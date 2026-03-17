@@ -1,2 +1,3 @@
-# skills
-Skills to be used in the customware sandbox
+# Customware Skills
+
+This is the skills repository for Customware.
