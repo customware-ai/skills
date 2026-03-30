@@ -1,5 +1,5 @@
 ---
-name: design
+name: frontend-design
 description: Prevents generic AI/GPT UI patterns when generating frontend code. Use this skill whenever generating HTML, CSS, React, Vue, Svelte, or any frontend UI code to enforce clean, human-designed aesthetics inspired by Linear, Raycast, Stripe, and GitHub instead of typical AI-generated UI.
 ---
 
