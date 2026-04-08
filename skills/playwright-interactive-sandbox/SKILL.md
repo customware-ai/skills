@@ -28,6 +28,8 @@ description: "Persistent browser interaction through a normal Node.js Playwright
 
 Set `TARGET_URL` to the app you are debugging. Use port `4444` and prefer `127.0.0.1` over `localhost`.
 
+In this sandbox, Playwright browsers are preinstalled under `/ms-playwright` and `PLAYWRIGHT_BROWSERS_PATH` may already be set to that location. Do not assume the default cache path `~/.cache/ms-playwright`.
+
 In this Debian sandbox, use headless mode for Playwright. Do not spend attempts trying headed mode unless the environment explicitly provides an X server.
 
 In this Debian sandbox, use headless mode for Playwright. Do not spend attempts trying headed mode unless the environment explicitly provides an X server.
@@ -58,6 +60,13 @@ try {
 ```
 
 Use this pattern for the main changed flow. Keep the script focused on the exact behavior you need to verify.
+
+If you want to confirm the Playwright browser path and installed browser payload, you can run:
+
+```bash
+echo "$PLAYWRIGHT_BROWSERS_PATH"
+ls -al /ms-playwright
+```
 
 Example check run:
 
@@ -251,6 +260,6 @@ Before `page.goto(...)`, verify port `4444` is listening and the app responds.
 ## Common Failure Modes
 
 - `Cannot find module 'playwright'`: ensure the `playwright` package is installed in the current workspace and verify the import before running the Node.js script.
-- Playwright package is installed but the browser executable is missing: run `npx playwright install chromium`.
+- Playwright package is installed but the browser executable seems missing: first verify `echo $PLAYWRIGHT_BROWSERS_PATH` and `ls -al /ms-playwright`. In this sandbox, browsers are expected at `/ms-playwright`, not `~/.cache/ms-playwright`. Only run `npx playwright install chromium` if that directory is actually absent or unusable.
 - `page.goto: net::ERR_CONNECTION_REFUSED`: make sure the dev server is still running in a persistent TTY session, recheck the port, and prefer `http://127.0.0.1:<port>`.
 - The Node.js process exited or reset unexpectedly: rerun the verification script from a clean process.
