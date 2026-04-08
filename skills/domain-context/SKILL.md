@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification (e.g. Claude Code, Cursor, Windsurf, Copilot, and others). No system packages or network access required.
 metadata:
   author: ryan-price
-  version: "1.4"
+  version: "1.5"
 description: >
   Progressive Domain Crystallization (PDC) — a skill for building and maintaining a living
   domain knowledge base for any custom business application. Use this skill whenever the user
@@ -181,6 +181,32 @@ When the domain is split across files, the Proposed Domain Updates section shoul
 - [Session summary entry]
 ```
 
+### Versioning
+
+DOMAIN.md includes a version header in its frontmatter. This is the human-readable version — it tells the AI and the team what state the domain knowledge is in.
+
+**Version format:** `MAJOR.MINOR`
+- **MAJOR** increments when the fundamental scope changes (new business process, major entity restructure, domain boundary shift)
+- **MINOR** increments on every approved update (new entities, new rules, flow adjustments, stakeholder additions)
+
+**Who increments:** The system auto-increments MINOR on each approved update. MAJOR is incremented manually when the team decides the domain has fundamentally expanded.
+
+**The version header lives in the DOMAIN.md frontmatter:**
+
+```markdown
+> **Version:** 1.5
+> **Last updated:** 2026-04-06 (Session 30)
+> **Changes:** +Commission Report entity, +BR-013–015, updated Quote-to-Close flow
+```
+
+**On every approved update, the AI must:**
+1. Increment the version number (MINOR +1)
+2. Update the "Last updated" date and session reference
+3. Update the "Changes" line with a brief summary
+4. Append an entry to the Changelog section
+
+**If the system uses git**, the commit message should mirror the Changes line. The version header and git history serve different audiences — the header is for the AI and the business user, git is for engineering.
+
 ---
 
 ## DOMAIN.md File Structure
@@ -320,3 +346,4 @@ Over time, the DOMAIN.md becomes the single source of truth for:
 - `references/seed-questions.md` — Questions to ask when bootstrapping a new domain
 - `references/entity-template.md` — Template for individual entity files (large projects)
 - `references/anti-patterns.md` — Common mistakes to avoid when building domain context
+
