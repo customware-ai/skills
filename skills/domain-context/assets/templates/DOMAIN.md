@@ -8,6 +8,10 @@
 > **Who maintains it?** The human team. The AI proposes updates; humans review and apply them.
 > **Where does it live?** Project root as `DOMAIN.md`, or `docs/domain/DOMAIN.md`.
 >
+> **Version:** [1.0]
+> **Last updated:** [YYYY-MM-DD] ([session name or source])
+> **Changes:** [brief summary of last update — e.g., "+3 entities, +2 rules, updated Quote-to-Close flow"]
+>
 > **Progressive Disclosure:** Sections are marked with tiers.
 > - **Tier 1 (Core)** — Always loaded at session start. Ground truth.
 > - **Tier 2 (Working Context)** — Loaded on demand when the session touches that entity or flow.
@@ -267,3 +271,4 @@
 | Date | Session Summary | Entities Added | Rules Added |
 |------|----------------|----------------|-------------|
 | [YYYY-MM-DD] | [Brief description of session] | [list] | [list] |
+
