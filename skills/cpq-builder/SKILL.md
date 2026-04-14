@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "3.0"
+  version: "3.1"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -21,10 +21,11 @@ description: >
 This skill tells the Builder Agent how to configure the Customware SPA as a Configure-Price-Quote system. It provides:
 
 1. **Section definitions** — the four views that make up a CPQ application
-2. **Config schema** — the data shape for products, options, dependencies, pricing, and quotes
-3. **Deterministic mapping rules** — if-then rules for transforming DOMAIN.md into config.json
-4. **Business rule templates** — patterns for the SPA's rules engine
-5. **Vertical presets** — defaults for Manufacturing, Wholesale, and Services verticals
+2. **Layout pattern** — the three-panel layout (sidebar stepper, main content, quote summary) with RBAC and saved quotes
+3. **Config schema** — the data shape for products, options, dependencies, pricing, and quotes
+4. **Deterministic mapping rules** — if-then rules for transforming DOMAIN.md into config.json
+5. **Business rule templates** — patterns for the SPA's rules engine
+6. **Vertical presets** — defaults for Manufacturing, Wholesale, and Services verticals
 
 The Builder Agent does NOT generate code. It generates a config object that the SPA renders.
 
@@ -150,6 +151,53 @@ The CPQ application has four sections. These are fixed — the Builder Agent use
 ```
 
 **Navigation mode is `stepper`** — the sidebar shows all four sections as sequential steps. All steps are clickable at any time (not a wizard). The Approve step shows gating indicators when requirements aren't met.
+
+---
+
+## Layout Pattern
+
+The CPQ application uses a **three-panel layout**. The builder MUST follow this layout — not a single scrolling page with all sections stacked.
+
+### Left sidebar (always visible)
+
+| Component | Content |
+|---|---|
+| **Stepper** | The four CPQ sections as clickable steps. Each step shows: step number, label, and completion state (pending / active / done). Clicking a step navigates to that section's panel. Only ONE section is visible in the main content at a time. |
+| **Role switcher** | "View as role" — lists every named person from DOMAIN.md's Stakeholder Map with their role. Clicking changes what the user can see and do. Active role persists in localStorage. |
+| **Saved quotes** | List of quotes stored in localStorage. Each shows name + status badge (Draft / Sent / Approved). Clicking loads the quote. "New quote" button at top creates a fresh one. |
+
+### Main content (center — changes per section)
+
+**Only the active section renders.** Do NOT stack all four sections on one scrolling page. Each stepper step shows its corresponding panel:
+
+| Section | What renders |
+|---|---|
+| **Configure** | Product card with base price. Option selectors (motors, accessories) with prices next to each. Toggles for optional items (installation). A "Continue" button to advance to Build Quote. |
+| **Build Quote** | Line items table: item, option/variant, quantity, unit price, line total. Editable rows — add, remove, duplicate. Route specialist work section with assignment dropdowns (from DOMAIN.md roles). |
+| **Preview** | Read-only summary: subtotal, tax line (HST/GST with rate), total. Payment terms. Currency. Formatted for review — this is what the customer would see. |
+| **Approve** | Approval owner display, status badge (Pending / Approved / Rejected). Approve and reject buttons. **Gated by role** — only roles with approval permission can approve. Other roles see a message: "You are viewing as [Name]. Only [approver names] can approve." |
+
+### Right sidebar (always visible)
+
+| Component | Content |
+|---|---|
+| **Current quote summary** | Live-updating card: selected product, chosen options, running subtotal, tax, total. Updates immediately when the user changes configuration. |
+| **Workflow notes** | Business rules and routing info from DOMAIN.md displayed as contextual guidance cards. |
+
+### RBAC behavior
+
+- Seed localStorage with roles from DOMAIN.md User Roles or Stakeholder Map.
+- Role switcher in the left sidebar lets users preview the app as any role.
+- **Approval gating**: If DOMAIN.md says "only Andy or Jeff can approve," disable the Approve button when viewing as Dre or Manish. Show a clear message explaining why.
+- **Routing visibility**: If a role handles specific work types (e.g., "Dre handles maintenance"), show relevant routing info when that role is active.
+
+### Price visibility
+
+- Show prices on EVERY screen where products or options appear.
+- Option selection (motors, accessories) immediately updates the right sidebar total.
+- Preview section calculates: subtotal + tax = total.
+- Use the tax type from DOMAIN.md (HST = 13%, GST = 5%).
+- Currency from DOMAIN.md (CAD, USD) appears in all price displays.
 
 ---
 
@@ -454,4 +502,3 @@ This log is NOT part of the config. It's a separate output that can be reviewed 
 - `references/config-schema.md` — Full TypeScript interfaces for the CPQ config shape
 - `references/vertical-presets.md` — Detailed presets for Manufacturing, Wholesale, and Services
 - `references/example-config.json` — Fully populated Total Water example config
-
