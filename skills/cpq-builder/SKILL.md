@@ -168,7 +168,25 @@ The CPQ application uses a **three-panel layout**. The builder MUST follow this 
 
 ### Main content (center — changes per section)
 
-**Only the active section renders.** Do NOT stack all four sections on one scrolling page. Each stepper step shows its corresponding panel:
+**Only the active section renders.** Do NOT stack all four sections on one scrolling page. Do NOT render sections as side-by-side cards. Each stepper step shows its corresponding panel at FULL WIDTH of the main content area. All other panels are hidden.
+
+Implementation: use a `currentStep` state variable. Render only the panel that matches `currentStep`. When the user clicks a stepper step, update `currentStep` and only that panel appears.
+
+```tsx
+// Correct: conditional rendering
+{currentStep === 0 && <ConfigurePanel />}
+{currentStep === 1 && <BuildQuotePanel />}
+{currentStep === 2 && <PreviewPanel />}
+{currentStep === 3 && <ApprovePanel />}
+```
+
+```tsx
+// WRONG: all panels visible, scroll to find the right one
+<ConfigurePanel />
+<BuildQuotePanel />
+<PreviewPanel />
+<ApprovePanel />
+```
 
 | Section | What renders |
 |---|---|
