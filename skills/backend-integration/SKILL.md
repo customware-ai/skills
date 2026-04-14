@@ -50,6 +50,78 @@ The backend reference repo is:
 
 Use the same clone pattern/runtime approach already known to work for Customware repos in the execution environment.
 
+## Minimum Package And Setup Delta From `client-only-spa`
+
+When migrating from the standard `client-only-spa` starter toward the backend-enabled stack, treat the following as the minimum baseline delta that must be accounted for.
+
+### Must-Add Runtime Packages
+
+- `hono`
+- `@hono/node-server`
+- `@hono/trpc-server`
+- `@trpc/server`
+- `@trpc/client`
+- `@trpc/react-query`
+- `@tanstack/react-query`
+- `better-sqlite3`
+- `drizzle-orm`
+- `dotenv`
+
+### Must-Add Dev/Test/Tooling Packages
+
+- `vitest`
+- `jsdom`
+- `@playwright/test`
+- `@testing-library/dom`
+- `@testing-library/jest-dom`
+- `@testing-library/react`
+- `@testing-library/user-event`
+- `drizzle-kit`
+- `tsx`
+- `typescript`
+- `@types/better-sqlite3`
+
+### Must-Add Or Align Scripts
+
+- `build:client`
+- `build:server`
+- `test`
+- `e2e:install`
+- `e2e`
+- `db:generate`
+- `db:migrate`
+
+### Must-Add Or Align Files
+
+- `.env.example`
+- `drizzle.config.ts`
+- `playwright.config.ts`
+- `vitest.config.ts`
+- `server/tsconfig.json`
+- `server/index.ts`
+- `server/start.ts`
+- `server/utils/env.ts`
+- `server/db/index.ts`
+- `server/db/schemas.ts`
+- `server/db/migrate.ts`
+- `server/trpc/router.ts`
+- `tests/e2e/database.ts`
+- `tests/e2e/global-setup.ts`
+- `tests/unit/setup.ts`
+- `tests/unit/helpers.ts`
+
+### Important Rule
+
+- This list is the minimum baseline, not the full migration.
+- If other packages, files, configs, or helpers are needed to complete the backend integration correctly, add them too.
+- Do not treat this list as permission to skip unlisted required setup.
+- Do not omit a listed item unless the migrated app has an explicit higher-priority reason not to use it.
+- For backend/runtime/testing dependencies and setup, prefer the backend reference repo's versions and conventions.
+- Use the same backend/runtime/testing package versions as the backend reference repo unless there is an explicit approved reason to differ.
+- Do not install `latest`, `next`, floating ranges, or ad hoc newer versions for Playwright or any other backend/runtime/testing package during this task.
+- When adding packages from the backend reference repo, copy the template's pinned version choice instead of guessing or upgrading.
+- Do not churn unrelated frontend package versions unless the migration genuinely requires it.
+
 ## Required Step Order
 
 1. Read project instructions first.
@@ -57,14 +129,16 @@ Use the same clone pattern/runtime approach already known to work for Customware
 3. Create `plan.md` in the project root using the exact section contract in this skill.
 4. Clone or refresh the backend reference repo into a temporary location if needed.
 5. Replace the current project `AGENTS.md` with the `AGENTS.md` from the backend reference repo.
-6. Use `playwright-interactive-sandbox` for a baseline interactive audit of the current app behavior and record the findings in `plan.md`.
-7. Audit the current project and map it against the reference repo.
-8. Adapt the backend stack and test setup using this skill's template map.
-9. Migrate storage-backed flows to backend-backed flows and track every migration in `plan.md`.
-10. Create or update automated tests using this skill's testing and verification rules.
-11. Use `playwright-interactive-sandbox` again for final interactive verification of behavior parity after backend migration.
-12. Run final verification.
-13. Remove temporary assets and `plan.md` as the final successful step.
+6. Immediately re-read the newly replaced project `AGENTS.md` before continuing.
+7. Use `playwright-interactive-sandbox` for a baseline interactive audit of the current app behavior and record the findings in `plan.md`.
+8. Audit the current project and map it against the reference repo.
+9. Replace the frontend-only runtime/build/startup flow with the backend reference repo's runtime/build/startup flow while keeping the top-level package commands `npm run build` and `npm run start`.
+10. Adapt the backend stack and test setup using this skill's template map.
+11. Migrate storage-backed flows to backend-backed flows and track every migration in `plan.md`.
+12. Create or update automated tests using this skill's testing and verification rules.
+13. Use `playwright-interactive-sandbox` again for final interactive verification of behavior parity after backend migration.
+14. Run final verification.
+15. Remove temporary assets and `plan.md` as the final successful step.
 
 Do not skip a prerequisite step because the later action seems obvious.
 
@@ -90,6 +164,15 @@ This task does not need domain knowledge files to decide scope.
 - Do not keep the frontend-only `AGENTS.md` in place.
 - The backend reference `AGENTS.md` becomes the new governing repo instructions for the migrated app.
 - Perform this replacement early in the workflow so all later work follows the backend-capable instructions.
+- Immediately re-read the replaced `AGENTS.md` before continuing any migration work.
+
+## Required Runtime Script And Startup Replacement
+
+- Replace the frontend-only runtime/build/start flow with the backend reference repo's flow.
+- Keep the top-level package commands named `npm run build` and `npm run start`.
+- What those commands do should follow the backend reference repo's behavior, not the old client-only starter behavior.
+- Remove or adapt obsolete frontend-only startup entrypoints such as `start.js` or any old startup-script path once the backend server startup flow takes over.
+- Do not keep conflicting old startup behavior alongside the new backend-capable startup path.
 
 ## Output Contract While Working
 
@@ -164,6 +247,21 @@ This task does not need domain knowledge files to decide scope.
 - If an additional intermediate shape is genuinely needed, define it as another Zod schema rather than a plain TypeScript-only contract.
 - Main thing to avoid: multiple drifting schema/type layers describing the same concept differently.
 
+## No Custom Alternatives Rule
+
+- Do not substitute a different backend stack.
+- Do not switch to Express, Fastify, Prisma, Postgres, REST-only replacements, custom RPC layers, or custom test frameworks when this workflow already defines the intended stack.
+- Stay with the backend reference repo's choices:
+  - Hono
+  - tRPC
+  - Zod
+  - neverthrow
+  - SQLite via `better-sqlite3`
+  - Drizzle
+  - Vitest
+  - Playwright
+- If more helpers are required, add them around this stack instead of replacing it.
+
 ## Testing Rules
 
 - Backend integration includes real test work.
@@ -174,6 +272,15 @@ This task does not need domain knowledge files to decide scope.
   - Playwright E2E coverage for the migrated flows
 - Replace tests that only validate the old localStorage mode.
 - Follow the deterministic database setup pattern from the backend reference repo.
+- Copy or adapt the backend reference repo's unit-test and Playwright E2E setup shape directly.
+- Do not invent a parallel custom E2E harness when the reference repo already defines the intended setup.
+- If extra helpers are needed, layer them on top of the reference setup instead of replacing it.
+
+## Demo / Template Cleanup Rule
+
+- Remove template sample backend domain code once the real app-specific backend modules are in place.
+- Remove demo or placeholder tests once real app-specific coverage replaces them.
+- Do not leave sample estimate/demo/template artifacts pretending to be the app's real backend or coverage.
 
 ## Backend Reference Map
 
@@ -237,6 +344,14 @@ Use the `template-be-setup` repo as the canonical reference for stack, file layo
   - deterministic Playwright database reset pattern
 - `tests/e2e/global-setup.ts`
   - E2E setup wiring
+- `playwright.config.ts`
+  - Playwright runner config and setup linkage
+- `vitest.config.ts`
+  - unit/service test runner config
+- `tests/unit/setup.ts`
+  - unit test setup and shared globals
+- `tests/unit/helpers.ts`
+  - unit test helpers and shared fixtures/utilities
 - `tests/e2e/README_FIRST_BEFORE_ADDING_E2E_TESTS.spec.ts`
   - format example only; do not preserve demo behavior
 - `tests/unit/services/estimate.test.ts`
@@ -252,13 +367,18 @@ Use the `template-be-setup` repo as the canonical reference for stack, file layo
 ### Must-Not-Miss Areas
 
 - runtime scripts and dependencies
+- backend-template-aligned build/start behavior
+- removal of obsolete frontend-only startup paths
 - server entry and startup
 - tRPC mount path
 - sqlite/drizzle setup
 - migration runner
 - provider wiring on the frontend
 - deterministic test database setup
+- unit test setup helpers
 - replacement of browser-storage-backed data paths
+- direct adoption of the template's testing setup shape instead of inventing a new one
+- cleanup of demo/template-only backend code and demo test artifacts once real app-specific replacements exist
 
 ## `plan.md` Contract
 
@@ -289,8 +409,11 @@ Use this exact top-level section order in `plan.md`.
 
 ## Package And Runtime Alignment
 - [ ] Align required backend/runtime dependencies
+- [ ] Align backend/runtime/testing package versions to the backend reference repo
 - [ ] Align required npm scripts
 - [ ] Align required config files
+- [ ] Replace frontend-only build/start behavior with the backend reference flow while keeping `npm run build` and `npm run start`
+- [ ] Remove or adapt obsolete frontend-only startup paths
 - [ ] Align runtime port/server startup assumptions
 
 ## Server Skeleton
@@ -329,6 +452,7 @@ Use this exact top-level section order in `plan.md`.
 ## Seed Fixture And Test Data Setup
 - [ ] Establish deterministic backend test-data setup
 - [ ] Align Playwright DB reset/setup pattern
+- [ ] Align unit-test setup/helpers from the backend reference repo
 - [ ] Add or adapt seed/fixture helpers as needed
 - [ ] Replace template sample data assumptions with app-specific test data
 
@@ -354,6 +478,7 @@ Use this exact top-level section order in `plan.md`.
 ## Cleanup
 - [ ] Remove temp backend reference clone/assets
 - [ ] Remove temporary execution-only files
+- [ ] Remove demo/template-only backend code and placeholder test artifacts once real replacements exist
 - [ ] Remove `plan.md` as the final successful step
 ```
 
@@ -400,12 +525,19 @@ Use the reference repo's deterministic E2E DB setup pattern:
 
 - `tests/e2e/database.ts`
 - `tests/e2e/global-setup.ts`
+- `playwright.config.ts`
 
 This means:
 
 - the backend starts against a clean, deterministic sqlite DB for E2E
 - test state can be seeded deliberately
 - assertions should validate real backend-backed behavior, not browser-storage fallbacks
+
+This is a required rule:
+
+- copy or adapt the template's Playwright E2E setup shape directly
+- do not invent a custom or weird E2E setup when the template already provides the intended pattern
+- if the app needs more E2E helpers, layer them on top of the template pattern rather than replacing it
 
 Do not keep the demo E2E example as product coverage. Replace it with real flow coverage.
 
