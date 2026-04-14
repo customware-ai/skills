@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "3.6"
+  version: "3.7"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -156,19 +156,21 @@ The CPQ application has four sections. These are fixed — the Builder Agent use
 
 ## Layout Pattern
 
-The CPQ application uses a **three-panel layout**. The builder MUST follow this layout — not a single scrolling page with all sections stacked.
+The CPQ application uses a **three-panel layout** with **FIVE sections** (not four). The builder MUST follow this layout — not a single scrolling page with all sections stacked.
 
-### Left sidebar (always visible)
+The five sections are: **Configure, Build Quote, Preview, Approve, Quote Document.** The task description from the project agent may only list four stages — the Quote Document is always added as the fifth section by this skill regardless of what the task says. Do not skip it.
+
+### Left sidebar (always visible, collapsible)
 
 This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. Do not create a second sidebar next to the template's default one. One left sidebar total.
 
-If the template's sidebar is collapsible, keep that behavior — the quote flow content goes inside the collapsible panel.
+**Preserve the template's collapsible sidebar behavior.** If the template has a sidebar toggle button (hamburger icon, collapse arrow, etc.), keep it working. Inject the skill content (stepper, saved quotes) INTO the existing collapsible component — do not rebuild the sidebar from scratch and lose the collapse feature. If you must create a new sidebar component, include a collapse toggle that hides the sidebar and expands the main content area.
 
 **Sidebar heading:** Use a contextual label like "Quote workflow" or "Business process" — not the company name (which is already in the header). The sidebar heading describes what the navigation IS, not who it's for.
 
 | Component | Content |
 |---|---|
-| **Stepper** | A VERTICAL list of the CPQ sections (Configure, Build Quote, Preview, Approve, Quote Document) in the left sidebar. Each step shows: step number, label, subtitle, and completion state (pending / active / done with checkmark). Clicking a step navigates to that section's panel. **This is a vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** If you cannot put the stepper in the sidebar without modifying the layout file, modify the layout file. The skill layout overrides template preservation. |
+| **Stepper** | A VERTICAL list of ALL FIVE CPQ sections in the left sidebar: (1) Configure, (2) Build Quote, (3) Preview, (4) Approve, (5) Quote Document. Each step shows: step number, label, subtitle, and completion state (pending / active / done with checkmark). Clicking a step navigates to that section's panel. **This is a vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** If you cannot put the stepper in the sidebar without modifying the layout file, modify the layout file. The skill layout overrides template preservation. |
 | **Saved quotes** | List of quotes stored in localStorage. Each shows name + status badge (Draft / Awaiting Approval / Approved). Clicking loads the quote. "New quote" button at top creates a fresh one. |
 
 The **role switcher** is in the header bar as a dropdown — not in the left sidebar. See Layout Principles in the builder prompt.
@@ -179,15 +181,20 @@ The **role switcher** is in the header bar as a dropdown — not in the left sid
 
 **Do NOT put the stepper as horizontal tabs at the top of the main content area.** The stepper belongs in the left sidebar as a vertical list. Horizontal tabs are a common wrong interpretation — the builder defaults to them because they avoid modifying the layout file. Modify the layout file instead.
 
-Implementation: use a `currentStep` state variable. Render only the panel that matches `currentStep`. When the user clicks a stepper step, update `currentStep` and only that panel appears.
+Implementation: use a `currentStep` state variable (0–4, not 0–3). Render only the panel that matches `currentStep`. When the user clicks a stepper step, update `currentStep` and only that panel appears.
 
 ```tsx
-// Correct: conditional rendering
+// Correct: ALL FIVE panels, conditional rendering
 {currentStep === 0 && <ConfigurePanel />}
 {currentStep === 1 && <BuildQuotePanel />}
 {currentStep === 2 && <PreviewPanel />}
 {currentStep === 3 && <ApprovePanel />}
 {currentStep === 4 && <QuoteDocumentPanel />}
+```
+
+If you define a WorkflowStep type, it must include all five:
+```tsx
+type WorkflowStep = "configure" | "build" | "preview" | "approve" | "document";
 ```
 
 ```tsx
@@ -546,7 +553,7 @@ After executing the mapping rules, the Builder Agent should produce a brief mapp
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v3.6
+**Skill:** cpq-builder v3.7
 **DOMAIN.md:** [company name]
 **Vertical preset:** [manufacturing / wholesale / services / none]
 
