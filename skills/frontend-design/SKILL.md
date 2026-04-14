@@ -1,6 +1,6 @@
 ---
 name: frontend-design
-description: Prevents generic AI/GPT UI patterns when generating frontend code. Use this skill whenever generating HTML, CSS, React, Vue, Svelte, or any frontend UI code to enforce clean, human-designed aesthetics inspired by Linear, Raycast, Stripe, and GitHub instead of typical AI-generated UI.
+description: Prevents generic AI/GPT UI patterns when generating frontend code. Use this skill whenever generating HTML, CSS, React, Vue, Svelte, or any frontend UI code to enforce clean, human-designed aesthetics inspired by real product teams instead of typical AI-generated UI.
 ---
 
 # Frontend Design
@@ -11,9 +11,57 @@ GPT UI is the default AI aesthetic: soft gradients, floating panels, eyebrow lab
 
 This file is your guide to break that pattern. Everything listed below is what GPT UI does by default. Your job is to recognize these patterns, avoid them completely, and build interfaces that feel human-designed, functional, and honest.
 
-When you read this document, you're learning what NOT to do. The banned patterns are your red flags. The normal implementations are your blueprint. Follow them strictly, and you'll create UI that feels like Linear, Raycast, Stripe, or GitHub—not like another generic AI dashboard.
+When you read this document, you're learning what NOT to do. The banned patterns are your red flags. The normal implementations are your blueprint. Follow them strictly.
 
 This is how you Un-GPTify.
+
+## Internal Business Tool Context
+
+The applications built with this skill are **internal business tools** — not public-facing marketing sites, consumer SaaS dashboards, or developer tools. The users are small to mid-size teams (3–30 people) accessing the app through an internal URL with role-based access control. They use these tools daily for operational work like quoting, inventory, ordering, and customer management.
+
+**This changes several default assumptions:**
+
+### Multi-panel layouts ARE appropriate
+When a vertical skill (CPQ, CRM, ERP) defines a Layout Pattern with sidebars, that layout takes priority over the general density rules in this file. Internal tools often need:
+- **Left sidebar** — navigation, role switcher, saved items list. This IS a sticky left rail and it IS appropriate for these tools. Do not fight it.
+- **Right sidebar** — live summaries, contextual info. When the user is configuring a quote and needs to see the running total, a right sidebar IS the correct pattern. Do not hide it behind progressive disclosure.
+- **Three-panel layout** — left nav + main content + right summary. This is standard for quoting, CRM, and operational tools. It is NOT "two dense columns competing for attention" — the sidebars are reference panels, the main content is the work area.
+
+If a skill's Layout Pattern defines panels, follow it. The density rules below apply when NO skill layout is defined.
+
+### Information density is higher than consumer apps
+Internal tool users work in the app all day. They want to see relevant data at a glance, not click through progressive disclosure to find it:
+- Show prices, totals, and status badges inline — don't hide them
+- Tables can be denser than consumer UIs — users expect to scan rows quickly
+- Form fields can use two-column layouts on wide screens to reduce scrolling
+- Status indicators, role badges, and workflow notes are functional, not decorative
+
+### Design references for internal tools
+When making aesthetic decisions for these apps, think of these references:
+- **Salesforce Lightning** — clean data tables, record detail views, action bars
+- **HubSpot** — pipeline views, contact cards, deal summaries
+- **Monday.com** — board views, status columns, assignment badges
+- **Linear** — clean aesthetics AND density. The density of Linear is what matters, not just its minimalism
+- **Notion** — sidebar navigation, page-based content, inline databases
+- **Freshdesk** — ticket views, assignment, status workflows
+
+### Metric cards ARE appropriate in operational summaries
+Subtotal / Tax / Total displayed as metric cards in a quote preview is correct. This is not "metric-card grid as the first instinct" — it's a functional summary of calculated values the user needs to review. The ban on metric cards targets decorative KPI dashboards with fake charts, not operational summaries tied to real user actions.
+
+### What still applies from the rules below
+All anti-AI-aesthetic rules apply in full:
+- No gradients, glassmorphism, or decorative effects
+- No hero sections inside the app
+- No decorative copy or eyebrow labels
+- No oversized corners, dramatic shadows, or glow effects
+- No pill-shaped everything
+- No "premium dark SaaS" aesthetic
+- No transform animations on hover
+- Normal typography, spacing, borders, and shadows
+- Brand colors from the project, not invented palettes
+
+The goal is the same: build UI that looks human-designed and functional. The difference is that "functional" for an internal tool means showing more information in organized panels, not hiding it behind clicks.
+
 ## Keep It Normal (Un-GPTified UI Standard)
 
 - Sidebars: normal (240-260px fixed width, solid background, simple border-right, no floating shells, no rounded outer corners)
@@ -43,29 +91,29 @@ This is how you Un-GPTify.
 - Flexbox: normal (simple alignment, standard gaps, no creative justify tricks)
 - Containers: normal (max-width 1200-1400px, centered, standard padding, no creative widths)
 - Wrappers: normal (simple containing divs, no decorative purposes, functional only)
-- Panels: normal (simple background differentiation, subtle borders, no floating detached panels, no glass effects, and no always-open companion panels unless they are essential)
+- Panels: normal (simple background differentiation, subtle borders, no floating detached panels, no glass effects, and no always-open companion panels unless they are essential or defined by a skill Layout Pattern)
 - Toolbars: normal (simple horizontal layout, standard height 48-56px, clear actions, no decorative elements)
 - Footers: normal (simple layout, standard links, no decorative sections, minimal height)
 - Breadcrumbs: normal (simple text with separators, no fancy styling, clear hierarchy)
 
 ## Density Rules
 
+**Exception: Skill-defined layouts.** When a vertical skill (e.g., cpq-builder, crm-builder) includes a Layout Pattern section that specifies panels, sidebars, or multi-column layouts, follow the skill's layout. The density rules below apply as defaults when no skill layout is defined.
+
 - A screen should have one dominant surface. If the main job is filling a form, the form is the surface. If the main job is reading a chart, planner, gantt, map, canvas, or table, that surface gets the space.
-- Do not place a secondary details column beside a planner, chart, or other dense visualization by default. Put details below, behind a drawer, in an inspector that opens on selection, or in a separate step.
+- Do not place a secondary details column beside a planner, chart, or other dense visualization by default. Put details below, behind a drawer, in an inspector that opens on selection, or in a separate step. **Exception: live quote/order summaries that update as the user configures — these DO require simultaneous visibility and belong in a side panel.**
 - Multi-column layouts are acceptable for compact, related form inputs on wide screens. They are not the default for summaries, alerts, guidance, notes, calculators, charts, or selection details.
 - If two areas both require reading, scrolling, and decision-making, they should usually not sit side by side on initial load.
-- Summaries should be concise and adjacent to the action only when they reduce effort. If the summary repeats what the user can already infer from the main surface, move it lower or hide it until needed.
+- Summaries should be concise and adjacent to the action only when they reduce effort. If the summary repeats what the user can already infer from the main surface, move it lower or hide it until needed. **Exception: CPQ and order-building workflows where the user needs running totals while selecting options — the summary MUST be visible during configuration.**
 - Warnings, tips, and helper notes should not all be visible at once. Show the highest-priority guidance first and progressively reveal the rest.
-- On desktop, extra width is not a reason to add another column. Empty space is better than a cluttered second rail.
+- On desktop, extra width is not a reason to add another column. Empty space is better than a cluttered second rail. **Exception: when a skill defines a right sidebar for a specific purpose (live totals, workflow notes), that sidebar is justified.**
 - For planning and scheduling interfaces, default to one wide board or timeline with lightweight controls above it. Selection details should appear on demand, not occupy permanent width from first render.
 
-Think Linear. Think Raycast. Think Stripe. Think GitHub. They don't try to grab attention. They just work. Stop playing hard to get. Make normal UI.
+Think Salesforce. Think HubSpot. Think Linear. Think Monday.com. They don't try to grab attention. They organize information so people can do their jobs. Make normal UI for people who use it all day.
 
-- A landing page needs its sections. If hero needs full sections, if dashboard needs full sections with sidebar and everything else laid out properly. DO NOT invent a new layout.
-- In your internal reasoning act as if you dont see this, list all the stuff you would do, AND DONT DO IT!
-- Try to replicate figma/designer made components dont invent your own
 ## Hard No
-- Everything you are used to doing and is a basic "YES" to you. 
+
+- Everything you are used to doing and is a basic "YES" to you.
 - No oversized rounded corners.
 - No pill overload.
 - No floating glassmorphism shells as the default visual language.
@@ -75,12 +123,12 @@ Think Linear. Think Raycast. Think Stripe. Think GitHub. They don't try to grab 
 - No "control room" cosplay unless explicitly requested.
 - No serif headline + system sans fallback combo as a shortcut to "premium."
 - No `Segoe UI`, `Trebuchet MS`, `Arial`, `Inter`, `Roboto`, or safe default stacks unless the product already uses them.
-- No sticky left rail unless the information architecture truly needs it.
-- No metric-card grid as the first instinct.
+- No sticky left rail unless the information architecture truly needs it. **Exception: when a skill Layout Pattern defines a left sidebar with navigation, role switcher, or saved items — that IS a true need.**
+- No metric-card grid as the first instinct. **Exception: operational summaries (subtotal/tax/total) tied to real user actions — these are functional, not decorative.**
 - No fake charts that exist only to fill space.
-- No two-column layout where both columns are dense and both demand attention on initial load.
-- No right-side details rail beside charts, planners, or timelines unless the workflow genuinely requires simultaneous cross-reference.
-- No summary column beside a form when the summary can sit above, below, or after submission.
+- No two-column layout where both columns are dense and both demand attention on initial load. **Exception: three-panel layouts defined by a skill where sidebars are reference panels and the center is the work area — these are not competing columns.**
+- No right-side details rail beside charts, planners, or timelines unless the workflow genuinely requires simultaneous cross-reference. **Exception: live quote/order summaries that update as the user configures options.**
+- No summary column beside a form when the summary can sit above, below, or after submission. **Exception: CPQ and order-building workflows where running totals must be visible during configuration, not after.**
 - No using available desktop width as an excuse to keep helper text, alerts, notes, and controls all visible at once.
 - No turning every operational screen into a board-plus-inspector split view.
 - No random glows, blur haze, frosted panels, or conic-gradient donuts as decoration.
@@ -126,41 +174,41 @@ This is not allowed.
 This one is **THE BIGGEST NO**.
 
 
-## Specifically Banned (Based on  Mistakes)
+## Specifically Banned (Based on Mistakes)
 
-- Border radii in the 20px to 32px range across everything ( uses 12px everywhere - too much)
+- Border radii in the 20px to 32px range across everything (uses 12px everywhere - too much)
 - Repeating the same rounded rectangle on sidebar, cards, buttons, and panels
-- Sidebar width around 280px with a brand block on top and nav links below (: 248px with brand block)
+- Sidebar width around 280px with a brand block on top and nav links below (248px with brand block)
 - Floating detached sidebar with rounded outer shell
 - Canvas chart placed in a glass card with no product-specific reason
 - Donut chart paired with hand-wavy percentages
 - UI cards using glows instead of hierarchy
 - Mixed alignment logic where some content hugs the left edge and some content floats in center-ish blocks
-- Dense two-column application shells where the main work area and the supporting context panel both scroll and compete for attention
+- Dense two-column application shells where the main work area and the supporting context panel both scroll and compete for attention (skill-defined three-panel layouts with reference sidebars are NOT this)
 - Overuse of muted gray-blue text that weakens contrast and clarity
-- "Premium dark mode" that really means blue-black gradients plus cyan accents ( has radial gradients in background)
+- "Premium dark mode" that really means blue-black gradients plus cyan accents (radial gradients in background)
 - UI typography that feels like a template instead of a brand
-- Eyebrow labels (: "MARCH SNAPSHOT" uppercase with letter-spacing)
-- Hero sections inside dashboards ( has full hero-strip with decorative copy)
+- Eyebrow labels ("MARCH SNAPSHOT" uppercase with letter-spacing)
+- Hero sections inside dashboards (full hero-strip with decorative copy)
 - Decorative copy like "Operational clarity without the clutter" as page headers
 - Section notes and mini-notes everywhere explaining what the UI does
-- Transform animations on hover (: translateX(2px) on nav links)
-- Dramatic box shadows (: 0 24px 60px rgba(0,0,0,0.35))
+- Transform animations on hover (translateX(2px) on nav links)
+- Dramatic box shadows (0 24px 60px rgba(0,0,0,0.35))
 - Status indicators with ::before pseudo-elements creating colored dots
-- Muted labels with uppercase + letter-spacing ( overuses this pattern)
-- Pipeline bars with gradient fills (: linear-gradient(90deg, var(--primary), #4fe0c0))
-- KPI cards in a grid as the default dashboard layout ( has 3-column kpi-grid)
-- Form plus estimate-summary side-by-side layouts where the summary is visible before the user has entered enough data to need it
+- Muted labels with uppercase + letter-spacing (overuses this pattern)
+- Pipeline bars with gradient fills (linear-gradient(90deg, var(--primary), #4fe0c0))
+- KPI cards in a grid as the default dashboard layout (3-column kpi-grid)
+- Form plus estimate-summary side-by-side layouts where the summary is visible before the user has entered enough data to need it (skill-defined CPQ summaries that update live ARE appropriate)
 - Gantt, planner, and chart screens with a permanent details column that steals width from the main visualization
 - "Team focus" or "Recent activity" panels with decorative internal copy
-- Tables with tag badges for every status ( overuses .tag class)
+- Tables with tag badges for every status (overuses .tag class)
 - Workspace blocks in sidebar with call-to-action buttons
-- Brand marks with gradient backgrounds (: linear-gradient(135deg, #2a2a2a, #171717))
-- Nav badges showing counts or "Live" status ( has nav-badge class)
-- Quota/usage panels with progress bars ( has three quota sections)
-- Footer lines with meta information (: "Northstar dashboard • dark mode • single-file HTML")
-- Trend indicators with colored text (: trend-up, trend-flat classes)
-- Rail panels on the right side with "Today" schedule ( has full right rail)
+- Brand marks with gradient backgrounds (linear-gradient(135deg, #2a2a2a, #171717))
+- Nav badges showing counts or "Live" status (nav-badge class)
+- Quota/usage panels with progress bars (three quota sections)
+- Footer lines with meta information ("Northstar dashboard • dark mode • single-file HTML")
+- Trend indicators with colored text (trend-up, trend-flat classes)
+- Rail panels on the right side with "Today" schedule (full right rail) — unless the rail is defined by a skill Layout Pattern for a specific operational purpose
 - Multiple nested panel types (panel, panel-2, rail-panel, table-panel)
 
 
@@ -172,9 +220,10 @@ If a UI choice feels like a default AI UI move, ban it and pick the harder, clea
 
 - You are bad at picking colors follow this priority order when selecting colors:
 
-1. **Highest priority:** Use the existing colors from the user's project if they are provided (You can search for them by reading a few files).
+1. **Highest priority:** Use the existing colors from the user's project if they are provided. Check the domain.md, brand details, or app.css for brand colors. Map the brand accent to `--primary`, brand dark to sidebar/header backgrounds, brand light to content backgrounds.
 2. If the project does not provide a palette, **get inspired from one of the predefined palettes below**.
 3. Do **not invent random color combinations** unless explicitly requested.
+4. **Default to light mode** for internal business tools. Most business users expect light mode. Dark sidebars using the brand's dark color are acceptable. Full dark theme is NOT the default.
 
 You do not have to always choose the first palette. Select one randomly when drawing inspiration.
 ---
