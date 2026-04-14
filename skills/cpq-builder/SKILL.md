@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "3.2"
+  version: "3.3"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -163,8 +163,9 @@ The CPQ application uses a **three-panel layout**. The builder MUST follow this 
 | Component | Content |
 |---|---|
 | **Stepper** | The four CPQ sections as clickable steps. Each step shows: step number, label, and completion state (pending / active / done). Clicking a step navigates to that section's panel. Only ONE section is visible in the main content at a time. |
-| **Role switcher** | "View as role" — lists every named person from DOMAIN.md's Stakeholder Map with their role. Clicking changes what the user can see and do. Active role persists in localStorage. |
 | **Saved quotes** | List of quotes stored in localStorage. Each shows name + status badge (Draft / Sent / Approved). Clicking loads the quote. "New quote" button at top creates a fresh one. |
+
+The **role switcher** is in the header bar as a dropdown — not in the left sidebar. See Layout Principles in the builder prompt.
 
 ### Main content (center — changes per section)
 
@@ -205,7 +206,7 @@ Implementation: use a `currentStep` state variable. Render only the panel that m
 ### RBAC behavior
 
 - Seed localStorage with roles from DOMAIN.md User Roles or Stakeholder Map.
-- Role switcher in the left sidebar lets users preview the app as any role.
+- Role switcher is a **dropdown in the header bar** — not in the sidebar. Shows active role name and badge. Selecting a new role updates the view immediately.
 - **Approval gating**: If DOMAIN.md says "only Andy or Jeff can approve," disable the Approve button when viewing as Dre or Manish. Show a clear message explaining why.
 - **Routing visibility**: If a role handles specific work types (e.g., "Dre handles maintenance"), show relevant routing info when that role is active.
 
@@ -516,7 +517,7 @@ After executing the mapping rules, the Builder Agent should produce a brief mapp
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v3.0
+**Skill:** cpq-builder v3.3
 **DOMAIN.md:** [company name]
 **Vertical preset:** [manufacturing / wholesale / services / none]
 
