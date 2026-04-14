@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "3.4"
+  version: "3.5"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -166,7 +166,7 @@ If the template's sidebar is collapsible, keep that behavior — the quote flow 
 
 | Component | Content |
 |---|---|
-| **Stepper** | The four CPQ sections (plus Quote Document when approved) as clickable steps. Each step shows: step number, label, and completion state (pending / active / done). Clicking a step navigates to that section's panel. Only ONE section is visible in the main content at a time. |
+| **Stepper** | A VERTICAL list of the CPQ sections (Configure, Build Quote, Preview, Approve, Quote Document) in the left sidebar. Each step shows: step number, label, subtitle, and completion state (pending / active / done with checkmark). Clicking a step navigates to that section's panel. **This is a vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** If you cannot put the stepper in the sidebar without modifying the layout file, modify the layout file. The skill layout overrides template preservation. |
 | **Saved quotes** | List of quotes stored in localStorage. Each shows name + status badge (Draft / Awaiting Approval / Approved). Clicking loads the quote. "New quote" button at top creates a fresh one. |
 
 The **role switcher** is in the header bar as a dropdown — not in the left sidebar. See Layout Principles in the builder prompt.
@@ -174,6 +174,8 @@ The **role switcher** is in the header bar as a dropdown — not in the left sid
 ### Main content (center — changes per section)
 
 **Only the active section renders.** Do NOT stack all four sections on one scrolling page. Do NOT render sections as side-by-side cards. Each stepper step shows its corresponding panel at FULL WIDTH of the main content area. All other panels are hidden.
+
+**Do NOT put the stepper as horizontal tabs at the top of the main content area.** The stepper belongs in the left sidebar as a vertical list. Horizontal tabs are a common wrong interpretation — the builder defaults to them because they avoid modifying the layout file. Modify the layout file instead.
 
 Implementation: use a `currentStep` state variable. Render only the panel that matches `currentStep`. When the user clicks a stepper step, update `currentStep` and only that panel appears.
 
@@ -542,7 +544,7 @@ After executing the mapping rules, the Builder Agent should produce a brief mapp
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v3.4
+**Skill:** cpq-builder v3.5
 **DOMAIN.md:** [company name]
 **Vertical preset:** [manufacturing / wholesale / services / none]
 
