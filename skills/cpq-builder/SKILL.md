@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "3.5"
+  version: "3.6"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -163,6 +163,8 @@ The CPQ application uses a **three-panel layout**. The builder MUST follow this 
 This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. Do not create a second sidebar next to the template's default one. One left sidebar total.
 
 If the template's sidebar is collapsible, keep that behavior — the quote flow content goes inside the collapsible panel.
+
+**Sidebar heading:** Use a contextual label like "Quote workflow" or "Business process" — not the company name (which is already in the header). The sidebar heading describes what the navigation IS, not who it's for.
 
 | Component | Content |
 |---|---|
@@ -544,7 +546,7 @@ After executing the mapping rules, the Builder Agent should produce a brief mapp
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v3.5
+**Skill:** cpq-builder v3.6
 **DOMAIN.md:** [company name]
 **Vertical preset:** [manufacturing / wholesale / services / none]
 
