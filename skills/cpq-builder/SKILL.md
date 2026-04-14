@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "3.3"
+  version: "3.4"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -160,10 +160,14 @@ The CPQ application uses a **three-panel layout**. The builder MUST follow this 
 
 ### Left sidebar (always visible)
 
+This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. Do not create a second sidebar next to the template's default one. One left sidebar total.
+
+If the template's sidebar is collapsible, keep that behavior — the quote flow content goes inside the collapsible panel.
+
 | Component | Content |
 |---|---|
-| **Stepper** | The four CPQ sections as clickable steps. Each step shows: step number, label, and completion state (pending / active / done). Clicking a step navigates to that section's panel. Only ONE section is visible in the main content at a time. |
-| **Saved quotes** | List of quotes stored in localStorage. Each shows name + status badge (Draft / Sent / Approved). Clicking loads the quote. "New quote" button at top creates a fresh one. |
+| **Stepper** | The four CPQ sections (plus Quote Document when approved) as clickable steps. Each step shows: step number, label, and completion state (pending / active / done). Clicking a step navigates to that section's panel. Only ONE section is visible in the main content at a time. |
+| **Saved quotes** | List of quotes stored in localStorage. Each shows name + status badge (Draft / Awaiting Approval / Approved). Clicking loads the quote. "New quote" button at top creates a fresh one. |
 
 The **role switcher** is in the header bar as a dropdown — not in the left sidebar. See Layout Principles in the builder prompt.
 
@@ -179,6 +183,7 @@ Implementation: use a `currentStep` state variable. Render only the panel that m
 {currentStep === 1 && <BuildQuotePanel />}
 {currentStep === 2 && <PreviewPanel />}
 {currentStep === 3 && <ApprovePanel />}
+{currentStep === 4 && <QuoteDocumentPanel />}
 ```
 
 ```tsx
@@ -187,14 +192,32 @@ Implementation: use a `currentStep` state variable. Render only the panel that m
 <BuildQuotePanel />
 <PreviewPanel />
 <ApprovePanel />
+<QuoteDocumentPanel />
 ```
 
 | Section | What renders |
 |---|---|
 | **Configure** | Product card with base price. Option selectors (motors, accessories) with prices next to each. Toggles for optional items (installation). A "Continue" button to advance to Build Quote. |
 | **Build Quote** | Line items table: item, option/variant, quantity, unit price, line total. Editable rows — add, remove, duplicate. Route specialist work section with assignment dropdowns (from DOMAIN.md roles). |
-| **Preview** | Read-only summary: subtotal, tax line (HST/GST with rate), total. Payment terms. Currency. Formatted for review — this is what the customer would see. |
+| **Preview** | Read-only summary: subtotal, tax line (HST/GST with rate), total. Payment terms. Currency. Formatted for review — this is the internal check before approval. |
 | **Approve** | Approval owner display, status badge (Pending / Approved / Rejected). Approve and reject buttons. **Gated by role** — only roles with approval permission can approve. Other roles see a message: "You are viewing as [Name]. Only [approver names] can approve." |
+| **Quote Document** | The final formatted quote — what you would send to the customer or print. Appears as a step after Approve (or accessible anytime from the stepper once the quote has content). See details below. |
+
+### Quote Document (final output view)
+
+This is the polished, customer-facing summary of the quote. It renders as a clean, printable document inside the main content area — not a modal, not a PDF viewer, just a formatted card.
+
+**Layout — top to bottom:**
+
+1. **Company header** — brand logo (from domain.md brand assets) + company name + placeholder address ("123 Main St, City, Province, Postal Code — update in settings"). Clean horizontal layout.
+2. **Quote metadata** — quote name, date, quote number (auto-generated), customer name, lead source, assigned to. Two-column grid of label/value pairs.
+3. **Configuration summary** — the selected product, chosen options (motor, accessories), and any optional items (installation). Shows what was configured, not the configuration UI.
+4. **Itemized pricing table** — line items with item name, description/option, quantity, unit price, line total. Clean table with a footer row showing subtotal.
+5. **Totals block** — subtotal, tax line (HST/GST with rate and calculated amount), grand total. The total should be visually prominent (larger text, bold).
+6. **Terms** — payment terms (Net 30), currency (CAD/USD), and any notes from the Build Quote step.
+7. **Status badge** — current status (Draft / Awaiting Approval / Approved) displayed clearly.
+
+**This view is read-only.** No edit controls. If the user wants to change something, they click back to Configure or Build Quote in the stepper. The Quote Document is the output, not the workspace.
 
 ### Right sidebar (always visible)
 
@@ -241,6 +264,8 @@ Use these shadcn components for each CPQ element. Do not build custom equivalent
 | Workflow notes sidebar | `Card` with `text-sm text-muted-foreground` | Reference material, not primary content. Small text, muted colors. |
 | Confirmation dialogs | `AlertDialog` | For destructive actions (delete quote, reject quote). |
 | Toast notifications | `Sonner` / `toast()` | After save, approve, reject, delete. Brief confirmation messages. |
+| Quote document header | `Card` with logo image + company name | Brand logo from domain.md assets. Placeholder address below. |
+| Quote document pricing table | `Table` with `TableFooter` | Clean itemized rows. Footer shows subtotal. Totals block below with large bold total. |
 
 ---
 
@@ -517,7 +542,7 @@ After executing the mapping rules, the Builder Agent should produce a brief mapp
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v3.3
+**Skill:** cpq-builder v3.4
 **DOMAIN.md:** [company name]
 **Vertical preset:** [manufacturing / wholesale / services / none]
 
