@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "3.1"
+  version: "3.2"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -198,6 +198,30 @@ The CPQ application uses a **three-panel layout**. The builder MUST follow this 
 - Preview section calculates: subtotal + tax = total.
 - Use the tax type from DOMAIN.md (HST = 13%, GST = 5%).
 - Currency from DOMAIN.md (CAD, USD) appears in all price displays.
+
+### shadcn/ui component mapping
+
+Use these shadcn components for each CPQ element. Do not build custom equivalents when a shadcn component exists.
+
+| CPQ Element | shadcn Component | Usage Notes |
+|---|---|---|
+| Product card | `Card`, `CardHeader`, `CardContent` | Show product name, description, base price. Use `CardDescription` for the price line. |
+| Motor / option selection | `RadioGroup`, `RadioGroupItem` | Mutually exclusive options. Show price next to each label. Wrap in a Card. |
+| Optional items (installation) | `Checkbox` with label | Toggle on/off. Show description below the label. |
+| Status badges | `Badge` | Use `variant="outline"` for Draft, `variant="default"` for Sent, `variant="secondary"` for Approved. Apply semantic colors via className. |
+| Role badges | `Badge` | `variant="outline"` for Staff, `variant="default"` for Approver, `variant="secondary"` for View only. |
+| Line items table | `Table`, `TableHeader`, `TableRow`, `TableCell` | Clean header row, right-align price columns. Use `TableFooter` for subtotal row. |
+| Form inputs | `Input`, `Label` | Quote name, customer name, notes. Stack label above input. |
+| Dropdowns | `Select`, `SelectContent`, `SelectItem` | Lead source, assigned-to, motor selection (alternative to RadioGroup for compact layouts). |
+| Action buttons | `Button` | Primary action: `variant="default"` with brand accent. Secondary: `variant="outline"`. Destructive: `variant="destructive"`. |
+| Section dividers | `Separator` | Between sections within a panel. Horizontal, subtle. |
+| Stepper navigation | Custom (no shadcn stepper) | Build as a vertical list of clickable items. Use `cn()` for active/done/pending states. |
+| Role switcher | Custom list with `Button variant="ghost"` | Each role is a ghost button. Active role gets accent background via className. |
+| Saved quotes list | Custom list | Each item is a clickable row with `Badge` for status. Use `ScrollArea` if the list could overflow. |
+| Quote summary sidebar | `Card` with stacked label/value rows | Compact. Labels are `text-muted-foreground text-sm`. Values are `font-medium`. Total row is `text-lg font-semibold`. |
+| Workflow notes sidebar | `Card` with `text-sm text-muted-foreground` | Reference material, not primary content. Small text, muted colors. |
+| Confirmation dialogs | `AlertDialog` | For destructive actions (delete quote, reject quote). |
+| Toast notifications | `Sonner` / `toast()` | After save, approve, reject, delete. Brief confirmation messages. |
 
 ---
 
