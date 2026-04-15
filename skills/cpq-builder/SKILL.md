@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "3.7"
+  version: "3.8"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -171,7 +171,7 @@ This content goes INTO the template's existing sidebar slot — it REPLACES the 
 | Component | Content |
 |---|---|
 | **Stepper** | A VERTICAL list of ALL FIVE CPQ sections in the left sidebar: (1) Configure, (2) Build Quote, (3) Preview, (4) Approve, (5) Quote Document. Each step shows: step number, label, subtitle, and completion state (pending / active / done with checkmark). Clicking a step navigates to that section's panel. **This is a vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** If you cannot put the stepper in the sidebar without modifying the layout file, modify the layout file. The skill layout overrides template preservation. |
-| **Saved quotes** | List of quotes stored in localStorage. Each shows name + status badge (Draft / Awaiting Approval / Approved). Clicking loads the quote. "New quote" button at top creates a fresh one. |
+| **Saved quotes** | List of quotes stored in localStorage. Each shows name + status badge (Draft / Awaiting Approval / Approved). Clicking loads the quote. "New quote" button at top. **Pin this section to the bottom of the sidebar** so it's always visible without scrolling — use flexbox with stepper taking available space and saved quotes fixed at the bottom. Double-click a quote name to rename it inline. |
 
 The **role switcher** is in the header bar as a dropdown — not in the left sidebar. See Layout Principles in the builder prompt.
 
@@ -240,7 +240,7 @@ This is the polished, customer-facing summary of the quote. It renders as a clea
 ### RBAC behavior
 
 - Seed localStorage with roles from DOMAIN.md User Roles or Stakeholder Map.
-- Role switcher is a **dropdown in the header bar** — not in the sidebar. Shows active role name and badge. Selecting a new role updates the view immediately.
+- Role switcher is a **single `DropdownMenu` dropdown in the header bar** — not separate buttons for each role. The dropdown trigger shows the active role name and badge (e.g., "Jeff — Approver"). Clicking opens the menu listing all roles. **Do NOT render each role as a separate button in the header row.** One trigger, one dropdown menu. Selecting a new role updates the view immediately.
 - **Approval gating**: If DOMAIN.md says "only Andy or Jeff can approve," disable the Approve button when viewing as Dre or Manish. Show a clear message explaining why.
 - **Routing visibility**: If a role handles specific work types (e.g., "Dre handles maintenance"), show relevant routing info when that role is active.
 
@@ -254,29 +254,30 @@ This is the polished, customer-facing summary of the quote. It renders as a clea
 
 ### shadcn/ui component mapping
 
-Use these shadcn components for each CPQ element. Do not build custom equivalents when a shadcn component exists.
+Use these shadcn/ui and Kibo UI components for each CPQ element. Do not build custom equivalents when an existing component does the job. Import shadcn from `~/components/ui/*` and Kibo UI from `~/components/kibo-ui/*`.
 
-| CPQ Element | shadcn Component | Usage Notes |
-|---|---|---|
-| Product card | `Card`, `CardHeader`, `CardContent` | Show product name, description, base price. Use `CardDescription` for the price line. |
-| Motor / option selection | `RadioGroup`, `RadioGroupItem` | Mutually exclusive options. Show price next to each label. Wrap in a Card. |
-| Optional items (installation) | `Checkbox` with label | Toggle on/off. Show description below the label. |
-| Status badges | `Badge` | Use `variant="outline"` for Draft, `variant="default"` for Sent, `variant="secondary"` for Approved. Apply semantic colors via className. |
-| Role badges | `Badge` | `variant="outline"` for Staff, `variant="default"` for Approver, `variant="secondary"` for View only. |
-| Line items table | `Table`, `TableHeader`, `TableRow`, `TableCell` | Clean header row, right-align price columns. Use `TableFooter` for subtotal row. |
-| Form inputs | `Input`, `Label` | Quote name, customer name, notes. Stack label above input. |
-| Dropdowns | `Select`, `SelectContent`, `SelectItem` | Lead source, assigned-to, motor selection (alternative to RadioGroup for compact layouts). |
-| Action buttons | `Button` | Primary action: `variant="default"` with brand accent. Secondary: `variant="outline"`. Destructive: `variant="destructive"`. |
-| Section dividers | `Separator` | Between sections within a panel. Horizontal, subtle. |
-| Stepper navigation | Custom (no shadcn stepper) | Build as a vertical list of clickable items. Use `cn()` for active/done/pending states. |
-| Role switcher | Custom list with `Button variant="ghost"` | Each role is a ghost button. Active role gets accent background via className. |
-| Saved quotes list | Custom list | Each item is a clickable row with `Badge` for status. Use `ScrollArea` if the list could overflow. |
-| Quote summary sidebar | `Card` with stacked label/value rows | Compact. Labels are `text-muted-foreground text-sm`. Values are `font-medium`. Total row is `text-lg font-semibold`. |
-| Workflow notes sidebar | `Card` with `text-sm text-muted-foreground` | Reference material, not primary content. Small text, muted colors. |
-| Confirmation dialogs | `AlertDialog` | For destructive actions (delete quote, reject quote). |
-| Toast notifications | `Sonner` / `toast()` | After save, approve, reject, delete. Brief confirmation messages. |
-| Quote document header | `Card` with logo image + company name | Brand logo from domain.md assets. Placeholder address below. |
-| Quote document pricing table | `Table` with `TableFooter` | Clean itemized rows. Footer shows subtotal. Totals block below with large bold total. |
+| CPQ Element | Component | Source | Usage Notes |
+|---|---|---|---|
+| Product card | `Card`, `CardHeader`, `CardContent` | shadcn | Show product name, description, base price. |
+| Motor / option selection | `RadioGroup`, `RadioGroupItem` | shadcn | Mutually exclusive options. Show price next to each label. Wrap in a Card. |
+| Optional items (installation) | `Checkbox` with label | shadcn | Toggle on/off. Show description below the label. |
+| Status badges | `Status` | Kibo UI | Use for quote status indicators (Draft, Awaiting Approval, Approved). Falls back to shadcn `Badge` if Kibo UI Status is not installed. |
+| Role badges | `Badge` | shadcn | `variant="outline"` for Staff, `variant="default"` for Approver, `variant="secondary"` for View only. |
+| Line items table | `Table` | Kibo UI | Enhanced table with sorting capabilities. Falls back to shadcn `Table` if not installed. Right-align price columns. |
+| Saved quotes list | `List` | Kibo UI | Grouped list with status badges. Each item clickable to load. Falls back to custom list with shadcn `Badge` if not installed. |
+| Form inputs | `Input`, `Label` | shadcn | Quote name, customer name, notes. Stack label above input. |
+| Dropdowns | `Select`, `SelectContent`, `SelectItem` | shadcn | Lead source, assigned-to, motor selection (alternative to RadioGroup for compact layouts). |
+| Action buttons | `Button` | shadcn | Primary: `variant="default"` with brand accent. Secondary: `variant="outline"`. Destructive: `variant="destructive"`. |
+| Section dividers | `Separator` | shadcn | Between sections within a panel. Horizontal, subtle. |
+| Stepper navigation | Custom (no library component) | — | Build as a vertical list of clickable items in the left sidebar. Use `cn()` for active/done/pending states. Step number in a circle, label, subtitle, completion checkmark. |
+| Role switcher | `DropdownMenu` | shadcn | In the header. Shows active role name and badge. Dropdown lists all roles. |
+| Quote summary sidebar | `Card` with stacked label/value rows | shadcn | Labels are `text-muted-foreground text-sm`. Values are `font-medium`. Total row is `text-lg font-semibold`. |
+| Workflow notes sidebar | `Card` with `text-sm text-muted-foreground` | shadcn | Reference material, not primary content. Small text, muted colors. |
+| Confirmation dialogs | `AlertDialog` | shadcn | For destructive actions (delete quote, reject quote). |
+| Toast notifications | `Sonner` / `toast()` | shadcn | After save, approve, reject, delete. Brief confirmation messages. |
+| Quote document header | `Card` with logo image + company name | shadcn | Brand logo from domain.md assets. Placeholder address below. |
+| Quote document pricing table | `Table` | Kibo UI or shadcn | Clean itemized rows. Footer shows subtotal. Totals block below with large bold total. |
+| Quote notes / rich text | `Editor` | Kibo UI | Rich text editing for internal notes. Optional — falls back to shadcn `Textarea` if not installed. |
 
 ---
 
@@ -553,7 +554,7 @@ After executing the mapping rules, the Builder Agent should produce a brief mapp
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v3.7
+**Skill:** cpq-builder v3.8
 **DOMAIN.md:** [company name]
 **Vertical preset:** [manufacturing / wholesale / services / none]
 
