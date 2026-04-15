@@ -139,8 +139,8 @@ Map brand colors to the template's existing CSS variables in `app.css`. The vari
 
 **Critical mapping rules:**
 - **`accent` from domain.md → `--primary` AND `--sidebar-primary`** — this colors buttons, links, and active states. The most common mistake is mapping the `dark` color here instead — don't.
-- **`dark` from domain.md → `--sidebar`, BUT LIGHTENED.** Do not use the raw dark color — it's too heavy. Take the dark color's HSL values and increase lightness to ~30-35%. The sidebar should feel like a tinted panel, not a black wall.
-- **`light` from domain.md → `--background`** — main content area background.
+- **`dark` from domain.md → `--sidebar`, BUT LIGHTENED.** Do not use the raw dark color — it's too heavy. Take the dark color's HSL values and increase lightness to ~30-35%. For example, `hsl(210 80% 15%)` becomes `hsl(210 60% 32%)`. The sidebar should feel like a tinted panel, not a black wall. **This is the most-skipped step.** If you do nothing else with brand colors, at minimum set `--sidebar` and `--sidebar-foreground`. A white sidebar with brand colors only on buttons looks unfinished.
+- **`light` from domain.md → `--background`** — main content area background. **Guard rail:** if the "light" color has HSL lightness below 85%, it's too vivid for a full-page background. In that case, use `hsl(0 0% 97%)` (near-white) for `--background` and use the brand "light" color only for accents, highlights, or link colors.
 - **Convert hex to HSL.** The template wraps values in `hsl()`.
 - Also update the `.dark` section's sidebar variables to match.
 - **Use the brand logo** in the top-left header if a logo path is provided.
@@ -161,6 +161,30 @@ Map brand colors to the template's existing CSS variables in `app.css`. The vari
 - **Buttons** — primary action uses the brand accent color. Secondary actions use outline style. Destructive actions use red/danger.
 - **Form inputs** — clean borders, adequate height (`36px` to `40px`), clear focus states with the brand accent color.
 - **Tables** — clean header row with subtle background, aligned columns. No heavy grid lines — use subtle bottom borders only.
+
+### Inline editing and editable fields
+Not every field needs a form page. Many fields should be editable inline — click the value, edit it, save on blur or Enter. This is how real business tools work (think Salesforce, Notion, Monday.com).
+
+**When to use inline editing:**
+- Text fields that users frequently update (project name, customer name, notes)
+- Status fields (click a badge → dropdown to change status)
+- Assignment fields (click assigned person → dropdown to reassign)
+- Numeric values in tables (click a cell → edit the number)
+
+**How inline editing should work:**
+- **Display mode:** The value appears as plain text (not in an input box). It looks like content, not a form.
+- **Edit mode:** Clicking the value (or a small pencil icon) turns it into an editable input. Focus is set automatically.
+- **Save:** Pressing Enter or clicking away (blur) saves to localStorage. Show a brief toast confirmation.
+- **Cancel:** Pressing Escape reverts to the previous value.
+- **Visual affordance:** On hover, show a subtle underline, background tint, or pencil icon so the user knows it's clickable. Don't make everything look like a form field all the time.
+
+**Editable tables:**
+- Table cells for quantities, rates, and prices should be directly editable — click the cell, type a new value, blur to save.
+- Use `Input` inside the table cell in edit mode. Show plain text in display mode.
+- Add/remove rows with "Add row" button and a delete icon per row.
+- Auto-calculate line totals, subtotals, tax, and totals on every change.
+
+**What the vertical skill defines:** The vertical skill says WHICH fields are editable in each section. The frontend-design skill defines HOW inline editing looks and behaves.
 
 ### Stepper and navigation styling
 - **Active step** — highlighted with the brand accent color on the left border and background tint.
