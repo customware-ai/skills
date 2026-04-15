@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "1.1"
+  version: "1.2"
 description: >
   Trades Operations vertical skill for the Customware SPA. Defines the section
   layout, config schema, and mapping rules for transforming a DOMAIN.md into a
@@ -58,20 +58,34 @@ The trades-builder tool has **FIVE sections**. These are fixed — they come fro
 
 **What it does:** Capture the project details and build the scope-based estimate.
 
-**Fields from DOMAIN.md:**
-- Project name, customer name, address (always)
-- Lead source (if DOMAIN.md mentions how projects originate)
-- Estimator notes (free text)
+**Project details (editable inline):**
+- Project name — inline editable text (click to edit, save on blur)
+- Customer name — inline editable text
+- Address — inline editable text
+- Estimate number — auto-generated, read-only
+- Lead source — `Select` dropdown if DOMAIN.md defines sources, otherwise free text
+- Estimator notes — `Textarea`, always editable
 
-**Scope items table:**
-- Each row is a scope item from the DOMAIN.md entity registry (e.g., insulation, drywall, taping, sanding, cleaning)
-- Columns: scope name, location, quantity (sqft/lft/units), unit rate, line total
-- Multiple rows per scope if location-based specs exist (BR-005 pattern: "Basement — Type X — 1680 sqft")
-- Add/remove rows
-- Auto-calculate subtotal, tax, total
+**Scope items table (the core of this section):**
+This table is the most important element in the app. Each row represents a scope of work with measured quantities.
+
+| Column | Type | Editable | Notes |
+|---|---|---|---|
+| Scope | `Select` dropdown | Yes | Options from DOMAIN.md: insulation, drywall, taping, sanding, cleaning, priming, etc. |
+| Location | Text input | Yes | e.g., "Main floor living room," "Basement suite" |
+| Spec/Type | Text input or `Select` | Yes | e.g., "Type X," "Moisture resistant," "R-20 batt," "Level 4 finish" |
+| Sq ft | Number input | Yes | Square footage for this scope at this location |
+| Rate | Number input | Yes | Dollar rate per sqft (CAD) |
+| Line total | Calculated | No | Sqft × Rate, auto-calculated |
+| Actions | Delete button | — | Trash icon to remove the row |
+
+- **"Add row" button** below the table to add more scope items
+- **Multiple rows per scope type** — e.g., two drywall rows for different locations with different types
+- **Auto-calculated footer:** Subtotal, Tax (GST 5%), Total — updates on every cell change
+- **All cells are directly editable** — click a cell, type, blur to save. See frontend-design skill for inline editing pattern.
 
 **Data from DOMAIN.md to use:**
-- Entity Registry → Job Specification sub-items become scope item rows
+- Entity Registry → Job Specification sub-items become the Scope dropdown options
 - Business Rules → unit of measure (sqft, lft), tax type and rate, payment terms
 - Terminology Glossary → exact scope names (not generic labels)
 
@@ -79,11 +93,12 @@ The trades-builder tool has **FIVE sections**. These are fixed — they come fro
 
 **What it does:** Plan field work assignments and sequence.
 
-**Fields:**
-- Assigned roles/people (from DOMAIN.md Stakeholder Map — use `Select` dropdowns, not free text)
-- Scope sequence (which scope items happen in what order — from DOMAIN.md flow or domain notes)
-- Start date, target completion date
-- Notes for field crew
+**Fields (editable):**
+- Assigned roles/people — `Select` dropdowns from DOMAIN.md Stakeholder Map, NOT free text
+- Scope sequence — reorderable list showing which scope items happen in what order
+- Start date — date picker, editable
+- Target completion date — date picker, editable
+- Field crew notes — `Textarea`, editable
 
 **If DOMAIN.md mentions scheduling tools** (e.g., "Bold for scheduling"), reference them in the section description: "Use Bold to line up the field crew."
 
@@ -92,38 +107,55 @@ The trades-builder tool has **FIVE sections**. These are fixed — they come fro
 **What it does:** Track work completion per scope item and location.
 
 **Display:**
-- Table view: Location | Quantity (sqft) | Scope Type | Status
-- Rows come from the Estimate's scope items — this is the same data, now being tracked for completion
-- Status per row: Not Started / In Progress / Completed
-- "Mark completed" action button per row or for the whole section
+- Table populated from Estimate's scope items — same rows, now being tracked for completion
 
-**This section implements BR-004/BR-006 patterns** — scope items tracked by square footage, subtrade pay tied to measured work.
+| Column | Type | Editable | Notes |
+|---|---|---|---|
+| Scope | Text | No | From Estimate |
+| Location | Text | No | From Estimate |
+| Sq ft | Number | No | From Estimate |
+| Status | `Select` dropdown | Yes | Not Started / In Progress / Completed |
+
+- Status changes save immediately to localStorage
+- "Mark all completed" button for bulk update
+- Progress indicator: "3 of 5 scope items completed"
 
 ### Section 4: Close Out
 
 **What it does:** Handle the dual payment flow — pay subtrades and invoice the customer.
 
-**Display:**
-- Two cards side by side:
-  - **Trade Invoice** — status: Ready to pay / Paid. Shows subtrade payment amount based on completed scope sqft.
-  - **Customer Invoice** — status: Ready to send / Sent / Paid. Shows customer-facing total with tax.
-- "Close out job" action button that marks the project as Completed
+**Display — two cards side by side:**
 
-**If DOMAIN.md mentions invoicing tools** (e.g., "Arvest for invoices"), reference them: "Send Bold trade invoice and Arvest customer invoice."
+**Trade Invoice card:**
+- Subtrade payment amount — auto-calculated from completed scope items (sqft × rate)
+- Status: `Select` dropdown — Ready to pay / Paid
+- Payment date — date picker, editable when status is Paid
+- Reference to Bold if mentioned in DOMAIN.md
+
+**Customer Invoice card:**
+- Invoice amount — subtotal + tax from Estimate
+- Status: `Select` dropdown — Ready to send / Sent / Paid
+- Invoice date — date picker, editable
+- Reference to Arvest if mentioned in DOMAIN.md
+
+- "Close out job" action button that marks the project as Completed
+- Both invoice statuses must be saved to localStorage
+
+**If DOMAIN.md mentions invoicing tools**, reference them in the card headers: "Trade invoice (Bold)" and "Customer invoice (Arvest)."
 
 ### Section 5: Job Summary
 
 **What it does:** Read-only summary of the completed project — the final output view.
 
 **Layout (top to bottom):**
-1. **Company header** — brand logo + company name + placeholder address
-2. **Project metadata** — project name, customer, address, estimate number, dates, assigned to
-3. **Scope summary table** — all scope items with location, quantity, unit rate, line total
-4. **Totals block** — subtotal, tax (with rate label), total
-5. **Payment status** — trade invoice status + customer invoice status
-6. **Terms** — payment terms, currency
+1. **Company header** — brand logo from domain.md Brand Logos section (use the logo URL or path provided) + company name + placeholder address ("123 Main St, City, Province, Postal Code — update in settings")
+2. **Project metadata** — project name, customer, address, estimate number, dates, assigned to. Two-column grid of label/value pairs.
+3. **Scope summary table** — all scope items with scope type, location, spec/type, sqft, rate, line total. Clean `Table` with right-aligned numeric columns.
+4. **Totals block** — subtotal, tax (GST 5%), total. Total is large and bold.
+5. **Payment status** — trade invoice status badge + customer invoice status badge, side by side.
+6. **Terms** — payment terms (Net 30), currency (CAD).
 
-**This view is read-only.** Users click back to Estimate or Schedule to make changes.
+**This view is entirely read-only.** No edit controls, no inputs, no dropdowns. Users click back to Estimate or Schedule in the stepper to make changes. The Job Summary is the output, not the workspace.
 
 ## Layout Pattern
 
@@ -143,6 +175,8 @@ This content goes INTO the template's existing sidebar slot — it REPLACES the 
 |---|---|
 | **Stepper** | A VERTICAL list of ALL FIVE sections: (1) Estimate, (2) Schedule, (3) In Progress, (4) Close Out, (5) Job Summary. Each step shows: step number, label, subtitle from section description, and completion state. **Vertical stepper in the sidebar — NOT horizontal tabs.** Modify the layout file if needed — skill layout overrides template preservation. |
 | **Saved projects** | List of projects stored in localStorage. Each shows name + customer + status badge (Estimated / Scheduled / In Progress / Completed). Pin this section to the bottom of the sidebar so it's always visible without scrolling. Double-click a project name to rename inline. |
+
+**CRITICAL: Stepper labels come from THIS SKILL, not from DOMAIN.md.** The DOMAIN.md state model may list `estimated, scheduled, in progress, completed` — those are the project's STATUS values for badges. The stepper LABELS are the skill's section names: **Estimate, Schedule, In Progress, Close Out, Job Summary.** These are different things. The stepper has 5 steps. The domain has 4 statuses. Do not use the domain status list as stepper labels — you'll get 4 steps instead of 5 and lose Close Out and Job Summary.
 
 ### Main content (center — changes per section)
 
