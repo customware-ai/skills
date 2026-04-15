@@ -62,6 +62,143 @@ All anti-AI-aesthetic rules apply in full:
 
 The goal is the same: build UI that looks human-designed and functional. The difference is that "functional" for an internal tool means showing more information in organized panels, not hiding it behind clicks.
 
+## Layout Principles (Apply to All Verticals)
+
+These principles apply regardless of which vertical skill is loaded. They define the universal patterns for every internal business tool.
+
+### Section-based navigation, not single-page scroll
+- **Only the active section renders in the main content area.** Clicking a stepper step or nav item shows ONLY that section's panel. All other sections are hidden.
+- **Never stack all sections on one scrolling page.** This is the most common first-shot mistake. Each section occupies the FULL main content area by itself.
+- **The stepper MUST control which section is visible.** Clicking "Configure" shows only the Configure panel. Use React state or React Router routes — not a dropdown buried inside the page.
+- **Do NOT use a "current stage" dropdown for navigation.** The stepper IS the navigation.
+- **Metadata (name, source, customer) belongs inside the relevant section** — not in a persistent top section above all panels. The only persistent elements are the left sidebar, right sidebar, and header.
+
+### Navigation flow
+- **Each section has a primary action button at the bottom** that advances to the next step. This is the happy path.
+- **The stepper also allows free navigation.** The user can click any step at any time — the stepper is not a locked wizard. Completed steps show checkmarks.
+- **"Back" buttons are optional** since the stepper provides backward navigation.
+- **The primary action button should be the brand accent color.** Secondary buttons (Back, Delete) use outline style.
+
+### Role switching (RBAC)
+- If DOMAIN.md defines User Roles or a Stakeholder Map with named people, include a role switcher.
+- **Place it in the header bar as a SINGLE dropdown** using shadcn `DropdownMenu`. The dropdown trigger shows the active role name and badge (e.g., "Jeff — Approver"). Clicking it opens a list of all roles. Selecting a role updates the view immediately.
+- **Do NOT render roles as separate horizontal buttons in the header.** Four names as four buttons is wrong — it wastes space and looks like navigation, not a role switcher. One dropdown trigger, one dropdown menu. This is the same pattern as user profile menus in every SaaS app.
+- Clicking a role changes what the user can see and do:
+  - Buttons and actions gated by role should disable with a message when the active role lacks permission.
+  - Filtered views should show only the work relevant to that role when appropriate.
+- Store the active role in localStorage so it persists across refreshes.
+- **Do NOT put non-functional buttons in the header.** The only header elements should be: company name/logo, current item name, role switcher dropdown, and theme toggle (if applicable).
+
+### Persistent sidebars
+- **Left sidebar** — always visible. Contains navigation (stepper or list) and any saved-items list. The role switcher lives in the header, NOT in the sidebar.
+- **The skill's left sidebar content REPLACES the template's default sidebar.** This overrides template preservation rules. Modify the template's layout file to inject the skill's sidebar content into the existing sidebar slot. Do not render two separate sidebars. Do not implement the stepper as horizontal tabs because you're avoiding layout file changes. The skill layout takes priority. One left sidebar, not two.
+- **Sidebar heading** should describe the navigation context (e.g., "Quote workflow," "Business process") — not repeat the company name, which is already in the header.
+- **Preserve collapsible sidebar behavior.** If the template's sidebar has a toggle/collapse feature, keep it working. Do not rebuild the sidebar from scratch and lose the collapse.
+- **Right sidebar** — if the skill defines one, it stays visible across all sections and updates in real time.
+- If the skill does not define a right sidebar, use a two-panel layout (left sidebar + main content only).
+
+### Prices and calculations
+- If the domain involves pricing (quotes, orders, invoices), show prices on EVERY screen where products or options appear.
+- Selection changes should immediately update any summary totals.
+- Use the tax type from DOMAIN.md (HST = 13%, GST = 5%, etc.) and the currency (CAD, USD, etc.) in all price displays.
+
+### Saved items
+- If the domain involves creating records (quotes, orders, contacts, projects), include a saved-items list in the left sidebar showing items stored in localStorage.
+- Each item shows its name and a status badge.
+- Clicking an item loads it. A "New [item]" button creates a fresh one.
+- **The saved items list must be visible without scrolling.** Use a split layout in the sidebar: stepper at the top (scrollable if needed), saved items pinned to the bottom (always visible). Do not push saved items below the fold.
+- **Inline title editing.** Users should be able to rename a saved item quickly — either by double-clicking the name in the sidebar list, or by clicking a small edit icon next to the name.
+
+### Constrained fields
+- **Any field that references people, roles, or statuses from DOMAIN.md must be a dropdown (`Select`), not a free text input.** If the domain defines named people (Jeff, Andy, Dre, Manish), the "Assigned to" field is a `Select` with those four names — not an `Input` where someone could type anything. Same for lead source, request type, status, or any other field where valid values are defined by business rules. Free text inputs are only for fields where the user genuinely needs to enter arbitrary content (quote name, customer name, notes).
+
+## Brand Theming (Apply to All Builds)
+
+**Always read domain.md for brand colors before writing any CSS.** The domain.md Brand Details section contains `accent`, `dark`, and `light` colors. These are the source of truth for the app's visual identity. Do not leave the default template theme in place when brand colors are available. Do not invent a color palette when the brand provides one.
+
+Map brand colors to the template's existing CSS variables in `app.css`. The variables already exist — you are REPLACING values, not creating new variables.
+
+```css
+:root {
+  /* Main theme — replace these existing variables */
+  --primary: hsl([accent color in HSL]);           /* buttons, links, active states */
+  --primary-foreground: hsl(0 0% 100%);            /* text on primary buttons */
+  --background: hsl([light color in HSL]);         /* main content background */
+  --ring: hsl([accent color in HSL]);              /* focus rings */
+
+  /* Sidebar theme — these variables also already exist in the template */
+  --sidebar: hsl([dark color, LIGHTENED to ~30-35% lightness]);  /* mid-tone, not full dark */
+  --sidebar-foreground: hsl(0 0% 100%);             /* light text on mid-tone sidebar */
+  --sidebar-primary: hsl([accent color in HSL]);   /* active items in sidebar */
+  --sidebar-primary-foreground: hsl(0 0% 100%);    /* text on active sidebar items */
+  --sidebar-accent: hsl([dark color, slightly lighter than sidebar]); /* hover state */
+  --sidebar-accent-foreground: hsl(0 0% 100%);     /* text on hover */
+  --sidebar-border: hsl([dark color, slightly lighter than sidebar]); /* borders */
+}
+```
+
+**Critical mapping rules:**
+- **`accent` from domain.md → `--primary` AND `--sidebar-primary`** — this colors buttons, links, and active states. The most common mistake is mapping the `dark` color here instead — don't.
+- **`dark` from domain.md → `--sidebar`, BUT LIGHTENED.** Do not use the raw dark color — it's too heavy. Take the dark color's HSL values and increase lightness to ~30-35%. The sidebar should feel like a tinted panel, not a black wall.
+- **`light` from domain.md → `--background`** — main content area background.
+- **Convert hex to HSL.** The template wraps values in `hsl()`.
+- Also update the `.dark` section's sidebar variables to match.
+- **Use the brand logo** in the top-left header if a logo path is provided.
+- **Use the company name** in the header, not "Customware Template."
+- **Light mode by default.** Set light mode as the default. Do not ship in dark mode. The sidebar uses a mid-tone tinted version of the brand's dark color. The main content area and right sidebar use the brand's light color or white.
+
+## Visual Quality (Apply to All Builds)
+
+### Whitespace and density
+- **Generous spacing.** Use `gap: 16px` to `24px` between cards and sections. Avoid cramming content.
+- **Section padding.** Main content area should have `24px` to `32px` padding. Sidebar padding should be `16px`.
+- **Card breathing room.** Cards should have `16px` to `20px` internal padding.
+- **Visual hierarchy.** Section headings are large and bold. Descriptions under headings are smaller and muted. Labels are small and secondary-colored. Values are normal weight, primary-colored.
+
+### Component styling
+- **Cards** — light backgrounds (`--card` or white), subtle borders, rounded corners (`8px` to `12px`). No heavy borders or drop shadows.
+- **Badges** — small, pill-shaped, colored by semantic meaning (draft = amber/warning, sent = blue/info, approved = green/success).
+- **Buttons** — primary action uses the brand accent color. Secondary actions use outline style. Destructive actions use red/danger.
+- **Form inputs** — clean borders, adequate height (`36px` to `40px`), clear focus states with the brand accent color.
+- **Tables** — clean header row with subtle background, aligned columns. No heavy grid lines — use subtle bottom borders only.
+
+### Stepper and navigation styling
+- **Active step** — highlighted with the brand accent color on the left border and background tint.
+- **Completed steps** — show a checkmark icon in the step number circle, with a success-colored background.
+- **Pending steps** — muted text and empty circle.
+
+### Right sidebar styling
+- **Summary cards** — compact rows with label (muted) on the left and value (bold) on the right. A divider before the total row. Total should be the largest text in the card.
+- **Workflow notes** — smaller text, muted, with bullet points or small colored dots. Reference material, not primary content.
+
+### Avoid these common first-shot mistakes
+- Full dark theme when the brand has light colors
+- Generic template branding left in place
+- Dense, cramped layouts with no breathing room
+- All text the same size and weight
+- Heavy borders and thick dividers
+- Buttons without the brand accent color
+- Status badges that are all the same color
+- Tables with heavy grid lines instead of subtle row borders
+- RBAC roles as horizontal buttons instead of a dropdown
+- Saved items pushed below the fold
+- Free text inputs where dropdowns should enforce valid options
+
+## Generic Layout Fallback
+
+When NO skill is loaded, or the loaded skill does not include a Layout Pattern section, use this default:
+
+### Two-panel layout
+- **Left sidebar** — navigation listing the main entities from the task or DOMAIN.md. Saved items list below.
+- **Main content** — list/detail pattern. Each nav item shows a list view. Clicking an item opens a detail/edit view.
+- **CRUD for each entity** — create, read, update, delete with localStorage persistence.
+- **No right sidebar** — keep it simple without a skill to define what goes there.
+- **Role switcher in the header** if DOMAIN.md has roles — same dropdown pattern as all other apps.
+
+## Component Libraries
+
+- **Use shadcn/ui components** from `~/components/ui/*` as the primary building blocks. Prefer `Card`, `Button`, `Badge`, `Input`, `Select`, `Checkbox`, `RadioGroup`, `Table`, `Separator`, `ScrollArea`, and `Popover` over custom HTML. If a needed component is not installed, install it with `npx shadcn@latest add [component]`.
+
 ## Keep It Normal (Un-GPTified UI Standard)
 
 - Sidebars: normal (240-260px fixed width, solid background, simple border-right, no floating shells, no rounded outer corners)
