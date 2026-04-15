@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "1.0"
+  version: "1.1"
 description: >
   Trades Operations vertical skill for the Customware SPA. Defines the section
   layout, config schema, and mapping rules for transforming a DOMAIN.md into a
@@ -131,7 +131,11 @@ The trades-builder tool uses a **three-panel layout** with **FIVE sections** (no
 
 ### Left sidebar (always visible, collapsible)
 
-This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. One left sidebar total.
+This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. Do not create a second sidebar next to the template's default one. One left sidebar total.
+
+**Preserve the template's collapsible sidebar behavior.** If the template has a sidebar toggle, keep it working. Inject skill content into the existing collapsible component — do not rebuild from scratch.
+
+**If you cannot put the stepper in the template's sidebar without modifying the layout file, modify the layout file.** The skill layout overrides template preservation. Do not create a second sidebar column just to avoid touching `MainLayout.tsx`.
 
 **Sidebar heading:** Use a contextual label like "Workflow" or "Project workflow" — not the company name.
 
@@ -142,7 +146,7 @@ This content goes INTO the template's existing sidebar slot — it REPLACES the 
 
 ### Main content (center — changes per section)
 
-**Only the active section renders.** Do NOT stack all sections on one scrolling page. Do NOT use horizontal tabs.
+**Only the active section renders.** Do NOT stack all sections on one scrolling page. Do NOT combine multiple sections into one panel (e.g., "Schedule / In Progress / Close Out" as one section is WRONG — each is its own panel). Do NOT use horizontal tabs. Each stepper step shows its corresponding panel at FULL WIDTH of the main content area. All other panels are hidden.
 
 Implementation: use a `currentStep` state variable (0–4). Render only the panel that matches `currentStep`.
 
