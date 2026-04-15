@@ -254,17 +254,17 @@ This is the polished, customer-facing summary of the quote. It renders as a clea
 
 ### shadcn/ui component mapping
 
-Use these shadcn/ui and Kibo UI components for each CPQ element. Do not build custom equivalents when an existing component does the job. Import shadcn from `~/components/ui/*` and Kibo UI from `~/components/kibo-ui/*`.
+Use these shadcn/ui components for each CPQ element. Do not build custom equivalents when an existing component does the job. Import from `~/components/ui/*`.
 
 | CPQ Element | Component | Source | Usage Notes |
 |---|---|---|---|
 | Product card | `Card`, `CardHeader`, `CardContent` | shadcn | Show product name, description, base price. |
 | Motor / option selection | `RadioGroup`, `RadioGroupItem` | shadcn | Mutually exclusive options. Show price next to each label. Wrap in a Card. |
 | Optional items (installation) | `Checkbox` with label | shadcn | Toggle on/off. Show description below the label. |
-| Status badges | `Status` | Kibo UI | Use for quote status indicators (Draft, Awaiting Approval, Approved). Falls back to shadcn `Badge` if Kibo UI Status is not installed. |
+| Status badges | `Badge` | shadcn | Use `variant="outline"` for Draft, `variant="default"` for Awaiting Approval, `variant="secondary"` for Approved. Apply semantic colors via className. |
 | Role badges | `Badge` | shadcn | `variant="outline"` for Staff, `variant="default"` for Approver, `variant="secondary"` for View only. |
-| Line items table | `Table` | Kibo UI | Enhanced table with sorting capabilities. Falls back to shadcn `Table` if not installed. Right-align price columns. |
-| Saved quotes list | `List` | Kibo UI | Grouped list with status badges. Each item clickable to load. Falls back to custom list with shadcn `Badge` if not installed. |
+| Line items table | `Table`, `TableHeader`, `TableRow`, `TableCell` | shadcn | Clean header row, right-align price columns. Use `TableFooter` for subtotal row. |
+| Saved quotes list | Custom list with `Badge` | shadcn | Each item is a clickable row with `Badge` for status. Use `ScrollArea` if the list could overflow. |
 | Form inputs | `Input`, `Label` | shadcn | Quote name, customer name, notes. Stack label above input. |
 | Dropdowns | `Select`, `SelectContent`, `SelectItem` | shadcn | Lead source, assigned-to, motor selection (alternative to RadioGroup for compact layouts). |
 | Action buttons | `Button` | shadcn | Primary: `variant="default"` with brand accent. Secondary: `variant="outline"`. Destructive: `variant="destructive"`. |
@@ -276,8 +276,8 @@ Use these shadcn/ui and Kibo UI components for each CPQ element. Do not build cu
 | Confirmation dialogs | `AlertDialog` | shadcn | For destructive actions (delete quote, reject quote). |
 | Toast notifications | `Sonner` / `toast()` | shadcn | After save, approve, reject, delete. Brief confirmation messages. |
 | Quote document header | `Card` with logo image + company name | shadcn | Brand logo from domain.md assets. Placeholder address below. |
-| Quote document pricing table | `Table` | Kibo UI or shadcn | Clean itemized rows. Footer shows subtotal. Totals block below with large bold total. |
-| Quote notes / rich text | `Editor` | Kibo UI | Rich text editing for internal notes. Optional — falls back to shadcn `Textarea` if not installed. |
+| Quote document pricing table | `Table` with `TableFooter` | shadcn | Clean itemized rows. Footer shows subtotal. Totals block below with large bold total. |
+| Quote notes | `Textarea` | shadcn | Plain text editing for internal notes. |
 
 ---
 
