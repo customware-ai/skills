@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "4.0"
+  version: "4.1"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -179,7 +179,9 @@ The five sections are: **Configure, Build Quote, Preview, Approve, Quote Documen
 
 This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. Do not create a second sidebar next to the template's default one. One left sidebar total.
 
-**Preserve the template's collapsible sidebar behavior.** If the template has a sidebar toggle button (hamburger icon, collapse arrow, etc.), keep it working. Inject the skill content (stepper, saved quotes) INTO the existing collapsible component — do not rebuild the sidebar from scratch and lose the collapse feature. If you must create a new sidebar component, include a collapse toggle that hides the sidebar and expands the main content area.
+**The most common mistake:** The builder keeps the template sidebar as a thin dark brand strip (company name + logo) on the far left, then builds the workflow stepper as a SECOND column next to it. This creates two left columns. **This is WRONG.** The company name and logo belong in the HEADER BAR, not in a separate sidebar strip. The sidebar slot gets the workflow stepper and saved items — nothing else.
+
+**Preserve the template's collapsible sidebar behavior.** If the template has a sidebar toggle button (hamburger icon, collapse arrow, etc.), keep it working. Inject the skill content (stepper, saved items) INTO the existing collapsible component — do not rebuild the sidebar from scratch and lose the collapse feature. If you must create a new sidebar component, include a collapse toggle that hides the sidebar and expands the main content area.
 
 **Sidebar heading:** Use a contextual label like "Quote workflow" or "Business process" — not the company name (which is already in the header). The sidebar heading describes what the navigation IS, not who it's for.
 
