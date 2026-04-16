@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "1.2"
+  version: "1.3"
 description: >
   Trades Operations vertical skill for the Customware SPA. Defines the section
   layout, config schema, and mapping rules for transforming a DOMAIN.md into a
@@ -165,7 +165,9 @@ The trades-builder tool uses a **three-panel layout** with **FIVE sections** (no
 
 This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. Do not create a second sidebar next to the template's default one. One left sidebar total.
 
-**Preserve the template's collapsible sidebar behavior.** If the template has a sidebar toggle, keep it working. Inject skill content into the existing collapsible component — do not rebuild from scratch.
+**The most common mistake:** The builder keeps the template sidebar as a thin dark brand strip (company name + logo) on the far left, then builds the workflow stepper as a SECOND column next to it. This creates two left columns. **This is WRONG.** The company name and logo belong in the HEADER BAR, not in a separate sidebar strip. The template sidebar slot gets the workflow stepper and saved projects — nothing else. If the template has a sidebar with company branding, REMOVE the branding from the sidebar and put it in the header. The sidebar is 100% workflow content.
+
+**Preserve the template's collapsible sidebar behavior.** If the template has a sidebar toggle, keep it working. Inject skill content into the existing collapsible component — do not rebuild from scratch. If the template uses a `SidebarProvider` with a trigger button, keep the trigger. A sidebar that cannot collapse wastes screen space.
 
 **If you cannot put the stepper in the template's sidebar without modifying the layout file, modify the layout file.** The skill layout overrides template preservation. Do not create a second sidebar column just to avoid touching `MainLayout.tsx`.
 
