@@ -92,6 +92,7 @@ These principles apply regardless of which vertical skill is loaded. They define
 ### Persistent sidebars
 - **Left sidebar** — always visible. Contains navigation (stepper or list) and any saved-items list. The role switcher lives in the header, NOT in the sidebar.
 - **The skill's left sidebar content REPLACES the template's default sidebar.** This overrides template preservation rules. Modify the template's layout file to inject the skill's sidebar content into the existing sidebar slot. Do not render two separate sidebars. Do not implement the stepper as horizontal tabs because you're avoiding layout file changes. The skill layout takes priority. One left sidebar, not two.
+- **Anti-pattern: brand strip + stepper as two columns.** The most common first-shot mistake is keeping the template's sidebar as a thin dark brand strip (company name/logo) on the far left, then building the workflow stepper as a second column next to it. This creates two left columns. The company name and logo belong in the HEADER BAR, not in a leftmost sidebar strip. The sidebar slot gets workflow content only.
 - **Sidebar heading** should describe the navigation context (e.g., "Quote workflow," "Business process") — not repeat the company name, which is already in the header.
 - **Preserve collapsible sidebar behavior.** If the template's sidebar has a toggle/collapse feature, keep it working. Do not rebuild the sidebar from scratch and lose the collapse.
 - **Right sidebar** — if the skill defines one, it stays visible across all sections and updates in real time.
@@ -143,7 +144,7 @@ Map brand colors to the template's existing CSS variables in `app.css`. The vari
 - **`light` from domain.md → `--background`** — main content area background. **Guard rail:** if the "light" color has HSL lightness below 85%, it's too vivid for a full-page background. In that case, use `hsl(0 0% 97%)` (near-white) for `--background` and use the brand "light" color only for accents, highlights, or link colors.
 - **Convert hex to HSL.** The template wraps values in `hsl()`.
 - Also update the `.dark` section's sidebar variables to match.
-- **Use the brand logo** in the top-left header if a logo path is provided.
+- **Use the brand logo** in the header. The domain.md Brand Logos section provides a logo URL or path (e.g., `logo / dark: https://...` or `logo / dark: brand/logos/logo.png`). Use it as an `<img src="...">` in the top-left of the header, sized to 28-36px height, next to the company name. The `/ dark` qualifier means it's designed for dark backgrounds — use it on the sidebar header or dark-themed header. If the URL is long (Azure Blob, S3, etc.), use it as-is — it's a valid image source. If no logo is provided, use a text-only header with the company name.
 - **Use the company name** in the header, not "Customware Template."
 - **Light mode by default.** Set light mode as the default. Do not ship in dark mode. The sidebar uses a mid-tone tinted version of the brand's dark color. The main content area and right sidebar use the brand's light color or white.
 
