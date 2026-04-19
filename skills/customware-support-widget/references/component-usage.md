@@ -1,13 +1,44 @@
-# Customware Support Chat Component Usage
+# Customware Support Widget Component Usage
 
-This reference explains how to embed the Customware support chat widget in a React client-side SPA. Because the target app is client-only, use `window`, `document`, `customElements`, and refs inside React effects.
+This reference explains how to embed the Customware support widget in the Customware React Router client-only SPA template at `/Users/sravansuresh/Developer/Cohesiv/client-only-spa`.
+
+The template is a Vite-built React Router v7 SPA:
+
+- `react-router.config.ts` has `ssr: false`.
+- `root.tsx`, or the equivalent React Router root file/component, owns the generated HTML document structure.
+- Route composition lives in `app/routes.ts`.
+- Page and layout UI live under `app/routes/` and `app/layouts/`.
+- The app uses the `~/` path alias and validates with `npm run check`.
+
+Because this is client-only, React effects can use `window`, `document`, `customElements`, and element refs.
 
 ## Integration Model
 
-The widget is loaded as an external browser script:
+The widget is loaded as an external browser script. In this template, prefer adding the script once in `root.tsx` or the equivalent React Router root file/component that defines the HTML document structure, inside the document `<head>`:
 
-```html
-<script src="https://app.customware.ai/support-widget/customware-chat.js"></script>
+```tsx
+export function Layout({ children }: { children: ReactNode }): ReactElement {
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<head>
+				<meta charSet="utf-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<Meta />
+				<Links />
+				<script
+					id="customware-support-widget-script"
+					src="https://app.customware.ai/support-widget/customware-chat.js"
+					defer
+				/>
+			</head>
+			<body className="overflow-x-hidden bg-background text-foreground antialiased">
+				{children}
+				<ScrollRestoration />
+				<Scripts />
+			</body>
+		</html>
+	);
+}
 ```
 
 That script registers this custom element:
@@ -16,7 +47,15 @@ That script registers this custom element:
 <customware-chat></customware-chat>
 ```
 
-The React app is responsible for loading the script once, rendering the element, placing/sizing it in the SPA layout, and passing the required ids. The widget is responsible for its own Shadow DOM UI, messages, tool badges, service calls, speech input, and page-operation behavior.
+The React app is responsible for loading the script once in `root.tsx` or the root document component, rendering the element on the route/layout that needs support, placing/sizing it in the SPA layout, and passing the required ids. The widget is responsible for its own Shadow DOM UI, messages, tool badges, service calls, speech input, and page-operation behavior.
+
+Do not add this script to Vite config and do not import the widget script from TypeScript. It is an external runtime script, not an npm dependency and not part of the Vite bundle.
+
+Vite-specific notes:
+
+- No Vite plugin, alias, optimizeDeps entry, or build config is required for the widget script.
+- If ids are provided through Vite env, only use public `VITE_*` variables and never store secrets there.
+- Prefer passing runtime `orgId` and `projectId` from the generated app's existing project/context state when available.
 
 ## Required Inputs
 
@@ -29,11 +68,13 @@ Do not render the widget without both values. If either id is not available whil
 
 Do not pass task ids, domain ids, user ids, API tokens, session tokens, auth cookies, or credentials into the widget. Optional visitor identity belongs in the `meta` DOM property only.
 
-## React TypeScript Setup
+## TypeScript Setup
 
-Add element/property types if the app does not already have them:
+Add element/property types if the app does not already have them. In this template, put them in a dedicated file such as `app/customware-chat.d.ts`:
 
 ```ts
+import type React from 'react';
+
 interface CustomwareChatElement extends HTMLElement {
 	meta?: { email?: string; name?: string };
 	styleOptions?: Partial<Record<SupportChatStyleOption, string>>;
@@ -52,47 +93,61 @@ type SupportChatStyleOption =
 	| 'launcherIconScale'
 	| 'gap';
 
-declare namespace JSX {
-	interface IntrinsicElements {
-		'customware-chat': React.DetailedHTMLProps<
-			React.HTMLAttributes<CustomwareChatElement>,
-			CustomwareChatElement
-		> & {
-			mode?: 'chat-bubble' | 'full';
-			'org-id': string;
-			'project-id': string;
-			'style-options'?: string;
-		};
+declare module 'react' {
+	namespace JSX {
+		interface IntrinsicElements {
+			'customware-chat': React.DetailedHTMLProps<
+				React.HTMLAttributes<CustomwareChatElement>,
+				CustomwareChatElement
+			> & {
+				mode?: 'chat-bubble' | 'full';
+				'org-id': string;
+				'project-id': string;
+				'style-options'?: string;
+			};
+		}
 	}
 }
+
+export {};
 ```
 
-## Script Loading
+This is a type-only declaration file. Do not import the widget runtime from it.
 
-In a React SPA, prefer loading the script once from a small hook or app-level component:
+## Script Loading In root.tsx
+
+Add the external script once in `root.tsx` or the React Router root file/component that defines the HTML document `<head>`. Keep the existing template tags such as `<Meta />`, `<Links />`, `<ScrollRestoration />`, and `<Scripts />`.
+
+Recommended placement:
 
 ```tsx
-import { useEffect } from 'react';
-
-const CUSTOMWARE_CHAT_SCRIPT_ID = 'customware-chat-script';
-const CUSTOMWARE_CHAT_SCRIPT_URL = 'https://app.customware.ai/support-widget/customware-chat.js';
-
-export function useCustomwareChatScript() {
-	useEffect(() => {
-		if (document.getElementById(CUSTOMWARE_CHAT_SCRIPT_ID)) {
-			return;
-		}
-
-		const script = document.createElement('script');
-		script.id = CUSTOMWARE_CHAT_SCRIPT_ID;
-		script.src = CUSTOMWARE_CHAT_SCRIPT_URL;
-		script.async = true;
-		document.head.append(script);
-	}, []);
-}
+<Meta />
+<Links />
+<script
+	id="customware-support-widget-script"
+	src="https://app.customware.ai/support-widget/customware-chat.js"
+	defer
+/>
 ```
 
-Do not bundle the widget source into the React app. Treat it as a third-party component loaded by URL.
+Rules:
+
+- Use exactly `https://app.customware.ai/support-widget/customware-chat.js`.
+- Add it once.
+- Use `defer` so it does not block document parsing.
+- Do not add a second dynamic hook loader unless the `root.tsx`/root document script cannot be used.
+- Do not bundle the widget source into the React app.
+- No Vite config change is needed for the script.
+
+## Where To Render In The Template
+
+Render the widget only where the product needs support:
+
+- Use `app/layouts/MainLayout.tsx` when the bubble should be available across the whole app shell.
+- Use a route file such as `app/routes/index.tsx` when support should appear only on that page.
+- Use a feature-specific layout/route when full mode belongs beside a particular workflow.
+
+If adding a new support-specific route, register it in `app/routes.ts` using the template's React Router route config. Do not create a separate HTML file for the widget.
 
 ## Bubble Mode
 
@@ -107,7 +162,6 @@ export function SupportBubble(props: {
 	email?: string;
 	name?: string;
 }) {
-	useCustomwareChatScript();
 	const ref = useRef<CustomwareChatElement | null>(null);
 
 	useEffect(() => {
@@ -148,7 +202,6 @@ Use `full` when support belongs inside a real layout region, such as a right rai
 import { useEffect, useRef } from 'react';
 
 export function SupportRail(props: { orgId: string; projectId: string }) {
-	useCustomwareChatScript();
 	const ref = useRef<CustomwareChatElement | null>(null);
 
 	useEffect(() => {
@@ -287,8 +340,8 @@ The MITB agent may not have browser automation or visual testing. Validate the i
 
 Minimum code checks:
 
-- The script loader uses `https://app.customware.ai/support-widget/customware-chat.js`.
-- The script is loaded once, not once per render.
+- The `root.tsx`/root document script tag uses `https://app.customware.ai/support-widget/customware-chat.js`.
+- The script is loaded once in `root.tsx` or the root document component, not once per route render.
 - `<customware-chat>` is rendered directly.
 - Both `org-id` and `project-id` are always supplied when the element renders.
 - The widget is gated when runtime ids are unavailable.
@@ -296,6 +349,7 @@ Minimum code checks:
 - Full mode has a wrapper/component height.
 - Bubble mode has a stable anchor and no obviously clipped wrapper.
 - No host code calls support chat endpoints, page-operation endpoints, or internal widget APIs.
+- No Vite config was changed just to load the widget script.
 
 Useful user prompt examples for reasoning about page-operation support:
 
