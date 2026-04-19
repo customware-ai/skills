@@ -1,6 +1,6 @@
 # Customware Support Widget Component Usage
 
-This reference explains how to embed the Customware support widget in the Customware React Router client-only SPA template at `/Users/sravansuresh/Developer/Cohesiv/client-only-spa`.
+This reference explains how to embed the Customware support widget in the React Router App.
 
 The template is a Vite-built React Router v7 SPA:
 
