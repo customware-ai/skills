@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "1.0"
+  version: "1.1"
 description: >
   Customer Relationship Management (CRM) vertical skill for the Customware SPA. Defines the
   section layout, entity views, and mapping rules for transforming a DOMAIN.md into a CRM tool.
@@ -46,6 +46,35 @@ Use this skill when the transcript or DOMAIN.md contains these signals:
 - Product configuration with pricing → use cpq-builder
 - Construction/trades project tracking → use trades-builder
 - Inventory and stock management → use erp-builder (future)
+
+---
+
+## Template Contract
+
+Before you start building, understand what the template gives you and what this skill adds. This is the contract:
+
+**The template (`app/layouts/MainLayout.tsx`) ships with:**
+- `SidebarProvider`, `Sidebar`, `SidebarContent`, `SidebarInset`, `SidebarTrigger` — already wired
+- `SidebarContent` is **empty** — this is your landing zone
+- One brand slot in the header (logo placeholder + company name)
+- `ModeToggle` and user menu in the header's right cluster
+
+**This skill fills:**
+- `SidebarContent` — with entity navigation (Pipeline, Contacts, Companies, Deals, Activities), quick filters, and recent records (see Layout Pattern below)
+- The brand slot in the header — with the client's logo and company name from DOMAIN.md
+- The header's right cluster — adds a role switcher `DropdownMenu` before the existing user menu, plus a global search input if there's room
+- The `<Outlet />` in `<main>` — via route components for each entity view (Pipeline is default)
+
+**This skill does NOT:**
+- Add a second `Sidebar` component. There is one sidebar.
+- Put a brand tile inside `SidebarContent`. Brand lives in the header only.
+- Rewire `SidebarProvider` or replace the collapsible behavior. Use what's there.
+- Build a stepper. CRM uses entity navigation — parallel views, not sequential stages.
+- Collapse the detail view into a popover or modal by default. List/detail is a full-page pattern (list view → click → detail view in the main content area).
+
+If you find yourself wanting to restructure `MainLayout.tsx`, stop — the answer is almost always to fill `SidebarContent` instead.
+
+---
 
 ## Section Definitions
 
@@ -150,15 +179,15 @@ The CRM tool uses a **two-panel layout** (left sidebar + main content) by defaul
 
 ### Left sidebar (always visible, collapsible)
 
-This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. One left sidebar total.
+The template ships `SidebarProvider`, `Sidebar`, `SidebarContent`, and `SidebarTrigger` already wired in `app/layouts/MainLayout.tsx`. `SidebarContent` is empty — that's the slot this skill fills with entity navigation. Do not re-wire the sidebar, do not add a second `Sidebar` component, and do not put a brand tile inside it. Brand identity lives in the header only (see Template Contract above).
 
-**Sidebar heading:** Use a contextual label like "CRM" or the business name + "CRM" — not a workflow description.
+**Sidebar heading:** Use a contextual label like "CRM" or the business name + "CRM" — not a workflow description. If the business name is short, "[Business] CRM" reads naturally; if it's long, just "CRM" is fine. The heading describes what the navigation IS.
 
 | Component | Content |
 |---|---|
-| **Entity navigation** | A VERTICAL nav list of the five sections: Pipeline, Contacts, Companies, Deals, Activities. Each nav item shows: icon, label, and record count badge. Clicking navigates to that entity's view. This is a navigator, NOT a stepper — no step numbers, no completion states, no sequential flow. |
+| **Entity navigation** | A VERTICAL nav list inside `SidebarContent` with the five sections: Pipeline, Contacts, Companies, Deals, Activities. Each nav item shows: icon, label, and record count badge. Clicking navigates to that entity's view. **This is a navigator, NOT a stepper** — no step numbers, no completion states, no sequential flow. |
 | **Quick filters** | Below the nav, show saved filters or views if the user creates them. E.g., "My deals," "Hot leads," "This week's follow-ups." |
-| **Recent records** | Below filters, show the 3-5 most recently accessed records (any entity type) for quick navigation. Each shows name and entity type badge. |
+| **Recent records** | Below filters, show the 3-5 most recently accessed records (any entity type) for quick navigation. Each shows name and entity type badge. Pin this section near the bottom of the sidebar so it's always visible without scrolling. |
 
 ### Main content (center — changes per section)
 
@@ -206,7 +235,7 @@ This sidebar is optional for the prototype. If the main content area has enough 
 
 | CRM Element | shadcn Component | Usage Notes |
 |---|---|---|
-| Entity nav items | `Button variant="ghost"` in vertical stack | Active item gets accent background. Icon + label + count badge. |
+| Entity nav items | `Button variant="ghost"` in vertical stack | Inside `SidebarContent`. Active item gets accent background. Icon + label + count badge. |
 | Pipeline columns | `Card` per stage, `ScrollArea` if many deals | Column header shows stage name + deal count + total value. |
 | Deal cards (pipeline) | `Card` with `CardContent` | Compact: deal name, company, value, assigned avatar. |
 | Contact/Company list | `Table` | Sortable columns, search input above. |
