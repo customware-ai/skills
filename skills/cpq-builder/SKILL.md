@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "4.1"
+  version: "4.2"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -65,9 +65,35 @@ The Builder Agent should select this skill when the customer's DOMAIN.md contain
 
 ---
 
+## Template Contract
+
+Before you start building, understand what the template gives you and what this skill adds. This is the contract:
+
+**The template (`app/layouts/MainLayout.tsx`) ships with:**
+- `SidebarProvider`, `Sidebar`, `SidebarContent`, `SidebarInset`, `SidebarTrigger` — already wired
+- `SidebarContent` is **empty** — this is your landing zone
+- One brand slot in the header (logo placeholder + company name)
+- `ModeToggle` and user menu in the header's right cluster
+
+**This skill fills:**
+- `SidebarContent` — with the vertical stepper and saved items (see Layout Pattern below)
+- The brand slot in the header — with the client's logo and company name from DOMAIN.md
+- The header's right cluster — adds a role switcher `DropdownMenu` before the existing user menu
+- The `<Outlet />` in `<main>` — via route components for each of the five sections
+
+**This skill does NOT:**
+- Add a second `Sidebar` component. There is one sidebar.
+- Put a brand tile inside `SidebarContent`. Brand lives in the header only.
+- Rewire `SidebarProvider` or replace the collapsible behavior. Use what's there.
+- Put the stepper as horizontal tabs in the main content area. The stepper is a vertical list inside `SidebarContent`.
+
+If you find yourself wanting to restructure `MainLayout.tsx`, stop — the answer is almost always to fill `SidebarContent` instead.
+
+---
+
 ## Section Definitions
 
-The CPQ application has four sections. These are fixed — the Builder Agent uses them as-is.
+The CPQ application has four navigable sections plus a fifth output view. The Builder Agent uses these as-is.
 
 ```json
 {
@@ -165,7 +191,7 @@ The CPQ application has four sections. These are fixed — the Builder Agent use
 }
 ```
 
-**Navigation mode is `stepper`** — the sidebar shows all four sections as sequential steps. All steps are clickable at any time (not a wizard). The Approve step shows gating indicators when requirements aren't met.
+**Navigation mode is `stepper`** — the sidebar shows all sections as sequential steps. All steps are clickable at any time (not a wizard). The Approve step shows gating indicators when requirements aren't met.
 
 ---
 
@@ -177,26 +203,22 @@ The five sections are: **Configure, Build Quote, Preview, Approve, Quote Documen
 
 ### Left sidebar (always visible, collapsible)
 
-This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. Do not create a second sidebar next to the template's default one. One left sidebar total.
+The template ships `SidebarProvider`, `Sidebar`, `SidebarContent`, and `SidebarTrigger` already wired in `app/layouts/MainLayout.tsx`. `SidebarContent` is empty — that's the slot this skill fills. Do not re-wire the sidebar, do not add a second `Sidebar` component, and do not put a brand tile inside it. Brand identity lives in the header only (see Template Contract above).
 
-**The most common mistake:** The builder keeps the template sidebar as a thin dark brand strip (company name + logo) on the far left, then builds the workflow stepper as a SECOND column next to it. This creates two left columns. **This is WRONG.** The company name and logo belong in the HEADER BAR, not in a separate sidebar strip. The sidebar slot gets the workflow stepper and saved items — nothing else.
-
-**Preserve the template's collapsible sidebar behavior.** If the template has a sidebar toggle button (hamburger icon, collapse arrow, etc.), keep it working. Inject the skill content (stepper, saved items) INTO the existing collapsible component — do not rebuild the sidebar from scratch and lose the collapse feature. If you must create a new sidebar component, include a collapse toggle that hides the sidebar and expands the main content area.
-
-**Sidebar heading:** Use a contextual label like "Quote workflow" or "Business process" — not the company name (which is already in the header). The sidebar heading describes what the navigation IS, not who it's for.
+**Sidebar heading:** Use a contextual label like "Quote workflow" or "Business process" — not the company name. The heading describes what the navigation IS, not who it's for.
 
 | Component | Content |
 |---|---|
-| **Stepper** | A VERTICAL list of ALL FIVE CPQ sections in the left sidebar: (1) Configure, (2) Build Quote, (3) Preview, (4) Approve, (5) Quote Document. Each step shows: step number, label, subtitle, and completion state (pending / active / done with checkmark). Clicking a step navigates to that section's panel. **This is a vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** If you cannot put the stepper in the sidebar without modifying the layout file, modify the layout file. The skill layout overrides template preservation. |
+| **Stepper** | A VERTICAL list of ALL FIVE CPQ sections inside `SidebarContent`: (1) Configure, (2) Build Quote, (3) Preview, (4) Approve, (5) Quote Document. Each step shows: step number, label, subtitle, and completion state (pending / active / done with checkmark). Clicking a step navigates to that section's panel. **This is a vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** |
 | **Saved items** | List of saved records stored in localStorage. Each shows name + status badge (Draft / Awaiting Review / Approved). Clicking loads the record. "New" button at top. **Pin this section to the bottom of the sidebar** so it's always visible without scrolling — use flexbox with stepper taking available space and saved items fixed at the bottom. Double-click a name to rename inline. The label should match the domain: "Saved quotes" for product domains, "Saved submissions" for intake/calculator domains, or whatever DOMAIN.md calls them. |
 
 The **role switcher** is in the header bar as a dropdown — not in the left sidebar. See Layout Principles in the builder prompt.
 
 ### Main content (center — changes per section)
 
-**Only the active section renders.** Do NOT stack all four sections on one scrolling page. Do NOT render sections as side-by-side cards. Each stepper step shows its corresponding panel at FULL WIDTH of the main content area. All other panels are hidden.
+**Only the active section renders.** Do NOT stack all five sections on one scrolling page. Do NOT render sections as side-by-side cards. Each stepper step shows its corresponding panel at FULL WIDTH of the main content area. All other panels are hidden.
 
-**Do NOT put the stepper as horizontal tabs at the top of the main content area.** The stepper belongs in the left sidebar as a vertical list. Horizontal tabs are a common wrong interpretation — the builder defaults to them because they avoid modifying the layout file. Modify the layout file instead.
+**Do NOT put the stepper as horizontal tabs at the top of the main content area.** The stepper belongs in the sidebar as a vertical list. The template's `SidebarContent` is already empty and waiting — fill it there.
 
 Implementation: use a `currentStep` state variable (0–4, not 0–3). Render only the panel that matches `currentStep`. When the user clicks a stepper step, update `currentStep` and only that panel appears.
 
@@ -283,7 +305,7 @@ Use these shadcn/ui components for each CPQ element. Do not build custom equival
 | Dropdowns | `Select`, `SelectContent`, `SelectItem` | shadcn | Lead source, assigned-to, motor selection (alternative to RadioGroup for compact layouts). |
 | Action buttons | `Button` | shadcn | Primary: `variant="default"` with brand accent. Secondary: `variant="outline"`. Destructive: `variant="destructive"`. |
 | Section dividers | `Separator` | shadcn | Between sections within a panel. Horizontal, subtle. |
-| Stepper navigation | Custom (no library component) | — | Build as a vertical list of clickable items in the left sidebar. Use `cn()` for active/done/pending states. Step number in a circle, label, subtitle, completion checkmark. |
+| Stepper navigation | Custom (no library component) | — | Build as a vertical list of clickable items inside `SidebarContent`. Use `cn()` for active/done/pending states. Step number in a circle, label, subtitle, completion checkmark. |
 | Role switcher | `DropdownMenu` | shadcn | In the header. Shows active role name and badge. Dropdown lists all roles. |
 | Quote summary sidebar | `Card` with stacked label/value rows | shadcn | Labels are `text-muted-foreground text-sm`. Values are `font-medium`. Total row is `text-lg font-semibold`. |
 | Workflow notes sidebar | `Card` with `text-sm text-muted-foreground` | shadcn | Reference material, not primary content. Small text, muted colors. |
@@ -584,9 +606,9 @@ After executing the mapping rules, the Builder Agent should produce a brief mapp
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v3.8
+**Skill:** cpq-builder v4.2
 **DOMAIN.md:** [company name]
-**Vertical preset:** [manufacturing / wholesale / services / none]
+**Vertical preset:** [manufacturing / wholesale / services / legal / financial / assessment / none]
 
 ### Products mapped: [N]
 - [entity name] → config.data.products[0] ([pricingSource], [N] options)
