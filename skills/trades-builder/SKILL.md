@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "1.3"
+  version: "1.4"
 description: >
   Trades Operations vertical skill for the Customware SPA. Defines the section
   layout, config schema, and mapping rules for transforming a DOMAIN.md into a
@@ -48,7 +48,35 @@ Use this skill when the transcript or DOMAIN.md contains these signals:
 **Do NOT use this skill for:**
 - Product configuration with dependencies → use cpq-builder
 - Inventory and stock management → use erp-builder (future)
-- Generic CRM or contact management → use crm-builder (future)
+- Generic CRM or contact management → use crm-builder
+
+---
+
+## Template Contract
+
+Before you start building, understand what the template gives you and what this skill adds. This is the contract:
+
+**The template (`app/layouts/MainLayout.tsx`) ships with:**
+- `SidebarProvider`, `Sidebar`, `SidebarContent`, `SidebarInset`, `SidebarTrigger` — already wired
+- `SidebarContent` is **empty** — this is your landing zone
+- One brand slot in the header (logo placeholder + company name)
+- `ModeToggle` and user menu in the header's right cluster
+
+**This skill fills:**
+- `SidebarContent` — with the vertical stepper and saved projects (see Layout Pattern below)
+- The brand slot in the header — with the client's logo and company name from DOMAIN.md
+- The header's right cluster — adds a role switcher `DropdownMenu` before the existing user menu
+- The `<Outlet />` in `<main>` — via route components for each of the five sections
+
+**This skill does NOT:**
+- Add a second `Sidebar` component. There is one sidebar.
+- Put a brand tile inside `SidebarContent`. Brand lives in the header only.
+- Rewire `SidebarProvider` or replace the collapsible behavior. Use what's there.
+- Put the stepper as horizontal tabs in the main content area. The stepper is a vertical list inside `SidebarContent`.
+
+If you find yourself wanting to restructure `MainLayout.tsx`, stop — the answer is almost always to fill `SidebarContent` instead.
+
+---
 
 ## Section Definitions
 
@@ -163,19 +191,13 @@ The trades-builder tool uses a **three-panel layout** with **FIVE sections** (no
 
 ### Left sidebar (always visible, collapsible)
 
-This content goes INTO the template's existing sidebar slot — it REPLACES the template's default navigation. Do not create a second sidebar next to the template's default one. One left sidebar total.
+The template ships `SidebarProvider`, `Sidebar`, `SidebarContent`, and `SidebarTrigger` already wired in `app/layouts/MainLayout.tsx`. `SidebarContent` is empty — that's the slot this skill fills. Do not re-wire the sidebar, do not add a second `Sidebar` component, and do not put a brand tile inside it. Brand identity lives in the header only (see Template Contract above).
 
-**The most common mistake:** The builder keeps the template sidebar as a thin dark brand strip (company name + logo) on the far left, then builds the workflow stepper as a SECOND column next to it. This creates two left columns. **This is WRONG.** The company name and logo belong in the HEADER BAR, not in a separate sidebar strip. The template sidebar slot gets the workflow stepper and saved projects — nothing else. If the template has a sidebar with company branding, REMOVE the branding from the sidebar and put it in the header. The sidebar is 100% workflow content.
-
-**Preserve the template's collapsible sidebar behavior.** If the template has a sidebar toggle, keep it working. Inject skill content into the existing collapsible component — do not rebuild from scratch. If the template uses a `SidebarProvider` with a trigger button, keep the trigger. A sidebar that cannot collapse wastes screen space.
-
-**If you cannot put the stepper in the template's sidebar without modifying the layout file, modify the layout file.** The skill layout overrides template preservation. Do not create a second sidebar column just to avoid touching `MainLayout.tsx`.
-
-**Sidebar heading:** Use a contextual label like "Workflow" or "Project workflow" — not the company name.
+**Sidebar heading:** Use a contextual label like "Workflow" or "Project workflow" — not the company name. The heading describes what the navigation IS.
 
 | Component | Content |
 |---|---|
-| **Stepper** | A VERTICAL list of ALL FIVE sections: (1) Estimate, (2) Schedule, (3) In Progress, (4) Close Out, (5) Job Summary. Each step shows: step number, label, subtitle from section description, and completion state. **Vertical stepper in the sidebar — NOT horizontal tabs.** Modify the layout file if needed — skill layout overrides template preservation. |
+| **Stepper** | A VERTICAL list of ALL FIVE sections inside `SidebarContent`: (1) Estimate, (2) Schedule, (3) In Progress, (4) Close Out, (5) Job Summary. Each step shows: step number, label, subtitle from section description, and completion state. **Vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** |
 | **Saved projects** | List of projects stored in localStorage. Each shows name + customer + status badge (Estimated / Scheduled / In Progress / Completed). Pin this section to the bottom of the sidebar so it's always visible without scrolling. Double-click a project name to rename inline. |
 
 **CRITICAL: Stepper labels come from THIS SKILL, not from DOMAIN.md.** The DOMAIN.md state model may list `estimated, scheduled, in progress, completed` — those are the project's STATUS values for badges. The stepper LABELS are the skill's section names: **Estimate, Schedule, In Progress, Close Out, Job Summary.** These are different things. The stepper has 5 steps. The domain has 4 statuses. Do not use the domain status list as stepper labels — you'll get 4 steps instead of 5 and lose Close Out and Job Summary.
@@ -237,7 +259,7 @@ Implementation: use a `currentStep` state variable (0–4). Render only the pane
 | Assignment dropdowns | `Select`, `SelectContent`, `SelectItem` | Populate from DOMAIN.md stakeholder names. NOT free text inputs. |
 | Invoice status cards | `Card`, `CardHeader`, `CardContent` | Trade invoice + customer invoice side by side. |
 | Action buttons | `Button` | Primary: brand accent, "Continue." Secondary: outline, "Back." Destructive: "Delete project." |
-| Stepper navigation | Custom vertical list | Step number in circle, label, subtitle, completion checkmark. Use `cn()` for states. |
+| Stepper navigation | Custom vertical list | Inside `SidebarContent`. Step number in circle, label, subtitle, completion checkmark. Use `cn()` for states. |
 | Role switcher | `DropdownMenu` | Single dropdown trigger in header. |
 | Project summary sidebar | `Card` with stacked label/value rows | Labels muted, values bold. Total row large and prominent. |
 | Workflow notes | `Card` with `text-sm text-muted-foreground` | Reference material with BR-IDs. |
