@@ -4,7 +4,7 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "4.2"
+  version: "4.3"
 description: >
   Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the section
   layout, config schema, business rule templates, and deterministic mapping rules for
@@ -79,7 +79,7 @@ Before you start building, understand what the template gives you and what this 
 - `SidebarContent` — with the vertical stepper and saved items (see Layout Pattern below)
 - The brand slot in the header — with the client's logo and company name from DOMAIN.md
 - The header's right cluster — adds a role switcher `DropdownMenu` before the existing user menu
-- The `<Outlet />` in `<main>` — via route components for each of the five sections
+- The `<Outlet />` in `<main>` — via route components for each of the four sections
 
 **This skill does NOT:**
 - Add a second `Sidebar` component. There is one sidebar.
@@ -93,7 +93,9 @@ If you find yourself wanting to restructure `MainLayout.tsx`, stop — the answe
 
 ## Section Definitions
 
-The CPQ application has four navigable sections plus a fifth output view. The Builder Agent uses these as-is.
+The CPQ application has three navigable sections plus a fourth output view. The Builder Agent uses these as-is.
+
+**Section count rationale:** CPQ has FOUR sections, not five. The older "Preview" section has been removed — its job (showing subtotal, tax, total before approval) is already done by the always-on **Live Summary** panel in the right sidebar, which updates continuously as the user configures the quote. A dedicated Preview step would be redundant. If a review gate before approval is genuinely needed, it belongs as a confirmation dialog on the Approve action, not as its own stepper step.
 
 ```json
 {
@@ -110,7 +112,8 @@ The CPQ application has four navigable sections plus a fifth output view. The Bu
         "showDescription": true,
         "showOptions": true,
         "selectionMode": "add-to-list",
-        "groupBy": "category"
+        "groupBy": "category",
+        "capturePricing": true
       },
       "dataSource": "data.products",
       "actions": [
@@ -128,44 +131,24 @@ The CPQ application has four navigable sections plus a fifth output view. The Bu
           { "key": "product", "label": "Product", "width": "auto" },
           { "key": "options", "label": "Configuration", "width": "auto" },
           { "key": "quantity", "label": "Qty", "width": "80px", "editable": true },
-          { "key": "unitPrice", "label": "Unit Price", "width": "120px", "format": "currency" },
+          { "key": "unitPrice", "label": "Unit Price", "width": "120px", "format": "currency", "editable": true },
           { "key": "total", "label": "Total", "width": "120px", "format": "currency", "computed": true }
         ],
         "showRowActions": true,
-        "rowActions": ["edit", "duplicate", "remove"]
+        "rowActions": ["edit", "duplicate", "remove"],
+        "showTotalsFooter": true
       },
       "dataSource": "data.lineItems",
       "actions": [
-        { "label": "Preview Quote", "action": "navigateTo:preview", "variant": "primary" },
+        { "label": "Continue to Approval", "action": "navigateTo:approve", "variant": "primary" },
         { "label": "Clear All", "action": "clearItems", "variant": "ghost", "confirm": true }
-      ]
-    },
-    {
-      "id": "preview",
-      "label": "Preview",
-      "icon": "Eye",
-      "order": 3,
-      "component": "summary",
-      "componentConfig": {
-        "showLineItems": true,
-        "showSubtotal": true,
-        "showMarkup": false,
-        "showTax": true,
-        "showTotal": true,
-        "showTerms": true,
-        "showNotes": true
-      },
-      "dataSource": "data.lineItems",
-      "actions": [
-        { "label": "Export PDF", "action": "exportPDF", "variant": "primary" },
-        { "label": "Back to Quote", "action": "navigateTo:quote", "variant": "ghost" }
       ]
     },
     {
       "id": "approve",
       "label": "Approve",
       "icon": "CheckCircle",
-      "order": 4,
+      "order": 3,
       "component": "form",
       "componentConfig": {
         "fields": [
@@ -174,16 +157,36 @@ The CPQ application has four navigable sections plus a fifth output view. The Bu
           { "key": "paymentTerms", "label": "Payment Terms", "type": "select", "default": "net30" },
           { "key": "notes", "label": "Notes", "type": "textarea" },
           { "key": "validUntil", "label": "Valid Until", "type": "date" }
-        ]
+        ],
+        "confirmBeforeSubmit": true
       },
       "dataSource": "data.quoteSettings",
       "gated": {
-        "requires": ["customerName", "hasLineItems", "noErrors"],
-        "message": "Complete these before approving: customer name, at least one product, no unresolved dependency errors."
+        "requires": ["customerName", "hasLineItems", "hasPricing", "noErrors"],
+        "message": "Complete these before approving: customer name, at least one product with unit price, no unresolved dependency errors."
       },
       "actions": [
         { "label": "Approve & Send", "action": "approveQuote", "variant": "primary", "confirm": true },
         { "label": "Save Draft", "action": "saveDraft", "variant": "secondary" }
+      ]
+    },
+    {
+      "id": "document",
+      "label": "Quote Document",
+      "icon": "FileOutput",
+      "order": 4,
+      "component": "quote-document",
+      "componentConfig": {
+        "readOnly": true,
+        "printable": true,
+        "showBrandHeader": true,
+        "showLineItemsTable": true,
+        "showTotalsBlock": true,
+        "showTermsBlock": true
+      },
+      "dataSource": "data.currentQuote",
+      "actions": [
+        { "label": "Back to Approve", "action": "navigateTo:approve", "variant": "ghost" }
       ]
     }
   ],
@@ -191,15 +194,48 @@ The CPQ application has four navigable sections plus a fifth output view. The Bu
 }
 ```
 
-**Navigation mode is `stepper`** — the sidebar shows all sections as sequential steps. All steps are clickable at any time (not a wizard). The Approve step shows gating indicators when requirements aren't met.
+**Navigation mode is `stepper`** — the sidebar shows all sections as sequential steps. All steps are clickable at any time (not a wizard). The Approve step shows gating indicators when requirements aren't met. The Quote Document step becomes clickable once a quote is approved or saved as draft.
+
+### Pricing Capture is Mandatory (Not Optional)
+
+A CPQ tool without pricing is not CPQ — it is intake routing. The Builder Agent MUST capture pricing during the Configure or Build Quote step when the domain has any pricing information. This is a hard requirement, not a preference.
+
+**What triggers pricing capture:**
+
+- DOMAIN.md Entity Registry notes mention prices, rates, or costs for any entity ("Example price: $15,000")
+- DOMAIN.md has an Approved Pricing Reference, rate card, or pricing table
+- DOMAIN.md Business Rules reference monetary thresholds or calculations ("discounts over 15% require approval")
+- The domain is clearly a pricing/quoting domain (customer mentioned currency, tax, payment terms, quotes, estimates, proposals)
+
+**What the build must include when pricing is triggered:**
+
+1. **Unit price field** in the Configure or Build Quote step — either as a number input (simple case) or as a product picker that loads the price from a pricing table (catalog case). Never as a hardcoded constant.
+2. **Quantity field** in the Build Quote step line items — default to 1, editable.
+3. **Line total computation** — unit price × quantity, displayed per line and as a footer subtotal.
+4. **Tax line** — computed as a percentage of subtotal. The tax name (HST, GST, VAT, Sales Tax) and rate come from DOMAIN.md. If the rate isn't specified, default to the jurisdiction's standard (HST → 13% for Ontario, GST → 5% for Canada-wide, etc.) and note the assumption in the completion summary.
+5. **Grand total** — subtotal + tax, displayed prominently.
+6. **Payment terms** — from DOMAIN.md (Net 30, Net 45, etc.) captured in the Approve step.
+7. **Currency** — from DOMAIN.md. Format all money displays with the currency symbol or code (e.g., "CA$15,000.00" or "$15,000.00 CAD").
+
+**When pricing info is partial or missing:**
+
+If the domain is clearly a pricing domain but DOMAIN.md doesn't have specific price values, do NOT skip pricing capture — still build the pricing UI with empty/editable fields so the user can fill them in. Then note the gap in the completion summary: "DOMAIN.md mentions pricing but does not specify unit prices. Pricing UI is present and editable; unit prices are empty and must be entered by the user."
+
+**Example values from DOMAIN.md are seed data, not constants:**
+
+If DOMAIN.md says "Example price: $15,000," that value should appear as a default/seed in localStorage pricing data — NOT hardcoded in the UI, NOT embedded in rule logic. The user can change it. This is consistent with the "examples are data points, not canonical rules" extraction rule in the Knowledge Agent.
+
+**Failure mode to avoid:** A CPQ prototype that shows "Quote Document" with Customer, Product, Motor, Status, and Terms — but no price, no subtotal, no tax, no grand total. That is a routing workflow masquerading as a quote. If the domain has any pricing signal, that build is incomplete regardless of how clean the UI looks.
 
 ---
 
 ## Layout Pattern
 
-The CPQ application uses a **three-panel layout** with **FIVE sections** (not four). The builder MUST follow this layout — not a single scrolling page with all sections stacked.
+The CPQ application uses a **three-panel layout** with **FOUR sections** (not five). The builder MUST follow this layout — not a single scrolling page with all sections stacked.
 
-The five sections are: **Configure, Build Quote, Preview, Approve, Quote Document.** The task description from the project agent may only list four stages — the Quote Document is always added as the fifth section by this skill regardless of what the task says. Do not skip it.
+The four sections are: **Configure, Build Quote, Approve, Quote Document.** The task description from the project agent may only list three stages — the Quote Document is always added as the fourth section by this skill regardless of what the task says. Do not skip it.
+
+The older Preview step has been removed. Its role (showing subtotal + tax + total before approval) is fully covered by the always-visible Live Summary panel in the right sidebar, which updates as the user configures the quote. Do not re-introduce a Preview step.
 
 ### Left sidebar (always visible, collapsible)
 
@@ -209,65 +245,203 @@ The template ships `SidebarProvider`, `Sidebar`, `SidebarContent`, and `SidebarT
 
 | Component | Content |
 |---|---|
-| **Stepper** | A VERTICAL list of ALL FIVE CPQ sections inside `SidebarContent`: (1) Configure, (2) Build Quote, (3) Preview, (4) Approve, (5) Quote Document. Each step shows: step number, label, subtitle, and completion state (pending / active / done with checkmark). Clicking a step navigates to that section's panel. **This is a vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** |
+| **Stepper** | A VERTICAL list of ALL FOUR CPQ sections inside `SidebarContent`: (1) Configure, (2) Build Quote, (3) Approve, (4) Quote Document. Each step shows: step number, label, subtitle, and completion state (pending / active / done with checkmark). Clicking a step navigates to that section's panel. **This is a vertical stepper in the sidebar — NOT horizontal tabs in the main content area.** |
 | **Saved items** | List of saved records stored in localStorage. Each shows name + status badge (Draft / Awaiting Review / Approved). Clicking loads the record. "New" button at top. **Pin this section to the bottom of the sidebar** so it's always visible without scrolling — use flexbox with stepper taking available space and saved items fixed at the bottom. Double-click a name to rename inline. The label should match the domain: "Saved quotes" for product domains, "Saved submissions" for intake/calculator domains, or whatever DOMAIN.md calls them. |
 
 The **role switcher** is in the header bar as a dropdown — not in the left sidebar. See Layout Principles in the builder prompt.
 
 ### Main content (center — changes per section)
 
-**Only the active section renders.** Do NOT stack all five sections on one scrolling page. Do NOT render sections as side-by-side cards. Each stepper step shows its corresponding panel at FULL WIDTH of the main content area. All other panels are hidden.
+**Only the active section renders.** Do NOT stack all four sections on one scrolling page. Do NOT render sections as side-by-side cards. Each stepper step shows its corresponding panel at FULL WIDTH of the main content area. All other panels are hidden.
 
 **Do NOT put the stepper as horizontal tabs at the top of the main content area.** The stepper belongs in the sidebar as a vertical list. The template's `SidebarContent` is already empty and waiting — fill it there.
 
-Implementation: use a `currentStep` state variable (0–4, not 0–3). Render only the panel that matches `currentStep`. When the user clicks a stepper step, update `currentStep` and only that panel appears.
+Implementation: use a `currentStep` state variable (0–3, not 0–4). Render only the panel that matches `currentStep`. When the user clicks a stepper step, update `currentStep` and only that panel appears.
 
 ```tsx
-// Correct: ALL FIVE panels, conditional rendering
+// Correct: ALL FOUR panels, conditional rendering
 {currentStep === 0 && <ConfigurePanel />}
 {currentStep === 1 && <BuildQuotePanel />}
-{currentStep === 2 && <PreviewPanel />}
-{currentStep === 3 && <ApprovePanel />}
-{currentStep === 4 && <QuoteDocumentPanel />}
+{currentStep === 2 && <ApprovePanel />}
+{currentStep === 3 && <QuoteDocumentPanel />}
 ```
 
-If you define a WorkflowStep type, it must include all five:
+If you define a WorkflowStep type, it must include all four:
 ```tsx
-type WorkflowStep = "configure" | "build" | "preview" | "approve" | "document";
+type WorkflowStep = "configure" | "build" | "approve" | "document";
 ```
 
 ```tsx
 // WRONG: all panels visible, scroll to find the right one
 <ConfigurePanel />
 <BuildQuotePanel />
-<PreviewPanel />
 <ApprovePanel />
 <QuoteDocumentPanel />
 ```
 
 | Section | What renders |
 |---|---|
-| **Configure** | Input selection or data entry. For product domains: product cards with options and prices. For calculator/intake domains: guided form sections with input fields, dropdowns, and validation. The DOMAIN.md determines which pattern — if entities have prices and options, use product cards. If entities are form fields with rules, use guided form sections. |
-| **Build Quote** | Results assembly and review. For product domains: line items table with quantities, prices, editable rows. For calculator/intake domains: calculated results table showing inputs → applied rules → outputs. Editable where the domain allows adjustments. |
-| **Preview** | Read-only summary: subtotal, tax line (HST/GST with rate), total (for pricing domains) or calculated results summary (for calculator domains). Payment terms or output parameters. Formatted for internal review before approval. |
-| **Approve** | Approval owner display, status badge (Pending / Approved / Rejected). Approve and reject buttons. **Gated by role** — only roles with approval permission can approve. Other roles see a message: "You are viewing as [Name]. Only [approver names] can approve." For intake domains: the reviewer (lawyer, underwriter, advisor) reviews the submission. |
-| **Quote Document** | The final formatted output — what you would send to the customer or print. For product domains: a sales quote. For calculator/intake domains: a summary report with inputs, calculations, results, and any disclaimers. See details below. |
+| **Configure** | Input selection or data entry. For product domains: product cards with options AND **unit price fields** — pricing capture is mandatory when the domain has pricing signals (see Pricing Capture is Mandatory above). For calculator/intake domains: guided form sections with input fields, dropdowns, and validation. The DOMAIN.md determines which pattern — if entities have prices and options, use product cards with editable price fields. If entities are form fields with rules, use guided form sections. |
+| **Build Quote** | Results assembly and review. For product domains: line items table with **editable quantities, editable unit prices, and computed line totals**, plus a totals footer showing subtotal + tax + grand total. For calculator/intake domains: calculated results table showing inputs → applied rules → outputs. Editable where the domain allows adjustments. |
+| **Approve** | Approval owner display, status badge (Pending / Approved / Rejected). Approve and reject buttons, **gated by presence of pricing data** (cannot approve a priceless quote when the domain is a pricing domain). **Gated by role** — only roles with approval permission can approve. Other roles see a message: "You are viewing as [Name]. Only [approver names] can approve." For intake domains: the reviewer (lawyer, underwriter, advisor) reviews the submission. Clicking Approve should show a confirmation dialog summarizing the final totals before committing, since the old Preview step has been removed. |
+| **Quote Document** | The final formatted output — what you would send to the customer or print. For product domains: a proper sales quote with brand header, line items table, totals, and terms. For calculator/intake domains: a summary report with inputs, calculations, results, and any disclaimers. See "Quote Document" section below for the required layout. |
 
 ### Quote Document (final output view)
 
-This is the polished, recipient-facing summary. It renders as a clean, printable document inside the main content area — not a modal, not a PDF viewer, just a formatted card.
+This is the polished, recipient-facing document. It renders as a clean, printable layout inside the main content area — styled as if it could be handed directly to the customer. This is the actual deliverable the CPQ tool produces. Treat it as such: it is not a summary card, it is a document.
 
-**Layout — top to bottom:**
+**Minimum quality bar:** if you would be embarrassed to email this to North Shore Fabrication as "the quote," it is not done. If it omits price, line items, tax, or grand total on a pricing domain, it is not done.
 
-1. **Company header** — brand logo (from domain.md brand assets) + company name + placeholder address ("123 Main St, City, Province, Postal Code — update in settings"). Clean horizontal layout.
-2. **Document metadata** — document name, date, reference number (auto-generated), recipient name, source, assigned to. Two-column grid of label/value pairs.
-3. **Configuration / input summary** — what was configured or entered. For product domains: selected product, chosen options, optional items. For calculator/intake domains: all input values organized by section.
-4. **Results table** — For product domains: line items with item name, description, quantity, unit price, line total. For calculator domains: calculated results with labels, formulas applied, and output values. Clean table with a footer row.
-5. **Totals block** — subtotal, tax line (if applicable), grand total or final calculated result. The primary result should be visually prominent (larger text, bold).
-6. **Terms and disclaimers** — payment terms, currency, validity period, and any legal disclaimers from DOMAIN.md. For legal/financial calculators: mandatory disclaimer text.
-7. **Status badge** — current status (Draft / Awaiting Review / Approved / Complete) displayed clearly.
+**Layout — top to bottom, each a distinct block:**
 
-**This view is read-only.** No edit controls. If the user wants to change something, they click back to Configure or Build Quote in the stepper. The Quote Document is the output, not the workspace.
+**1. Document header block** — two columns:
+- Left: `BrandMark` component with `size="lg"`, the full company name, and company address (placeholder address if not in DOMAIN.md: "123 Main St, City, Province, Postal Code — update in settings").
+- Right: document title ("Quote"), document reference number (auto-generated, e.g., "Q-2026-0001"), document date, "Valid until" date (from Approve step).
+
+Use `BrandMark`, not a bare `<img>`. The logo falls back to a tinted initials square gracefully on failure.
+
+**2. Prepared-for block** — a labeled "Prepared for" section with the customer's name, contact email, and any customer company name captured during Configure. Give this block visual weight — it's the most important identity on the document.
+
+**3. Line items table** — for product/pricing domains, a proper table with these columns:
+
+| Column | Content |
+|---|---|
+| # | Line number (1, 2, 3...) |
+| Description | Product name + configuration details ("Single girder crane — Motor A") |
+| Qty | Quantity |
+| Unit Price | Per-unit price, formatted with currency |
+| Line Total | Qty × Unit Price, formatted with currency |
+
+For calculator/intake domains: an inputs table (left column: input name, right column: value) instead of a line items table, followed by a results table (left: result name, right: computed value with formula note).
+
+**4. Totals block** — right-aligned, structured as a stack:
+
+```
+Subtotal:                    $XX,XXX.00
+HST (13%):                    $X,XXX.00
+─────────────────────────────────────────
+Total:                       $XX,XXX.00 CAD
+```
+
+The Total row should be visually prominent — larger font, bold, full currency label (e.g., "CAD", "USD").
+
+**5. Terms block** — a clearly delimited section with:
+- **Payment Terms** (e.g., "Net 45")
+- **Currency** (e.g., "Canadian Dollars (CAD)")
+- **Validity period** (e.g., "This quote is valid for 30 days")
+- Any mandatory terms or disclaimers from DOMAIN.md (e.g., for legal calculators, the required "this is an estimate, not legal advice" language)
+
+**6. Status and approval block** — status badge (Draft / Awaiting Review / Approved), approved-by name if applicable, approval date if applicable.
+
+**7. Footer** — small print area for additional terms, contact info, or signature lines if the domain requires them.
+
+**This view is read-only.** No edit controls anywhere on the document. The only action available is "Back to Approve" (which returns to the stepper). If the user wants to change something, they click back to Configure or Build Quote in the stepper. The Quote Document is the output, not a workspace.
+
+**Reference implementation (abbreviated):**
+
+```tsx
+<article className="bg-card border rounded-lg p-8 max-w-4xl mx-auto print:border-0 print:shadow-none">
+  {/* 1. Header */}
+  <header className="flex justify-between items-start pb-6 border-b">
+    <div className="flex items-center gap-4">
+      <BrandMark logoUrl={BRAND_LOGO_URL} companyName={COMPANY_NAME} size="lg" />
+      <div>
+        <h1 className="text-xl font-bold">{COMPANY_NAME}</h1>
+        <p className="text-sm text-muted-foreground">{COMPANY_ADDRESS}</p>
+      </div>
+    </div>
+    <div className="text-right">
+      <h2 className="text-2xl font-bold">Quote</h2>
+      <p className="text-sm">{quote.ref}</p>
+      <p className="text-sm text-muted-foreground">Date: {quote.date}</p>
+      <p className="text-sm text-muted-foreground">Valid until: {quote.validUntil}</p>
+    </div>
+  </header>
+
+  {/* 2. Prepared for */}
+  <section className="py-6">
+    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+      Prepared for
+    </h3>
+    <p className="text-lg font-medium">{quote.customerName}</p>
+    {quote.customerEmail && <p className="text-sm">{quote.customerEmail}</p>}
+  </section>
+
+  {/* 3. Line items */}
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead className="w-12">#</TableHead>
+        <TableHead>Description</TableHead>
+        <TableHead className="w-20 text-right">Qty</TableHead>
+        <TableHead className="w-32 text-right">Unit Price</TableHead>
+        <TableHead className="w-32 text-right">Total</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {quote.lineItems.map((item, i) => (
+        <TableRow key={item.id}>
+          <TableCell>{i + 1}</TableCell>
+          <TableCell>
+            <div className="font-medium">{item.product}</div>
+            <div className="text-sm text-muted-foreground">{item.configuration}</div>
+          </TableCell>
+          <TableCell className="text-right">{item.quantity}</TableCell>
+          <TableCell className="text-right">{formatCurrency(item.unitPrice, quote.currency)}</TableCell>
+          <TableCell className="text-right">{formatCurrency(item.lineTotal, quote.currency)}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+
+  {/* 4. Totals */}
+  <section className="flex justify-end py-6">
+    <dl className="w-80 space-y-2">
+      <div className="flex justify-between text-sm">
+        <dt>Subtotal:</dt>
+        <dd>{formatCurrency(quote.subtotal, quote.currency)}</dd>
+      </div>
+      <div className="flex justify-between text-sm">
+        <dt>{quote.taxName} ({quote.taxRate}%):</dt>
+        <dd>{formatCurrency(quote.taxAmount, quote.currency)}</dd>
+      </div>
+      <div className="flex justify-between text-lg font-bold pt-2 border-t">
+        <dt>Total:</dt>
+        <dd>{formatCurrency(quote.total, quote.currency)} {quote.currency}</dd>
+      </div>
+    </dl>
+  </section>
+
+  {/* 5. Terms */}
+  <section className="py-6 border-t">
+    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+      Terms
+    </h3>
+    <dl className="grid grid-cols-2 gap-y-2 text-sm">
+      <dt className="font-medium">Payment Terms:</dt>
+      <dd>{quote.paymentTerms}</dd>
+      <dt className="font-medium">Currency:</dt>
+      <dd>{quote.currencyName}</dd>
+      <dt className="font-medium">Validity:</dt>
+      <dd>Valid until {quote.validUntil}</dd>
+    </dl>
+  </section>
+
+  {/* 6. Status */}
+  <footer className="pt-6 border-t flex justify-between items-center">
+    <StatusBadge status={quote.status} />
+    {quote.approvedBy && (
+      <p className="text-sm text-muted-foreground">
+        Approved by {quote.approvedBy} on {quote.approvedDate}
+      </p>
+    )}
+  </footer>
+</article>
+```
+
+**What the document must NOT look like:**
+
+A 5-line key-value list showing "Customer: X, Product: Y, Motor: Z, Status: Awaiting Review, Terms: Net 45" inside a single card is not a Quote Document. It's a summary blurb. A customer receiving that would have no idea what they're being quoted, for how much, or what they're agreeing to. If your Quote Document would fit inside the Live Summary panel, you have not built a Quote Document.
 
 ### Right sidebar (always visible)
 
@@ -285,8 +459,8 @@ This is the polished, recipient-facing summary. It renders as a clean, printable
 
 ### Price and results visibility
 
-- **For pricing domains:** Show prices on EVERY screen where products or options appear. Option selection immediately updates the right sidebar total. Preview section calculates: subtotal + tax = total. Use the tax type from DOMAIN.md (HST = 13%, GST = 5%). Currency from DOMAIN.md (CAD, USD) appears in all price displays.
-- **For calculator/intake domains:** Show calculated results as they become available. If partial results can be computed from the inputs entered so far, show them in the right sidebar. The Preview section shows the full calculation results. Use the output format specified in DOMAIN.md (monetary amounts, percentages, ranges, scores).
+- **For pricing domains:** Show prices on EVERY screen where products or options appear. Option selection immediately updates the right sidebar Live Summary total. The Build Quote section shows subtotal + tax = total in a footer row. Use the tax type from DOMAIN.md (HST = 13%, GST = 5%). Currency from DOMAIN.md (CAD, USD) appears in all price displays. The Quote Document shows the full totals block as the recipient would see it.
+- **For calculator/intake domains:** Show calculated results as they become available. If partial results can be computed from the inputs entered so far, show them in the right sidebar Live Summary. The Build Quote section shows the full calculation results. Use the output format specified in DOMAIN.md (monetary amounts, percentages, ranges, scores). The Quote Document renders as a formal summary report.
 
 ### shadcn/ui component mapping
 
@@ -458,7 +632,7 @@ IF DOMAIN.md State Models contains payment terms or approval statuses:
 
 IF DOMAIN.md State Models contains quote statuses:
   → MAP to section gating logic
-  → The CPQ skill handles this through the fixed section definitions (Configure → Quote → Preview → Approve)
+  → The CPQ skill handles this through the fixed section definitions (Configure → Quote → Approve → Quote Document)
 ```
 
 ### Branding → Theme Mapping
