@@ -90,8 +90,9 @@ Before you start building, understand what the template gives you.
 
 ### Role switching (RBAC)
 - If DOMAIN.md defines User Roles or a Stakeholder Map with named people, include a role switcher.
-- **Place it in the header bar as a SINGLE dropdown** using shadcn `DropdownMenu`. The dropdown trigger shows the active role name and badge (e.g., "Jeff — Approver"). Clicking it opens a list of all roles. Selecting a role updates the view immediately.
+- **Place it in the header bar as a SINGLE dropdown** using shadcn `DropdownMenu`. The dropdown trigger shows the active role name with the role as a small muted badge next to it (e.g., "Jeff" with a small "Approver" badge). Clicking it opens a list of all roles. Selecting a role updates the view immediately.
 - **Do NOT render roles as separate horizontal buttons in the header.** Four names as four buttons is wrong — it wastes space and looks like navigation, not a role switcher. One dropdown trigger, one dropdown menu. This is the same pattern as user profile menus in every SaaS app.
+- **Do NOT prefix the trigger with the word "ROLE" or similar labels in uppercase.** The dropdown is self-evidently a switcher because of the chevron and dropdown affordance. Labels like "ROLE Jeff ▾" read as awkward enterprise-software artifacts. Just show the active role name (and an optional muted badge) — let the dropdown icon signal that it's clickable.
 - Clicking a role changes what the user can see and do:
   - Buttons and actions gated by role should disable with a message when the active role lacks permission.
   - Filtered views should show only the work relevant to that role when appropriate.
@@ -108,6 +109,24 @@ Before you start building, understand what the template gives you.
 - If the domain involves pricing (quotes, orders, invoices), show prices on EVERY screen where products or options appear.
 - Selection changes should immediately update any summary totals.
 - Use the tax type from DOMAIN.md (HST = 13%, GST = 5%, etc.) and the currency (CAD, USD, etc.) in all price displays.
+- **Format currency with `Intl.NumberFormat`, not string concatenation.** Use the correct locale for the currency (CAD → `en-CA`, USD → `en-US`, GBP → `en-GB`, EUR → appropriate locale). Never display money as `$15000.00` — always `$15,000.00` with thousands separators. Never display `$15000.00 CAD` — the `en-CA` currency formatter produces `CA$15,000.00` which is the correct locale-standard format, OR use `style: "decimal"` with a separate currency label.
+  ```tsx
+  // app/lib/format.ts
+  export function formatCurrency(amount: number, currency: string = "CAD"): string {
+    const localeMap: Record<string, string> = {
+      CAD: "en-CA", USD: "en-US", GBP: "en-GB", EUR: "de-DE", AUD: "en-AU",
+    };
+    return new Intl.NumberFormat(localeMap[currency] ?? "en-US", {
+      style: "currency",
+      currency,
+    }).format(amount);
+  }
+  // formatCurrency(15000, "CAD") → "CA$15,000.00"
+  // formatCurrency(16950, "USD") → "$16,950.00"
+  ```
+  Define this once in `app/lib/format.ts` and import it everywhere currency is shown. Do not reinvent it per component.
+- **Format numbers with thousands separators.** Quantities, counts, square footage, and other whole numbers should use `Intl.NumberFormat` with the `decimal` style for the same reason — `1234` should display as `1,234`.
+- **Round to the currency's standard decimal places.** CAD/USD/GBP/EUR all use 2 decimals. JPY uses 0. `Intl.NumberFormat` handles this correctly when the currency style is used.
 
 ### Saved items
 - If the domain involves creating records (quotes, orders, contacts, projects), include a saved-items list in the left sidebar showing items stored in localStorage.
@@ -150,7 +169,106 @@ Map brand colors to the template's existing CSS variables in `app.css`. The vari
 - **`light` from domain.md → `--background`** — main content area background. **Guard rail:** if the "light" color has HSL lightness below 85%, it's too vivid for a full-page background. In that case, use `hsl(0 0% 97%)` (near-white) for `--background` and use the brand "light" color only for accents, highlights, or link colors.
 - **Convert hex to HSL.** The template wraps values in `hsl()`.
 - Also update the `.dark` section's sidebar variables to match.
-- **Use the brand logo** in the header. The domain.md Brand Logos section provides a logo URL or path (e.g., `logo / dark: https://...` or `logo / dark: brand/logos/logo.png`). Replace the placeholder icon in `MainLayout.tsx`'s header brand slot with an `<img src="...">`, sized to 28-36px height, next to the company name. The `/ dark` qualifier means it's designed for dark backgrounds — use it on the sidebar header or dark-themed header. If the URL is long (Azure Blob, S3, etc.), use it as-is — it's a valid image source. If no logo is provided, use a text-only header with the company name.
+
+**Variables brand theming does NOT touch:**
+
+Brand theming is scoped to the variables named above. Do NOT remap brand colors to the following CSS variables — they should keep their default template values so form fields, cards, and neutral UI stay readable:
+
+- `--input` — form field backgrounds. Must stay a near-white / very-light value so inputs look editable, not disabled. Mapping `dark` or `light` here produces grey-filled inputs that look read-only.
+- `--muted` and `--muted-foreground` — muted backgrounds and text. Used by shadcn components for secondary content. Keep default.
+- `--secondary` and `--secondary-foreground` — secondary button backgrounds and other neutral surfaces. Keep default.
+- `--card` and `--popover` — card and popover backgrounds. Usually white or very near white, same as `--background` in most themes. Keep default unless the brand explicitly specifies a card color.
+- `--border` — default border color on inputs, cards, and dividers. Keep default neutral.
+- `--destructive` — error/delete actions. Always red, never brand-colored.
+
+The test: if a form field's background is darker than the page background, brand theming overreached. Form fields should read as "editable" at a glance — that requires a near-white fill against the light page background. A grey-filled input looks disabled even when it's fully functional, and users hesitate to click them.
+
+---
+
+
+- **Use the brand logo via a shared `BrandMark` component.** Create `app/components/brand-mark.tsx` as part of the initial scaffolding and use it in BOTH the `MainLayout` header AND any document-style view that shows the brand (Quote Document, Job Summary, invoices, etc.). Never render a bare `<img>` for the brand logo — logo sources from domain.md fail often enough (expired SAS tokens, Brandfetch rate limits, missing deployed assets, relative paths the sandbox can't serve) that a bare `<img>` is a near-guaranteed broken-icon state on some builds. The component MUST gracefully fall back to a tinted initials square when the image fails or the URL is unusable:
+
+  ```tsx
+  // app/components/brand-mark.tsx
+  import { useState, type ReactElement } from "react";
+  import { cn } from "~/lib/utils";
+
+  interface BrandMarkProps {
+    logoUrl?: string | null;
+    companyName: string;
+    size?: "sm" | "md" | "lg"; // sm = 28px (header), md = 40px, lg = 56px (document)
+    className?: string;
+  }
+
+  const SIZE_CLASSES = {
+    sm: "h-7 w-7 text-xs",
+    md: "h-10 w-10 text-sm",
+    lg: "h-14 w-14 text-base",
+  } as const;
+
+  const IMG_SIZE_CLASSES = {
+    sm: "h-7 w-auto",
+    md: "h-9 w-auto",
+    lg: "h-12 w-auto",
+  } as const;
+
+  export function BrandMark({
+    logoUrl,
+    companyName,
+    size = "sm",
+    className,
+  }: BrandMarkProps): ReactElement {
+    const [failed, setFailed] = useState(false);
+    const isHttpUrl =
+      typeof logoUrl === "string" &&
+      (logoUrl.startsWith("http://") || logoUrl.startsWith("https://"));
+    const canShowLogo = isHttpUrl && !failed;
+
+    if (canShowLogo) {
+      return (
+        <img
+          src={logoUrl as string}
+          alt={companyName}
+          className={cn(IMG_SIZE_CLASSES[size], "object-contain", className)}
+          onError={() => setFailed(true)}
+        />
+      );
+    }
+
+    const initials = companyName
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase() ?? "")
+      .join("") || "•";
+
+    return (
+      <div
+        aria-hidden
+        className={cn(
+          SIZE_CLASSES[size],
+          "flex shrink-0 items-center justify-center rounded-lg border border-border bg-muted font-semibold text-foreground",
+          className,
+        )}
+      >
+        {initials}
+      </div>
+    );
+  }
+  ```
+
+  **Two rules the component enforces:**
+  1. Only `http://` or `https://` URLs render as `<img>`. Relative paths (`/brand/logos/...`) fall through to the initials. These rarely work in deployed sandboxes.
+  2. If the `<img>` fires `onError` (CORS, 404, SAS expiry, etc.), state flips to failed and the initials render instead. The user never sees a broken-image icon.
+
+  **Usage:**
+  ```tsx
+  // In MainLayout header:
+  <BrandMark logoUrl={BRAND_LOGO_URL} companyName={COMPANY_NAME} size="sm" />
+
+  // In Quote Document / Job Summary header:
+  <BrandMark logoUrl={BRAND_LOGO_URL} companyName={COMPANY_NAME} size="lg" />
+  ```
+  Define `BRAND_LOGO_URL` and `COMPANY_NAME` as constants at the top of the relevant file (or export them from a single `app/lib/brand.ts`) so they're in one place and easy to update later. The `/ dark` qualifier that sometimes appears in domain.md labels (e.g., `logo / dark: https://...`) is NOT part of the URL — parse the URL by taking everything after the colon and trimming whitespace.
 - **Use the company name** in the header, not "Customware Template." This is the ONE brand text slot in the layout — don't add a second one anywhere else.
 - **Light mode by default.** Set light mode as the default. Do not ship in dark mode. The sidebar uses a mid-tone tinted version of the brand's dark color. The main content area and right sidebar use the brand's light color or white. **Where to set this:** The template has a theme system (usually in `app/lib/theme.ts` or a `ThemeProvider`) that controls whether the app starts in light or dark mode. Find it and set the default to `"light"`. Setting CSS variables in `app.css` is NOT enough — if the theme provider applies a `dark` class to `<html>`, the dark-mode CSS variables override the light-mode ones regardless of what you put in `:root`. You must change the default in the JavaScript theme provider, not just the CSS.
 
@@ -212,9 +330,14 @@ Not every field needs a form page. Many fields should be editable inline — cli
 - Status badges that are all the same color
 - Tables with heavy grid lines instead of subtle row borders
 - RBAC roles as horizontal buttons instead of a dropdown
+- RBAC dropdown prefixed with an uppercase "ROLE" label (just show the name)
 - Saved items pushed below the fold
 - Free text inputs where dropdowns should enforce valid options
 - A brand tile or company block injected into the top of the sidebar — brand is header-only
+- Bare `<img>` for the brand logo with no fallback — use the `BrandMark` component, not a raw img tag
+- Grey-filled form inputs because brand colors leaked into `--input` or `--muted` (keep form fields near-white so they read as editable)
+- Currency displayed as raw numbers like `$15000.00 CAD` instead of properly formatted `CA$15,000.00` via `Intl.NumberFormat`
+- Numbers without thousands separators (`1234` instead of `1,234`)
 
 ## Generic Layout Fallback
 
