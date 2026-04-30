@@ -24,7 +24,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 ## Required Workflow
 
 1. Read the active task, domain context, and selected domain skills.
-2. Read `.tasks/domain.md` when it exists. Extract brand colors, logo/company name, logo path, domain tone, terminology, workflows, entities, statuses, roles, and constraints.
+2. Read `.tasks/domain.md` when it exists. Extract brand colors, company name, domain tone, terminology, workflows, entities, statuses, roles, and constraints.
 3. Read both frontend-design references.
 4. Produce the design pass before coding:
    - **Vision**: domain-specific product and visual direction. Reject generic SaaS purple, card-heavy dashboards, and generic admin shells.
@@ -40,7 +40,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 
 - **Brand first**: If `.tasks/domain.md` provides brand colors, use them. Map the main brand/accent color to primary actions, active navigation, selected state, focus, and links. Derive neutral surfaces, borders, muted text, and statuses from compatible tints. Do not default to generic purple/blue.
 - **Creative fallback when no vertical skill fits**: If the app does not fit a selected business/domain skill like CPQ, CRM, trades, or similar, deliberately push the visual direction further. Commit to a cohesive aesthetic, use CSS variables consistently, prefer dominant colors with sharp accents over timid evenly distributed palettes, use motion for high-impact moments, favor unexpected composition, and build atmosphere through backgrounds and visual details instead of defaulting to a plain shell.
-- **Use the real logo**: If `.tasks/domain.md` provides a usable logo path, including an org logo file inside a `logos` folder, use that correct actual brand logo in the header or primary app chrome instead of inventing a placeholder logo.
+- **Use the real logo**: First look in `public/brand/logos/`. If that folder contains a usable logo file, use the correct actual logo from that folder in the header or primary app chrome. Only create or invent a logo if `public/brand/logos/` does not exist or has no usable logo files.
 - **Cardless by default**: Aim for zero cards. If the UI works without a card, the card is not allowed. A bordered rounded surface occupying a major region of the page is a card even if `Card` is not imported. Cards are only allowed for dialog/popover/sheet containment, concise notice, or truly repeated items when rows, dividers, or tonal separation fail.
 - **No top-level cards**: Never compose the main page from large sibling cards, a stack/grid of rounded panels, or a large framed hero/detail container. Top-level structure must be open sections, tonal bands, rows, dividers, workspace areas, or one open focal working zone.
 - **No sidebars by default**: Use a sidebar only when the user explicitly asks for one or a selected domain skill explicitly requires one. Do not add a sidebar because the app is operational, business, admin-like, multi-step, or has multiple sections.
@@ -63,7 +63,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 Do not code until all answers are acceptable.
 
 - Did I read `.tasks/domain.md` and summarize brand colors when present?
-- Did I read `.tasks/domain.md` for a usable logo path and plan to use the real logo in the header if available?
+- Did I check `public/brand/logos/` and plan to use an actual logo file from there if one exists?
 - Did I read both frontend-design references?
 - Did I define exact CSS/Tailwind/shadcn token updates?
 - If no selected domain skill fits, did I choose a deliberate fallback direction for color, motion, spatial composition, and background atmosphere?
@@ -116,7 +116,7 @@ Reject and revise if:
 - Editable controls in light mode are not near-white or very light tinted and therefore do not read clearly.
 - Row/table content is cramped, over-columned, or too tight inside the first column and metadata blocks.
 - A surfaced table is missing `shadow-xs` or its header/rows are padded too tightly.
-- A usable logo path exists in `.tasks/domain.md` but the header still uses a placeholder logo or no logo without reason.
+- `public/brand/logos/` contains a usable logo file but the header still uses a placeholder logo or no logo without reason.
 - Brand colors from `.tasks/domain.md` are not reflected in primary/active/focus treatment.
 - No vertical/domain skill fit the app, but the UI still defaulted to a generic admin shell instead of using a stronger creative direction.
 - A required sidebar uses a weak pale surface instead of a darker primary-derived tone.

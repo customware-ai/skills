@@ -27,7 +27,7 @@ At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal sur
 - Use the main brand/accent color for primary action, selected state, focus, active navigation, and links.
 - Use secondary brand colors only when they clarify hierarchy.
 - Derive backgrounds, surfaces, borders, muted text, and statuses from compatible tints.
-- If `.tasks/domain.md` provides a usable logo path, including an org logo file inside a `logos` folder, use the real logo in the header or primary chrome.
+- First check `public/brand/logos/`. If that folder contains a usable logo file, use the real logo from there in the header or primary chrome. Only create or invent a logo if that folder does not exist or has no usable logo files.
 - Commit to a cohesive aesthetic. Use CSS variables consistently.
 - Dominant colors with sharp accents are usually stronger than timid, evenly distributed palettes.
 - If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
@@ -77,7 +77,7 @@ Prefer:
 If a sidebar is required, keep it quiet, narrow, and secondary. Never pair it with a card-heavy workspace.
 Navigation chrome should be tonally distinct from the main canvas. Same-white navigation and content surfaces fail.
 Header/topbar surfaces should usually use a near-white or very light tinted treatment in light mode, and near-black in dark mode, so the chrome reads clearly without becoming a heavy slab.
-If a real brand logo exists, header chrome should use it instead of a generated placeholder logo.
+If `public/brand/logos/` contains a real logo, header chrome should use it instead of a generated placeholder logo.
 If a sidebar is required by the domain skill, prefer a much darker primary-derived tone for the sidebar background or active navigation field so the chrome feels intentional and anchored.
 
 ## Radius

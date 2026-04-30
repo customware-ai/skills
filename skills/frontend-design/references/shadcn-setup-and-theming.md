@@ -70,7 +70,7 @@ Search inputs, filter fields, and command-row controls should usually use one of
 - Compatible tints -> backgrounds, muted surfaces, borders, status colors.
 - Destructive stays red.
 - No generic purple/blue unless brand/domain supports it.
-- If `.tasks/domain.md` provides a usable logo path, including an org logo file inside a `logos` folder, use that actual logo in the header or primary app chrome.
+- First check `public/brand/logos/`. If that folder contains a usable logo file, use that actual logo in the header or primary app chrome. Only create or invent a logo if that folder does not exist or has no usable logo files.
 
 ## Tailwind Use
 
