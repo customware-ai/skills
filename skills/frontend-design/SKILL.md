@@ -53,7 +53,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 - **No major-region framed surfaces**: Do not turn the main working area, hero, inspector, or detail lane into a big bordered rounded panel. Prefer open layout, split rows, tonal bands, dividers, or a drawer/sheet for secondary detail.
 - **Token-first shadcn**: Configure `app.css`/global CSS variables and Tailwind theme values before component work. Do not accept default shadcn colors as the design.
 - **Strong soft contrast**: If a surface exists, it must separate from the canvas through tone first, border second, shadow last. Same-white or near-white surfaces with faint borders fail.
-- **Interactive surface contrast**: Inputs, selects, textareas, tables, and header/nav chrome must read as distinct working surfaces. In light mode they should usually sit on a near-white or very light brand-tinted surface; in dark mode they should usually sit on a near-black surface. Search fields, filter controls, and command-bar inputs should usually be even clearer than surrounding passive surfaces. Do not let controls or header chrome disappear into the page background.
+- **Interactive surface contrast**: Editable controls must be obvious. Inputs, selects, textareas, comboboxes, date fields, search fields, and command-bar controls must use a near-white or very light tinted background in light mode and a near-black background in dark mode. They must not blend into the page or panel background. Search/filter controls should usually be among the clearest input surfaces on the screen.
 - **Sidebar tone when required**: If a selected domain skill requires a sidebar, prefer a much darker shade derived from the primary color for the sidebar background or key sidebar surfaces. The sidebar should feel intentional and anchored, not like a pale afterthought.
 - **Contact depth only**: Avoid `shadow-sm`, `shadow-md`, and `shadow-lg` as defaults for normal layout surfaces. Prefer `shadow-2xs` for buttons and other small interactive elements, `shadow-xs` for cards/tables/similar contained surfaces, `shadow-xl` for popovers and banners, and `shadow-2xl` for dialogs. Use soft, tight, contact-edge depth only when needed. Soft means no hard spread edge, not barely visible; the shadow can still be a clear gray if needed for contrast. Depth should read as edge contact, not lift.
 - **Domain specificity**: The UI should not look unchanged if the domain name and labels are swapped.
@@ -78,6 +78,7 @@ Do not code until all answers are acceptable.
 - Does the typography feel distinctive and intentional rather than default/generic?
 - Do page background, canvas, nav chrome, and any focal surface separate clearly at thumbnail scale?
 - Do inputs, search/filter controls, tables, and header/nav chrome have enough tonal separation from the page background?
+- In light mode, do editable controls actually use near-white or very light tinted backgrounds rather than page-colored fills?
 - If a table is surfaced, is it using `shadow-xs` plus generous header and row padding?
 - If a sidebar is required, is it using a darker primary-derived tone instead of a pale generic surface?
 - Are shadows limited to contact-edge depth?
@@ -112,6 +113,7 @@ Reject and revise if:
 - Surface separation depends mostly on borders instead of tone.
 - Same-white or near-white panelization makes major surfaces blend together.
 - Inputs, search/filter controls, data rows, or header/nav chrome blend into the page background.
+- Editable controls in light mode are not near-white or very light tinted and therefore do not read clearly.
 - Row/table content is cramped, over-columned, or too tight inside the first column and metadata blocks.
 - A surfaced table is missing `shadow-xs` or its header/rows are padded too tightly.
 - A usable logo path exists in `.tasks/domain.md` but the header still uses a placeholder logo or no logo without reason.

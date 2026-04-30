@@ -32,7 +32,9 @@ At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal sur
 - Dominant colors with sharp accents are usually stronger than timid, evenly distributed palettes.
 - If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
 - White or near-white surface on white or near-white canvas with only a faint border fails.
-- Inputs, controls, and nav/header chrome should usually be lighter than the main page background in light mode and darker than the main page background in dark mode.
+- Editable controls must clearly separate from the surrounding page or panel.
+- In light mode, inputs, selects, textareas, search bars, date fields, and similar controls should use near-white or very light tinted backgrounds.
+- In dark mode, those same controls should use near-black backgrounds.
 - Search bars, filter inputs, and command-row controls should usually be more contrasty than nearby passive pills, muted bands, or page sections.
 - This does not require pure white. A very light shade close to white is usually better than same-tone blending.
 - Avoid generic purple/blue defaults and loud raw-brand floods.
@@ -185,6 +187,7 @@ Reject and revise if:
 - surface separation depends mostly on borders
 - same-white blending makes major surfaces merge together
 - inputs, search/filter controls, or header/nav chrome do not read clearly against the page background
+- editable controls are not near-white/lightest-surface in light mode or near-black in dark mode
 - inner row/table/card content is tight or over-columned instead of airy
 - a surfaced table is flat because it lacks `shadow-xs` or comfortable header/body padding
 - spacing feels cramped
