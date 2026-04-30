@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "frontend-design": {
+      "source": "/Users/sravan/Cohesiv/skills",
+      "sourceType": "local",
+      "computedHash": "5ba4a87c5e2921de514eca6eb1efbe614b8ac6a3fe4b05b806cf073dbb94a05b"
+    }
+  }
+}
