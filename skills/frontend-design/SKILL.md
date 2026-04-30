@@ -55,7 +55,9 @@ Before visual planning or implementation, read both files. Skipping either file 
 - **No major-region framed surfaces**: Do not turn the main working area, hero, inspector, or detail lane into a big bordered rounded panel. Prefer open layout, split rows, tonal bands, dividers, or a drawer/sheet for secondary detail.
 - **Token-first shadcn and CSS**: Configure `app.css`/global CSS variables, Tailwind theme values, and relevant shadcn component styles before component work. Do not accept default shadcn colors or component styling as the design. shadcn components are base primitives only; always customize their classes/styles to fit the app's tokens, spacing, contrast, radius, shadow, and interaction rules. Tailwind is not mandatory for every visual decision; write custom CSS when it creates a more distinct, minimal, polished UI, while reusing the same CSS variables and theme tokens.
 - **Strong soft contrast**: If a surface exists, it must separate from the canvas through tone first, border second, shadow last. Same-white or near-white surfaces with faint borders fail.
-- **Interactive surface contrast**: Editable controls must be obvious. Inputs, selects, textareas, comboboxes, date fields, search fields, and command-bar controls must use a near-white or very light tinted background in light mode and a near-black background in dark mode. They must not use `bg-transparent`, `bg-background`, `bg-muted`, or the same fill as the page/panel. `--input` must be visibly lighter than `--background` in light mode and visibly darker than the canvas in dark mode. Search/filter controls must be among the clearest input surfaces on the screen.
+- **Interactive surface contrast**: Every editable control must be obvious. Regular text inputs, selects, textareas, comboboxes, date fields, search fields, command-bar controls, and shadcn form controls must all use a near-white or very light tinted background in light mode and a near-black background in dark mode. Do not only fix selects while leaving normal inputs page-colored. Controls must not use `bg-transparent`, `bg-background`, `bg-muted`, or the same fill as the page/panel. `--input` must be visibly lighter than `--background` in light mode and visibly darker than the canvas in dark mode. Search/filter controls must be among the clearest input surfaces on the screen.
+- **Panel/card contrast when unavoidable**: If a card-like surface is truly unavoidable, including summary panels, live summary cards, inspectors, notices, and repeated item containers, it must use a clearly contrasting near-white or very light tinted background in light mode and near-black in dark mode. Same-fill panels on a tinted page fail even when borders are visible.
+- **Header treatment when present**: If the app has a header/topbar, prefer a translucent near-white or very light tinted surface in light mode and near-black in dark mode with `backdrop-blur-md` and roughly `70-80%` opacity. The header must still have enough contrast from the page and must use the real logo when available.
 - **Sidebar tone and space when required**: If a selected domain skill requires a sidebar, use a much darker shade derived from the primary color for the sidebar background or key sidebar surfaces. The sidebar must be wide enough for its labels, badges, and active states; do not clip text or squeeze actions off the edge. Use generous item padding, clear vertical rhythm, and deliberate truncation only for secondary descriptions.
 - **Contact depth only**: Avoid `shadow-sm`, `shadow-md`, and `shadow-lg` as defaults for normal layout surfaces. Prefer `shadow-2xs` for buttons and other small interactive elements, `shadow-xs` for cards/tables/similar contained surfaces, `shadow-xl` for popovers and banners, and `shadow-2xl` for dialogs. Use soft, tight, contact-edge depth only when needed. Soft means no hard spread edge, not barely visible; the shadow can still be a clear gray if needed for contrast. Depth should read as edge contact, not lift.
 - **Domain specificity**: The UI should not look unchanged if the domain name and labels are swapped.
@@ -81,8 +83,10 @@ Do not code until all answers are acceptable.
 - Does the typography feel distinctive and intentional rather than default/generic?
 - Do page background, canvas, nav chrome, and any focal surface separate clearly at thumbnail scale?
 - Do inputs, search/filter controls, tables, and header/nav chrome have enough tonal separation from the page background?
-- In light mode, do editable controls actually use near-white or very light tinted backgrounds rather than page-colored fills?
+- In light mode, do all editable controls, including normal text inputs and selects, actually use near-white or very light tinted backgrounds rather than page-colored fills?
 - Are editable controls free of `bg-transparent`, `bg-background`, `bg-muted`, and same-token page/panel fills?
+- Do summary/inspector/live-summary panels use a clear near-white/light-tinted surface instead of blending into the page?
+- If there is a header/topbar, does it use a clear translucent treatment with backdrop blur and enough contrast?
 - If a table is surfaced, is it using `shadow-xs` plus generous header and row padding?
 - If a sidebar is required, is it using a darker primary-derived tone with enough width, padding, row height, and overflow handling?
 - Are shadows limited to contact-edge depth?
@@ -100,6 +104,8 @@ Do not code until all answers are acceptable.
 - Use more expressive composition, stronger accent hierarchy, and more atmospheric backgrounds wherever they do not conflict with required workflow structure or operational clarity.
 - Keep surfaces distinct through tone, spacing, and hierarchy rather than borders and boxes around everything.
 - Give inputs/selects/textareas/search fields explicit contrasting fills; do not leave them transparent or page-colored.
+- Give summary/inspector/live-summary panels explicit contrasting fills when they are unavoidable.
+- If a header/topbar exists, use token-driven translucent background, `backdrop-blur-md`, and clear contrast rather than a flat same-color strip.
 - For required sidebars, use enough width and item height for readable labels, visible active states, and non-clipping badges/actions.
 - If a card is truly unavoidable, give it intentional tonal contrast from the canvas plus a visible but soft border. Weak same-white cards fail.
 - Add only shadcn components required by the actual workflow.
@@ -122,7 +128,10 @@ Reject and revise if:
 - Same-white or near-white panelization makes major surfaces blend together.
 - Inputs, search/filter controls, data rows, or header/nav chrome blend into the page background.
 - Editable controls in light mode are not near-white or very light tinted and therefore do not read clearly.
+- Selects are contrasted but normal text inputs remain page-colored or muted.
 - Editable controls use `bg-transparent`, `bg-background`, `bg-muted`, or the same token/fill as the page or panel.
+- Summary/inspector/live-summary cards or panels use the same fill as the page instead of a near-white/light-tinted contrast surface.
+- A header/topbar exists but lacks a clear translucent `backdrop-blur-md` style or blends into the page.
 - Row/table content is cramped, over-columned, or too tight inside the first column and metadata blocks.
 - A surfaced table is missing `shadow-xs` or its header/rows are padded too tightly.
 - `public/brand/logos/` contains a usable logo file but the header still uses a placeholder logo or no logo without reason.

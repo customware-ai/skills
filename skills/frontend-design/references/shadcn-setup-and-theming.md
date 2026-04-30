@@ -49,19 +49,21 @@ Use theme tokens to create a cohesive, vivid, authored aesthetic rather than a n
 
 - Page background: tinted pale gray, stone, cream, porcelain, glacier, or brand-derived tint.
 - App canvas: lighter off-white/porcelain, not raw white everywhere.
-- Navigation chrome: quiet near-white or very light tinted tone unless a required sidebar uses the darker primary-derived treatment.
+- Navigation chrome: translucent near-white or very light tinted tone unless a required sidebar uses the darker primary-derived treatment.
 - Required sidebars: much darker primary-derived tone or a darker companion tone from the same palette, not a pale washed-out sidebar.
 - Focal surface: clear tonal difference, not a repeated large card.
-- Inputs: near-white or very light tinted in light mode, near-black in dark mode, and clearly editable.
+- Inputs: near-white or very light tinted in light mode, near-black in dark mode, and clearly editable across normal inputs, selects, textareas, search fields, date fields, and comboboxes.
+- Unavoidable summary/inspector panels: clear near-white or light tinted surface in light mode, near-black in dark mode, not same-fill with the page.
 - Borders: soft but visible and selective.
 - Popovers/sheets/dialogs: clear separation with contact-edge depth.
 
 Do not use the same white for body, app frame, cards, popovers, inputs, and controls.
-Navigation chrome must remain visibly distinct from the main canvas.
+Navigation chrome must remain visibly distinct from the main canvas. If a header/topbar exists, prefer `backdrop-blur-md` with roughly `70-80%` opacity on a tokenized near-white/light-tinted or near-black surface.
 Do not rely on a faint border alone to separate a major surface from the canvas.
 Editable controls must not share the page/background fill.
 Inputs, selects, textareas, search fields, date fields, and similar controls must use near-white or very light tinted backgrounds in light mode.
 In dark mode, those same controls must move to near-black so they still read distinctly against the overall canvas.
+Do not only fix select components while leaving normal inputs, textareas, or search fields page-colored.
 Pure white is not required. Near-white is usually enough when the separation is obvious.
 Search inputs, filter fields, and command-row controls must use one of the clearest light surfaces on the screen in light mode so they remain obvious at a glance.
 Do not style editable controls with `bg-transparent`, `bg-background`, `bg-muted`, or the same token/fill as the page or panel.
@@ -181,7 +183,10 @@ Before finishing:
 - Major surfaces separate from the canvas through tone, not only border.
 - Inputs, search/filter controls, and header/nav chrome read clearly against the page background in both light and dark modes.
 - Editable controls use near-white/lightest-surface backgrounds in light mode and near-black backgrounds in dark mode.
+- Normal inputs, textareas, search fields, and selects all share the same contrast rule; selects cannot be the only controls with proper surface contrast.
 - Editable controls do not use transparent, muted, background, or same-fill treatments.
+- Summary/inspector/live-summary panels use clear near-white or light-tinted contrast surfaces when they are unavoidable.
+- If a header/topbar exists, it uses a tokenized translucent surface with `backdrop-blur-md` and enough contrast.
 - If no selected domain skill overrides radius language, controls and key UI surfaces read clearly as a rounded modern system.
 - Typography feels intentional and distinctive rather than default.
 - If a sidebar is required, it uses a darker primary-derived tone rather than a pale generic surface.

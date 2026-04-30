@@ -37,8 +37,9 @@ Tailwind utilities are not the design ceiling. Use custom CSS classes when neede
 - If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
 - White or near-white surface on white or near-white canvas with only a faint border fails.
 - Editable controls must clearly separate from the surrounding page or panel.
-- In light mode, inputs, selects, textareas, search bars, date fields, and similar controls must use near-white or very light tinted backgrounds.
+- In light mode, every editable control must use near-white or very light tinted backgrounds: normal text inputs, selects, textareas, search bars, date fields, comboboxes, and command controls.
 - In dark mode, those same controls must use near-black backgrounds.
+- Do not only style selects correctly while leaving regular inputs, textareas, or search fields page-colored.
 - Editable controls must not use `bg-transparent`, `bg-background`, `bg-muted`, or the same fill as the page/panel.
 - `--input` must be visibly lighter than `--background` in light mode and visibly darker than the canvas in dark mode.
 - Search bars, filter inputs, and command-row controls must be among the clearest control surfaces on the screen.
@@ -82,7 +83,7 @@ Prefer:
 
 If a sidebar is required, keep it quiet and secondary, but never cramped. Never pair it with a card-heavy workspace.
 Navigation chrome should be tonally distinct from the main canvas. Same-white navigation and content surfaces fail.
-Header/topbar surfaces should usually use a near-white or very light tinted treatment in light mode, and near-black in dark mode, so the chrome reads clearly without becoming a heavy slab.
+Header/topbar surfaces should usually use a translucent near-white or very light tinted treatment in light mode, and near-black in dark mode, with `backdrop-blur-md` and roughly `70-80%` opacity so the chrome reads clearly without becoming a heavy slab.
 If `public/brand/logos/` contains a real logo, header chrome should use it instead of a generated placeholder logo.
 If a sidebar is required by the domain skill, prefer a much darker primary-derived tone for the sidebar background or active navigation field so the chrome feels intentional and anchored.
 Required sidebars must have enough width, row height, padding, and overflow handling for readable labels, descriptions, badges, icons, and active states. Clip only secondary descriptions, not primary labels or action/status affordances.
@@ -158,6 +159,7 @@ Avoid:
 - Prefer no shadow plus a clear tonal step and soft border.
 - Use crisp contact-edge depth only for selected rows, floating controls, popovers, sheets, dialogs, or one focal surface.
 - If a card is truly unavoidable, give it intentional tonal contrast from the canvas. Same-white cards with faint borders fail.
+- Unavoidable summary panels, live summary cards, inspectors, notices, and repeated item containers should use a clear near-white or very light tinted background in light mode and near-black in dark mode. Same-fill panels on a tinted page fail.
 - Avoid heavy drop shadows, broad blur, glow, glassmorphism, and decorative gradients.
 - Avoid lift-style shadows. Depth should read as edge contact, not floating.
 - Soft shadow means soft-edged, not ultra-faint. It may still be a clearly visible gray when that improves separation.
@@ -197,7 +199,10 @@ Reject and revise if:
 - same-white blending makes major surfaces merge together
 - inputs, search/filter controls, or header/nav chrome do not read clearly against the page background
 - editable controls are not near-white/lightest-surface in light mode or near-black in dark mode
+- selects are contrasted but normal text inputs, textareas, or search fields remain page-colored
 - editable controls use transparent, muted, background, or same-fill treatments that hide their control boundary
+- summary/inspector/live-summary panels blend into the page instead of using a clear contrast surface
+- an existing header/topbar lacks a translucent `backdrop-blur-md` treatment or blends into the page
 - inner row/table/card content is tight or over-columned instead of airy
 - a surfaced table is flat because it lacks `shadow-xs` or comfortable header/body padding
 - spacing feels cramped
