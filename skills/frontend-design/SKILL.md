@@ -17,18 +17,33 @@ This is not a domain workflow skill. It does not decide the app category or requ
 
 ## Required References
 
-Before designing or implementing UI, read both reference files for the full design context. In the sandbox, the files are installed at:
+Before designing or implementing UI, read both reference files for the full design context. Skipping either reference is a skill violation. In the sandbox, the files are installed at:
 
 - `.agents/skills/frontend-design/references/visual-style-references.md` for the visual quality bar, composition principles, card avoidance, spacing, typography, colors, shadows, and common failure modes.
 - `.agents/skills/frontend-design/references/shadcn-setup-and-theming.md` for the implementation order, CSS variable setup, Tailwind/shadcn theming, radius/elevation tokens, and component treatment.
 
 Do not rely only on this `SKILL.md` when making visual decisions. The reference files contain the detailed rules.
 
+## Required Domain And Brand Read
+
+Before any visual planning:
+
+1. Read the active task and domain context.
+2. Read `.tasks/domain.md` when it exists.
+3. Extract and summarize the available brand colors, logo notes, domain tone, and product constraints.
+4. Map brand colors to theme roles before choosing UI colors:
+   - primary: main brand/accent color for primary action, active navigation, selected state, and focus.
+   - secondary/accent: supporting brand color only when it helps hierarchy.
+   - background/surface/border/muted/status: derived compatible tints, not raw brand floods.
+
+If `domain.md` provides brand colors, ignoring them or defaulting to generic purple/blue is a failure.
+
 ## Role Of This Skill
 
 - Preserve the app's required workflow and layout from the task, domain context, or selected domain skill.
 - Use brand colors when provided, but build a full supporting palette from color theory instead of applying brand colors everywhere.
 - Prefer modern, minimal, clean, airy interfaces with strong product specificity.
+- Bias strongly toward airy layouts with generous gaps, gutters, and breathing room. Too much spacing is acceptable; cramped spacing is a failure.
 - Avoid generic AI/SaaS defaults, especially purple/blue bias, card grids, bootstrap-like panels, and enterprise admin clutter.
 - Use shadcn/ui as the component foundation, not as the visual ceiling.
 
@@ -42,6 +57,18 @@ Before building a new UI or major screen, produce a short internal design pass:
 
 Iterate on those three steps until the design is specific and coherent. Only then start implementation.
 
+## Design Compliance Gate
+
+Before coding, pass this gate. If any answer is weak, revise the design pass first.
+
+- Brand: Did I read and summarize `.tasks/domain.md` brand colors when present, and map them into theme roles?
+- References: Did I read both frontend-design references from `.agents/skills/frontend-design/references/`?
+- Theme: Do I know the exact CSS variables and Tailwind tokens I will update before component work?
+- Surface hierarchy: Does the screen have clear page, canvas, and focal layers without many cards?
+- Cards: Can each planned card be justified as repeated separation, selected/detail framing, dialog/popover containment, or a concise highlighted state?
+- Shadows: Are shadows limited to contact-edge tokens and not Tailwind `shadow-md`, `shadow-lg`, broad blur, glow, or halo effects?
+- Domain fit: Does the UI feel specific to this domain and task, not a generic admin template with renamed labels?
+
 ## Implementation Order
 
 1. Read the domain/task and any selected domain skill.
@@ -54,6 +81,8 @@ Iterate on those three steps until the design is specific and coherent. Only the
 5. Build the UI using those tokens instead of hardcoding one-off colors.
 6. Verify all buttons, links, routes, dialogs, menus, inputs, and localStorage state actually work.
 
+After token setup, verify the exact variables exist in the actual files before building screen details. Do not assume shadcn defaults are acceptable.
+
 ## Default Design Direction
 
 - Light mode first unless the product, brand, or user explicitly calls for dark mode.
@@ -62,12 +91,17 @@ Iterate on those three steps until the design is specific and coherent. Only the
 - Use one or two accents purposefully for active states, primary actions, selected records, and important inline signals.
 - Choose good UI fonts with personality and readability. Do not use typewriter/blog fonts for app UI.
 - Use generous spacing and fewer visible modules. Empty space is a design material, not unused capacity.
+- When choosing between compact and spacious, choose spacious. Prefer noticeably large gaps between major groups, controls, records, and sections.
 - Prefer inline sections, bands, rows, dividers, typography, and tonal grouping over boxes around everything.
 
 ## Cards Rule
 
 Cards are an exception, not the default layout primitive.
 
+- Never use top-level cards as the primary page layout. The main screen should not be a grid or stack of large rounded panels.
+- Top-level regions must be open layout, tonal bands, rows, dividers, workspace sections, or authored surfaces directly on the app canvas.
+- Do not import or use a `Card` component by default.
+- If importing `Card`, add an inline justification near the import or first usage explaining why a card is needed for that specific element.
 - Do not turn every section into a floating rounded rectangle.
 - Do not build dashboards from repeated KPI cards, helper cards, note cards, and summary cards.
 - Inline content into the page body whenever spacing, typography, dividers, or a tinted band can provide enough structure.
@@ -106,3 +140,15 @@ If a selected skill's design suggestion would make the UI ugly, dated, over-card
 - Fake charts, fake metrics, and filler modules.
 - Oversized pill everything or inconsistent radius scales.
 - Broken logo images, invalid links, dead buttons, inert menus, and placeholder routes.
+
+## Pre-Completion Anti-Card Audit
+
+Before finishing UI work, inspect the implementation and revise if needed:
+
+- Search for `Card`, `card`, `shadow-md`, `shadow-lg`, `shadow-xl`, and repeated `rounded-* border bg-card` patterns.
+- Reject top-level cards. Convert large page-level panels into open sections, tonal bands, rows, dividers, workspace areas, or a single authored focal surface.
+- Remove cards that can become open sections, rows, dividers, tonal bands, or inline groups.
+- Keep only cards with a clear purpose: repeated item separation, selected/detail framing, popover/dialog/sheet containment, concise notice, or true emphasis.
+- Replace heavy Tailwind shadows with contact-edge token classes or explicit contact-edge box shadows.
+- Confirm brand-derived `primary`, `secondary/accent`, `background`, `surface/card`, `muted`, `border`, `input`, `ring`, `radius`, and status variables are configured in CSS/Tailwind.
+- Confirm the final screen would not look identical if the domain name and labels were swapped.

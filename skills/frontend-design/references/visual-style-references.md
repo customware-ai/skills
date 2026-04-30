@@ -8,6 +8,10 @@ The UI should feel modern, minimal, airy, and intentionally designed. It should 
 
 The target is working app software, not a marketing page. Keep real navigation, controls, records, forms, tables, status, actions, and state visible. Make the app feel premium through composition, hierarchy, restraint, and domain specificity.
 
+When domain context provides brand colors, use them as the starting point for the visual system. Do not ignore them and fall back to default purple/blue or generic shadcn colors.
+
+Airiness is mandatory. If spacing feels slightly too generous, that is acceptable. If spacing feels cramped, dense, or compressed, revise.
+
 ## Core Principles
 
 ### Surface Hierarchy
@@ -27,6 +31,7 @@ Separate these through subtle tone, spacing, radius, and selective elevation. Do
 - Avoid default blue/purple bias.
 - Status colors should be soft, readable, and systemized.
 - Do not wrap large surfaces in loud colored borders.
+- Read and summarize `.tasks/domain.md` brand colors when present before choosing the palette.
 
 ### Typography
 
@@ -65,6 +70,9 @@ Navigation should anchor the product without overpowering it.
 Use space as a design material.
 
 - Leave large gutters and quiet areas.
+- Use generous gaps between major groups, rows, controls, and sections.
+- Prefer fewer visible modules with more breathing room over more modules packed tightly.
+- When unsure, increase spacing rather than decrease it.
 - Show fewer modules with stronger hierarchy.
 - Do not fill every grid cell because it is available.
 - Move secondary content behind navigation, drawers, tabs, drill-down pages, or scroll.
@@ -72,6 +80,8 @@ Use space as a design material.
 ## Cards Rule
 
 Cards are an anti-pattern when used as the default answer.
+
+Top-level cards are not allowed. Do not compose the main page from large rounded panels. Use open page structure, tonal bands, authored workspace areas, rows, dividers, and one focal working surface instead.
 
 Prefer:
 
@@ -101,6 +111,8 @@ Avoid:
 - full-page layouts made from rounded rectangles
 - a main screen that resolves as two or three large neighboring cards
 
+Before completion, audit the UI for excessive cards. If top-level cards exist or cards dominate the first screen, revise toward open sections, rows, dividers, tonal bands, and one authored working surface.
+
 ## Layout Direction
 
 Business and operational apps still need strong design. Do not let the app become a CRUD template because it has a sidebar, data, approvals, pricing, or workflows.
@@ -124,7 +136,7 @@ Avoid:
 
 ## Domain Skill Compatibility
 
-If a selected domain skill defines structure, preserve it. Do not duplicate domain-skill-specific layout rules here. This reference should not need edits when CPQ, CRM, trades, scheduling, healthcare, or any future domain skill changes its own UI pattern.
+If a selected domain skill defines structure, preserve it. Do not duplicate domain-skill-specific layout rules here. This reference should not need edits when any current or future domain skill changes its own UI pattern.
 
 Improve the visual treatment:
 
@@ -166,7 +178,9 @@ Reject and revise the design if:
 - it looks like a starter admin template
 - the main screen is mostly cards
 - the chosen colors feel generic or AI-default
+- the domain brand colors were available but not reflected in primary/active/focus treatment
 - the first screen tries to show everything
 - the app has no strong product-specific working surface
 - spacing is cramped or all modules have equal weight
 - the UI would still look the same if the domain name changed
+- it uses heavy shadows, glow effects, or repeated Tailwind shadow utilities instead of crisp contact-edge depth

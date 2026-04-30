@@ -6,6 +6,8 @@ Use this reference when implementing a shadcn/ui + Tailwind app or updating an e
 
 Theme before building detailed UI. shadcn/ui and Tailwind are accelerators, not fidelity limits. If the component defaults do not match the desired product direction, configure CSS variables, Tailwind tokens, and targeted component styles instead of accepting drift.
 
+Skipping token setup before screen construction is a design failure.
+
 ## Implementation Order
 
 1. Inspect the generated or existing project structure before editing:
@@ -20,11 +22,13 @@ Theme before building detailed UI. shadcn/ui and Tailwind are accelerators, not 
 5. Add only the shadcn components needed by the actual UI.
 6. Build screens using the theme tokens rather than hardcoded visual decisions.
 
+After step 4, explicitly verify the intended variables exist in the real CSS/config files before continuing.
+
 ## Theme Variables
 
 Configure both light and dark variables when the project supports dark mode. Light mode is the default unless explicitly requested otherwise.
 
-At minimum, set or verify:
+At minimum, set or verify these exact roles:
 
 - `--background`
 - `--foreground`
@@ -50,6 +54,8 @@ At minimum, set or verify:
 
 Map tokens by role, not by copying brand colors into every variable.
 
+Do not proceed to component layout until these roles are configured in the real theme layer. If the project uses `tailwind.config.*`, confirm it consumes the variables or exposes equivalent theme tokens.
+
 ## Light Mode Surface System
 
 Light mode must have visible surface hierarchy:
@@ -72,6 +78,7 @@ Do not use the same white for body, app frame, cards, popovers, inputs, and cont
 - Keep `--input`, `--muted`, `--border`, and neutral surfaces readable and restrained.
 - Keep destructive actions red, not brand-colored.
 - Avoid defaulting to purple or blue unless the brand/domain supports it.
+- If `.tasks/domain.md` lists brand colors, read and summarize them before choosing tokens.
 
 ## Tailwind And Component Overrides
 
@@ -88,6 +95,8 @@ Use theme variables for common visual roles. Use Tailwind utilities for app-spec
 Do not fight shadcn defaults one component at a time when a variable would solve the issue globally. Do not overgeneralize one-off details into global variables.
 
 If Tailwind utilities are not enough, add small custom CSS classes based on the chosen design tokens.
+
+Default spacing should be generous. Prefer larger section padding, wider gutters, taller row rhythm, and more space between control groups. A slightly over-spaced layout is acceptable; a cramped layout is not.
 
 ## Radius System
 
@@ -111,12 +120,16 @@ Prefer crisp contact-edge elevation over classic drop shadows:
 
 Use elevation selectively on active nav, selected rows, popovers, compact floating controls, important notices, and one focal surface when needed.
 
-Avoid `shadow-md`, `shadow-lg`, broad blur halos, muddy gray clouds, colored glows, and heavy card shadows.
+Avoid `shadow-md`, `shadow-lg`, `shadow-xl`, broad blur halos, muddy gray clouds, colored glows, and heavy card shadows.
 
 ## Cards And Panels
 
 Cards are not the default unit of layout.
 
+- Do not use top-level cards. The app's main layout must not be large sibling `Card` panels.
+- Top-level structure should use open sections, tonal bands, rows, dividers, workspace areas, and at most one authored focal surface.
+- Do not import `Card` by default.
+- If importing `Card`, justify the specific usage inline. Acceptable reasons are repeated item separation, selected/detail framing, dialog/popover containment, concise notice, or true emphasis.
 - Use open sections, rows, dividers, bands, and typography first.
 - Use a card only for a highlighted state, repeated item that truly needs separation, popover/dialog/detail framing, or a concise notice.
 - Do not build card grids by default.
@@ -138,10 +151,14 @@ Adjust the list to the workflow. Do not install components just because they are
 Before considering UI work complete:
 
 - Theme variables are configured before component-specific styling.
+- The exact theme variables exist in the real CSS/Tailwind files.
+- Domain brand colors were read and mapped when present.
 - Light mode does not collapse into one flat white surface.
+- Major groups have generous gaps and the screen does not feel compressed.
 - Primary and selected states use the intended accent.
 - Inputs look editable.
 - Cards are scarce and justified.
 - Shadows are tight and contact-like.
+- No unjustified `Card` imports or heavy Tailwind shadows remain.
 - All buttons, links, menus, dialogs, tabs, and forms work.
 - LocalStorage-backed state persists after refresh when the app is frontend-only.
