@@ -43,13 +43,15 @@ Before visual planning or implementation, read both files. Skipping either file 
 - **No top-level cards**: Never compose the main page from large sibling cards, a stack/grid of rounded panels, or a large framed hero/detail container. Top-level structure must be open sections, tonal bands, rows, dividers, workspace areas, or one open focal working zone.
 - **No sidebars by default**: Use a sidebar only when the user explicitly asks for one or a selected domain skill explicitly requires one. Do not add a sidebar because the app is operational, business, admin-like, multi-step, or has multiple sections.
 - **Airy spacing**: Use generous gaps, gutters, row rhythm, and section spacing. Slightly too much spacing is acceptable; cramped, dense, or compressed UI is failure.
+- **Airy inner density**: Airiness must continue inside rows, tables, lists, cards, and compound components. Do not pack too many columns into one row when a cleaner stacked or richer row layout would breathe better. Inner content should use generous gaps between sub-elements, metadata, actions, and labels.
 - **Rounded by default**: If the selected domain skill does not explicitly require a sharper or specific radius language, prefer a clearly rounded modern system. Avoid timid 4px/6px/8px admin radii by default. Controls, chips, tabs, and key surfaces should usually feel distinctly rounded or pill-like.
 - **One dominant working surface**: The first screen should focus on one clear operational object or working section. Do not try to show the whole product at once.
 - **No major-region framed surfaces**: Do not turn the main working area, hero, inspector, or detail lane into a big bordered rounded panel. Prefer open layout, split rows, tonal bands, dividers, or a drawer/sheet for secondary detail.
 - **Token-first shadcn**: Configure `app.css`/global CSS variables and Tailwind theme values before component work. Do not accept default shadcn colors as the design.
 - **Strong soft contrast**: If a surface exists, it must separate from the canvas through tone first, border second, shadow last. Same-white or near-white surfaces with faint borders fail.
 - **Interactive surface contrast**: Inputs, selects, textareas, tables, and header/nav chrome must read as distinct working surfaces. In light mode they should usually sit on a near-white or very light brand-tinted surface; in dark mode they should usually sit on a near-black surface. Search fields, filter controls, and command-bar inputs should usually be even clearer than surrounding passive surfaces. Do not let controls or header chrome disappear into the page background.
-- **Contact depth only**: Avoid `shadow-md` and `shadow-lg` for normal UI, and avoid broad blur, glow, halo, glassmorphism, and heavy card shadows. Prefer `shadow-xs` or `shadow-sm` only when needed. Reserve `shadow-xl` for dialogs/popovers only. Use soft, tight, contact-edge depth only when needed. Soft means no hard spread edge, not barely visible; the shadow can still be a clear gray if needed for contrast. Depth should read as edge contact, not lift.
+- **Sidebar tone when required**: If a selected domain skill requires a sidebar, prefer a much darker shade derived from the primary color for the sidebar background or key sidebar surfaces. The sidebar should feel intentional and anchored, not like a pale afterthought.
+- **Contact depth only**: Avoid `shadow-sm`, `shadow-md`, and `shadow-lg` as defaults for normal layout surfaces. Prefer `shadow-2xs` for buttons and other small interactive elements, `shadow-xs` for cards/tables/similar contained surfaces, `shadow-xl` for popovers and banners, and `shadow-2xl` for dialogs. Use soft, tight, contact-edge depth only when needed. Soft means no hard spread edge, not barely visible; the shadow can still be a clear gray if needed for contrast. Depth should read as edge contact, not lift.
 - **Domain specificity**: The UI should not look unchanged if the domain name and labels are swapped.
 
 ## Design Compliance Gate
@@ -66,9 +68,11 @@ Do not code until all answers are acceptable.
 - Does the first screen focus on one dominant working surface instead of title + filters + KPI strip + card grid + table?
 - Am I avoiding large framed hero/detail/inspector surfaces?
 - Is the layout airy with generous spacing, not dense?
+- Is the inner density airy too: rows, tables, cards, and metadata blocks are not cramped or over-columned?
 - If no domain skill overrides radius language, does the UI lean clearly rounded rather than vague enterprise 4/6/8 radii?
 - Do page background, canvas, nav chrome, and any focal surface separate clearly at thumbnail scale?
 - Do inputs, search/filter controls, tables, and header/nav chrome have enough tonal separation from the page background?
+- If a sidebar is required, is it using a darker primary-derived tone instead of a pale generic surface?
 - Are shadows limited to contact-edge depth?
 - Does the design feel specific to this domain and task?
 
@@ -76,6 +80,7 @@ Do not code until all answers are acceptable.
 
 - Prefer topbar, tabs, segmented controls, breadcrumbs, command rows, stepped flows, drawers, sheets, dialogs, or detail routes over sidebars.
 - Before adding any card-like wrapper, try open spacing, typography, dividers, rows, tonal bands, tables, drawers, sheets, dialogs, or detail routes.
+- In tables and row-based views, prefer fewer columns, richer rows, taller row rhythm, and clearer vertical stacking when that makes the UI feel more airy and readable.
 - Detail views should prefer inline split layout, selected rows, dividers, tonal sections, drawers, or sheets before any framed panel.
 - If a `Card` component is imported or a card-like wrapper remains, add a nearby inline justification explaining why it is unavoidable under the allowed cases.
 - Use good readable UI fonts. Avoid typewriter/blog fonts unless the domain explicitly requires that character.
@@ -98,8 +103,10 @@ Reject and revise if:
 - Surface separation depends mostly on borders instead of tone.
 - Same-white or near-white panelization makes major surfaces blend together.
 - Inputs, search/filter controls, data rows, or header/nav chrome blend into the page background.
+- Row/table content is cramped, over-columned, or too tight inside the first column and metadata blocks.
 - A usable logo path exists in `.tasks/domain.md` but the header still uses a placeholder logo or no logo without reason.
 - Brand colors from `.tasks/domain.md` are not reflected in primary/active/focus treatment.
+- A required sidebar uses a weak pale surface instead of a darker primary-derived tone.
 - The UI falls back to vague enterprise middle-radius controls even though no domain skill asked for that.
 - Theme variables were not configured before component styling.
 - The screen feels cramped or all modules have equal weight.

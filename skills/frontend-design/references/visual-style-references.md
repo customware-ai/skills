@@ -39,6 +39,8 @@ Airiness is mandatory.
 
 - Use large gutters and clear gaps between groups, rows, controls, and sections.
 - Prefer fewer visible modules with more breathing room.
+- Carry that breathing room into inner content too: table rows, list rows, cards, metadata stacks, inline actions, and badges should not collapse into tight clusters.
+- If a row starts feeling cramped, reduce the number of same-line columns and let supporting information stack more naturally.
 - When unsure, increase spacing.
 - Cramped, dense, compressed layouts must be revised.
 
@@ -67,6 +69,7 @@ If a sidebar is required, keep it quiet, narrow, and secondary. Never pair it wi
 Navigation chrome should be tonally distinct from the main canvas. Same-white navigation and content surfaces fail.
 Header/topbar surfaces should usually use a near-white or very light tinted treatment in light mode, and near-black in dark mode, so the chrome reads clearly without becoming a heavy slab.
 If a real brand logo exists, header chrome should use it instead of a generated placeholder logo.
+If a sidebar is required by the domain skill, prefer a much darker primary-derived tone for the sidebar background or active navigation field so the chrome feels intentional and anchored.
 
 ## Radius
 
@@ -107,6 +110,7 @@ Good defaults:
 - open context/header zone plus one main working section
 - one dominant operational object
 - table/list rows with generous rhythm
+- rows that group related metadata with breathing room instead of forcing every fact into its own narrow column
 - selected row, inline lane, or drawer for focus
 - sparse command bar for filters/actions
 - tinted band for focus instead of another panel
@@ -130,7 +134,7 @@ Avoid:
 - Avoid heavy drop shadows, broad blur, glow, glassmorphism, and decorative gradients.
 - Avoid lift-style shadows. Depth should read as edge contact, not floating.
 - Soft shadow means soft-edged, not ultra-faint. It may still be a clearly visible gray when that improves separation.
-- Prefer `shadow-xs` and `shadow-sm` only when needed. Reserve `shadow-xl` for dialogs/popovers.
+- Prefer `shadow-2xs` for buttons and compact interactive controls, `shadow-xs` for cards/tables/similar contained surfaces, `shadow-xl` for popovers and banners, and `shadow-2xl` for dialogs.
 
 ## Hard Avoids
 
@@ -149,6 +153,7 @@ Reject and revise if:
 - surface separation depends mostly on borders
 - same-white blending makes major surfaces merge together
 - inputs, search/filter controls, or header/nav chrome do not read clearly against the page background
+- inner row/table/card content is tight or over-columned instead of airy
 - spacing feels cramped
 - all modules have equal visual weight
 - the UI would still look the same if the domain name changed

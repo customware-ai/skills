@@ -47,6 +47,7 @@ If the selected domain skill does not define a sharper or specific radius system
 - Page background: tinted pale gray, stone, cream, porcelain, glacier, or brand-derived tint.
 - App canvas: lighter off-white/porcelain, not raw white everywhere.
 - Navigation chrome: quiet near-white or very light tinted tone, not saturated slab.
+- Required sidebars: much darker primary-derived tone or a darker companion tone from the same palette, not a pale washed-out sidebar.
 - Focal surface: clear tonal difference, not a repeated large card.
 - Inputs: near-white and clearly editable.
 - Borders: soft but visible and selective.
@@ -82,6 +83,7 @@ Use Tailwind for:
 - responsive behavior
 
 Prefer larger section padding, wider gutters, taller row rhythm, and more space between control groups. Slightly over-spaced is acceptable; cramped is not.
+Carry that spacing into inner content as well. Table rows, list rows, cards, badges, metadata groups, and inline actions should breathe; do not solve a data-dense view by cramming too many narrow columns onto one line.
 If no selected domain skill overrides radius language, prefer rounded/pill-like controls and avoid defaulting to 4px/6px/8px-style admin radii.
 
 ## Cards
@@ -116,9 +118,11 @@ Use contact-edge depth only:
 - Contact 2: `0 0 0 1px rgba(16,24,40,0.08), 0 1px 2px rgba(16,24,40,0.10)`.
 - Contact 3: `0 0 0 1px rgba(16,24,40,0.08), 0 2px 3px rgba(16,24,40,0.10)` for floating UI only.
 
-Prefer `shadow-xs` and `shadow-sm` only when needed.
-Reserve `shadow-xl` for dialogs/popovers only.
-Avoid `shadow-md`, `shadow-lg`, blur halos, muddy gray clouds, colored glows, and heavy card shadows.
+Prefer `shadow-2xs` for buttons and compact interactive controls.
+Prefer `shadow-xs` for cards, tables, and similar contained surfaces.
+Reserve `shadow-xl` for popovers and banners.
+Reserve `shadow-2xl` for dialogs.
+Avoid `shadow-sm`, `shadow-md`, `shadow-lg`, blur halos, muddy gray clouds, colored glows, and heavy card shadows as broad defaults.
 Depth should read as soft, tight edge contact, not lift.
 Soft means the edge is diffused and not harsh. It does not mean the shadow must be extremely faint; a decently gray tight shadow is acceptable when needed for contrast.
 
@@ -139,13 +143,18 @@ Before finishing:
 - Theme variables are configured before component styling.
 - Domain brand colors are mapped when present.
 - Major groups have generous gaps.
+- Inner row/table/card content has generous gaps too and is not cramped by too many same-line columns.
 - No top-level cards exist.
 - Any remaining card is unavoidable and justified.
 - No large hero/detail/inspector surface still reads like a card.
 - Major surfaces separate from the canvas through tone, not only border.
 - Inputs, search/filter controls, and header/nav chrome read clearly against the page background in both light and dark modes.
 - If no selected domain skill overrides radius language, controls and key UI surfaces read clearly as a rounded modern system.
+- If a sidebar is required, it uses a darker primary-derived tone rather than a pale generic surface.
 - No sidebar exists unless explicitly requested or required by selected domain skill.
 - No heavy Tailwind shadows remain.
-- Any use of `shadow-xl` is limited to dialogs/popovers.
+- `shadow-2xs` is used for buttons/small interactive items when shadow is needed.
+- `shadow-xs` is used for cards/tables/similar contained surfaces when shadow is needed.
+- Any use of `shadow-xl` is limited to popovers and banners.
+- Any use of `shadow-2xl` is limited to dialogs.
 - Buttons, links, menus, dialogs, tabs, forms, routes, and localStorage-backed state work.
