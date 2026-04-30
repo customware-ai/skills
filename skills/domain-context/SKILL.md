@@ -1,7 +1,7 @@
 ---
 name: domain-context
 license: MIT
-compatibility: Works with any AI coding assistant that supports the Agent Skills specification (e.g. Claude Code, Cursor, Windsurf, Copilot, and others). No system packages or network access required.
+compatibility: Works with any AI coding assistant that supports the Agent Skills specification. No system packages or network access required.
 metadata:
   author: ryan-price
   version: "1.5"
@@ -15,7 +15,7 @@ description: >
   domain knowledge", "understand our terminology", "grow AI context over time", "domain
   model", "business rules documentation", or whenever a user says the AI doesn't understand
   their business-specific language or data model. Also use at the start of any session where
-  a DOMAIN.md file exists in the project — always read it before doing any work.
+  a .tasks/domain.md file exists in the project — always read it before doing any work.
 ---
 
 # Progressive Domain Crystallization (PDC) Skill
@@ -26,7 +26,7 @@ This skill enables any AI assistant to build and use a **living domain knowledge
 application — accumulated incrementally across sessions through a human-AI collaborative protocol.
 
 The AI never "knows" the domain by default. But with this skill, it can:
-- Read a structured `DOMAIN.md` file at the start of every session
+- Read a structured `.tasks/domain.md` file at the start of every session
 - Use internal terminology and entity names exactly as the business defines them
 - Flag gaps in domain understanding inline during work
 - Propose structured additions to the domain file for human review
@@ -39,16 +39,16 @@ The AI never "knows" the domain by default. But with this skill, it can:
 
 ### At Session Start
 
-1. **Look for DOMAIN.md** in the project root (or `docs/domain/DOMAIN.md`)
+1. **Look for .tasks/domain.md** in the project root
 2. If found → check the file structure:
    - **Single file** (under ~200 lines): Read it completely before doing any work.
-   - **Index + detail files** (split structure): Read the root DOMAIN.md index (Tier 1 — core context). Then determine which Tier 2 detail files are relevant to the current task and load only those. See § Progressive Disclosure.
-3. If not found → offer to initialize one using the template at `assets/templates/DOMAIN.md`
+   - **Index + detail files** (split structure): Read the root .tasks/domain.md index (Tier 1 — core context). Then determine which Tier 2 detail files are relevant to the current task and load only those. See § Progressive Disclosure.
+3. If not found → offer to initialize one using the template at `.tasks/domain.md`
 4. Confirm to the user: "I've loaded the domain context for [Project Name]. I'm familiar with [N] entities and [N] flows." If in split mode, also note: "I've loaded the core context. I'll pull in detail files as needed for what we're working on."
 
 ### During Work
 
-- Use entity names, terminology, and abbreviations **exactly as defined** in DOMAIN.md
+- Use entity names, terminology, and abbreviations **exactly as defined** in .tasks/domain.md
 - When encountering an undefined term or entity, mark it inline: `[UNKNOWN: <term>]`
 - When a relationship between entities is unclear, mark it: `[RELATIONSHIP UNCLEAR: <entity-a> → <entity-b>]`
 - When a business rule seems to be implied but isn't documented: `[RULE INFERRED: <description>]`
@@ -64,7 +64,7 @@ Format it as:
 ```markdown
 ## 📋 Proposed Domain Updates
 
-> Review these and copy any confirmed items into your DOMAIN.md
+> Review these and copy any confirmed items into your .tasks/domain.md
 
 ### New Entities Discovered
 - **[EntityName]**: [Definition as understood from this session]
@@ -83,17 +83,17 @@ Format it as:
 ### Open Questions
 - [ ] [Question about something ambiguous or unresolved]
 
-### Suggested DOMAIN.md Sections to Add/Update
+### Suggested .tasks/domain.md Sections to Add/Update
 - [ ] [specific section or entry to update]
 ```
 
-The human reviews this, edits as needed, and manually updates DOMAIN.md. This keeps the human as domain authority.
+The human reviews this, edits as needed, and manually updates .tasks/domain.md. This keeps the human as domain authority.
 
 ---
 
 ## Progressive Disclosure
 
-Domain knowledge files grow over time. A single DOMAIN.md that works well at 80 lines becomes unwieldy at 400. Progressive disclosure keeps the AI focused on what's relevant to the current session without losing access to the full knowledge base.
+Domain knowledge files grow over time. A single .tasks/domain.md that works well at 80 lines becomes unwieldy at 400. Progressive disclosure keeps the AI focused on what's relevant to the current session without losing access to the full knowledge base.
 
 ### Three Tiers of Domain Knowledge
 
@@ -105,7 +105,7 @@ Domain knowledge files grow over time. A single DOMAIN.md that works well at 80 
 
 ### What Goes in Each Tier
 
-**Tier 1 — Core (root DOMAIN.md, always loaded):**
+**Tier 1 — Core (root .tasks/domain.md, always loaded):**
 - `## Project Overview` — what it is, who uses it, business goal (5 lines)
 - `## Domain Boundaries` — what's in scope, what's supporting, what's explicitly excluded. Prevents overbuilding.
 - `## Terminology Glossary` — the shorthand table
@@ -131,9 +131,9 @@ Domain knowledge files grow over time. A single DOMAIN.md that works well at 80 
 
 ### When to Split: The ~200 Line Rule
 
-A single DOMAIN.md works well for early-stage projects. The trigger to split is simple:
+A single .tasks/domain.md works well for early-stage projects. The trigger to split is simple:
 
-**When DOMAIN.md exceeds ~200 lines, propose the split.**
+**When .tasks/domain.md exceeds ~200 lines, propose the split.**
 
 Say to the user: "The domain file is getting substantial — [N] lines with [N] entities and [N] flows. Want me to split it into an index file with detail files? This keeps sessions focused on what's relevant without losing anything."
 
@@ -142,7 +142,7 @@ If the user agrees, restructure into the tiered file layout (see below). If they
 ### How the AI Uses Tiers at Session Start
 
 ```
-1. Read root DOMAIN.md (Tier 1 — always)
+1. Read root .tasks/domain.md (Tier 1 — always)
       ↓
 2. Understand the current task
       ↓
@@ -156,7 +156,7 @@ If the user agrees, restructure into the tiered file layout (see below). If they
 ```
 
 Example: User says "I need to update the PM renewal flow." The AI:
-1. Reads root DOMAIN.md (core context — knows all entity names, all business rules)
+1. Reads root .tasks/domain.md (core context — knows all entity names, all business rules)
 2. Loads `docs/domain/flows/pm-renewal.md` (the relevant flow)
 3. Loads `docs/domain/entities/pm-renewal.md` (the relevant entity)
 4. Does NOT load `docs/domain/flows/lead-distribution.md` or `docs/domain/entities/customer.md` — not relevant to this task.
@@ -168,7 +168,7 @@ When the domain is split across files, the Proposed Domain Updates section shoul
 ```markdown
 ## 📋 Proposed Domain Updates
 
-### Update: `DOMAIN.md` (Tier 1 — core)
+### Update: `.tasks/domain.md` (Tier 1 — core)
 - Add to Business Rules: BR-013 — [rule description]
 
 ### Update: `docs/domain/entities/pm-renewal.md` (Tier 2)
@@ -183,7 +183,7 @@ When the domain is split across files, the Proposed Domain Updates section shoul
 
 ### Versioning
 
-DOMAIN.md includes a version header in its frontmatter. This is the human-readable version — it tells the AI and the team what state the domain knowledge is in.
+.tasks/domain.md includes a version header in its frontmatter. This is the human-readable version — it tells the AI and the team what state the domain knowledge is in.
 
 **Version format:** `MAJOR.MINOR`
 - **MAJOR** increments when the fundamental scope changes (new business process, major entity restructure, domain boundary shift)
@@ -191,7 +191,7 @@ DOMAIN.md includes a version header in its frontmatter. This is the human-readab
 
 **Who increments:** The system auto-increments MINOR on each approved update. MAJOR is incremented manually when the team decides the domain has fundamentally expanded.
 
-**The version header lives in the DOMAIN.md frontmatter:**
+**The version header lives in the .tasks/domain.md frontmatter:**
 
 ```markdown
 > **Version:** 1.5
@@ -209,9 +209,9 @@ DOMAIN.md includes a version header in its frontmatter. This is the human-readab
 
 ---
 
-## DOMAIN.md File Structure
+## .tasks/domain.md File Structure
 
-See `assets/templates/DOMAIN.md` for the full template.
+See `.tasks/domain.md` for the full template.
 
 ### Single-File Mode (under ~200 lines)
 
@@ -239,7 +239,7 @@ In single-file mode, all tiers are in one file. This is fine — the tier labels
 
 ```
 your-project/
-├── DOMAIN.md                          ← Tier 1: Core index (always loaded)
+├── .tasks/domain.md                   ← Tier 1: Core index (always loaded)
 ├── docs/
 │   └── domain/
 │       ├── entities/                  ← Tier 2: One file per major entity
@@ -259,7 +259,7 @@ your-project/
 └── ... (rest of your project)
 ```
 
-The root DOMAIN.md in split mode contains:
+The root .tasks/domain.md in split mode contains:
 - Tier 1 sections in full (Project Overview, Domain Boundaries, Glossary, Entity names table, State Models, Business Rules, User Roles, Stakeholder Map, Open Questions)
 - A `## Detail Files` index pointing to each Tier 2 file with a one-line summary:
 
@@ -281,11 +281,11 @@ The root DOMAIN.md in split mode contains:
 
 ## Initialization Workflow
 
-If no DOMAIN.md exists, the AI should:
+If no .tasks/domain.md exists, the AI should:
 
 1. Ask the user 5 seed questions (see `references/seed-questions.md`)
 2. Use the answers to populate the template
-3. Write a draft DOMAIN.md
+3. Write a draft .tasks/domain.md
 4. Present it for review before saving
 
 The initial file will be well under 200 lines. Start in single-file mode. Split later when it grows.
@@ -297,7 +297,7 @@ The initial file will be well under 200 lines. Start in single-file mode. Split 
 Each session follows this cycle:
 
 ```
-READ DOMAIN.md (+ relevant Tier 2 files if split)
+READ .tasks/domain.md (+ relevant Tier 2 files if split)
       ↓
 DO WORK (flag unknowns inline)
       ↓
@@ -305,7 +305,7 @@ PROPOSE UPDATES (specify target file if split)
       ↓
 HUMAN REVIEWS & APPROVES
       ↓
-HUMAN UPDATES DOMAIN.md (or detail files)
+HUMAN UPDATES .tasks/domain.md (or detail files)
       ↓
 (next session reads updated files)
 ```
@@ -313,8 +313,8 @@ HUMAN UPDATES DOMAIN.md (or detail files)
 ### Growth Lifecycle
 
 ```
-Sessions 1–3:     Single DOMAIN.md, ~60–80 lines      (Tier 1 only)
-Sessions 4–10:    Single DOMAIN.md, ~100–200 lines     (Tier 1 + 2 mixed)
+Sessions 1–3:     Single .tasks/domain.md, ~60–80 lines      (Tier 1 only)
+Sessions 4–10:    Single .tasks/domain.md, ~100–200 lines     (Tier 1 + 2 mixed)
 Sessions 10+:     Split into index + detail files       (Tier 1 / 2 / 3 separated)
 Mature project:   Full three-tier structure with archive
 ```
@@ -324,15 +324,15 @@ When the file crosses ~200 lines, the AI should proactively offer to split:
 > "The domain file is at [N] lines now — it covers [N] entities and [N] flows in detail. Want me to split it into a core index file with separate detail files? Each session would load just the parts relevant to what we're working on, and nothing is lost."
 
 If the user agrees:
-1. Extract Tier 1 content into a slim root DOMAIN.md (~80–120 lines)
+1. Extract Tier 1 content into a slim root .tasks/domain.md (~80–120 lines)
 2. Move each entity's full description into `docs/domain/entities/[name].md`
 3. Move each flow's full description into `docs/domain/flows/[name].md`
 4. Move relationship map and integration points into their own Tier 2 files
 5. Move changelog into `docs/domain/archive/changelog.md`
-6. Add the `## Detail Files` index to the root DOMAIN.md
+6. Add the `## Detail Files` index to the root .tasks/domain.md
 7. Present the new structure for review before saving
 
-Over time, the DOMAIN.md becomes the single source of truth for:
+Over time, the .tasks/domain.md becomes the single source of truth for:
 - New developers onboarding
 - Future AI sessions (any model, any tool)
 - Documentation and specs
@@ -342,8 +342,7 @@ Over time, the DOMAIN.md becomes the single source of truth for:
 
 ## Reference Files
 
-- `assets/templates/DOMAIN.md` — Blank template to initialize a new domain file
+- `.tasks/domain.md` — Blank template to initialize a new domain file
 - `references/seed-questions.md` — Questions to ask when bootstrapping a new domain
 - `references/entity-template.md` — Template for individual entity files (large projects)
 - `references/anti-patterns.md` — Common mistakes to avoid when building domain context
-
