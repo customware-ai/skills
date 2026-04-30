@@ -41,6 +41,7 @@ Set or verify:
 
 Map tokens by role. Do not copy brand colors into every variable.
 If the selected domain skill does not define a sharper or specific radius system, set `--radius` and component radii to a clearly rounded modern default rather than timid enterprise values.
+If no selected domain skill defines a stronger visual system, use the theme tokens to commit to a cohesive aesthetic rather than a neutral default.
 
 ## Light Surface System
 
@@ -85,6 +86,7 @@ Use Tailwind for:
 Prefer larger section padding, wider gutters, taller row rhythm, and more space between control groups. Slightly over-spaced is acceptable; cramped is not.
 Carry that spacing into inner content as well. Table rows, list rows, cards, badges, metadata groups, and inline actions should breathe; do not solve a data-dense view by cramming too many narrow columns onto one line.
 If no selected domain skill overrides radius language, prefer rounded/pill-like controls and avoid defaulting to 4px/6px/8px-style admin radii.
+If no selected domain skill defines the visual language, let the layout become more asymmetrical, expressive, and product-shaped instead of defaulting to safe symmetry.
 
 ## Cards
 
@@ -136,6 +138,13 @@ npx shadcn@latest add button input label select textarea badge separator dialog 
 
 Do not install components because dashboard examples usually include them.
 
+## Typography
+
+- Avoid generic defaults like Arial and Inter.
+- Choose a more beautiful and distinctive font direction.
+- Prefer a characterful display face plus a refined body face when the product can support it.
+- Encode that choice into the actual theme and component styling instead of mentioning it only in planning text.
+
 ## QA
 
 Before finishing:
@@ -150,7 +159,9 @@ Before finishing:
 - Major surfaces separate from the canvas through tone, not only border.
 - Inputs, search/filter controls, and header/nav chrome read clearly against the page background in both light and dark modes.
 - If no selected domain skill overrides radius language, controls and key UI surfaces read clearly as a rounded modern system.
+- Typography feels intentional and distinctive rather than default.
 - If a sidebar is required, it uses a darker primary-derived tone rather than a pale generic surface.
+- If no selected domain skill fit the app, the theme and composition still feel authored rather than like a default admin shell.
 - No sidebar exists unless explicitly requested or required by selected domain skill.
 - No heavy Tailwind shadows remain.
 - `shadow-2xs` is used for buttons/small interactive items when shadow is needed.

@@ -30,6 +30,7 @@ Before visual planning or implementation, read both files. Skipping either file 
    - **Vision**: domain-specific product and visual direction. Reject generic SaaS purple, card-heavy dashboards, and generic admin shells.
    - **First-version features**: working screens, controls, routes, dialogs, and localStorage-backed state.
    - **Design tokens**: primary, secondary/accent, background, canvas, focal contrast treatment, text, border, radius, contact shadow, status colors, typography, generous spacing, and cardless plan.
+   - **Fallback creative direction**: when no selected domain skill defines a stronger visual/product pattern, choose an intentional design direction for color, motion, composition, and background atmosphere rather than falling back to a generic admin shell.
 5. Pass the design compliance gate.
 6. Configure CSS variables and Tailwind/shadcn theme tokens before building screen details.
 7. Build the UI with those tokens.
@@ -38,6 +39,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 ## Non-Negotiables
 
 - **Brand first**: If `.tasks/domain.md` provides brand colors, use them. Map the main brand/accent color to primary actions, active navigation, selected state, focus, and links. Derive neutral surfaces, borders, muted text, and statuses from compatible tints. Do not default to generic purple/blue.
+- **Creative fallback when no vertical skill fits**: If the app does not fit a selected business/domain skill like CPQ, CRM, trades, or similar, deliberately push the visual direction further. Commit to a cohesive aesthetic, use CSS variables consistently, prefer dominant colors with sharp accents over timid evenly distributed palettes, use motion for high-impact moments, favor unexpected composition, and build atmosphere through backgrounds and visual details instead of defaulting to a plain shell.
 - **Use the real logo**: If `.tasks/domain.md` provides a usable logo path, use the correct actual brand logo in the header or primary app chrome instead of inventing a placeholder logo.
 - **Cardless by default**: Aim for zero cards. If the UI works without a card, the card is not allowed. A bordered rounded surface occupying a major region of the page is a card even if `Card` is not imported. Cards are only allowed for dialog/popover/sheet containment, concise notice, or truly repeated items when rows, dividers, or tonal separation fail.
 - **No top-level cards**: Never compose the main page from large sibling cards, a stack/grid of rounded panels, or a large framed hero/detail container. Top-level structure must be open sections, tonal bands, rows, dividers, workspace areas, or one open focal working zone.
@@ -45,6 +47,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 - **Airy spacing**: Use generous gaps, gutters, row rhythm, and section spacing. Slightly too much spacing is acceptable; cramped, dense, or compressed UI is failure.
 - **Airy inner density**: Airiness must continue inside rows, tables, lists, cards, and compound components. Do not pack too many columns into one row when a cleaner stacked or richer row layout would breathe better. Inner content should use generous gaps between sub-elements, metadata, actions, and labels.
 - **Rounded by default**: If the selected domain skill does not explicitly require a sharper or specific radius language, prefer a clearly rounded modern system. Avoid timid 4px/6px/8px admin radii by default. Controls, chips, tabs, and key surfaces should usually feel distinctly rounded or pill-like.
+- **Typography with character**: Choose fonts that are beautiful, distinctive, and interesting. Avoid generic defaults like Arial and Inter. Prefer a characterful display face paired with a refined body face when the product can support it. The typography should elevate the UI, not read like a default starter app.
 - **One dominant working surface**: The first screen should focus on one clear operational object or working section. Do not try to show the whole product at once.
 - **No major-region framed surfaces**: Do not turn the main working area, hero, inspector, or detail lane into a big bordered rounded panel. Prefer open layout, split rows, tonal bands, dividers, or a drawer/sheet for secondary detail.
 - **Token-first shadcn**: Configure `app.css`/global CSS variables and Tailwind theme values before component work. Do not accept default shadcn colors as the design.
@@ -62,6 +65,7 @@ Do not code until all answers are acceptable.
 - Did I read `.tasks/domain.md` for a usable logo path and plan to use the real logo in the header if available?
 - Did I read both frontend-design references?
 - Did I define exact CSS/Tailwind/shadcn token updates?
+- If no selected domain skill fits, did I choose a deliberate fallback direction for color, motion, spatial composition, and background atmosphere?
 - Can this UI be built with zero cards? If not, is every remaining card unavoidable under the narrow allowed cases?
 - Are there no top-level cards?
 - Am I avoiding sidebars unless explicitly requested or required by a selected domain skill?
@@ -70,6 +74,7 @@ Do not code until all answers are acceptable.
 - Is the layout airy with generous spacing, not dense?
 - Is the inner density airy too: rows, tables, cards, and metadata blocks are not cramped or over-columned?
 - If no domain skill overrides radius language, does the UI lean clearly rounded rather than vague enterprise 4/6/8 radii?
+- Does the typography feel distinctive and intentional rather than default/generic?
 - Do page background, canvas, nav chrome, and any focal surface separate clearly at thumbnail scale?
 - Do inputs, search/filter controls, tables, and header/nav chrome have enough tonal separation from the page background?
 - If a sidebar is required, is it using a darker primary-derived tone instead of a pale generic surface?
@@ -84,6 +89,7 @@ Do not code until all answers are acceptable.
 - Detail views should prefer inline split layout, selected rows, dividers, tonal sections, drawers, or sheets before any framed panel.
 - If a `Card` component is imported or a card-like wrapper remains, add a nearby inline justification explaining why it is unavoidable under the allowed cases.
 - Use good readable UI fonts. Avoid typewriter/blog fonts unless the domain explicitly requires that character.
+- When no selected domain skill is steering the design language, use more expressive composition, stronger accent hierarchy, and more atmospheric backgrounds instead of a safe generic shell.
 - Keep surfaces distinct through tone, spacing, and hierarchy rather than borders and boxes around everything.
 - If a card is truly unavoidable, give it intentional tonal contrast from the canvas plus a visible but soft border. Weak same-white cards fail.
 - Add only shadcn components required by the actual workflow.
@@ -106,8 +112,10 @@ Reject and revise if:
 - Row/table content is cramped, over-columned, or too tight inside the first column and metadata blocks.
 - A usable logo path exists in `.tasks/domain.md` but the header still uses a placeholder logo or no logo without reason.
 - Brand colors from `.tasks/domain.md` are not reflected in primary/active/focus treatment.
+- No vertical/domain skill fit the app, but the UI still defaulted to a generic admin shell instead of using a stronger creative direction.
 - A required sidebar uses a weak pale surface instead of a darker primary-derived tone.
 - The UI falls back to vague enterprise middle-radius controls even though no domain skill asked for that.
+- Typography falls back to generic fonts or lacks a distinctive display/body pairing when the product could support one.
 - Theme variables were not configured before component styling.
 - The screen feels cramped or all modules have equal weight.
 - The UI looks like a starter admin template, Bootstrap dashboard, or generic AI/SaaS app.

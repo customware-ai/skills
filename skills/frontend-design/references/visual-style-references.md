@@ -6,6 +6,8 @@ Use this reference for the visual quality bar. Domain skills still own product s
 
 Modern operational app UI with minimal visual noise, generous spacing, brand-aware color, and one clear working surface. Not a marketing page, admin template, Bootstrap dashboard, or generic AI/SaaS screen.
 
+When no selected business/domain skill provides a stronger product-specific visual pattern, raise the ambition of the visual system instead of settling for a safe default shell.
+
 ## Surface Hierarchy
 
 Create readable layers without boxing everything:
@@ -26,6 +28,8 @@ At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal sur
 - Use secondary brand colors only when they clarify hierarchy.
 - Derive backgrounds, surfaces, borders, muted text, and statuses from compatible tints.
 - If `.tasks/domain.md` provides a usable logo path, use the real logo in the header or primary chrome.
+- Commit to a cohesive aesthetic. Use CSS variables consistently.
+- Dominant colors with sharp accents are usually stronger than timid, evenly distributed palettes.
 - If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
 - White or near-white surface on white or near-white canvas with only a faint border fails.
 - Inputs, controls, and nav/header chrome should usually be lighter than the main page background in light mode and darker than the main page background in dark mode.
@@ -46,7 +50,9 @@ Airiness is mandatory.
 
 ## Typography
 
-- Use readable, modern UI fonts.
+- Choose fonts that are beautiful, unique, and interesting.
+- Avoid generic fonts like Arial and Inter.
+- Pair a distinctive display font with a refined body font when the product can support it.
 - Avoid typewriter/blog/editorial fonts unless the domain explicitly needs them.
 - Use clear hierarchy: titles, section labels, muted details, strong values.
 - Avoid decorative marketing copy inside working app screens.
@@ -115,6 +121,14 @@ Good defaults:
 - sparse command bar for filters/actions
 - tinted band for focus instead of another panel
 
+If no selected business/domain skill is steering the composition, push for a more intentional structure:
+
+- asymmetry
+- overlap
+- diagonal flow
+- grid-breaking moments
+- generous negative space or deliberately controlled density
+
 Avoid:
 
 - title + filters + KPI strip + card grid + table
@@ -135,6 +149,22 @@ Avoid:
 - Avoid lift-style shadows. Depth should read as edge contact, not floating.
 - Soft shadow means soft-edged, not ultra-faint. It may still be a clearly visible gray when that improves separation.
 - Prefer `shadow-2xs` for buttons and compact interactive controls, `shadow-xs` for cards/tables/similar contained surfaces, `shadow-xl` for popovers and banners, and `shadow-2xl` for dialogs.
+
+## Motion
+
+- Use animation for effects and micro-interactions when it improves the UI.
+- Prefer CSS-first motion where possible.
+- In React, use a motion library when available and appropriate.
+- Prioritize high-impact moments over scattered noise.
+- One well-orchestrated page-load sequence with staggered reveals is often better than many tiny unrelated effects.
+- Use scroll-triggered moments and hover states that feel intentional and surprising, not ornamental.
+
+## Backgrounds And Visual Details
+
+- Build atmosphere and depth instead of defaulting to flat solid fills.
+- Add contextual effects and textures that match the aesthetic.
+- Use gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, or grain overlays when they improve the product direction.
+- If no selected business/domain skill is narrowing the visual language, these details should help the UI feel authored rather than generic.
 
 ## Hard Avoids
 
