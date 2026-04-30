@@ -1,12 +1,181 @@
-# Component recipes
+# Component recipes and layout patterns
 
-These are exact specs for the most common UI components. The agent implements them using the active token set — same recipe across all archetypes; different tokens; different visual results; always coherent.
+This reference defines:
+- Layout pattern catalog — pick the right shape for the product surface
+- Component recipes with exact specs
+- When to use cards vs. inline composition
 
-Read this reference whenever building any UI component. Each recipe lists background, text, typography, radius, padding, height, hover, disabled, and transition specs — implementable directly without further design decisions.
+Read in full whenever building any UI screen or component. Do not skim.
 
 ---
 
-## Buttons
+## Part 1 — Layout pattern catalog
+
+The dashboard layout is overused. Pick the layout pattern that matches the product's primary surface, not the layout that AI defaults to. Each pattern below is a complete option.
+
+### Surface-first layout (DEFAULT for most apps)
+
+The product's primary working surface IS the page. No KPI cards above it, no card framing around it. The surface gets the screen.
+
+```
++----------+--------------------------------+--------------------+
+|          |                                 |                   |
+| Sidebar  | [PRIMARY PRODUCT SURFACE]       |  Side context     |
+| (nav)    | (calendar timeline / editor /   |  (filters,        |
+|          |  board / map / pipeline)        |   queue,          |
+|          |                                 |   selected item)  |
+|          |                                 |                   |
++----------+--------------------------------+--------------------+
+```
+
+**Use for:** calendar/scheduling apps, kanban/board apps, writing/editing apps, mapping apps, pipeline apps, any app where the user spends most of their time interacting with one large surface.
+
+**Side panel content:** narrow, supporting. "Up next" queue, filter chips, selected-item details, related records. Never KPI cards as decoration.
+
+This is the layout Marigold used for the dental scheduler — day timeline as the page, "Up next" as a narrow right column.
+
+### List-detail layout
+
+Two columns: a scannable list on the left, a detail/preview pane on the right. The list is the index; the right pane shows whatever the user selected.
+
+```
++----------+----------------------+--------------------------------+
+|          | [List of items]      | [Detail of selected item]      |
+| Sidebar  | (rows or compact     |                                |
+|          |  cards)              |  (form, content, properties,   |
+|          |                      |   related items)               |
+|          |                      |                                |
++----------+----------------------+--------------------------------+
+```
+
+**Use for:** email-style apps, any "browse and review" workflow, settings pages with categories, file managers, contact/people apps.
+
+### Reading layout (single column, centered)
+
+A single column of content centered on the page with generous side margins. No sidebar nav (or minimal/collapsed). The content is the page.
+
+```
++--------+---------------------------------------+---------+
+|        |                                        |         |
+|  ←     |  [Title]                               |  TOC    |
+| (back) |                                        | (opt.)  |
+|        |  Long-form content body                |         |
+|        |  with generous line height             |         |
+|        |  and serif body font.                  |         |
+|        |                                        |         |
++--------+---------------------------------------+---------+
+```
+
+**Use for:** article/document reading, long-form notes, blog-style content, knowledge bases, settings explanations, editorial content. Width capped around 640-720px for readability.
+
+### Board layout
+
+Multiple parallel columns scrolling horizontally, each holding a stack of cards. The board itself IS the surface.
+
+```
++----------+--------------------------------------------------+
+|          | [Col 1]    [Col 2]    [Col 3]    [Col 4]         |
+| Sidebar  |  card       card       card       card           |
+|          |  card       card                  card           |
+|          |             card                                  |
+|          |  + Add      + Add      + Add      + Add           |
+|          |                                                   |
++----------+--------------------------------------------------+
+```
+
+**Use for:** kanban tools, sales pipelines, content workflows, any "drag between stages" app. Cards here are appropriate because each card is a distinct repeatable unit (this is the "repetition" justification for cards).
+
+### Form layout
+
+Single column of grouped sections. Primary save action bottom-right.
+
+```
++----------+--------------------------------+
+|          | [Title]                         |
+| Sidebar  | --------------------------     |
+|          |                                 |
+|          | Section name                    |
+|          |   [Field row]                   |
+|          |   [Field row]                   |
+|          |                                 |
+|          | Section name                    |
+|          |   [Field row]                   |
+|          |                                 |
+|          |        [Cancel] [Save]         |
++----------+--------------------------------+
+```
+
+Single-column by default. Two-column field layouts only when fields are conceptually paired (first/last name, start/end date) and both are short. Field width matches expected content — currency/date/code fields constrained, names/addresses full-width. Never a wall of full-width fields.
+
+### Focal layout (use sparingly — this is the dashboard pattern)
+
+Sidebar + KPIs/focal element on top + supporting content below. **Only use when the user genuinely monitors metrics** — not as the default layout.
+
+```
++----------+--------------------------------+--------------------+
+|          | [Focal element / KPIs]          |  Right panel      |
+| Sidebar  | --------------------------     |  (up next,        |
+|          | [Section]                       |   trends)         |
+|          | [Row stack]                     |                   |
+|          |                                 |                   |
++----------+--------------------------------+--------------------+
+```
+
+**Appropriate for:** monitoring/observability dashboards, ops control panels, sales leaderboards, finance overviews where the user looks at metrics every visit. **Inappropriate for:** scheduling apps, writing apps, content apps, intake apps, any app where the user is *doing work* rather than *checking numbers*.
+
+If you reach for this layout, ask: does the user open this app to check numbers, or to do work? If the latter, use surface-first instead.
+
+### Single-page layout (no sidebar)
+
+For simple apps or focused workflows, no sidebar at all. Header + content.
+
+```
++--------------------------------------------------+
+|  Header (brand, primary action)                   |
++--------------------------------------------------+
+|                                                   |
+|  Content (one focal element + supporting)         |
+|                                                   |
+|                                                   |
++--------------------------------------------------+
+```
+
+**Use for:** single-purpose tools (calculator, converter, timer), onboarding flows, focused intake/wizard flows, mobile-first apps.
+
+---
+
+## Part 2 — Cards: when to use, when to inline
+
+Cards are NOT the default layout primitive. Inline content into the page body whenever possible. Cards are an exception.
+
+### Use cards when:
+
+- **Emphasis** — this one element is the focal point and needs visual lift from its surroundings (e.g., the day's primary score, the active document being worked on)
+- **Separation** — multiple unrelated content blocks need to be visually distinct (e.g., a settings page with multiple unrelated sections)
+- **Repetition** — a list of equivalent things benefits from each one being self-contained (e.g., kanban cards, product tiles, request items in a list)
+- **Framing** — modal, dialog, popover, or overlay content needs framing for focused attention
+
+### Don't use cards for:
+
+- A page title (use heading text)
+- A primary number (use display-size text on the page)
+- A simple list of items (use rows or styled list)
+- A form (use field rows on the page)
+- KPIs that aren't actively monitored (omit them or inline)
+- Generic "metric containers" that just frame numbers
+- Wrapping every content block on a page (flatten to inline)
+
+### The dashboard reflex test
+
+If you find yourself building a screen that has KPI cards on top, a "Today's X" card below, an "Up next" card on the right — stop and ask: *is this app actually a dashboard, or am I building one because cards are easy?*
+
+For Marigold, the answer was "scheduler, not dashboard" — and the layout became surface-first with the day timeline as the page. For an HVAC dispatch app, the answer might be "schedule canvas, not dashboard" — same shift. For a writing app, "editor, not dashboard." Most apps are not dashboards.
+
+---
+
+## Part 3 — Component recipes
+
+Components consume the active token set. Same recipes across all archetypes; different tokens; different visual results; always coherent.
 
 ### Primary Button
 
@@ -23,7 +192,7 @@ disabled:    opacity 60%, no hover
 transition:  150ms ease-out on background
 ```
 
-One per screen. Two only when the secondary primary is clearly subordinate ("Save and continue" / "Save and exit" pairs).
+One per screen. Two only when the secondary primary is clearly subordinate.
 
 ### Secondary Button
 
@@ -53,11 +222,7 @@ hover:       background to a translucent --primary tint (~8% opacity)
 transition:  150ms ease-out on background
 ```
 
-For actions with low visual weight — "Cancel," "Skip," in-content links.
-
----
-
-## Chips
+For low-weight actions — "Cancel," "Skip," in-content links.
 
 ### Chip (Active)
 
@@ -82,16 +247,12 @@ border:      --border-subtle
 hover:       background to --surface-stage
 ```
 
-Active and inactive chips sit next to each other in segmented controls (Today / Week, Day / Month / Year). Active chip is filled-light; inactive chip is outlined-white.
-
----
-
-## Status
+Active and inactive chips sit next to each other in segmented controls. Active is filled-light; inactive is outlined-white.
 
 ### Status Badge
 
 ```
-background:  --status-{type}        /* success, warning, info, error, neutral */
+background:  --status-{type}
 text:        --text-foreground       /* always foreground — never colored text */
 typography:  --type-caption, weight 500
 radius:      --radius-md (16px)
@@ -99,11 +260,7 @@ padding:     4px 10px
 border:      none
 ```
 
-Five status badges only — one per status slot. Text is always foreground; the readability comes from contrast between dark text and light tinted background. Don't make the text colored to "match" the background.
-
----
-
-## Rows
+Five status badges only — one per status slot. Text is always foreground; readability comes from contrast between dark text and light tinted background. Don't make the text colored.
 
 ### Row (Default)
 
@@ -113,7 +270,7 @@ border:      --border-subtle
 radius:      --radius-lg (20px)
 padding:     20px 24px
 gap:         16px between elements
-icon:        in a tinted square (32-40px), --radius-md, --accent-3 background
+icon:        in a tinted square (32-40px), --radius-md, --accent-3 background (when an icon is appropriate)
 title:       --type-body, weight 500, --text-foreground
 subtitle:    --type-caption, --text-muted
 right:       primary value (--type-body, foreground), then status badge or chevron
@@ -134,29 +291,21 @@ background:  --surface-canvas (unchanged)
 border:      --border-strong, with --primary as the border color
 ```
 
-The selected state is the primary color's role in row stacks. It's the strongest visual signal in the list and the only place primary appears as a border.
+The selected state is the primary color's role in row stacks. The strongest visual signal in the list.
 
----
-
-## Cards
-
-### Card (Primary)
+### Card (when justified — see Part 2)
 
 ```
 background:  --surface-canvas for default cards
-             --surface-focal (white) for THE focal card on the screen
+             --surface-focal (white) for THE focal card (rare — usually only one per screen)
 border:      --border-subtle  (NOT shadow)
 radius:      --radius-lg (20px) or --radius-xl (24px) for hero cards
 padding:     24px
-header:      --type-title for the card heading
+header:      --type-title for the card heading (only when card has a title)
 content:     --type-body for body, --type-caption for metadata
 ```
 
-One focal card per screen. Everything else uses canvas. White-on-canvas-on-stage is the three-tier depth that produces airiness without shadows.
-
----
-
-## Forms & Toggles
+Apply only when justified by emphasis, separation, repetition, or framing (Part 2). Otherwise inline the content.
 
 ### Toggle (On)
 
@@ -191,9 +340,7 @@ disabled:    background --surface-stage, text --text-muted
 transition:  150ms ease-out on border
 ```
 
----
-
-## Layout components
+Field width matches expected content. Currency/date/code fields constrained; names/addresses full-width.
 
 ### Section Header
 
@@ -219,11 +366,7 @@ active:
   label:       --primary
 ```
 
-The dark sidebar with white pill-active state is the signature navigation pattern — strong contrast, immediate location signal.
-
----
-
-## Feedback components
+Dark sidebar with white pill-active state is the signature navigation pattern — strong contrast, immediate location signal.
 
 ### Empty State
 
@@ -235,7 +378,7 @@ description: --type-body, --text-muted
 action:      Primary Button, optional
 ```
 
-Never leave a list view blank. Empty states signal "nothing yet, here's what to do" rather than "broken, no data."
+Never leave a list view blank.
 
 ### Toast
 
@@ -246,18 +389,18 @@ text:        white
 typography:  --type-body
 radius:      --radius-md
 padding:     12px 16px
-icon:        optional, 16px, color matched to message type (success/info/error)
+icon:        optional, 16px, color matched to message type
 duration:    3-4 seconds, then auto-dismiss
 animation:   slide in from bottom over 200ms, fade out over 150ms
 ```
 
-### Loading Skeleton (Row)
+### Loading Skeleton
 
 ```
-height:      matches the row it replaces
+height:      matches the element it replaces
 background:  --status-neutral or a slightly tinted --surface-canvas
-radius:      --radius-lg (matches row radius)
+radius:      matches the element's radius
 animation:   gentle shimmer or pulse, 1.2s loop
 ```
 
-Skeletons match the actual content shape, not generic spinners. A row skeleton is a tinted rectangle the size of a row. A card skeleton is a tinted rectangle the size of a card with internal placeholder lines.
+Skeletons match actual content shape, not generic spinners.
