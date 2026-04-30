@@ -6,9 +6,9 @@ Use this reference for the visual quality bar. Domain skills still own product s
 
 Modern operational app UI with minimal visual noise, generous spacing, brand-aware color, and one clear working surface. Not a marketing page, admin template, Bootstrap dashboard, or generic AI/SaaS screen.
 
-For CPQ, CRM, trades, and similar business/domain skills, keep the selected skill's product structure while applying the shared visual quality rules here: brand-aware color, actual logo usage, airy spacing, airy inner density, rounded controls, strong input contrast, soft/tight shadows, minimal visual noise, and cardless defaults.
+For CPQ, CRM, trades, and similar business/domain skills, keep the selected skill's required product structure while applying the visual quality rules here: brand-aware color, actual logo usage, airy spacing, airy inner density, rounded controls, strong input contrast, soft/tight shadows, minimal visual noise, cardless defaults, and authored composition.
 
-When no selected business/domain skill provides a stronger product-specific visual pattern, raise the ambition of the visual system instead of settling for a safe default shell.
+Domain skills may specify header/sidebar/workflow layout. Where they do not specify the body, details, table rhythm, visual hierarchy, composition, backgrounds, or interaction feel, use this reference to make the UI more intentional instead of settling for a safe default shell.
 
 ## Surface Hierarchy
 
@@ -22,6 +22,8 @@ Create readable layers without boxing everything:
 Use tone, spacing, typography, and selective dividers before borders, shadows, or panels.
 
 At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal surface should still separate clearly. Same-white blending fails.
+
+Tailwind utilities are not the design ceiling. Use custom CSS classes when needed for better spacing, contrast, surface treatment, background detail, or component polish, while reusing the global CSS variables and theme tokens.
 
 ## Color
 
@@ -130,7 +132,7 @@ Good defaults:
 - sparse command bar for filters/actions
 - tinted band for focus instead of another panel
 
-If no selected business/domain skill is steering the composition, push for a more intentional structure:
+Push for a more intentional structure wherever the required workflow leaves room:
 
 - asymmetry
 - overlap
@@ -138,7 +140,7 @@ If no selected business/domain skill is steering the composition, push for a mor
 - grid-breaking moments
 - generous negative space or deliberately controlled density
 
-Do not apply this expressive fallback as a reason to ignore a selected business/domain skill. Business apps should still be minimal, airy, rounded, brand-aware, low-noise, and sparse on a single page.
+Do not use creative composition as a reason to ignore a selected business/domain skill. Business apps should still be minimal, airy, rounded, brand-aware, low-noise, and sparse on a single page while using stronger composition in the parts the domain skill does not prescribe.
 
 Avoid:
 
@@ -175,7 +177,7 @@ Avoid:
 - Build atmosphere and depth instead of defaulting to flat solid fills.
 - Add contextual effects and textures that match the aesthetic.
 - Use gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, or grain overlays when they improve the product direction.
-- If no selected business/domain skill is narrowing the visual language, these details should help the UI feel authored rather than generic.
+- Where the selected business/domain skill leaves room, these details should help the UI feel authored rather than generic.
 
 ## Hard Avoids
 

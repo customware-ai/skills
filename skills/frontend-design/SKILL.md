@@ -31,18 +31,17 @@ Before visual planning or implementation, read both files. Skipping either file 
    - **Vision**: domain-specific product and visual direction. Reject generic SaaS purple, card-heavy dashboards, and generic admin shells.
    - **First-version features**: working screens, controls, routes, dialogs, and localStorage-backed state.
    - **Design tokens**: primary, secondary/accent, background, canvas, focal contrast treatment, text, border, radius, contact shadow, status colors, typography, generous spacing, and cardless plan.
-   - **Shared visual rules**: for every app, including CPQ/CRM/trades-like business apps, enforce brand color usage, actual logo usage, airy spacing, airy inner density, rounded controls, strong input contrast, soft/tight shadows, minimal visual noise, and cardless defaults.
-   - **Fallback creative direction**: only when no selected domain skill defines a business/product pattern, choose a more vivid intentional direction for color, motion, composition, and background atmosphere rather than falling back to a generic admin shell.
+   - **Design direction**: enforce brand color usage, actual logo usage, airy spacing, airy inner density, rounded controls, strong input contrast, soft/tight shadows, minimal visual noise, cardless defaults, and authored composition. Where the selected domain skill does not specify structure, use stronger visual ideas like asymmetry, deliberate negative space, vivid accent hierarchy, motion, and atmospheric background detail.
 5. Pass the design compliance gate.
-6. Configure CSS variables and Tailwind/shadcn theme tokens before building screen details.
-7. Build the UI with those tokens.
+6. Configure CSS variables, Tailwind/shadcn theme tokens, and the relevant shadcn component styles before building screen details.
+7. Build the UI with those tokens. Use Tailwind where it is useful, and write custom CSS classes when Tailwind is limiting; custom CSS must reuse the global CSS variables, radius, color, and shadow tokens.
 8. Run the pre-completion audit and revise before finishing.
 
 ## Non-Negotiables
 
 - **Brand first**: If `.tasks/domain.md` provides brand colors, use them. Map the main brand/accent color to primary actions, active navigation, selected state, focus, and links. Derive neutral surfaces, borders, muted text, and statuses from compatible tints. Do not default to generic purple/blue.
-- **Business-skill compatibility**: If the app fits a selected business/domain skill like CPQ, CRM, trades, or similar, follow that skill's workflow and layout mostly as written, but still enforce this skill's shared visual rules: airy spacing, airy inner density, rounded controls, strong input contrast, soft/tight shadows, brand colors, actual logo usage, minimal visual noise, and cardless defaults.
-- **Creative fallback when no vertical skill fits**: Only if the app does not fit a selected business/domain skill like CPQ, CRM, trades, or similar, deliberately push the visual direction further. Commit to a cohesive aesthetic, use CSS variables consistently, prefer dominant colors with sharp accents over timid evenly distributed palettes, use motion for high-impact moments, favor unexpected composition, and build atmosphere through backgrounds and visual details instead of defaulting to a plain shell.
+- **Domain-skill compatibility**: If the app fits a selected business/domain skill like CPQ, CRM, trades, or similar, follow that skill's required workflow, terminology, and layout structure. For anything the domain skill does not specify, use this skill's visual rules and composition guidance rather than falling back to a generic admin shell.
+- **Authored composition**: Every app should feel intentionally designed. Commit to a cohesive aesthetic, use CSS variables consistently, prefer dominant colors with sharp accents over timid evenly distributed palettes, use motion for high-impact moments, favor asymmetry or unexpected composition where it does not conflict with workflow clarity, and build atmosphere through brand-compatible backgrounds and visual details.
 - **Use the real logo**: First look in `public/brand/logos/`. If that folder contains a usable logo file, use the correct actual logo from that folder in the header or primary app chrome. Only create or invent a logo if `public/brand/logos/` does not exist or has no usable logo files.
 - **Cardless by default**: Aim for zero cards. If the UI works without a card, the card is not allowed. A bordered rounded surface occupying a major region of the page is a card even if `Card` is not imported. Cards are only allowed for dialog/popover/sheet containment, concise notice, or truly repeated items when rows, dividers, or tonal separation fail.
 - **No top-level cards**: Never compose the main page from large sibling cards, a stack/grid of rounded panels, or a large framed hero/detail container. Top-level structure must be open sections, tonal bands, rows, dividers, workspace areas, or one open focal working zone.
@@ -54,7 +53,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 - **Typography with character**: Choose fonts that are beautiful, distinctive, and interesting. Avoid generic defaults like Arial and Inter. Prefer a characterful display face paired with a refined body face when the product can support it. The typography should elevate the UI, not read like a default starter app.
 - **One dominant working surface**: The first screen should focus on one clear operational object or working section. Do not try to show the whole product at once.
 - **No major-region framed surfaces**: Do not turn the main working area, hero, inspector, or detail lane into a big bordered rounded panel. Prefer open layout, split rows, tonal bands, dividers, or a drawer/sheet for secondary detail.
-- **Token-first shadcn**: Configure `app.css`/global CSS variables and Tailwind theme values before component work. Do not accept default shadcn colors as the design.
+- **Token-first shadcn and CSS**: Configure `app.css`/global CSS variables, Tailwind theme values, and relevant shadcn component styles before component work. Do not accept default shadcn colors or component styling as the design. shadcn components are base primitives only; always customize their classes/styles to fit the app's tokens, spacing, contrast, radius, shadow, and interaction rules. Tailwind is not mandatory for every visual decision; write custom CSS when it creates a more distinct, minimal, polished UI, while reusing the same CSS variables and theme tokens.
 - **Strong soft contrast**: If a surface exists, it must separate from the canvas through tone first, border second, shadow last. Same-white or near-white surfaces with faint borders fail.
 - **Interactive surface contrast**: Editable controls must be obvious. Inputs, selects, textareas, comboboxes, date fields, search fields, and command-bar controls must use a near-white or very light tinted background in light mode and a near-black background in dark mode. They must not use `bg-transparent`, `bg-background`, `bg-muted`, or the same fill as the page/panel. `--input` must be visibly lighter than `--background` in light mode and visibly darker than the canvas in dark mode. Search/filter controls must be among the clearest input surfaces on the screen.
 - **Sidebar tone and space when required**: If a selected domain skill requires a sidebar, use a much darker shade derived from the primary color for the sidebar background or key sidebar surfaces. The sidebar must be wide enough for its labels, badges, and active states; do not clip text or squeeze actions off the edge. Use generous item padding, clear vertical rhythm, and deliberate truncation only for secondary descriptions.
@@ -68,9 +67,9 @@ Do not code until all answers are acceptable.
 - Did I read `.tasks/domain.md` and summarize brand colors when present?
 - Did I check `public/brand/logos/` and plan to use an actual logo file from there if one exists?
 - Did I read both frontend-design references?
-- Did I define exact CSS/Tailwind/shadcn token updates?
-- If no selected domain skill fits, did I choose a deliberate fallback direction for color, motion, spatial composition, and background atmosphere?
-- If a selected business/domain skill fits, am I following it while still enforcing the shared visual rules?
+- Did I define exact global CSS variable, Tailwind/shadcn token, and shadcn component style updates?
+- Am I following required domain-skill structure while using authored visual composition wherever the domain skill leaves room?
+- Did I choose a deliberate direction for color, motion, spatial composition, and background atmosphere instead of a generic shell?
 - Can this UI be built with zero cards? If not, is every remaining card unavoidable under the narrow allowed cases?
 - Are there no top-level cards?
 - Am I avoiding sidebars unless explicitly requested or required by a selected domain skill?
@@ -98,12 +97,14 @@ Do not code until all answers are acceptable.
 - Detail views should prefer inline split layout, selected rows, dividers, tonal sections, drawers, or sheets before any framed panel.
 - If a `Card` component is imported or a card-like wrapper remains, add a nearby inline justification explaining why it is unavoidable under the allowed cases.
 - Use good readable UI fonts. Avoid typewriter/blog fonts unless the domain explicitly requires that character.
-- When no selected domain skill is steering the design language, use more expressive composition, stronger accent hierarchy, and more atmospheric backgrounds instead of a safe generic shell.
+- Use more expressive composition, stronger accent hierarchy, and more atmospheric backgrounds wherever they do not conflict with required workflow structure or operational clarity.
 - Keep surfaces distinct through tone, spacing, and hierarchy rather than borders and boxes around everything.
 - Give inputs/selects/textareas/search fields explicit contrasting fills; do not leave them transparent or page-colored.
 - For required sidebars, use enough width and item height for readable labels, visible active states, and non-clipping badges/actions.
 - If a card is truly unavoidable, give it intentional tonal contrast from the canvas plus a visible but soft border. Weak same-white cards fail.
 - Add only shadcn components required by the actual workflow.
+- Always customize shadcn component classes/styles so inputs, buttons, tables, tabs, dialogs, sheets, popovers, and navigation follow this app's visual rules instead of default component styling.
+- Use custom CSS classes for enhanced layouts, backgrounds, spacing, and component treatments when Tailwind utilities become limiting; keep those classes token-driven through `var(...)` colors, radii, borders, and shadows from the global theme.
 - Keep all buttons, links, menus, dialogs, tabs, forms, routes, and localStorage-backed state functional.
 
 ## Pre-Completion Audit
@@ -126,11 +127,13 @@ Reject and revise if:
 - A surfaced table is missing `shadow-xs` or its header/rows are padded too tightly.
 - `public/brand/logos/` contains a usable logo file but the header still uses a placeholder logo or no logo without reason.
 - Brand colors from `.tasks/domain.md` are not reflected in primary/active/focus treatment.
-- No vertical/domain skill fit the app, but the UI still defaulted to a generic admin shell instead of using a stronger creative direction.
+- The UI defaults to a generic admin shell instead of using authored composition where the workflow allowed it.
 - A required sidebar uses a weak pale surface instead of a darker primary-derived tone.
 - A required sidebar clips labels, badges, icons, or actions, or uses cramped item padding/row height.
 - The UI falls back to vague enterprise middle-radius controls even though no domain skill asked for that.
 - Typography falls back to generic fonts or lacks a distinctive display/body pairing when the product could support one.
 - Theme variables were not configured before component styling.
+- shadcn components are used as-is without app-specific class/style customization.
+- Custom CSS uses hardcoded one-off colors/radii/shadows instead of global theme variables.
 - The screen feels cramped or all modules have equal weight.
 - The UI looks like a starter admin template, Bootstrap dashboard, or generic AI/SaaS app.

@@ -7,11 +7,12 @@ Use this reference when implementing shadcn/ui + Tailwind.
 1. Inspect `components.json`, global CSS, `tailwind.config.*`, app routes/layouts, `components/ui/*`, and `package.json`.
 2. Read domain/brand inputs and selected domain skill rules.
 3. Define tokens.
-4. Update global CSS variables and Tailwind theme extension.
+4. Update global CSS variables, Tailwind theme extension, and shadcn component styles.
 5. Verify the tokens exist in the real files.
-6. Build screen details.
+6. Build screen details with Tailwind utilities and/or custom CSS classes that reuse the same tokens.
 
 Do not build screens first and theme later.
+Do not let Tailwind utility availability limit the design. Custom CSS is allowed when it produces a cleaner, more distinct, minimal UI, but it must reuse global CSS variables and theme tokens.
 
 ## Required Token Roles
 
@@ -41,8 +42,8 @@ Set or verify:
 
 Map tokens by role. Do not copy brand colors into every variable.
 If the selected domain skill does not define a sharper or specific radius system, set `--radius` and component radii to a clearly rounded modern default rather than timid enterprise values.
-For CPQ, CRM, trades, and similar business/domain skills, preserve the selected skill's product structure while enforcing the shared theme rules: brand-aware tokens, actual logo usage, airy spacing, strong input contrast, rounded controls, soft/tight shadows, and cardless defaults.
-Only when no selected domain skill defines a stronger visual system, use the theme tokens to create a more vivid, asymmetrical, authored aesthetic rather than a neutral default.
+For CPQ, CRM, trades, and similar business/domain skills, preserve the selected skill's required product structure while enforcing the theme rules: brand-aware tokens, actual logo usage, airy spacing, strong input contrast, rounded controls, soft/tight shadows, cardless defaults, and authored composition where the domain skill leaves room.
+Use theme tokens to create a cohesive, vivid, authored aesthetic rather than a neutral default.
 
 ## Light Surface System
 
@@ -77,7 +78,7 @@ Set `--input` so it is visibly lighter than `--background` in light mode and vis
 
 ## Tailwind Use
 
-Use Tailwind for:
+Use Tailwind when it is the clearest fit for:
 
 - shell dimensions
 - topbar/tabs/command rows or explicitly required sidebar behavior
@@ -91,7 +92,17 @@ Prefer larger section padding, wider gutters, taller row rhythm, and more space 
 Carry that spacing into inner content as well. Table rows, list rows, cards, badges, metadata groups, and inline actions should breathe; do not solve a data-dense view by cramming too many narrow columns onto one line.
 When a table is surfaced as a primary or secondary working object, give it `shadow-xs`, generous header padding, and generous row padding by default.
 If no selected domain skill overrides radius language, prefer rounded/pill-like controls and avoid defaulting to 4px/6px/8px-style admin radii.
-If no selected domain skill defines the visual language, let the layout become more asymmetrical, expressive, and product-shaped instead of defaulting to safe symmetry.
+Where the selected domain skill leaves room, let the layout become more asymmetrical, expressive, and product-shaped instead of defaulting to safe symmetry.
+
+## Custom CSS
+
+Use custom CSS classes when Tailwind utilities make the UI too generic, cramped, or hard to tune.
+
+- Reuse global tokens with `var(...)` for colors, borders, radii, shadows, focus rings, and background treatments.
+- Keep custom CSS in the app's normal stylesheet path, usually `app.css` or the project equivalent.
+- Custom CSS is appropriate for authored backgrounds, layered surfaces, table rhythm, sidebar layout, complex responsive grids, input contrast, and shadcn component refinements.
+- Do not hardcode unrelated one-off colors, radii, or shadows when an existing token should express the system.
+- Prefer custom classes over long unreadable Tailwind strings when the design needs precision.
 
 ## Cards
 
@@ -144,6 +155,7 @@ npx shadcn@latest add button input label select textarea badge separator dialog 
 ```
 
 Do not install components because dashboard examples usually include them.
+After adding or using shadcn components, always customize their classes/styles. Treat shadcn as base primitives, not finished UI. Inputs, selects, textareas, tables, tabs, buttons, dialogs, sheets, popovers, and navigation must inherit the app's tokenized visual system rather than looking like default shadcn.
 
 ## Typography
 
@@ -157,6 +169,8 @@ Do not install components because dashboard examples usually include them.
 Before finishing:
 
 - Theme variables are configured before component styling.
+- shadcn component styles are customized for the app rather than used as-is.
+- Custom CSS, when used, reuses global variables instead of hardcoded one-offs.
 - Domain brand colors are mapped when present.
 - Major groups have generous gaps.
 - Inner row/table/card content has generous gaps too and is not cramped by too many same-line columns.
@@ -172,7 +186,7 @@ Before finishing:
 - Typography feels intentional and distinctive rather than default.
 - If a sidebar is required, it uses a darker primary-derived tone rather than a pale generic surface.
 - If a sidebar is required, it has enough width, row height, padding, and overflow handling to avoid clipped labels/actions.
-- If no selected domain skill fit the app, the theme and composition still feel authored rather than like a default admin shell.
+- Theme and composition feel authored rather than like a default admin shell, including inside business/domain skill layouts where the skill leaves room.
 - No sidebar exists unless explicitly requested or required by selected domain skill.
 - No heavy Tailwind shadows remain.
 - `shadow-2xs` is used for buttons/small interactive items when shadow is needed.
