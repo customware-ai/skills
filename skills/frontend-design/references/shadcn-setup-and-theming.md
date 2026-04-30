@@ -1,34 +1,21 @@
 # Shadcn Setup And Theming
 
-Use this reference when implementing a shadcn/ui + Tailwind app or updating an existing app theme.
+Use this reference when implementing shadcn/ui + Tailwind.
 
-## Core Rule
+## Order
 
-Theme before building detailed UI. shadcn/ui and Tailwind are accelerators, not fidelity limits. If the component defaults do not match the desired product direction, configure CSS variables, Tailwind tokens, and targeted component styles instead of accepting drift.
+1. Inspect `components.json`, global CSS, `tailwind.config.*`, app routes/layouts, `components/ui/*`, and `package.json`.
+2. Read domain/brand inputs and selected domain skill rules.
+3. Define tokens.
+4. Update global CSS variables and Tailwind theme extension.
+5. Verify the tokens exist in the real files.
+6. Build screen details.
 
-Skipping token setup before screen construction is a design failure.
+Do not build screens first and theme later.
 
-## Implementation Order
+## Required Token Roles
 
-1. Inspect the generated or existing project structure before editing:
-   - `components.json`
-   - global CSS such as `src/index.css`, `src/app.css`, or `app.css`
-   - `tailwind.config.*` or equivalent theme config
-   - `src/App.tsx`, routes, layouts, and existing `components/ui/*`
-   - `package.json`
-2. Read brand/domain inputs and selected domain skill rules.
-3. Define design tokens before component work.
-4. Update global CSS variables and Tailwind theme extension first.
-5. Add only the shadcn components needed by the actual UI.
-6. Build screens using the theme tokens rather than hardcoded visual decisions.
-
-After step 4, explicitly verify the intended variables exist in the real CSS/config files before continuing.
-
-## Theme Variables
-
-Configure both light and dark variables when the project supports dark mode. Light mode is the default unless explicitly requested otherwise.
-
-At minimum, set or verify these exact roles:
+Set or verify:
 
 - `--background`
 - `--foreground`
@@ -50,115 +37,95 @@ At minimum, set or verify these exact roles:
 - `--input`
 - `--ring`
 - `--radius`
-- chart/status colors when charts or statuses appear
+- chart/status colors when used
 
-Map tokens by role, not by copying brand colors into every variable.
+Map tokens by role. Do not copy brand colors into every variable.
 
-Do not proceed to component layout until these roles are configured in the real theme layer. If the project uses `tailwind.config.*`, confirm it consumes the variables or exposes equivalent theme tokens.
+## Light Surface System
 
-## Light Mode Surface System
-
-Light mode must have visible surface hierarchy:
-
-- Page background: tinted pale cool gray, glacier, porcelain, stone, cream, or faint blue-gray.
-- App canvas: lighter off-white or porcelain, not raw white.
-- Navigation chrome: slightly darker, cooler, or more tinted than the app canvas.
-- Focal surfaces: subtly brighter than the app canvas, but not repeated everywhere.
+- Page background: tinted pale gray, stone, cream, porcelain, glacier, or brand-derived tint.
+- App canvas: lighter off-white/porcelain, not raw white everywhere.
+- Navigation chrome: quiet tone, not saturated slab.
+- Focal surface: subtle tonal difference, not repeated large cards.
 - Inputs: near-white and clearly editable.
 - Borders: low-contrast and selective.
-- Popovers/sheets: clear but calm separation from the canvas.
+- Popovers/sheets/dialogs: clear separation with contact-edge depth.
 
 Do not use the same white for body, app frame, cards, popovers, inputs, and controls.
 
-## Brand Color Mapping
+## Brand Mapping
 
-- Use the primary brand/accent color for `--primary`, primary buttons, links, selected records, and active navigation.
-- Use secondary brand colors for supporting accents only when useful.
-- Derive backgrounds and surfaces from compatible tints, not raw brand fills.
-- Keep `--input`, `--muted`, `--border`, and neutral surfaces readable and restrained.
-- Keep destructive actions red, not brand-colored.
-- Avoid defaulting to purple or blue unless the brand/domain supports it.
-- If `.tasks/domain.md` lists brand colors, read and summarize them before choosing tokens.
+- Main brand/accent -> `--primary`, primary buttons, links, active navigation, selected records, focus.
+- Secondary brand colors -> supporting accents only when useful.
+- Compatible tints -> backgrounds, muted surfaces, borders, status colors.
+- Destructive stays red.
+- No generic purple/blue unless brand/domain supports it.
 
-## Tailwind And Component Overrides
+## Tailwind Use
 
-Use theme variables for common visual roles. Use Tailwind utilities for app-specific composition:
+Use Tailwind for:
 
 - shell dimensions
-- sidebar/topbar width and behavior
-- spacing and grid tracks
+- topbar/tabs/command rows or explicitly required sidebar behavior
+- spacing/gutters/grid tracks
+- row rhythm
 - table density
-- row treatment
-- status chip variants
+- status chips
 - responsive behavior
 
-Do not fight shadcn defaults one component at a time when a variable would solve the issue globally. Do not overgeneralize one-off details into global variables.
+Prefer larger section padding, wider gutters, taller row rhythm, and more space between control groups. Slightly over-spaced is acceptable; cramped is not.
 
-If Tailwind utilities are not enough, add small custom CSS classes based on the chosen design tokens.
+## Cards
 
-Default spacing should be generous. Prefer larger section padding, wider gutters, taller row rhythm, and more space between control groups. A slightly over-spaced layout is acceptable; a cramped layout is not.
+Do not import `Card` by default.
 
-## Radius System
+- No top-level cards.
+- No large sibling `Card` panels.
+- No card grids.
+- No cards inside cards.
+- Do not use card wrappers as generic spacing/grouping.
 
-Use a consistent radius scale:
+If a card-like wrapper remains, justify it inline. Acceptable reasons: unavoidable repeated item separation, selected/detail framing, dialog/popover/sheet containment, concise notice, or true emphasis.
 
-- Largest radius for app shells or major containers.
-- Smaller shared radius for focal surfaces.
-- Medium radius for rows, inputs, buttons, tabs, and popovers.
-- Pill or small radius for badges, chips, and icon buttons.
+## Sidebars
 
-Avoid random radius values. Avoid timid default 4/6/8px ladders unless the whole UI is intentionally sharp and editorial. Avoid making every object a large rounded card.
+Do not build a sidebar by default.
 
-## Elevation System
+- Use a sidebar only when the user explicitly requested one or a selected domain skill explicitly requires one.
+- Prefer topbar, tabs, segmented controls, breadcrumbs, command rows, step flows, sheets, drawers, or detail routes.
+- If required, keep the sidebar narrow, quiet, and secondary.
+- Never combine a sidebar with top-level cards or a card-heavy workspace.
 
-Prefer crisp contact-edge elevation over classic drop shadows:
+## Depth
 
-- Contact 0: no shadow plus a low-opacity border.
+Use contact-edge depth only:
+
+- Contact 0: no shadow plus low-opacity border.
 - Contact 1: `0 0 0 1px rgba(16,24,40,0.07), 0 1px 0 rgba(16,24,40,0.08)`.
 - Contact 2: `0 0 0 1px rgba(16,24,40,0.08), 0 1px 2px rgba(16,24,40,0.10)`.
-- Contact 3: `0 0 0 1px rgba(16,24,40,0.08), 0 2px 3px rgba(16,24,40,0.10)` for popovers or floating controls only.
+- Contact 3: `0 0 0 1px rgba(16,24,40,0.08), 0 2px 3px rgba(16,24,40,0.10)` for floating UI only.
 
-Use elevation selectively on active nav, selected rows, popovers, compact floating controls, important notices, and one focal surface when needed.
+Avoid `shadow-md`, `shadow-lg`, `shadow-xl`, blur halos, muddy gray clouds, colored glows, and heavy card shadows.
 
-Avoid `shadow-md`, `shadow-lg`, `shadow-xl`, broad blur halos, muddy gray clouds, colored glows, and heavy card shadows.
+## shadcn Components
 
-## Cards And Panels
-
-Cards are not the default unit of layout.
-
-- Do not use top-level cards. The app's main layout must not be large sibling `Card` panels.
-- Top-level structure should use open sections, tonal bands, rows, dividers, workspace areas, and at most one authored focal surface.
-- Do not import `Card` by default.
-- If importing `Card`, justify the specific usage inline. Acceptable reasons are repeated item separation, selected/detail framing, dialog/popover containment, concise notice, or true emphasis.
-- Use open sections, rows, dividers, bands, and typography first.
-- Use a card only for a highlighted state, repeated item that truly needs separation, popover/dialog/detail framing, or a concise notice.
-- Do not build card grids by default.
-- Do not put cards inside cards.
-- Do not separate every major region by a bordered rounded shell.
-
-## shadcn Component Use
-
-Add only components the UI needs. Common components:
+Add only components required by the workflow. Common examples:
 
 ```bash
 npx shadcn@latest add button input label select textarea badge separator dialog dropdown-menu table avatar tooltip scroll-area sheet popover tabs checkbox radio-group
 ```
 
-Adjust the list to the workflow. Do not install components just because they are common in dashboards.
+Do not install components because dashboard examples usually include them.
 
-## Practical QA
+## QA
 
-Before considering UI work complete:
+Before finishing:
 
-- Theme variables are configured before component-specific styling.
-- The exact theme variables exist in the real CSS/Tailwind files.
-- Domain brand colors were read and mapped when present.
-- Light mode does not collapse into one flat white surface.
-- Major groups have generous gaps and the screen does not feel compressed.
-- Primary and selected states use the intended accent.
-- Inputs look editable.
-- Cards are scarce and justified.
-- Shadows are tight and contact-like.
-- No unjustified `Card` imports or heavy Tailwind shadows remain.
-- All buttons, links, menus, dialogs, tabs, and forms work.
-- LocalStorage-backed state persists after refresh when the app is frontend-only.
+- Theme variables are configured before component styling.
+- Domain brand colors are mapped when present.
+- Major groups have generous gaps.
+- No top-level cards exist.
+- Any remaining card is unavoidable and justified.
+- No sidebar exists unless explicitly requested or required by selected domain skill.
+- No heavy Tailwind shadows remain.
+- Buttons, links, menus, dialogs, tabs, forms, routes, and localStorage-backed state work.
