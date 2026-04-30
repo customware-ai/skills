@@ -57,6 +57,7 @@ Do not rely on a faint border alone to separate a major surface from the canvas.
 Inputs, selects, textareas, tables, and nav/header chrome should usually be lighter than the page background in light mode.
 In dark mode, those same working surfaces should usually move to near-black so they still read distinctly against the overall canvas.
 Pure white is not required. Near-white is usually enough when the separation is obvious.
+Search inputs, filter fields, and command-row controls should usually use one of the clearest light surfaces on the screen in light mode so they remain obvious at a glance.
 
 ## Brand Mapping
 
@@ -112,8 +113,11 @@ Use contact-edge depth only:
 - Contact 2: `0 0 0 1px rgba(16,24,40,0.08), 0 1px 2px rgba(16,24,40,0.10)`.
 - Contact 3: `0 0 0 1px rgba(16,24,40,0.08), 0 2px 3px rgba(16,24,40,0.10)` for floating UI only.
 
-Avoid `shadow-md`, `shadow-lg`, `shadow-xl`, blur halos, muddy gray clouds, colored glows, and heavy card shadows.
+Prefer `shadow-xs` and `shadow-sm` only when needed.
+Reserve `shadow-xl` for dialogs/popovers only.
+Avoid `shadow-md`, `shadow-lg`, blur halos, muddy gray clouds, colored glows, and heavy card shadows.
 Depth should read as soft, tight edge contact, not lift.
+Soft means the edge is diffused and not harsh. It does not mean the shadow must be extremely faint; a decently gray tight shadow is acceptable when needed for contrast.
 
 ## shadcn Components
 
@@ -136,7 +140,8 @@ Before finishing:
 - Any remaining card is unavoidable and justified.
 - No large hero/detail/inspector surface still reads like a card.
 - Major surfaces separate from the canvas through tone, not only border.
-- Inputs and header/nav chrome read clearly against the page background in both light and dark modes.
+- Inputs, search/filter controls, and header/nav chrome read clearly against the page background in both light and dark modes.
 - No sidebar exists unless explicitly requested or required by selected domain skill.
 - No heavy Tailwind shadows remain.
+- Any use of `shadow-xl` is limited to dialogs/popovers.
 - Buttons, links, menus, dialogs, tabs, forms, routes, and localStorage-backed state work.

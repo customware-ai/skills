@@ -28,6 +28,7 @@ At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal sur
 - If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
 - White or near-white surface on white or near-white canvas with only a faint border fails.
 - Inputs, controls, and nav/header chrome should usually be lighter than the main page background in light mode and darker than the main page background in dark mode.
+- Search bars, filter inputs, and command-row controls should usually be more contrasty than nearby passive pills, muted bands, or page sections.
 - This does not require pure white. A very light shade close to white is usually better than same-tone blending.
 - Avoid generic purple/blue defaults and loud raw-brand floods.
 
@@ -115,6 +116,8 @@ Avoid:
 - If a card is truly unavoidable, give it intentional tonal contrast from the canvas. Same-white cards with faint borders fail.
 - Avoid heavy drop shadows, broad blur, glow, glassmorphism, and decorative gradients.
 - Avoid lift-style shadows. Depth should read as edge contact, not floating.
+- Soft shadow means soft-edged, not ultra-faint. It may still be a clearly visible gray when that improves separation.
+- Prefer `shadow-xs` and `shadow-sm` only when needed. Reserve `shadow-xl` for dialogs/popovers.
 
 ## Hard Avoids
 
@@ -132,7 +135,7 @@ Reject and revise if:
 - the app ignores available brand colors
 - surface separation depends mostly on borders
 - same-white blending makes major surfaces merge together
-- inputs or header/nav chrome do not read clearly against the page background
+- inputs, search/filter controls, or header/nav chrome do not read clearly against the page background
 - spacing feels cramped
 - all modules have equal visual weight
 - the UI would still look the same if the domain name changed
