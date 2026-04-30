@@ -17,10 +17,10 @@ This is not a domain workflow skill. It does not decide the app category or requ
 
 ## Required References
 
-Before designing or implementing UI, read both reference files for the full design context:
+Before designing or implementing UI, read both reference files for the full design context. In the sandbox, the files are installed at:
 
-- `references/visual-style-references.md` for the visual quality bar, composition principles, card avoidance, spacing, typography, colors, shadows, and common failure modes.
-- `references/shadcn-setup-and-theming.md` for the implementation order, CSS variable setup, Tailwind/shadcn theming, radius/elevation tokens, and component treatment.
+- `.agents/skills/frontend-design/references/visual-style-references.md` for the visual quality bar, composition principles, card avoidance, spacing, typography, colors, shadows, and common failure modes.
+- `.agents/skills/frontend-design/references/shadcn-setup-and-theming.md` for the implementation order, CSS variable setup, Tailwind/shadcn theming, radius/elevation tokens, and component treatment.
 
 Do not rely only on this `SKILL.md` when making visual decisions. The reference files contain the detailed rules.
 
@@ -45,7 +45,7 @@ Iterate on those three steps until the design is specific and coherent. Only the
 ## Implementation Order
 
 1. Read the domain/task and any selected domain skill.
-2. Read both references in `references/`.
+2. Read both references in `.agents/skills/frontend-design/references/`.
 3. Decide the vision, first-version features, and design tokens.
 4. Update theme foundations first:
    - `app.css` or the app's global CSS variables.
