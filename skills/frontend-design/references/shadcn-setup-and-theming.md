@@ -69,7 +69,7 @@ Search inputs, filter fields, and command-row controls should usually use one of
 - Compatible tints -> backgrounds, muted surfaces, borders, status colors.
 - Destructive stays red.
 - No generic purple/blue unless brand/domain supports it.
-- If `.tasks/domain.md` provides a usable logo path, use that logo in the header or primary app chrome.
+- If `.tasks/domain.md` provides a usable logo path, including an org logo file inside a `logos` folder, use that actual logo in the header or primary app chrome.
 
 ## Tailwind Use
 
@@ -85,6 +85,7 @@ Use Tailwind for:
 
 Prefer larger section padding, wider gutters, taller row rhythm, and more space between control groups. Slightly over-spaced is acceptable; cramped is not.
 Carry that spacing into inner content as well. Table rows, list rows, cards, badges, metadata groups, and inline actions should breathe; do not solve a data-dense view by cramming too many narrow columns onto one line.
+When a table is surfaced as a primary or secondary working object, give it `shadow-xs`, generous header padding, and generous row padding by default.
 If no selected domain skill overrides radius language, prefer rounded/pill-like controls and avoid defaulting to 4px/6px/8px-style admin radii.
 If no selected domain skill defines the visual language, let the layout become more asymmetrical, expressive, and product-shaped instead of defaulting to safe symmetry.
 
@@ -153,6 +154,7 @@ Before finishing:
 - Domain brand colors are mapped when present.
 - Major groups have generous gaps.
 - Inner row/table/card content has generous gaps too and is not cramped by too many same-line columns.
+- Surfaced tables use `shadow-xs` and generous header/body padding.
 - No top-level cards exist.
 - Any remaining card is unavoidable and justified.
 - No large hero/detail/inspector surface still reads like a card.

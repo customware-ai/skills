@@ -27,7 +27,7 @@ At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal sur
 - Use the main brand/accent color for primary action, selected state, focus, active navigation, and links.
 - Use secondary brand colors only when they clarify hierarchy.
 - Derive backgrounds, surfaces, borders, muted text, and statuses from compatible tints.
-- If `.tasks/domain.md` provides a usable logo path, use the real logo in the header or primary chrome.
+- If `.tasks/domain.md` provides a usable logo path, including an org logo file inside a `logos` folder, use the real logo in the header or primary chrome.
 - Commit to a cohesive aesthetic. Use CSS variables consistently.
 - Dominant colors with sharp accents are usually stronger than timid, evenly distributed palettes.
 - If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
@@ -45,6 +45,7 @@ Airiness is mandatory.
 - Prefer fewer visible modules with more breathing room.
 - Carry that breathing room into inner content too: table rows, list rows, cards, metadata stacks, inline actions, and badges should not collapse into tight clusters.
 - If a row starts feeling cramped, reduce the number of same-line columns and let supporting information stack more naturally.
+- Surfaced tables should use more generous header padding and row padding than default starter tables.
 - When unsure, increase spacing.
 - Cramped, dense, compressed layouts must be revised.
 
@@ -116,6 +117,7 @@ Good defaults:
 - open context/header zone plus one main working section
 - one dominant operational object
 - table/list rows with generous rhythm
+- surfaced tables with `shadow-xs` and comfortable header/body padding
 - rows that group related metadata with breathing room instead of forcing every fact into its own narrow column
 - selected row, inline lane, or drawer for focus
 - sparse command bar for filters/actions
@@ -184,6 +186,7 @@ Reject and revise if:
 - same-white blending makes major surfaces merge together
 - inputs, search/filter controls, or header/nav chrome do not read clearly against the page background
 - inner row/table/card content is tight or over-columned instead of airy
+- a surfaced table is flat because it lacks `shadow-xs` or comfortable header/body padding
 - spacing feels cramped
 - all modules have equal visual weight
 - the UI would still look the same if the domain name changed

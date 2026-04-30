@@ -40,12 +40,13 @@ Before visual planning or implementation, read both files. Skipping either file 
 
 - **Brand first**: If `.tasks/domain.md` provides brand colors, use them. Map the main brand/accent color to primary actions, active navigation, selected state, focus, and links. Derive neutral surfaces, borders, muted text, and statuses from compatible tints. Do not default to generic purple/blue.
 - **Creative fallback when no vertical skill fits**: If the app does not fit a selected business/domain skill like CPQ, CRM, trades, or similar, deliberately push the visual direction further. Commit to a cohesive aesthetic, use CSS variables consistently, prefer dominant colors with sharp accents over timid evenly distributed palettes, use motion for high-impact moments, favor unexpected composition, and build atmosphere through backgrounds and visual details instead of defaulting to a plain shell.
-- **Use the real logo**: If `.tasks/domain.md` provides a usable logo path, use the correct actual brand logo in the header or primary app chrome instead of inventing a placeholder logo.
+- **Use the real logo**: If `.tasks/domain.md` provides a usable logo path, including an org logo file inside a `logos` folder, use that correct actual brand logo in the header or primary app chrome instead of inventing a placeholder logo.
 - **Cardless by default**: Aim for zero cards. If the UI works without a card, the card is not allowed. A bordered rounded surface occupying a major region of the page is a card even if `Card` is not imported. Cards are only allowed for dialog/popover/sheet containment, concise notice, or truly repeated items when rows, dividers, or tonal separation fail.
 - **No top-level cards**: Never compose the main page from large sibling cards, a stack/grid of rounded panels, or a large framed hero/detail container. Top-level structure must be open sections, tonal bands, rows, dividers, workspace areas, or one open focal working zone.
 - **No sidebars by default**: Use a sidebar only when the user explicitly asks for one or a selected domain skill explicitly requires one. Do not add a sidebar because the app is operational, business, admin-like, multi-step, or has multiple sections.
 - **Airy spacing**: Use generous gaps, gutters, row rhythm, and section spacing. Slightly too much spacing is acceptable; cramped, dense, or compressed UI is failure.
 - **Airy inner density**: Airiness must continue inside rows, tables, lists, cards, and compound components. Do not pack too many columns into one row when a cleaner stacked or richer row layout would breathe better. Inner content should use generous gaps between sub-elements, metadata, actions, and labels.
+- **Table rhythm**: When using a surfaced table, give the table `shadow-xs` and use generous header padding, row padding, and taller row rhythm. Tables should not feel compressed, flat, or spreadsheet-tight.
 - **Rounded by default**: If the selected domain skill does not explicitly require a sharper or specific radius language, prefer a clearly rounded modern system. Avoid timid 4px/6px/8px admin radii by default. Controls, chips, tabs, and key surfaces should usually feel distinctly rounded or pill-like.
 - **Typography with character**: Choose fonts that are beautiful, distinctive, and interesting. Avoid generic defaults like Arial and Inter. Prefer a characterful display face paired with a refined body face when the product can support it. The typography should elevate the UI, not read like a default starter app.
 - **One dominant working surface**: The first screen should focus on one clear operational object or working section. Do not try to show the whole product at once.
@@ -77,6 +78,7 @@ Do not code until all answers are acceptable.
 - Does the typography feel distinctive and intentional rather than default/generic?
 - Do page background, canvas, nav chrome, and any focal surface separate clearly at thumbnail scale?
 - Do inputs, search/filter controls, tables, and header/nav chrome have enough tonal separation from the page background?
+- If a table is surfaced, is it using `shadow-xs` plus generous header and row padding?
 - If a sidebar is required, is it using a darker primary-derived tone instead of a pale generic surface?
 - Are shadows limited to contact-edge depth?
 - Does the design feel specific to this domain and task?
@@ -86,6 +88,7 @@ Do not code until all answers are acceptable.
 - Prefer topbar, tabs, segmented controls, breadcrumbs, command rows, stepped flows, drawers, sheets, dialogs, or detail routes over sidebars.
 - Before adding any card-like wrapper, try open spacing, typography, dividers, rows, tonal bands, tables, drawers, sheets, dialogs, or detail routes.
 - In tables and row-based views, prefer fewer columns, richer rows, taller row rhythm, and clearer vertical stacking when that makes the UI feel more airy and readable.
+- Surfaced tables should usually use `shadow-xs`, generous header padding, and generous body row padding rather than relying only on borders.
 - Detail views should prefer inline split layout, selected rows, dividers, tonal sections, drawers, or sheets before any framed panel.
 - If a `Card` component is imported or a card-like wrapper remains, add a nearby inline justification explaining why it is unavoidable under the allowed cases.
 - Use good readable UI fonts. Avoid typewriter/blog fonts unless the domain explicitly requires that character.
@@ -110,6 +113,7 @@ Reject and revise if:
 - Same-white or near-white panelization makes major surfaces blend together.
 - Inputs, search/filter controls, data rows, or header/nav chrome blend into the page background.
 - Row/table content is cramped, over-columned, or too tight inside the first column and metadata blocks.
+- A surfaced table is missing `shadow-xs` or its header/rows are padded too tightly.
 - A usable logo path exists in `.tasks/domain.md` but the header still uses a placeholder logo or no logo without reason.
 - Brand colors from `.tasks/domain.md` are not reflected in primary/active/focus treatment.
 - No vertical/domain skill fit the app, but the UI still defaulted to a generic admin shell instead of using a stronger creative direction.
