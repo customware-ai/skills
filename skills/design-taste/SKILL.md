@@ -1,29 +1,43 @@
 ---
 name: design-taste
 license: MIT
-compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Read alongside frontend-design on every UI build.
+compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Read on every UI build.
 metadata:
   author: ryan-price
-  version: "0.1"
+  version: "0.2"
 description: >
-  Universal visual quality skill applied to every Customware build, regardless of vertical.
-  Encodes layout balance, hierarchy, restraint, rhythm, component recipes, and aesthetic
-  principles that make any UI feel polished and intentional rather than generic-AI-output.
-  Read alongside frontend-design on every build, in addition to any vertical skill
-  (cpq-builder, trades-builder, crm-builder, erp-builder). Trigger signals: any UI build,
-  improving visual quality, aesthetic balance, polished design, restraint, hierarchy,
-  taste, component design, layout principles, premium feel, well-balanced UI.
+  Universal visual quality skill for every Customware build. Encodes layout philosophy,
+  hierarchy, restraint, rhythm, brand theming mechanics, the template contract, BrandMark
+  rendering, archetype catalog, component recipes, and aesthetic anti-patterns. Read on
+  every UI build. The first task agent (mitb-initial-agent) runs the vision pass once;
+  this skill is the implementation contract that turns vision into a coherent app.
+  Trigger signals: any UI build, improving visual quality, aesthetic balance, polished design,
+  hierarchy, restraint, taste, component design, layout principles, premium feel,
+  brand theming, template contract, light-mode default, BrandMark.
 ---
 
 # Design Taste Skill
 
 ## What this skill is
 
-This skill is the visual quality bar shared across every build. It's read alongside `frontend-design` (which handles mechanics — template contract, brand theming, BrandMark) and any vertical skill (which handles workflow structure — CPQ stages, Trades sections, CRM entities). `design-taste` encodes the *taste* layer: how to lay things out so they feel balanced, how to pick a coherent visual language, how to build components with restraint, and how to avoid the patterns that make AI builds look generic.
+This skill is the visual quality bar for every build. It owns both the *taste* layer (foundations, archetypes, recipes, anti-patterns) and the *mechanics* layer (template contract, brand theming, BrandMark, light-mode mandate, header right cluster).
 
-The reason most one-shot AI output looks mediocre is not that the agent is incapable of any individual decision. It's that the agent makes decisions component-by-component in isolation, and each "reasonable" decision drifts slightly from the last. Twelve reasonable-but-uncoordinated decisions produce visual chaos. This skill replaces that pattern with a coordinated system: declare the visual language upfront, then implement every component as a consumer of that language.
+This skill is read by:
+- **mitb-initial-agent** on the first task, after the agent has stated its vision and design tokens. design-taste is the implementation contract that turns the vision into a coherent app.
+- **mitb-agent-prototype** and **mitb-agent-full-access** on subsequent tasks. The vision is already in the codebase by then; design-taste guides additions to match the existing visual language.
 
-Read this skill on every build. Apply it whether the build is a CPQ for an industrial customer, a CRM for a professional services firm, a Trades app for a contractor, or a YOLO consumer SPA with no vertical at all. The taste layer is universal.
+The first task is special — it sets the design language. Every task after that respects it. Both modes use design-taste; only the first build uses it to *establish* the system, and every later build uses it to *extend* the system.
+
+## Reading order — fully read these before writing any tokens or components
+
+The reference files are short and necessary. Do not skim, do not partial-read with `head`, do not skip:
+
+1. `references/archetypes.md` — full archetype catalog, token sets, reference apps, typography pairings
+2. `references/components.md` — exact recipes for every common component
+3. `references/anti-patterns.md` — failure modes to scan for during and before completion
+4. `references/mechanics.md` — template contract, brand theming, BrandMark, light-mode mandate, header rules
+
+If any of these is unread when you start writing tokens, your output will drift from the system. The previous build (dental scheduler, April 2026) only read SKILL.md and partial archetypes.md and produced generic-dashboard output. Read all four references in full.
 
 ---
 
@@ -59,7 +73,7 @@ The single most important restraint rule: **the brand or accent color appears in
 
 Other restraint rules:
 - **No more than one primary action per screen.** Two if absolutely necessary, with one clearly subordinate.
-- **No more than one focal card per screen.** Other cards are supporting context.
+- **No more than one focal element per screen.** Other elements are supporting context.
 - **No more than 2-3 colors in any chart.** Multi-colored bars and lines are noise.
 - **No more than 4 type sizes total in the entire app.** Hard ceiling.
 - **No drop shadows for elevation.** Use 1px borders. Shadows immediately read as bargain-template.
@@ -77,6 +91,24 @@ Rhythm is the consistent spacing and sizing pattern that makes the app feel like
 
 Rhythm is invisible when present and obvious when absent. It's what separates "looks fine" from "feels right."
 
+### 5. Inline-first composition
+
+This is the principle most often violated by AI builds. Cards are not the default layout primitive. They are an *exception* used when content needs emphasis, separation, repetition, or framing.
+
+Default to inline content in the page body:
+- A page title sits as text, not inside a card with a title bar
+- A primary number sits as a large display element on the page, not inside a "metric card"
+- A list of items can be a styled list with rows, not a grid of card tiles
+- A form is field rows on the page, not a "Form" card
+
+Use cards only when:
+- **Emphasis** — this one element is the focal point and needs visual lift from its surroundings
+- **Separation** — multiple unrelated content blocks need to be visually distinct
+- **Repetition** — a list of equivalent things benefits from each one being self-contained
+- **Framing** — a detail panel, modal, or overlay frames content for focused attention
+
+A page that stacks one card after another for no reason — KPI card, today card, list card, secondary list card — is the dashboard reflex, and it's almost always wrong. Real apps inline most content and reserve cards for moments that actually need framing.
+
 ---
 
 ## B. System — how to encode visual language
@@ -91,74 +123,65 @@ Every build follows this order:
 2. **Declare the complete token set** in `app.css` — colors, typography, radius, borders, elevation, spacing
 3. **Build every component as a consumer of those tokens** — no hardcoded hex values, no improvised type sizes, no ad-hoc radii
 
-This single ordering eliminates 60% of AI design failures. It physically prevents the agent from inventing a fourth radius or a sixth type size mid-build. The constraint produces coherence; the coherence produces taste.
+This single ordering eliminates the most common AI design failures: invented colors, mixed radii, accidental new type sizes, ad-hoc status colors. The constraint produces coherence; the coherence produces taste.
 
 ### Picking the archetype
 
-An archetype is a complete preset for the visual language — a palette flavor, a typography pairing, a radius scale, an elevation style. All archetypes share the same structural shape (8 token categories); they differ only in values.
+An archetype is a complete preset for the visual language — palette flavor, typography pairing, radius scale, elevation style. All archetypes share the same structural shape; they differ only in values.
 
-Selection rules:
-- **DOMAIN.md has brand colors** → use the brand colors for the palette layer; pick the archetype whose structural feel matches the customer (industrial CPQ → Enterprise; wellness clinic → Wellness; creative agency CRM → Creator). The brand colors override the archetype's palette; everything else (typography, radius, elevation) comes from the archetype.
-- **No DOMAIN.md and no clear emotional cue** → use Neutral / Default. It's the safe choice and works for any app.
-- **No DOMAIN.md but a clear cue from the task** → match the archetype to the cue. "Build me a habit tracker" → Wellness. "Build me an expense tracker" → Finance & Trust. "Build me a journal" → Creator & Social.
+- **DOMAIN.md has brand colors** → use brand colors for the palette layer; pick the archetype whose structural feel matches the customer (industrial CPQ → Enterprise; wellness clinic → Wellness; creative agency CRM → Creator). Brand colors override the archetype's palette; everything else (typography, radius, elevation) comes from the archetype.
+- **No DOMAIN.md and no clear emotional cue** → use Neutral / Default. Safe choice that works for any app.
+- **No DOMAIN.md but a clear cue from the task** → match the archetype to the cue. "Build me a habit tracker" → Wellness. "Dental scheduler" → Editorial-Clinical or Wellness. "Build me an expense tracker" → Finance & Trust.
 - **Multiple cues** → pick the most dominant. Don't blend archetypes.
 
-**Do not invent a new archetype mid-build.** Pick one, declare its tokens, build against them.
+Do not invent a new archetype mid-build.
 
-**For full archetype catalog and the encoded token sets** (Neutral / Default + Wellness & Health in v0.1, others pending validation), see [`references/archetypes.md`](references/archetypes.md). Read this reference at the moment of writing the token block to `app.css`.
+**For the full archetype catalog and encoded token sets**, read `references/archetypes.md` in full before writing the token block.
+
+### Picking the layout shape
+
+The dashboard layout (sidebar + KPI cards + content cards) is overused and almost always wrong unless the app is genuinely a dashboard tool. Most apps have a *primary product surface* — and that surface should be the focal element, not buried below KPI cards.
+
+Common product surfaces by app type:
+- **Calendar/scheduler** → day or week timeline IS the surface. The schedule is not "below" KPIs; it's the page.
+- **Writing/notes** → the editor IS the surface
+- **Pipeline/board** → the board IS the surface
+- **Map/location** → the map IS the surface
+- **Reading** → the article IS the surface
+- **Chat/messaging** → the conversation IS the surface
+- **Tracker/log** → the log entries ARE the surface
+- **Form-heavy intake** → the form sequence IS the surface
+
+When the product has a clear primary surface, that surface gets the page. Supporting context (counts, filters, related items) goes in narrow side panels or collapses into the surface itself. KPIs go above only when the user actually monitors them — not as decoration.
+
+For full layout patterns (focal, surface-first, list-detail, form, reading, board, single-column), see `references/components.md`.
 
 ---
 
-## C. Patterns — how to lay things out
+## C. Patterns — interactive states and microinteractions
 
-These are universal layout patterns that work across verticals and archetypes. The vertical skill (if present) defines what content goes in each region; this skill defines how the regions are arranged and how content within them is composed.
+### Every interactive element has all four states
 
-### Layout patterns
-
-**Focal layout (most common for primary screens).** Sidebar + main content area with focal card on top + row stack below + supporting right panel. Used for CRM home, CPQ project list, Trades job list, consumer SPA home.
-
-**Detail layout (for viewing/editing a single record).** Header (back nav + title + primary actions) + tab nav + body (form or detail data) + optional right panel for related items. Used for the document view in CPQ, the project detail in Trades, the contact/deal detail in CRM.
-
-**List/index layout (for browsing many records).** Title + primary action above; search + filter chips below; row stack as the body. Optional right panel for advanced filters or a preview of the selected row.
-
-**Form layout.** Single column by default. Two-column field layouts only when fields are conceptually paired (first/last name, start/end date). Primary save action goes at the bottom-right; cancel is to its left.
-
-### Mobile-first responsiveness
-
-Three-column layouts collapse to single-column under 768px. The right panel either disappears, becomes a tab, or becomes a section below the main content. The sidebar becomes a drawer triggered by a menu button.
-
-For consumer SPAs likely used primarily on phones, build for mobile first and let the desktop layout grow from it. For business apps used primarily on desktops, build for desktop first and let mobile collapse cleanly.
-
-### State patterns — every interactive element has all four states
-
-**Default.** Resting appearance. What the user sees on first paint.
-
+**Default.** Resting appearance.
 **Hover.** Subtle change signaling interactivity — slight background tint, slight border darken. Never a dramatic visual jump. Cursor changes to pointer.
-
 **Active / pressed.** Slightly more pronounced than hover; signals the click is registering.
-
 **Disabled.** Reduced opacity (60-70%), no hover effect, no cursor change. The user should immediately understand "this is here but currently unavailable."
 
-Beyond these four interactive states, every list, every form, every async action has these UI states:
+### Every async surface has all four UI states
 
-**Empty.** Never leave a list view blank. Empty state has: optional muted illustration, title ("No projects yet"), description ("Create your first project to get started"), and a primary action button when applicable.
-
-**Loading.** Skeletons matching the actual content shape, not generic spinners. A row skeleton is a tinted rectangle the size of a row. Spinners are reserved for short async actions (button submit) and even then a loading state on the button itself is better.
-
-**Error.** Constructive, never dead-end. Title ("Couldn't load projects"), description ("Check your connection and try again"), action ("Retry"). Never a raw error message.
-
-**Success.** After a destructive or significant action, confirm via a toast at the bottom-right that auto-dismisses after 3-4 seconds. For inline actions (toggling a checkbox), the visible state change IS the confirmation — no toast needed.
+**Default.** Content rendered.
+**Empty.** Never blank. Title ("No appointments yet"), description ("Book the first one to get started"), action button when applicable.
+**Loading.** Skeletons matching the actual content shape, not generic spinners. A row skeleton is a tinted rectangle the size of a row.
+**Error.** Constructive, never dead-end. Title ("Couldn't load appointments"), description ("Check your connection and try again"), action ("Retry"). Never a raw error message.
 
 ### Microinteractions
 
-Microinteractions are small UI responses that make the app feel alive. Universal subtleties:
-
-- **Hover transitions:** 150-200ms ease-out on background, border, color changes
+- **Hover transitions:** 150-200ms ease-out
 - **Focus indicators:** visible focus ring on keyboard nav (2px outline in `--primary` with 2px offset)
 - **Optimistic UI:** update immediately, roll back if the action fails
 - **Button press feedback:** subtle scale or color shift on press
-- **Animated state transitions:** 150ms cross-fade or slide between sections
-- **Toast entry animation:** slide in from bottom-right over 200ms
+- **State transitions:** 150ms cross-fade or slide between sections
+- **Toast entry:** slide in from bottom-right over 200ms
 
 If a transition is noticeable as a transition, it's too long. Aim for "I didn't notice it but the app felt good."
 
@@ -166,82 +189,107 @@ If a transition is noticeable as a transition, it's too long. Aim for "I didn't 
 
 ## D. Component recipes
 
-Components consume the active token set. Same recipe across all archetypes; different tokens; different visual results; always coherent.
+Components consume the active token set. Same recipes across all archetypes; different tokens; different visual results; always coherent.
 
-**For exact specs of all component recipes** (Primary Button, Secondary Button, Tertiary Button, Chip Active/Inactive, Status Badge, Row Default/Hover/Selected, Card, Toggle, Form Input, Section Header, Empty State, Toast, Loading Skeleton — 16 recipes total), see [`references/components.md`](references/components.md).
+For exact specs of all 16+ component recipes — Primary/Secondary/Tertiary Buttons, Chips, Status Badges, Rows (default/hover/selected), Cards (when appropriate), Toggles, Form Inputs, Section Headers, Empty States, Toasts, Loading Skeletons, plus the layout pattern catalog — see [`references/components.md`](references/components.md).
 
-Read this reference whenever building any UI component. Each recipe specifies background, text, typography, radius, padding, height, hover, disabled, and transition specs — implementable directly without design decisions.
+Read this reference whenever building any UI component or composing a screen layout.
 
 ---
 
 ## E. Anti-patterns
 
-These are the failures that show up in 90% of one-shot AI builds. Naming them explicitly is the most effective preventive measure.
+The 18+ failures that show up in 90% of one-shot AI builds — including the dashboard reflex, card-heavy compositions, generic SaaS purple, decorative gradients, mixed radii, fifth type sizes, invented status colors, and brand-color overuse.
 
-The full list of 18 anti-patterns — covering brand-color overuse, drop shadows, mixed radii, fifth type sizes, invented status colors, colored-text-on-tinted-backgrounds, dense layouts, gradients, decorative gray icons, internal dividers, centered-everything layouts, loading spinners, unexplained disabled buttons, uniform field widths, modal overuse, toast overuse, decorative emojis, regular-weight page titles — lives in [`references/anti-patterns.md`](references/anti-patterns.md).
-
-Read this reference before starting the build (to internalize what to avoid) AND before completion (to scan the build for violations).
+See [`references/anti-patterns.md`](references/anti-patterns.md). Read at the start of the build to internalize and again before completion as a verification scan.
 
 ---
 
-## F. Build order
+## F. Mechanics
 
-The agent MUST follow this order. Do not start building components before the token block is complete in `app.css`.
+The non-optional mechanics inherited from the deprecated frontend-design skill: template contract, brand theming CSS variable mapping, BrandMark component pattern with onError fallback, light-mode-in-both-places mandate, header right cluster (role switcher + theme toggle + user menu), currency formatting, scope boundaries.
 
-1. **Pick the archetype.** Read `references/archetypes.md`. Match to the task description, DOMAIN.md (if present), and customer feeling. Note the choice in a code comment at the top of `app.css`: `/* design-taste archetype: Wellness & Health */`
-2. **Write the complete token block to `app.css`.** All 8 token categories (surfaces, palette, status, text, typography, radius, borders, elevation, spacing) declared as CSS variables under `:root`. No exceptions.
-3. **Set light mode in BOTH places.** `app.css` AND the JavaScript ThemeProvider default. Failure to do this means the app ships in dark mode regardless of tokens. Most-skipped step in the entire pipeline.
-4. **Build the layout shell.** Sidebar (if applicable), header, main content area. Use `--surface-stage` for the page background, `--surface-navigation` for the sidebar. NO hardcoded colors — every value comes from a token.
-5. **Build the focal element on the primary screen.** The focal card, score, dashboard centerpiece — whichever is the screen's anchor. Use `--surface-focal` (white), generous padding, display-size primary text.
-6. **Build supporting elements.** Row stacks, secondary cards, section headers, sidebar navigation items. Open `references/components.md` and follow each recipe exactly.
-7. **Build interactive states.** Every interactive element has hover, active, selected, disabled. Every form has loading, error, success.
-8. **Build empty/loading/error/success states.** Every list view has an empty state. Every async action has a loading and error state. Every significant action confirms.
-9. **Add microinteractions.** Hover transitions, focus indicators, optimistic UI, button press feedback, toast animations.
-10. **Anti-pattern scan.** Open `references/anti-patterns.md`. Scan the build against each item. Fix any violations.
-11. **Side-by-side check (iterative builds only).** When the prototype already exists and this is a follow-up build, compare the new screen to the closest existing peer screen using `playwright-interactive-sandbox`. Match radius, typography, spacing, badge style, button shape. The existing app's visual language overrides this skill's defaults — match the existing.
+These rules are mandatory. Skipping any of them is a failed build even when tokens and components are perfect.
+
+See [`references/mechanics.md`](references/mechanics.md). Read before writing the token block AND before building the layout shell.
 
 ---
 
-## G. Verification
+## G. Build order
+
+The agent MUST follow this order. Do not start building components before the token block is complete.
+
+1. **Read all four references in full.** Do not skim. archetypes, components, anti-patterns, mechanics.
+2. **Pick the archetype.** Match to the task description, DOMAIN.md (if present), and any vision the upstream agent stated. Note the choice in a code comment at the top of `app.css`: `/* design-taste archetype: Wellness & Health */`
+3. **Identify the primary product surface.** What IS this app? Calendar timeline? Writing canvas? Board? Pipeline? Map? Reading layout? The answer determines the layout shape — see Section B and `references/components.md`.
+4. **Write the complete token block to `app.css`.** All token categories declared as CSS variables under `:root`. No exceptions. No "I'll add elevation later." Use `references/mechanics.md` for the brand theming variable mapping.
+5. **Set light mode in BOTH places.** `app.css` AND the JavaScript ThemeProvider default. Failure to do this means the app ships in dark mode regardless of tokens. Most-skipped step.
+6. **Build the layout shell using the Template Contract.** Sidebar (if applicable), header, main content area. Use `--surface-stage` for the page background, `--surface-navigation` for the sidebar. Header gets the BrandMark + company name on the left and the right cluster on the right. NO hardcoded colors anywhere — every value comes from a token.
+7. **Build the primary product surface.** Whatever the surface is for this app — that's the focal element. Inline it on the page. Do NOT wrap it in a "card" unless the surface itself benefits from card framing (rare).
+8. **Build supporting elements.** Side panels, secondary surfaces, navigation rows. Apply the recipes in `references/components.md` exactly. Inline content into the page body before reaching for cards.
+9. **Build interactive states.** Every interactive element has hover, active, selected, disabled. Every async surface has loading, error, empty.
+10. **Add microinteractions.** Hover transitions, focus indicators, optimistic UI, button press feedback, toast animations.
+11. **Anti-pattern scan.** Open `references/anti-patterns.md`. Walk each item. Fix any violations.
+12. **Side-by-side check (iterative builds only — not first build).** Compare the new screen to the closest existing peer screen. Match radius, typography, spacing, badge style, button shape. The existing app's visual language overrides this skill's defaults — match the existing.
+
+---
+
+## H. Verification
 
 Before completion, run through this checklist:
 
-1. **Token block complete.** All 8 token categories declared in `app.css`. No hardcoded hex values anywhere except inside the token block.
+1. **Token block complete.** Every token category declared in `app.css`. No hardcoded hex values anywhere except inside the token block.
 2. **Archetype consistent.** Every component pulls from the declared tokens. No off-archetype values.
 3. **Light mode in both places.** `app.css` AND ThemeProvider default. App ships in light mode.
-4. **Hierarchy clear.** Each screen has one focal point. Supporting elements are visually subordinate.
-5. **Restraint visible.** Brand color used in <10% of pixels. No more than one primary action per screen. No drop shadows.
-6. **Rhythm consistent.** All spacing on the 4/8 scale. Same hierarchy = same radius. Aligned baselines.
-7. **All four states present** for every interactive element (default/hover/active/disabled) and every async surface (default/loading/empty/error).
-8. **Anti-pattern scan clean.** All 18 anti-patterns checked (`references/anti-patterns.md`). No violations.
-9. **Side-by-side check passed (iterative builds).** New screen visually matches existing peer screen.
+4. **Brand colors mapped if present in DOMAIN.md.** `accent` → `--primary`; `dark` (lightened) → `--sidebar`; `light` → `--background`. Per `references/mechanics.md`.
+5. **BrandMark used everywhere a logo appears.** No bare `<img>` tags.
+6. **Primary surface is the focal element.** Not a card buried below KPIs.
+7. **Inline-first composition.** Cards used only for emphasis, separation, repetition, or framing — not as the default layout primitive.
+8. **Hierarchy clear.** Each screen has one focal point. Supporting elements are visually subordinate.
+9. **Restraint visible.** Brand color used in <10% of pixels. No more than one primary action per screen. No drop shadows.
+10. **Rhythm consistent.** All spacing on the 4/8 scale. Same hierarchy = same radius. Aligned baselines.
+11. **All four states present** for every interactive element (default/hover/active/disabled) and every async surface (default/loading/empty/error).
+12. **Anti-pattern scan clean.** All items in `references/anti-patterns.md` checked. No violations.
+13. **Header right cluster correct.** Role switcher (prototype phase) + theme toggle + user menu. User menu has placeholder Log out + "Demo mode" hint per mechanics.
+14. **Side-by-side check passed (iterative builds).** New screen visually matches existing peer screen.
 
 ---
 
-## H. v0.1 scope and validation plan
+## I. v0.2 scope, what changed since v0.1, and known gaps
 
-This is v0.1. Validated on zero builds.
+### What changed
 
-**Encoded in v0.1:**
-- 2 archetypes (Neutral / Default + Wellness & Health) — see `references/archetypes.md`
-- 16 component recipes — see `references/components.md`
-- 18 anti-patterns — see `references/anti-patterns.md`
-- 4 layout patterns + 4 interactive states + 4 async UI states + 6 microinteraction guidelines
+- **Absorbed mechanics from frontend-design** (now disabled). Template Contract, BrandMark, brand theming variable mapping, light-mode mandate, header right cluster, currency formatting — all live in `references/mechanics.md`. design-taste is now the single source of truth for visual mechanics + taste.
+- **Added inline-first composition principle (Section A.5).** Cards are an exception, not the default. Replaces the v0.1 assumption that cards are the primary layout primitive.
+- **Added "identify the primary product surface" step in build order.** This was the gap that produced the generic-dashboard dental scheduler in the April 2026 validation. Now an explicit step before token-write.
+- **Added reference apps and optional typography pairings to archetypes** (in `references/archetypes.md`). Each archetype names 2-3 real apps as North Stars and may declare an optional display font pairing.
+- **Added Editorial-Clinical archetype** for medical/professional/document-heavy contexts (Marigold-style — Fraunces + Inter, soft mint, generous whitespace, broadsheet feel).
+- **Strengthened the read directive.** All four references must be read in full before writing tokens. The April 2026 validation showed that partial reads (`head -150` on archetypes.md) lose critical information.
+- **Removed VISION.md hooks.** The first task agent (mitb-initial-agent) runs the vision pass once as an inline planning note, not as a separate file. design-taste consumes whatever vision exists in the agent's context; subsequent builds match the existing codebase.
+- **Removed Generic Layout Fallback references.** design-taste's archetype model replaces it.
 
-**Pending in future versions:**
-- 8 additional archetypes (Productivity, Finance, Creator, Lifestyle, Education, Utility, Reading, Enterprise)
+### Encoded in v0.2
+
+- 3 archetypes (Neutral / Default + Wellness & Health + Editorial-Clinical)
+- 16+ component recipes
+- 18+ anti-patterns including new card-overuse and generic-dashboard items
+- Layout pattern catalog (focal, surface-first, list-detail, form, reading, board, single-column)
+- 4 interactive states + 4 async UI states + 6 microinteraction guidelines
+- Mechanics: Template Contract, BrandMark, brand theming, light-mode mandate, header right cluster, currency
+
+### Pending
+
+- 7 additional archetypes (Productivity & Focus, Finance & Trust, Creator & Social, Lifestyle & Travel, Education & Knowledge, Utility & Tools, Reading & Content, Enterprise & Professional)
 - Edge components (date picker, multi-step wizards, complex modals, data tables, calendars, kanban boards)
 - Animation specifics for transitions beyond microinteractions
 - Detailed responsive breakpoint behavior
 - Dark mode (deferred — get light mode reliable first)
 
-**Validation plan:**
-1. Run a YOLO build with this v0.1 ("build me a habit tracker") using the Wellness archetype. Compare to the vision-board reference.
-2. Run an existing-vertical build (e.g., re-run an HB Material Handling CPQ build) using the Default archetype with brand colors from DOMAIN.md overriding the palette. Compare against current quality.
-3. Identify gaps in both runs. Update to v0.2.
-4. Encode a third archetype only after both validation builds reliably hit their respective quality targets.
+### Validation plan
 
-Do not generalize this skill across all 10 archetypes until the encoded ones produce reliable output.
+1. Re-run the dental scheduler build with v0.2 (Editorial-Clinical archetype). Compare to Marigold reference.
+2. Run an existing-vertical build (e.g., HB Material Handling CPQ) using the Default archetype with brand colors from DOMAIN.md overriding the palette. Compare against current quality.
+3. Identify gaps. Update to v0.3.
 
 ---
 
@@ -249,11 +297,11 @@ Do not generalize this skill across all 10 archetypes until the encoded ones pro
 
 | Skill | Reads when | What it provides |
 |---|---|---|
-| `frontend-design` | Always | Template contract, BrandMark, brand theming mechanics, must-not-skip rules |
-| **`design-taste`** | **Always** | **Visual quality bar — foundations, archetypes, recipes, anti-patterns, polish** |
+| **design-taste** | **Always** | **Visual quality + mechanics — foundations, archetypes, recipes, anti-patterns, template contract, brand theming, BrandMark, light-mode mandate** |
+| `domain-context` | Always | Business terminology, entities, statuses, stakeholders |
 | `cpq-builder` | When task is CPQ-shaped | CPQ-specific section structure, quote document, RBAC patterns |
 | `trades-builder` | When task is trades-shaped | Trades-specific section structure, job summary, payment flow |
 | `crm-builder` | When task is CRM-shaped | Entity model, pipeline view, list/detail patterns |
 | `erp-builder` | When task is ERP-shaped | Inventory model, purchase order flow |
 
-Every build reads `frontend-design` + `design-taste`. Verticals are additive. For YOLO consumer SPAs, no vertical is read — `design-taste` carries most of the visual decisions.
+design-taste and domain-context are read on every build. Verticals are additive when one fits. For builds with no vertical, design-taste + domain-context are sufficient — there is no Generic Layout Fallback; the chosen archetype IS the design system.
