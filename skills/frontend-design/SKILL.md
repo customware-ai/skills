@@ -5,9 +5,10 @@ description: >
   non-generic app UIs. Use whenever creating or changing frontend UI, React components,
   shadcn/ui themes, Tailwind styles, app layouts, or first-version product screens.
   This skill complements vertical/domain skills like CPQ, CRM, and similar app builders:
-  follow the selected domain skill's workflow and layout requirements, then use this
-  skill for brand-aware theming, generous spacing, typography, surface hierarchy,
-  cardless defaults, no-sidebar defaults, and anti-pattern avoidance.
+  follow the selected domain skill's workflow and layout requirements, then enforce
+  this skill's shared visual rules for brand-aware theming, generous spacing,
+  typography, contrast, roundedness, shadows, surface hierarchy, cardless defaults,
+  no-sidebar defaults, and anti-pattern avoidance.
 ---
 
 # Frontend Design
@@ -30,7 +31,8 @@ Before visual planning or implementation, read both files. Skipping either file 
    - **Vision**: domain-specific product and visual direction. Reject generic SaaS purple, card-heavy dashboards, and generic admin shells.
    - **First-version features**: working screens, controls, routes, dialogs, and localStorage-backed state.
    - **Design tokens**: primary, secondary/accent, background, canvas, focal contrast treatment, text, border, radius, contact shadow, status colors, typography, generous spacing, and cardless plan.
-   - **Fallback creative direction**: when no selected domain skill defines a stronger visual/product pattern, choose an intentional design direction for color, motion, composition, and background atmosphere rather than falling back to a generic admin shell.
+   - **Shared visual rules**: for every app, including CPQ/CRM/trades-like business apps, enforce brand color usage, actual logo usage, airy spacing, airy inner density, rounded controls, strong input contrast, soft/tight shadows, minimal visual noise, and cardless defaults.
+   - **Fallback creative direction**: only when no selected domain skill defines a business/product pattern, choose a more vivid intentional direction for color, motion, composition, and background atmosphere rather than falling back to a generic admin shell.
 5. Pass the design compliance gate.
 6. Configure CSS variables and Tailwind/shadcn theme tokens before building screen details.
 7. Build the UI with those tokens.
@@ -39,7 +41,8 @@ Before visual planning or implementation, read both files. Skipping either file 
 ## Non-Negotiables
 
 - **Brand first**: If `.tasks/domain.md` provides brand colors, use them. Map the main brand/accent color to primary actions, active navigation, selected state, focus, and links. Derive neutral surfaces, borders, muted text, and statuses from compatible tints. Do not default to generic purple/blue.
-- **Creative fallback when no vertical skill fits**: If the app does not fit a selected business/domain skill like CPQ, CRM, trades, or similar, deliberately push the visual direction further. Commit to a cohesive aesthetic, use CSS variables consistently, prefer dominant colors with sharp accents over timid evenly distributed palettes, use motion for high-impact moments, favor unexpected composition, and build atmosphere through backgrounds and visual details instead of defaulting to a plain shell.
+- **Business-skill compatibility**: If the app fits a selected business/domain skill like CPQ, CRM, trades, or similar, follow that skill's workflow and layout mostly as written, but still enforce this skill's shared visual rules: airy spacing, airy inner density, rounded controls, strong input contrast, soft/tight shadows, brand colors, actual logo usage, minimal visual noise, and cardless defaults.
+- **Creative fallback when no vertical skill fits**: Only if the app does not fit a selected business/domain skill like CPQ, CRM, trades, or similar, deliberately push the visual direction further. Commit to a cohesive aesthetic, use CSS variables consistently, prefer dominant colors with sharp accents over timid evenly distributed palettes, use motion for high-impact moments, favor unexpected composition, and build atmosphere through backgrounds and visual details instead of defaulting to a plain shell.
 - **Use the real logo**: First look in `public/brand/logos/`. If that folder contains a usable logo file, use the correct actual logo from that folder in the header or primary app chrome. Only create or invent a logo if `public/brand/logos/` does not exist or has no usable logo files.
 - **Cardless by default**: Aim for zero cards. If the UI works without a card, the card is not allowed. A bordered rounded surface occupying a major region of the page is a card even if `Card` is not imported. Cards are only allowed for dialog/popover/sheet containment, concise notice, or truly repeated items when rows, dividers, or tonal separation fail.
 - **No top-level cards**: Never compose the main page from large sibling cards, a stack/grid of rounded panels, or a large framed hero/detail container. Top-level structure must be open sections, tonal bands, rows, dividers, workspace areas, or one open focal working zone.
@@ -53,8 +56,8 @@ Before visual planning or implementation, read both files. Skipping either file 
 - **No major-region framed surfaces**: Do not turn the main working area, hero, inspector, or detail lane into a big bordered rounded panel. Prefer open layout, split rows, tonal bands, dividers, or a drawer/sheet for secondary detail.
 - **Token-first shadcn**: Configure `app.css`/global CSS variables and Tailwind theme values before component work. Do not accept default shadcn colors as the design.
 - **Strong soft contrast**: If a surface exists, it must separate from the canvas through tone first, border second, shadow last. Same-white or near-white surfaces with faint borders fail.
-- **Interactive surface contrast**: Editable controls must be obvious. Inputs, selects, textareas, comboboxes, date fields, search fields, and command-bar controls must use a near-white or very light tinted background in light mode and a near-black background in dark mode. They must not blend into the page or panel background. Search/filter controls should usually be among the clearest input surfaces on the screen.
-- **Sidebar tone when required**: If a selected domain skill requires a sidebar, prefer a much darker shade derived from the primary color for the sidebar background or key sidebar surfaces. The sidebar should feel intentional and anchored, not like a pale afterthought.
+- **Interactive surface contrast**: Editable controls must be obvious. Inputs, selects, textareas, comboboxes, date fields, search fields, and command-bar controls must use a near-white or very light tinted background in light mode and a near-black background in dark mode. They must not use `bg-transparent`, `bg-background`, `bg-muted`, or the same fill as the page/panel. `--input` must be visibly lighter than `--background` in light mode and visibly darker than the canvas in dark mode. Search/filter controls must be among the clearest input surfaces on the screen.
+- **Sidebar tone and space when required**: If a selected domain skill requires a sidebar, use a much darker shade derived from the primary color for the sidebar background or key sidebar surfaces. The sidebar must be wide enough for its labels, badges, and active states; do not clip text or squeeze actions off the edge. Use generous item padding, clear vertical rhythm, and deliberate truncation only for secondary descriptions.
 - **Contact depth only**: Avoid `shadow-sm`, `shadow-md`, and `shadow-lg` as defaults for normal layout surfaces. Prefer `shadow-2xs` for buttons and other small interactive elements, `shadow-xs` for cards/tables/similar contained surfaces, `shadow-xl` for popovers and banners, and `shadow-2xl` for dialogs. Use soft, tight, contact-edge depth only when needed. Soft means no hard spread edge, not barely visible; the shadow can still be a clear gray if needed for contrast. Depth should read as edge contact, not lift.
 - **Domain specificity**: The UI should not look unchanged if the domain name and labels are swapped.
 
@@ -67,6 +70,7 @@ Do not code until all answers are acceptable.
 - Did I read both frontend-design references?
 - Did I define exact CSS/Tailwind/shadcn token updates?
 - If no selected domain skill fits, did I choose a deliberate fallback direction for color, motion, spatial composition, and background atmosphere?
+- If a selected business/domain skill fits, am I following it while still enforcing the shared visual rules?
 - Can this UI be built with zero cards? If not, is every remaining card unavoidable under the narrow allowed cases?
 - Are there no top-level cards?
 - Am I avoiding sidebars unless explicitly requested or required by a selected domain skill?
@@ -79,8 +83,9 @@ Do not code until all answers are acceptable.
 - Do page background, canvas, nav chrome, and any focal surface separate clearly at thumbnail scale?
 - Do inputs, search/filter controls, tables, and header/nav chrome have enough tonal separation from the page background?
 - In light mode, do editable controls actually use near-white or very light tinted backgrounds rather than page-colored fills?
+- Are editable controls free of `bg-transparent`, `bg-background`, `bg-muted`, and same-token page/panel fills?
 - If a table is surfaced, is it using `shadow-xs` plus generous header and row padding?
-- If a sidebar is required, is it using a darker primary-derived tone instead of a pale generic surface?
+- If a sidebar is required, is it using a darker primary-derived tone with enough width, padding, row height, and overflow handling?
 - Are shadows limited to contact-edge depth?
 - Does the design feel specific to this domain and task?
 
@@ -95,6 +100,8 @@ Do not code until all answers are acceptable.
 - Use good readable UI fonts. Avoid typewriter/blog fonts unless the domain explicitly requires that character.
 - When no selected domain skill is steering the design language, use more expressive composition, stronger accent hierarchy, and more atmospheric backgrounds instead of a safe generic shell.
 - Keep surfaces distinct through tone, spacing, and hierarchy rather than borders and boxes around everything.
+- Give inputs/selects/textareas/search fields explicit contrasting fills; do not leave them transparent or page-colored.
+- For required sidebars, use enough width and item height for readable labels, visible active states, and non-clipping badges/actions.
 - If a card is truly unavoidable, give it intentional tonal contrast from the canvas plus a visible but soft border. Weak same-white cards fail.
 - Add only shadcn components required by the actual workflow.
 - Keep all buttons, links, menus, dialogs, tabs, forms, routes, and localStorage-backed state functional.
@@ -114,12 +121,14 @@ Reject and revise if:
 - Same-white or near-white panelization makes major surfaces blend together.
 - Inputs, search/filter controls, data rows, or header/nav chrome blend into the page background.
 - Editable controls in light mode are not near-white or very light tinted and therefore do not read clearly.
+- Editable controls use `bg-transparent`, `bg-background`, `bg-muted`, or the same token/fill as the page or panel.
 - Row/table content is cramped, over-columned, or too tight inside the first column and metadata blocks.
 - A surfaced table is missing `shadow-xs` or its header/rows are padded too tightly.
 - `public/brand/logos/` contains a usable logo file but the header still uses a placeholder logo or no logo without reason.
 - Brand colors from `.tasks/domain.md` are not reflected in primary/active/focus treatment.
 - No vertical/domain skill fit the app, but the UI still defaulted to a generic admin shell instead of using a stronger creative direction.
 - A required sidebar uses a weak pale surface instead of a darker primary-derived tone.
+- A required sidebar clips labels, badges, icons, or actions, or uses cramped item padding/row height.
 - The UI falls back to vague enterprise middle-radius controls even though no domain skill asked for that.
 - Typography falls back to generic fonts or lacks a distinctive display/body pairing when the product could support one.
 - Theme variables were not configured before component styling.

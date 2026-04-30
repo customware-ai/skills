@@ -41,13 +41,14 @@ Set or verify:
 
 Map tokens by role. Do not copy brand colors into every variable.
 If the selected domain skill does not define a sharper or specific radius system, set `--radius` and component radii to a clearly rounded modern default rather than timid enterprise values.
-If no selected domain skill defines a stronger visual system, use the theme tokens to commit to a cohesive aesthetic rather than a neutral default.
+For CPQ, CRM, trades, and similar business/domain skills, preserve the selected skill's product structure while enforcing the shared theme rules: brand-aware tokens, actual logo usage, airy spacing, strong input contrast, rounded controls, soft/tight shadows, and cardless defaults.
+Only when no selected domain skill defines a stronger visual system, use the theme tokens to create a more vivid, asymmetrical, authored aesthetic rather than a neutral default.
 
 ## Light Surface System
 
 - Page background: tinted pale gray, stone, cream, porcelain, glacier, or brand-derived tint.
 - App canvas: lighter off-white/porcelain, not raw white everywhere.
-- Navigation chrome: quiet near-white or very light tinted tone, not saturated slab.
+- Navigation chrome: quiet near-white or very light tinted tone unless a required sidebar uses the darker primary-derived treatment.
 - Required sidebars: much darker primary-derived tone or a darker companion tone from the same palette, not a pale washed-out sidebar.
 - Focal surface: clear tonal difference, not a repeated large card.
 - Inputs: near-white or very light tinted in light mode, near-black in dark mode, and clearly editable.
@@ -58,10 +59,12 @@ Do not use the same white for body, app frame, cards, popovers, inputs, and cont
 Navigation chrome must remain visibly distinct from the main canvas.
 Do not rely on a faint border alone to separate a major surface from the canvas.
 Editable controls must not share the page/background fill.
-Inputs, selects, textareas, search fields, date fields, and similar controls should use near-white or very light tinted backgrounds in light mode.
-In dark mode, those same controls should move to near-black so they still read distinctly against the overall canvas.
+Inputs, selects, textareas, search fields, date fields, and similar controls must use near-white or very light tinted backgrounds in light mode.
+In dark mode, those same controls must move to near-black so they still read distinctly against the overall canvas.
 Pure white is not required. Near-white is usually enough when the separation is obvious.
-Search inputs, filter fields, and command-row controls should usually use one of the clearest light surfaces on the screen in light mode so they remain obvious at a glance.
+Search inputs, filter fields, and command-row controls must use one of the clearest light surfaces on the screen in light mode so they remain obvious at a glance.
+Do not style editable controls with `bg-transparent`, `bg-background`, `bg-muted`, or the same token/fill as the page or panel.
+Set `--input` so it is visibly lighter than `--background` in light mode and visibly darker than the canvas in dark mode.
 
 ## Brand Mapping
 
@@ -110,7 +113,9 @@ Do not build a sidebar by default.
 
 - Use a sidebar only when the user explicitly requested one or a selected domain skill explicitly requires one.
 - Prefer topbar, tabs, segmented controls, breadcrumbs, command rows, step flows, sheets, drawers, or detail routes.
-- If required, keep the sidebar narrow, quiet, and secondary.
+- If required, keep the sidebar quiet and secondary, but not cramped.
+- Required sidebars need enough width, row height, padding, and overflow handling for readable labels, badges, icons, and active states.
+- Do not let primary labels, badges, icons, or actions clip off the sidebar edge; truncate only secondary descriptions.
 - Never combine a sidebar with top-level cards or a card-heavy workspace.
 
 ## Depth
@@ -162,9 +167,11 @@ Before finishing:
 - Major surfaces separate from the canvas through tone, not only border.
 - Inputs, search/filter controls, and header/nav chrome read clearly against the page background in both light and dark modes.
 - Editable controls use near-white/lightest-surface backgrounds in light mode and near-black backgrounds in dark mode.
+- Editable controls do not use transparent, muted, background, or same-fill treatments.
 - If no selected domain skill overrides radius language, controls and key UI surfaces read clearly as a rounded modern system.
 - Typography feels intentional and distinctive rather than default.
 - If a sidebar is required, it uses a darker primary-derived tone rather than a pale generic surface.
+- If a sidebar is required, it has enough width, row height, padding, and overflow handling to avoid clipped labels/actions.
 - If no selected domain skill fit the app, the theme and composition still feel authored rather than like a default admin shell.
 - No sidebar exists unless explicitly requested or required by selected domain skill.
 - No heavy Tailwind shadows remain.

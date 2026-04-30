@@ -6,6 +6,8 @@ Use this reference for the visual quality bar. Domain skills still own product s
 
 Modern operational app UI with minimal visual noise, generous spacing, brand-aware color, and one clear working surface. Not a marketing page, admin template, Bootstrap dashboard, or generic AI/SaaS screen.
 
+For CPQ, CRM, trades, and similar business/domain skills, keep the selected skill's product structure while applying the shared visual quality rules here: brand-aware color, actual logo usage, airy spacing, airy inner density, rounded controls, strong input contrast, soft/tight shadows, minimal visual noise, and cardless defaults.
+
 When no selected business/domain skill provides a stronger product-specific visual pattern, raise the ambition of the visual system instead of settling for a safe default shell.
 
 ## Surface Hierarchy
@@ -33,9 +35,11 @@ At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal sur
 - If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
 - White or near-white surface on white or near-white canvas with only a faint border fails.
 - Editable controls must clearly separate from the surrounding page or panel.
-- In light mode, inputs, selects, textareas, search bars, date fields, and similar controls should use near-white or very light tinted backgrounds.
-- In dark mode, those same controls should use near-black backgrounds.
-- Search bars, filter inputs, and command-row controls should usually be more contrasty than nearby passive pills, muted bands, or page sections.
+- In light mode, inputs, selects, textareas, search bars, date fields, and similar controls must use near-white or very light tinted backgrounds.
+- In dark mode, those same controls must use near-black backgrounds.
+- Editable controls must not use `bg-transparent`, `bg-background`, `bg-muted`, or the same fill as the page/panel.
+- `--input` must be visibly lighter than `--background` in light mode and visibly darker than the canvas in dark mode.
+- Search bars, filter inputs, and command-row controls must be among the clearest control surfaces on the screen.
 - This does not require pure white. A very light shade close to white is usually better than same-tone blending.
 - Avoid generic purple/blue defaults and loud raw-brand floods.
 
@@ -74,11 +78,12 @@ Prefer:
 - stepped flows
 - drawers, sheets, or detail routes for secondary context
 
-If a sidebar is required, keep it quiet, narrow, and secondary. Never pair it with a card-heavy workspace.
+If a sidebar is required, keep it quiet and secondary, but never cramped. Never pair it with a card-heavy workspace.
 Navigation chrome should be tonally distinct from the main canvas. Same-white navigation and content surfaces fail.
 Header/topbar surfaces should usually use a near-white or very light tinted treatment in light mode, and near-black in dark mode, so the chrome reads clearly without becoming a heavy slab.
 If `public/brand/logos/` contains a real logo, header chrome should use it instead of a generated placeholder logo.
 If a sidebar is required by the domain skill, prefer a much darker primary-derived tone for the sidebar background or active navigation field so the chrome feels intentional and anchored.
+Required sidebars must have enough width, row height, padding, and overflow handling for readable labels, descriptions, badges, icons, and active states. Clip only secondary descriptions, not primary labels or action/status affordances.
 
 ## Radius
 
@@ -132,6 +137,8 @@ If no selected business/domain skill is steering the composition, push for a mor
 - diagonal flow
 - grid-breaking moments
 - generous negative space or deliberately controlled density
+
+Do not apply this expressive fallback as a reason to ignore a selected business/domain skill. Business apps should still be minimal, airy, rounded, brand-aware, low-noise, and sparse on a single page.
 
 Avoid:
 
@@ -188,9 +195,11 @@ Reject and revise if:
 - same-white blending makes major surfaces merge together
 - inputs, search/filter controls, or header/nav chrome do not read clearly against the page background
 - editable controls are not near-white/lightest-surface in light mode or near-black in dark mode
+- editable controls use transparent, muted, background, or same-fill treatments that hide their control boundary
 - inner row/table/card content is tight or over-columned instead of airy
 - a surfaced table is flat because it lacks `shadow-xs` or comfortable header/body padding
 - spacing feels cramped
+- a required sidebar is cramped, clips important text/actions, or uses too little item padding
 - all modules have equal visual weight
 - the UI would still look the same if the domain name changed
 - it looks like a starter admin template or default shadcn screen
