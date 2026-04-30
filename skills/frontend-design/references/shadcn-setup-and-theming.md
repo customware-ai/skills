@@ -14,7 +14,7 @@ Theme before building detailed UI. shadcn/ui and Tailwind are accelerators, not 
    - `tailwind.config.*` or equivalent theme config
    - `src/App.tsx`, routes, layouts, and existing `components/ui/*`
    - `package.json`
-2. Read brand/domain inputs and selected vertical skill rules.
+2. Read brand/domain inputs and selected domain skill rules.
 3. Define design tokens before component work.
 4. Update global CSS variables and Tailwind theme extension first.
 5. Add only the shadcn components needed by the actual UI.

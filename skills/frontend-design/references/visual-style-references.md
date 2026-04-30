@@ -44,7 +44,7 @@ Navigation should anchor the product without overpowering it.
 - Use quiet product chrome: mist, stone, porcelain, muted primary tint, or soft graphite.
 - Do not use a heavy saturated slab unless explicitly required.
 - Do not force a sidebar if the workflow does not need one.
-- If a vertical skill requires a sidebar, keep it, but make it quiet and ensure the main workspace remains designed and airy.
+- If a selected domain skill requires a navigation or layout structure, keep it, but make it quiet and ensure the main workspace remains designed and airy.
 
 ### Shape And Controls
 
@@ -122,21 +122,17 @@ Avoid:
 - helper panels added only to fill whitespace
 - generic left sidebar plus many cards because the app is "business software"
 
-## Domain-Specific Guidance
+## Domain Skill Compatibility
 
-If a vertical skill defines a layout, preserve it:
-
-- CPQ can keep stepper/sidebar, line items, totals, approvals, quote documents, and live summary.
-- CRM can keep entity navigation, pipeline, lists, records, and activity timelines.
-- Trades can keep stepper workflow, scope tables, schedules, close-out sections, and job summaries.
+If a selected domain skill defines structure, preserve it. Do not duplicate domain-skill-specific layout rules here. This reference should not need edits when CPQ, CRM, trades, scheduling, healthcare, or any future domain skill changes its own UI pattern.
 
 Improve the visual treatment:
 
 - Make summaries inline and compact when possible.
 - Use tables and rows with strong spacing instead of mini-card piles.
 - Use one main working section instead of many competing panels.
-- Let quote documents and job summaries look like polished documents, not dashboard cards.
-- Keep sidebars functional and quiet.
+- Let output views look like polished deliverables, not dashboard cards.
+- Keep navigation and supporting context functional and quiet.
 
 ## Strong Light-Mode Patterns
 

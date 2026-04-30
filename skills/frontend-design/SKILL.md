@@ -1,13 +1,19 @@
 ---
 name: frontend-design
-description: General frontend design guidance for building modern, minimal, airy, non-generic app UIs. Use whenever creating or changing frontend UI, React components, shadcn/ui themes, Tailwind styles, app layouts, or first-version product screens. This skill complements domain/layout skills such as CPQ, CRM, and trades: follow the vertical skill's required workflow and layout first, then use this skill for visual direction, theming quality, spacing, typography, surface hierarchy, and anti-pattern avoidance.
+description: >
+  General frontend design guidance for building modern, minimal, airy, non-generic app UIs.
+  Use whenever creating or changing frontend UI, React components, shadcn/ui themes,
+  Tailwind styles, app layouts, or first-version product screens. This skill complements
+  vertical/domain skills like CPQ, CRM, and similar app builders: follow the selected domain
+  skill's required workflow and layout first, then use this skill for visual direction,
+  theming quality, spacing, typography, surface hierarchy, and anti-pattern avoidance.
 ---
 
 # Frontend Design
 
 Use this skill to make app UI feel intentionally designed rather than generated from default component-library patterns.
 
-This is not a vertical workflow skill. It does not decide whether an app is CPQ, CRM, trades, scheduling, healthcare, or another domain. If another selected skill defines required sections, sidebar behavior, steppers, tables, quote documents, or entity flows, follow that structure. Apply this skill to improve the visual language, theme, spacing, hierarchy, component treatment, and implementation quality inside that structure.
+This is not a domain workflow skill. It does not decide the app category or required product flow. If another selected vertical/domain skill, like CPQ or CRM, defines required sections, navigation, tables, documents, entity flows, or output views, follow that structure. Apply this skill to improve the visual language, theme, spacing, hierarchy, component treatment, and implementation quality inside that structure.
 
 ## Required References
 
@@ -20,7 +26,7 @@ Do not rely only on this `SKILL.md` when making visual decisions. The reference 
 
 ## Role Of This Skill
 
-- Preserve the app's required workflow and layout from the task, domain context, or vertical skill.
+- Preserve the app's required workflow and layout from the task, domain context, or selected domain skill.
 - Use brand colors when provided, but build a full supporting palette from color theory instead of applying brand colors everywhere.
 - Prefer modern, minimal, clean, airy interfaces with strong product specificity.
 - Avoid generic AI/SaaS defaults, especially purple/blue bias, card grids, bootstrap-like panels, and enterprise admin clutter.
@@ -38,7 +44,7 @@ Iterate on those three steps until the design is specific and coherent. Only the
 
 ## Implementation Order
 
-1. Read the domain/task and any selected vertical skill.
+1. Read the domain/task and any selected domain skill.
 2. Read both references in `references/`.
 3. Decide the vision, first-version features, and design tokens.
 4. Update theme foundations first:
@@ -67,7 +73,7 @@ Cards are an exception, not the default layout primitive.
 - Inline content into the page body whenever spacing, typography, dividers, or a tinted band can provide enough structure.
 - Use cards only when an element truly needs emphasis, separation, repetition, dialog/detail framing, or a concise highlighted state.
 - Avoid cards inside cards and grids of equal-weight panels.
-- If a vertical skill says to use a sidebar, quote document, table, pipeline, or stepper, keep that structure but make the internal treatment de-carded and airy where possible.
+- If a selected domain skill requires a specific navigation model, document, table, workflow, entity view, or output surface, keep that structure but make the internal treatment de-carded and airy where possible.
 
 ## Brand And Theming
 
@@ -79,12 +85,12 @@ Cards are an exception, not the default layout primitive.
 - Configure theme values in the actual theme layer, not scattered hardcoded classes.
 - If a logo exists, render it robustly with a fallback initials mark. Do not reference app-specific components that may not exist.
 
-## Relationship To Vertical Skills
+## Relationship To Domain Skills
 
-- CPQ can still use its required sidebar, stepper, pricing tables, quote document, and live totals.
-- CRM can still use entity navigation, pipelines, lists, record detail views, and activity timelines.
-- Trades can still use its workflow stepper, scope table, schedule, close-out sections, and job summary.
-- This skill should make those layouts more modern, minimal, and intentional, not replace their required structure.
+- Domain skills own product structure, workflow requirements, information architecture, and domain-specific UI patterns.
+- This skill owns visual quality: theme, spacing, typography, surface hierarchy, card restraint, color treatment, radius, shadow, and polish.
+- Do not copy domain-specific layout decisions into this skill. If a domain skill changes, follow that skill directly.
+- Make selected domain-skill layouts more modern, minimal, and intentional without replacing their required structure.
 
 If a selected skill's design suggestion would make the UI ugly, dated, over-carded, or bootstrappy, preserve the functional structure but improve the visual treatment using this skill.
 
