@@ -1,13 +1,16 @@
 # Archetypes — encoded token sets
 
-This reference contains the full archetype catalog and the encoded token sets for v0.1. Read at the moment of writing the token block to `app.css`.
+This reference contains the full archetype catalog and the encoded token sets for v0.2. Read in full before writing the token block to `app.css`. Do not skim.
+
+---
 
 ## Catalog
 
-| Archetype | Use when the app is for... | Status in v0.1 |
+| Archetype | Use when the app is for... | Status |
 |---|---|---|
-| **Neutral / Default** | safe default — works for any app, professional and clean | **Encoded below** |
-| **Wellness & Health** | health, fitness, sleep, mindfulness, habit tracking, calm tools | **Encoded below** |
+| **Neutral / Default** | safe default — works for any app, professional and clean | **Encoded** |
+| **Wellness & Health** | health, fitness, sleep, mindfulness, habit tracking, calm tools | **Encoded** |
+| **Editorial-Clinical** | medical, professional services, document-heavy review, broadsheet feel | **Encoded** |
 | Productivity & Focus | tasks, projects, time blocking, focus sessions | Pending |
 | Finance & Trust | money, banking, professional services, B2B SaaS | Pending |
 | Creator & Social | journals, creative work, sharing, lightweight social | Pending |
@@ -19,7 +22,7 @@ This reference contains the full archetype catalog and the encoded token sets fo
 
 ## Picking the archetype
 
-- **DOMAIN.md has brand colors** → use the brand colors for the palette layer; pick the archetype whose structural feel matches the customer (industrial CPQ → Enterprise; wellness clinic → Wellness; creative agency CRM → Creator). The brand colors override the archetype's palette; everything else (typography, radius, elevation) comes from the archetype.
+- **DOMAIN.md has brand colors** → use the brand colors for the palette layer; pick the archetype whose structural feel matches the customer.
 - **No DOMAIN.md and no clear emotional cue** → use Neutral / Default.
 - **No DOMAIN.md but a clear cue from the task** → match the archetype to the cue.
 - **Multiple cues** → pick the most dominant. Don't blend.
@@ -28,85 +31,9 @@ Do not invent a new archetype mid-build.
 
 ---
 
-## Neutral / Default archetype (v0.1)
+## Shared structural tokens (read FIRST — apply to every archetype)
 
-The safe, professional, palette-flexible option. Restrained, modern, works for any app where there's no strong emotional cue. Suitable for productivity tools, dashboards, generic SaaS, and as a fallback when the archetype isn't obvious.
-
-### Foundation surfaces (4 layers)
-
-```css
---surface-stage:      #F5F6F8;  /* page background — soft cool neutral */
---surface-canvas:     #FAFBFC;  /* card surfaces — slightly off-white */
---surface-focal:      #FFFFFF;  /* elevated focal cards — pure white */
---surface-navigation: #1E293B;  /* sidebar — deep slate */
-```
-
-### Palette
-
-```css
---primary:    #3B82F6;  /* Confident blue — the one accent for action */
---accent-2:   #60A5FA;  /* Lighter blue for chart fills, soft accents */
---accent-3:   #DBEAFE;  /* Lightest tint for chip backgrounds, selected state tint */
-```
-
-### Status palette (5 named slots)
-
-```css
---status-success: #DCFCE7;
---status-warning: #FEF3C7;
---status-info:    #DBEAFE;
---status-error:   #FEE2E2;
---status-neutral: #F1F5F9;
-```
-
-### Shared structural tokens
-
-Text, typography, radius, borders, elevation, and spacing are shared with all archetypes — see [Shared structural tokens](#shared-structural-tokens) below.
-
----
-
-## Wellness & Health archetype (v0.1)
-
-The premium-matte, broadsheet aesthetic. Sage palette, warm neutrals, generous whitespace, light borders instead of shadows. Calm and clarity dominate. Suitable for any app where calm and clarity are the dominant feelings — health tracking, fitness, sleep, mindfulness, habit building.
-
-### Foundation surfaces
-
-```css
---surface-stage:      #F4F6F2;  /* page background — softest sage tint */
---surface-canvas:     #FAFBF8;  /* card surfaces — slightly warmer than white */
---surface-focal:      #FFFFFF;  /* elevated focal cards — pure white */
---surface-navigation: #2E362E;  /* sidebar — deep sage charcoal */
-```
-
-Why four surfaces, not one: layered surfaces create depth without shadows. A card on the stage (`F4F6F2`) sits naturally on a slightly warmer canvas (`FAFBF8`). Pure white (`FFFFFF`) is reserved for the most focal element. Most AI builds use one flat background for everything; the four-tier system is what makes the layout breathe.
-
-### Palette
-
-```css
---primary:    #6BA46F;  /* Sage — drives action */
---accent-2:   #8DBA8F;  /* Moss — chart fills, soft accents */
---accent-3:   #CFE8D2;  /* Mint — chip backgrounds, selected state tint */
-```
-
-**Restraint rule:** the primary color appears in roughly 8% of pixels — primary buttons, active state borders, the score badge fill. NEVER use it for body text, NEVER tint entire backgrounds with it, NEVER use it for icon decoration. Restraint is what makes the accent feel premium.
-
-### Status palette
-
-```css
---status-success: #D7EBD9;
---status-warning: #F7E7B5;
---status-info:    #E2EDE6;
---status-error:   #F7D7D7;
---status-neutral: #E5E6E4;
-```
-
-Each status is a **light fill background**. Text on these backgrounds is the foreground (`#0F172A`) at body or caption size. Do not invent solid-color status badges, do not use the primary green for status (it's reserved for action), do not introduce a sixth status.
-
----
-
-## Shared structural tokens
-
-These tokens are identical across all archetypes in v0.1. Only foundation surfaces, palette, and status colors differ between archetypes. Future archetypes may introduce different typography pairings (serif/sans for Reading, mono accents for Utility) — that's why typography is in the token block, not declared globally.
+These tokens are identical across all archetypes in v0.2 unless an archetype explicitly overrides them. They represent the rhythm and structure of every Customware build.
 
 ### Text colors (3 levels — used as a hierarchy)
 
@@ -116,18 +43,20 @@ These tokens are identical across all archetypes in v0.1. Only foundation surfac
 --text-subtle:     #94A3B8;  /* helper text, footnotes, decorative numerals */
 ```
 
-Why three: most AI builds use one or two colors and lose information density. The three-level hierarchy lets you put primary content (`8h 12m`), secondary context (`Last night`), and tertiary metadata (`Sleep window 10:30 PM – 6:30 AM`) on the same row without visual collision.
+Why three: most AI builds use one or two and lose information density. The three-level hierarchy lets you put primary content, secondary context, and tertiary metadata in the same row without visual collision.
 
-### Typography (Inter, 4 sizes ONLY — hard ceiling)
+### Typography sizes (4 levels — hard ceiling)
 
 ```css
---type-display: 32px / 1.1 / 600;  /* big numbers, primary scores */
---type-title:   20px / 1.3 / 500;  /* page and card titles */
+--type-display: 32px / 1.1 / 600;  /* big numbers, primary scores, page titles */
+--type-title:   20px / 1.3 / 500;  /* section headings, card titles */
 --type-body:    14px / 1.5 / 400;  /* body text, row labels, button text */
 --type-caption: 12px / 1.4 / 400;  /* metadata, helper text, status badges */
 ```
 
-Body weight goes to 500 inside buttons and primary labels. Display is reserved for the single most important number on each screen. **Do not introduce a 5th size.** If you find yourself wanting one, you're probably reaching for 16px or 24px — push back to 14px or 20px instead.
+Body weight goes to 500 inside buttons and primary labels. Display is reserved for the single most important number/title on each screen. Do NOT introduce a 5th size. If you reach for 16px or 24px, push back to 14px or 20px.
+
+Default font family: **Inter** for all four sizes. Some archetypes declare an optional display font pairing — see archetype sections.
 
 ### Radius scale (5 levels)
 
@@ -139,7 +68,7 @@ Body weight goes to 500 inside buttons and primary labels. Display is reserved f
 --radius-full: 9999px; /* pill chips, primary CTAs, avatars */
 ```
 
-**Consistency rule:** components at the same hierarchy use the same radius. All primary cards use `--radius-lg`. All chips use `--radius-full`. Mixing radii (a 12px card next to a 20px card) is the second-most-common AI failure after color invention.
+Components at the same hierarchy use the same radius. Mixing radii (12px card next to 20px card) is the second-most-common AI failure after color invention.
 
 ### Borders (NEVER use shadows for elevation)
 
@@ -148,7 +77,7 @@ Body weight goes to 500 inside buttons and primary labels. Display is reserved f
 --border-strong: 1px solid rgba(16, 24, 40, 0.12);
 ```
 
-Subtle border for default cards and rows. Strong border for selected state or focal emphasis. Both are nearly invisible on a casual look — they create the *suggestion* of an edge without weight. AI's default is to reach for a drop shadow; that's wrong here. Borders, not shadows.
+Subtle border for default cards and rows. Strong border for selected state or focal emphasis. Both are nearly invisible on a casual look — they create the *suggestion* of an edge without weight. AI's default is to reach for a drop shadow; that's wrong. Borders, not shadows.
 
 ### Elevation (4 levels, all border-based)
 
@@ -166,17 +95,160 @@ Subtle border for default cards and rows. Strong border for selected state or fo
 ### Spacing scale (8px rhythm)
 
 ```css
---space-1:  4px;   /* hairline */
---space-2:  8px;   /* tight */
---space-3:  12px;  /* compact */
---space-4:  16px;  /* default */
---space-5:  20px;  /* generous */
---space-6:  24px;  /* breath */
---space-8:  32px;  /* section gap */
---space-10: 40px;  /* page rhythm */
+--space-1:  4px;
+--space-2:  8px;
+--space-3:  12px;
+--space-4:  16px;
+--space-5:  20px;
+--space-6:  24px;
+--space-8:  32px;
+--space-10: 40px;
 ```
 
-**Generosity bias:** when in doubt, prefer the larger space. The premium aesthetic is built on whitespace. A card padding of 24px feels right; 16px feels cramped; 12px feels broken.
+Generosity bias: when in doubt, prefer the larger space. Premium aesthetic is built on whitespace. Card padding 24px feels right; 16px feels cramped; 12px feels broken.
+
+---
+
+## Neutral / Default archetype
+
+**Use when:** safe default. Productivity tools, dashboards, generic SaaS, internal business apps, anything where there's no strong emotional cue. The archetype to fall back on when others don't fit.
+
+**Reference apps (north stars):** Linear, Stripe Dashboard, Vercel.
+
+**Typography pairing:** Inter only. No display pairing.
+
+**Foundation surfaces (4 layers):**
+
+```css
+--surface-stage:      #F5F6F8;  /* page background — soft cool neutral */
+--surface-canvas:     #FAFBFC;  /* card surfaces — slightly off-white */
+--surface-focal:      #FFFFFF;  /* elevated focal cards — pure white */
+--surface-navigation: #1E293B;  /* sidebar — deep slate */
+```
+
+**Palette:**
+
+```css
+--primary:    #3B82F6;  /* Confident blue — the one accent for action */
+--accent-2:   #60A5FA;  /* Lighter blue for chart fills, soft accents */
+--accent-3:   #DBEAFE;  /* Lightest tint for chip backgrounds, selected state */
+```
+
+**Status palette:**
+
+```css
+--status-success: #DCFCE7;
+--status-warning: #FEF3C7;
+--status-info:    #DBEAFE;
+--status-error:   #FEE2E2;
+--status-neutral: #F1F5F9;
+```
+
+---
+
+## Wellness & Health archetype
+
+**Use when:** health tracking, fitness, sleep, mindfulness, habit building, calm tools, any app where calm and clarity dominate.
+
+**Reference apps (north stars):** Headspace, Apple Health, Calm, Whoop.
+
+**Typography pairing:** Inter only. No display pairing. Wellness apps are more effective with restrained typography.
+
+**Foundation surfaces:**
+
+```css
+--surface-stage:      #F4F6F2;  /* page background — softest sage tint */
+--surface-canvas:     #FAFBF8;  /* card surfaces — slightly warmer than white */
+--surface-focal:      #FFFFFF;  /* elevated focal cards — pure white */
+--surface-navigation: #2E362E;  /* sidebar — deep sage charcoal */
+```
+
+Why four surfaces: layered surfaces create depth without shadows. A card on the stage (`F4F6F2`) sits naturally on a slightly warmer canvas (`FAFBF8`). Pure white (`FFFFFF`) is reserved for the most focal element.
+
+**Palette:**
+
+```css
+--primary:    #6BA46F;  /* Sage — drives action */
+--accent-2:   #8DBA8F;  /* Moss — chart fills, soft accents */
+--accent-3:   #CFE8D2;  /* Mint — chip backgrounds, selected state tint */
+```
+
+Restraint rule: primary appears in roughly 8% of pixels. NEVER body text, NEVER full-background tints, NEVER decorative icons.
+
+**Status palette:**
+
+```css
+--status-success: #D7EBD9;
+--status-warning: #F7E7B5;
+--status-info:    #E2EDE6;
+--status-error:   #F7D7D7;
+--status-neutral: #E5E6E4;
+```
+
+Each status is a light fill background. Text on these backgrounds is `--text-foreground` at body or caption size. Do not invent solid-color status badges, do not use the primary green for status, do not introduce a sixth status.
+
+---
+
+## Editorial-Clinical archetype
+
+**Use when:** medical scheduling, professional services, document-heavy review, calendar/booking apps, any context where the app should feel like an editorial publication or premium clinical tool. The archetype to use for healthcare front-office, legal calendars, financial advisory portals, premium boutique services.
+
+This archetype is the answer to "make this feel like Cal.com meets Linear with warmth."
+
+**Reference apps (north stars):** Cal.com, Linear (with warmth), Notion (when used for document-heavy workflows), high-end medical practice management.
+
+**Typography pairing:** Fraunces (display serif) + Inter (body). The Fraunces serif on display-size headings — page titles, day-of-week, primary timestamps — is the editorial signature. Inter handles everything else (titles, body, captions).
+
+```css
+/* Override --type-display font family for this archetype only */
+--type-display: 32px / 1.1 / 500 'Fraunces', Georgia, serif;
+/* All other type sizes use Inter (default) */
+```
+
+The Fraunces serif at display size is what makes this archetype feel intentional rather than generic. Without it, this archetype is just a softer Default. Use it.
+
+**Foundation surfaces:**
+
+```css
+--surface-stage:      #F8F7F2;  /* page background — warm cream, broadsheet feel */
+--surface-canvas:     #FCFBF7;  /* card/panel surfaces — slightly warmer than stage */
+--surface-focal:      #FFFFFF;  /* elevated focal elements — pure white */
+--surface-navigation: #1F2A2A;  /* sidebar — deep teal-charcoal */
+```
+
+The warm cream stage is what differentiates this archetype from cool-neutral Default. Cream feels printed, premium, calm — perfect for medical/professional contexts where trust matters.
+
+**Palette:**
+
+```css
+--primary:    #2C9388;  /* Soft teal — clinical, trustworthy, calm */
+--accent-2:   #5AAFA5;  /* Lighter teal for chart fills */
+--accent-3:   #D6EAE7;  /* Lightest teal tint for chip backgrounds */
+```
+
+**Status palette:** uses pastel category colors that double as treatment/category coding. When the archetype is used for scheduling/calendar apps, these can be used as a category palette (e.g., treatment types in a dental scheduler):
+
+```css
+--status-success: #D6EAE7;  /* mint — confirmed, on-track */
+--status-warning: #F4E4D0;  /* peach — pending, attention */
+--status-info:    #DCE6F0;  /* slate-blue — informational */
+--status-error:   #F2D5D0;  /* coral — declined, missed */
+--status-neutral: #E5E5E0;  /* warm grey — inactive */
+```
+
+For category-coding (treatment types, appointment types), extend with additional pastels: lavender (`#E0DAEF`), pink (`#F0DCE2`), olive (`#E2E5D0`). Each follows the same light-fill-with-foreground-text pattern.
+
+---
+
+## When to override structural tokens
+
+The structural tokens (text, type, radius, borders, elevation, spacing) are deliberately shared. An archetype only overrides them when the override is essential to the feel:
+
+- Editorial-Clinical overrides `--type-display` font family to introduce Fraunces. This is essential — without it the archetype loses its identity.
+- Reading & Content (pending) might override typography to increase body line-height for sustained reading.
+- Wellness might override `--radius-lg` to a slightly larger value for softer feel.
+
+If an archetype doesn't NEED to override a structural token, it doesn't. Consistency across archetypes is part of what makes Customware builds feel coherent across customers.
 
 ---
 
@@ -185,9 +257,11 @@ Subtle border for default cards and rows. Strong border for selected state or fo
 To add a new archetype to a future version:
 
 1. Pick a name from the catalog above
-2. Provide the 3 archetype-specific token blocks: foundation surfaces, palette, status palette
-3. Use the shared structural tokens unchanged (or override specific ones if the archetype demands a different feel — e.g., Reading might use serif display type)
-4. Add an "encoded below" entry in the catalog table
-5. Validate by running at least one build with the new archetype before adding another
+2. Write the archetype-specific overrides: foundation surfaces, palette, status palette
+3. Optionally add a typography pairing if the archetype's feel demands one
+4. Identify 2-3 reference apps as north stars
+5. Use the shared structural tokens unchanged unless an override is essential
+6. Add an "Encoded" entry in the catalog table
+7. Validate by running at least one build with the new archetype before adding another
 
 Do not encode multiple new archetypes at once. Each archetype is a hypothesis about what a category of app should feel like — that hypothesis needs to be tested by a real build before the next is added.
