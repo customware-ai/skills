@@ -105,7 +105,7 @@ The CPQ application has three navigable sections plus a fourth output view. The 
       "label": "Configure",
       "icon": "Settings2",
       "order": 1,
-      "component": "card-selector",
+      "component": "selector",
       "componentConfig": {
         "itemLayout": "grid",
         "showPrice": true,
@@ -281,7 +281,7 @@ type WorkflowStep = "configure" | "build" | "approve" | "document";
 
 | Section | What renders |
 |---|---|
-| **Configure** | Input selection or data entry. For product domains: product cards with options AND **unit price fields** — pricing capture is mandatory when the domain has pricing signals (see Pricing Capture is Mandatory above). For calculator/intake domains: guided form sections with input fields, dropdowns, and validation. The DOMAIN.md determines which pattern — if entities have prices and options, use product cards with editable price fields. If entities are form fields with rules, use guided form sections. |
+| **Configure** | Input selection or data entry. For product domains: inline product/options selector with **unit price fields** — pricing capture is mandatory when the domain has pricing signals (see Pricing Capture is Mandatory above). For calculator/intake domains: guided form sections with input fields, dropdowns, and validation. The DOMAIN.md determines which pattern fits. |
 | **Build Quote** | Results assembly and review. For product domains: line items table with **editable quantities, editable unit prices, and computed line totals**, plus a totals footer showing subtotal + tax + grand total. For calculator/intake domains: calculated results table showing inputs → applied rules → outputs. Editable where the domain allows adjustments. |
 | **Approve** | Approval owner display, status badge (Pending / Approved / Rejected). Approve and reject buttons, **gated by presence of pricing data** (cannot approve a priceless quote when the domain is a pricing domain). **Gated by role** — only roles with approval permission can approve. Other roles see a message: "You are viewing as [Name]. Only [approver names] can approve." For intake domains: the reviewer (lawyer, underwriter, advisor) reviews the submission. Clicking Approve should show a confirmation dialog summarizing the final totals before committing, since the old Preview step has been removed. |
 | **Quote Document** | The final formatted output — what you would send to the customer or print. For product domains: a proper sales quote with brand header, line items table, totals, and terms. For calculator/intake domains: a summary report with inputs, calculations, results, and any disclaimers. See "Quote Document" section below for the required layout. |
@@ -295,10 +295,10 @@ This is the polished, recipient-facing document. It renders as a clean, printabl
 **Layout — top to bottom, each a distinct block:**
 
 **1. Document header block** — two columns:
-- Left: `BrandMark` component with `size="lg"`, the full company name, and company address (placeholder address if not in DOMAIN.md: "123 Main St, City, Province, Postal Code — update in settings").
+- Left: brand logo when available, the full company name, and company address (placeholder address if not in DOMAIN.md: "123 Main St, City, Province, Postal Code — update in settings").
 - Right: document title ("Quote"), document reference number (auto-generated, e.g., "Q-2026-0001"), document date, "Valid until" date (from Approve step).
 
-Use `BrandMark`, not a bare `<img>`. The logo falls back to a tinted initials square gracefully on failure.
+Render logos robustly. If a logo URL is missing, broken, expired, relative, or blocked, fall back to a styled initials mark.
 
 **2. Prepared-for block** — a labeled "Prepared for" section with the customer's name, contact email, and any customer company name captured during Configure. Give this block visual weight — it's the most important identity on the document.
 
@@ -340,11 +340,17 @@ The Total row should be visually prominent — larger font, bold, full currency 
 **Reference implementation (abbreviated):**
 
 ```tsx
-<article className="bg-card border rounded-lg p-8 max-w-4xl mx-auto print:border-0 print:shadow-none">
+<article className="bg-background border rounded-lg p-8 max-w-4xl mx-auto print:border-0 print:shadow-none">
   {/* 1. Header */}
   <header className="flex justify-between items-start pb-6 border-b">
     <div className="flex items-center gap-4">
-      <BrandMark logoUrl={BRAND_LOGO_URL} companyName={COMPANY_NAME} size="lg" />
+      {BRAND_LOGO_URL ? (
+        <img src={BRAND_LOGO_URL} alt={COMPANY_NAME} className="h-10 w-auto" />
+      ) : (
+        <div className="flex size-10 items-center justify-center rounded-md bg-primary/10 text-sm font-semibold text-primary">
+          {COMPANY_INITIALS}
+        </div>
+      )}
       <div>
         <h1 className="text-xl font-bold">{COMPANY_NAME}</h1>
         <p className="text-sm text-muted-foreground">{COMPANY_ADDRESS}</p>
@@ -447,8 +453,8 @@ A 5-line key-value list showing "Customer: X, Product: Y, Motor: Z, Status: Awai
 
 | Component | Content |
 |---|---|
-| **Live summary** | Live-updating card: For product domains — selected product, chosen options, running subtotal, tax, total. For calculator domains — key inputs entered so far, preliminary results. Updates immediately when the user changes any input. |
-| **Workflow notes** | Business rules and routing info from DOMAIN.md displayed as contextual guidance cards. For calculator domains, this can include "Guidelines applied" or "Rules being used." |
+| **Live summary** | Live-updating sidebar summary: For product domains — selected product, chosen options, running subtotal, tax, total. For calculator domains — key inputs entered so far, preliminary results. Updates immediately when the user changes any input. |
+| **Workflow notes** | Business rules and routing info from DOMAIN.md displayed as compact contextual notes. For calculator domains, this can include "Guidelines applied" or "Rules being used." |
 
 ### RBAC behavior
 
@@ -466,10 +472,12 @@ A 5-line key-value list showing "Customer: X, Product: Y, Motor: Z, Status: Awai
 
 Use these shadcn/ui components for each CPQ element. Do not build custom equivalents when an existing component does the job. Import from `~/components/ui/*`.
 
+Treat cards as an exception, not the default layout primitive. Inline content into the page body whenever possible. Use cards only when something truly needs emphasis, separation, repetition, or dialog/detail framing. Do not build card-heavy dashboards, cards inside cards, or generic grids of floating panels.
+
 | CPQ Element | Component | Source | Usage Notes |
 |---|---|---|---|
-| Product card | `Card`, `CardHeader`, `CardContent` | shadcn | Show product name, description, base price. |
-| Motor / option selection | `RadioGroup`, `RadioGroupItem` | shadcn | Mutually exclusive options. Show price next to each label. Wrap in a Card. |
+| Product/options selector | `RadioGroup`, `Checkbox`, `Select`, `Table` | shadcn | Show product name, description, base price, and configuration fields inline. Use a card only if an item genuinely needs visual emphasis. |
+| Motor / option selection | `RadioGroup`, `RadioGroupItem` | shadcn | Mutually exclusive options. Show price next to each label. Keep options inline or in a compact list. |
 | Optional items (installation) | `Checkbox` with label | shadcn | Toggle on/off. Show description below the label. |
 | Status badges | `Badge` | shadcn | Use `variant="outline"` for Draft, `variant="default"` for Awaiting Approval, `variant="secondary"` for Approved. Apply semantic colors via className. |
 | Role badges | `Badge` | shadcn | `variant="outline"` for Staff, `variant="default"` for Approver, `variant="secondary"` for View only. |
@@ -481,11 +489,11 @@ Use these shadcn/ui components for each CPQ element. Do not build custom equival
 | Section dividers | `Separator` | shadcn | Between sections within a panel. Horizontal, subtle. |
 | Stepper navigation | Custom (no library component) | — | Build as a vertical list of clickable items inside `SidebarContent`. Use `cn()` for active/done/pending states. Step number in a circle, label, subtitle, completion checkmark. |
 | Role switcher | `DropdownMenu` | shadcn | In the header. Shows active role name and badge. Dropdown lists all roles. |
-| Quote summary sidebar | `Card` with stacked label/value rows | shadcn | Labels are `text-muted-foreground text-sm`. Values are `font-medium`. Total row is `text-lg font-semibold`. |
-| Workflow notes sidebar | `Card` with `text-sm text-muted-foreground` | shadcn | Reference material, not primary content. Small text, muted colors. |
+| Quote summary sidebar | Inline stacked label/value rows | shadcn primitives | Labels are `text-muted-foreground text-sm`. Values are `font-medium`. Total row is `text-lg font-semibold`. |
+| Workflow notes sidebar | Compact muted note block | shadcn primitives | Reference material, not primary content. Small text, muted colors. |
 | Confirmation dialogs | `AlertDialog` | shadcn | For destructive actions (delete quote, reject quote). |
 | Toast notifications | `Sonner` / `toast()` | shadcn | After save, approve, reject, delete. Brief confirmation messages. |
-| Quote document header | `Card` with logo image + company name | shadcn | Brand logo from domain.md assets. Placeholder address below. |
+| Quote document header | Header block with robust logo fallback + company name | shadcn primitives | Brand logo from domain.md assets. Placeholder address below. |
 | Quote document pricing table | `Table` with `TableFooter` | shadcn | Clean itemized rows. Footer shows subtotal. Totals block below with large bold total. |
 | Quote notes | `Textarea` | shadcn | Plain text editing for internal notes. |
 

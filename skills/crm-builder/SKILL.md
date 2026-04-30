@@ -87,7 +87,7 @@ The CRM tool has **FIVE sections**. Unlike CPQ/trades-builder, these are NOT seq
 **Display:**
 - Kanban-style columns, one per pipeline stage from DOMAIN.md
 - If DOMAIN.md does not define stages, use: Lead → Qualified → Proposal → Negotiation → Closed Won / Closed Lost
-- Each deal card shows: deal name, company, value, assigned to, days in stage
+- Each deal item shows: deal name, company, value, assigned to, days in stage
 - Drag-and-drop between columns (or click to move stage)
 - "Add deal" button on each column
 - Filter by assigned person, date range, or deal value
@@ -99,19 +99,19 @@ The CRM tool has **FIVE sections**. Unlike CPQ/trades-builder, these are NOT seq
 **What it does:** List/detail view of people.
 
 **List view:**
-- Table or card grid of contacts
+- Table or lightweight list of contacts
 - Columns: name, email, phone, company, last activity, tags
 - Search and filter
 - "Add contact" button
 
 **Detail view (clicking a contact):**
-- Contact card: name, email, phone, company (linked), role/title, source, notes
+- Contact detail: name, email, phone, company (linked), role/title, source, notes
 - Activity timeline below: calls, emails, meetings, notes — most recent first
 - Linked deals: list of deals associated with this contact
 - "Log activity" button: quick-add a call, email, meeting, or note with date and description
 
 **Fields from DOMAIN.md:**
-- Entity Registry → Contact entity fields become the contact card fields
+- Entity Registry → Contact entity fields become the contact detail fields
 - Terminology Glossary → exact field names and labels
 - If DOMAIN.md doesn't define contact fields, use: name, email, phone, company, role, source, notes
 
@@ -126,7 +126,7 @@ The CRM tool has **FIVE sections**. Unlike CPQ/trades-builder, these are NOT seq
 - "Add company" button
 
 **Detail view (clicking a company):**
-- Company card: name, industry, size, website, address, notes
+- Company detail: name, industry, size, website, address, notes
 - Contacts tab: list of people linked to this company
 - Deals tab: list of deals linked to this company
 - Activity timeline: aggregated from all contacts at this company
@@ -147,7 +147,7 @@ The CRM tool has **FIVE sections**. Unlike CPQ/trades-builder, these are NOT seq
 - "Add deal" button
 
 **Detail view (clicking a deal):**
-- Deal card: name, value, stage (selectable dropdown), expected close date, probability, assigned to
+- Deal detail: name, value, stage (selectable dropdown), expected close date, probability, assigned to
 - Linked contact and company (clickable links)
 - Activity timeline specific to this deal
 - Notes section
@@ -202,8 +202,8 @@ The template ships `SidebarProvider`, `Sidebar`, `SidebarContent`, and `SidebarT
 ```
 
 **List/detail pattern within each section:**
-- Default: list view (table or card grid)
-- Click a record: detail view with full card, activity timeline, linked records
+- Default: list view, table, or lightweight board depending on the entity.
+- Click a record: detail view with full-width sections, activity timeline, linked records
 - "Back to list" button or breadcrumb to return
 - This is a standard Salesforce/HubSpot pattern
 
@@ -226,30 +226,32 @@ This sidebar is optional for the prototype. If the main content area has enough 
 
 ### Price/value visibility
 
-- Show deal values on Pipeline cards, Deal list, and Deal detail.
+- Show deal values on Pipeline items, Deal list, and Deal detail.
 - Show total pipeline value per stage at the top of the Pipeline view.
 - Use the currency from DOMAIN.md.
 - Format: "$25,000" or "$25,000 CAD" depending on DOMAIN.md.
 
 ### shadcn/ui component mapping
 
+Treat cards as an exception, not the default layout primitive. Inline content into the page body whenever possible. Use cards only when something truly needs emphasis, separation, repetition, or dialog/detail framing. Do not build card-heavy dashboards, cards inside cards, or generic grids of floating panels.
+
 | CRM Element | shadcn Component | Usage Notes |
 |---|---|---|
 | Entity nav items | `Button variant="ghost"` in vertical stack | Inside `SidebarContent`. Active item gets accent background. Icon + label + count badge. |
-| Pipeline columns | `Card` per stage, `ScrollArea` if many deals | Column header shows stage name + deal count + total value. |
-| Deal cards (pipeline) | `Card` with `CardContent` | Compact: deal name, company, value, assigned avatar. |
+| Pipeline columns | Column sections, `ScrollArea` if many deals | Column header shows stage name + deal count + total value. Use cards only if items need strong separation. |
+| Deal items (pipeline) | Compact clickable rows or subtle item blocks | Deal name, company, value, assigned avatar. |
 | Contact/Company list | `Table` | Sortable columns, search input above. |
-| Record detail card | `Card` with sections | Full-width, divided into sections with `Separator`. |
+| Record detail | Full-width sections with `Separator` | Keep details inline in the main page body. |
 | Activity timeline | Custom list with icons | Each item: type icon, description, date, linked record. Use `Avatar` for person. |
 | Stage badges | `Badge` | Color-coded by stage: lead=gray, qualified=blue, proposal=amber, negotiation=purple, won=green, lost=red. |
-| Deal value | `text-lg font-semibold` | Prominent on cards and detail views. |
+| Deal value | `text-lg font-semibold` | Prominent on pipeline items and detail views. |
 | Assignment dropdowns | `Select` | Populated from DOMAIN.md stakeholder names. NOT free text. |
 | Activity type selector | `Select` or `RadioGroup` | Call, Email, Meeting, Note, Task. |
 | Search inputs | `Input` with search icon | At top of every list view. |
 | Action buttons | `Button` | Primary: "Add contact," "Log activity." Destructive: "Delete," "Mark as Lost." |
 | Linked record chips | `Badge variant="outline"` | Clickable — navigates to the linked record. |
 | Quick add forms | `Dialog` or inline form | Modal for adding a contact/deal quickly without leaving the current view. |
-| Empty states | `Card` with centered text + action | "No contacts yet. Add your first contact." |
+| Empty states | Inline empty block with centered text + action | "No contacts yet. Add your first contact." |
 | Confirmation dialogs | `AlertDialog` | Delete record, mark deal as lost. |
 | Toast notifications | `Sonner` / `toast()` | After create, update, delete, log activity. |
 
@@ -330,6 +332,5 @@ This skill expects these files to exist:
 | File | Purpose |
 |---|---|
 | `DOMAIN.md` or `.tasks/domain.md` | Business terminology, entities, pipeline stages, roles, brand data |
-| `frontend-design/SKILL.md` | Universal layout principles, brand theming, visual quality rules |
 
-The builder should read BOTH before writing any code.
+The builder should read `DOMAIN.md` or `.tasks/domain.md` before writing any code.

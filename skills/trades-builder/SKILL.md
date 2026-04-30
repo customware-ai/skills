@@ -152,15 +152,15 @@ This table is the most important element in the app. Each row represents a scope
 
 **What it does:** Handle the dual payment flow — pay subtrades and invoice the customer.
 
-**Display — two cards side by side:**
+**Display — two invoice sections side by side:**
 
-**Trade Invoice card:**
+**Trade Invoice section:**
 - Subtrade payment amount — auto-calculated from completed scope items (sqft × rate)
 - Status: `Select` dropdown — Ready to pay / Paid
 - Payment date — date picker, editable when status is Paid
 - Reference to Bold if mentioned in DOMAIN.md
 
-**Customer Invoice card:**
+**Customer Invoice section:**
 - Invoice amount — subtotal + tax from Estimate
 - Status: `Select` dropdown — Ready to send / Sent / Paid
 - Invoice date — date picker, editable
@@ -169,7 +169,7 @@ This table is the most important element in the app. Each row represents a scope
 - "Close out job" action button that marks the project as Completed
 - Both invoice statuses must be saved to localStorage
 
-**If DOMAIN.md mentions invoicing tools**, reference them in the card headers: "Trade invoice (Bold)" and "Customer invoice (Arvest)."
+**If DOMAIN.md mentions invoicing tools**, reference them in the section headers: "Trade invoice (Bold)" and "Customer invoice (Arvest)."
 
 ### Section 5: Job Summary
 
@@ -222,14 +222,14 @@ Implementation: use a `currentStep` state variable (0–4). Render only the pane
 | **Estimate** | Project details form + scope items table with add/remove rows, quantities, rates, auto-calculated totals. "Save estimate" and "Continue to Schedule" buttons. |
 | **Schedule** | Role/crew assignment dropdowns (from DOMAIN.md), scope sequence, date fields, field notes. "Continue to In Progress" button. |
 | **In Progress** | Location-based scope tracking table with status per row. "Mark completed" button. |
-| **Close Out** | Trade invoice card + customer invoice card, side by side. "Close out job" button. |
+| **Close Out** | Trade invoice section + customer invoice section, side by side. "Close out job" button. |
 | **Job Summary** | Read-only formatted project summary with company header, scope table, totals, payment status. |
 
 ### Right sidebar (always visible)
 
 | Component | Content |
 |---|---|
-| **Project summary** | Live-updating card: current stage, estimate number, payment terms, subtotal, tax, total. Updates when scope items change. |
+| **Project summary** | Live-updating sidebar summary: current stage, estimate number, payment terms, subtotal, tax, total. Updates when scope items change. |
 | **Workflow notes** | Business rules from DOMAIN.md displayed as contextual guidance. Reference BR-IDs. |
 | **Actions** | Back, Continue, and Delete project buttons. Primary action uses brand accent color. |
 
@@ -249,6 +249,8 @@ Implementation: use a `currentStep` state variable (0–4). Render only the pane
 
 ### shadcn/ui component mapping
 
+Treat cards as an exception, not the default layout primitive. Inline content into the page body whenever possible. Use cards only when something truly needs emphasis, separation, repetition, or dialog/detail framing. Do not build card-heavy dashboards, cards inside cards, or generic grids of floating panels.
+
 | Trades-ops Element | shadcn Component | Usage Notes |
 |---|---|---|
 | Project details form | `Input`, `Label`, `Select` | Project name, customer, address. Stack label above input. |
@@ -257,12 +259,12 @@ Implementation: use a `currentStep` state variable (0–4). Render only the pane
 | Project status badges | `Badge` | Estimated = amber, Scheduled = blue, In Progress = blue, Completed = green. |
 | Role badges | `Badge` | Staff = outline, Approver = default. |
 | Assignment dropdowns | `Select`, `SelectContent`, `SelectItem` | Populate from DOMAIN.md stakeholder names. NOT free text inputs. |
-| Invoice status cards | `Card`, `CardHeader`, `CardContent` | Trade invoice + customer invoice side by side. |
+| Invoice status sections | Inline sections with `Separator`, `Badge`, `Select`, `Input` | Trade invoice + customer invoice side by side. Use cards only if the invoices need stronger separation. |
 | Action buttons | `Button` | Primary: brand accent, "Continue." Secondary: outline, "Back." Destructive: "Delete project." |
 | Stepper navigation | Custom vertical list | Inside `SidebarContent`. Step number in circle, label, subtitle, completion checkmark. Use `cn()` for states. |
 | Role switcher | `DropdownMenu` | Single dropdown trigger in header. |
-| Project summary sidebar | `Card` with stacked label/value rows | Labels muted, values bold. Total row large and prominent. |
-| Workflow notes | `Card` with `text-sm text-muted-foreground` | Reference material with BR-IDs. |
+| Project summary sidebar | Inline stacked label/value rows | Labels muted, values bold. Total row large and prominent. |
+| Workflow notes | Compact muted note block | Reference material with BR-IDs. |
 | Date fields | `Input` with `type="date"` | Start date, target completion. |
 | Notes/textarea | `Textarea` | Estimator notes, field crew notes. |
 | Confirmation dialogs | `AlertDialog` | Delete project, close out job. |
@@ -279,8 +281,8 @@ When the Knowledge Agent extracts entities from the transcript, map them to the 
 | Project / Job | Project record (top-level) | All sections |
 | Estimate | Estimate data (prices, terms) | Estimate panel |
 | Job Specification / Scope | Scope items table rows | Estimate + In Progress |
-| Invoice | Customer invoice card | Close Out |
-| Trade Invoice | Trade invoice card | Close Out |
+| Invoice | Customer invoice section | Close Out |
+| Trade Invoice | Trade invoice section | Close Out |
 | Subtrade Payment | Payment status on trade invoice | Close Out |
 | Field Schedule | Schedule data | Schedule panel |
 
@@ -308,6 +310,5 @@ This skill expects these files to exist:
 | File | Purpose |
 |---|---|
 | `DOMAIN.md` or `.tasks/domain.md` | Business terminology, entities, rules, roles, brand data |
-| `frontend-design/SKILL.md` | Universal layout principles, brand theming, visual quality rules |
 
-The builder should read BOTH before writing any code.
+The builder should read `DOMAIN.md` or `.tasks/domain.md` before writing any code.
