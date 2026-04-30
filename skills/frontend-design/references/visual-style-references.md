@@ -17,12 +17,16 @@ Create readable layers without boxing everything:
 
 Use tone, spacing, typography, and selective dividers before borders, shadows, or panels.
 
+At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal surface should still separate clearly. Same-white blending fails.
+
 ## Color
 
 - Start from `.tasks/domain.md` brand colors when present.
 - Use the main brand/accent color for primary action, selected state, focus, active navigation, and links.
 - Use secondary brand colors only when they clarify hierarchy.
 - Derive backgrounds, surfaces, borders, muted text, and statuses from compatible tints.
+- If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
+- White or near-white surface on white or near-white canvas with only a faint border fails.
 - Avoid generic purple/blue defaults and loud raw-brand floods.
 
 ## Space
@@ -56,6 +60,7 @@ Prefer:
 - drawers, sheets, or detail routes for secondary context
 
 If a sidebar is required, keep it quiet, narrow, and secondary. Never pair it with a card-heavy workspace.
+Navigation chrome should be tonally distinct from the main canvas. Same-white navigation and content surfaces fail.
 
 ## Cards
 
@@ -66,15 +71,17 @@ Target zero cards.
 - No cards as default grouping or spacing.
 - No cards inside cards.
 - No equal-weight panel fields under a header.
+- No large framed hero, inspector, or detail panel.
 
 Allowed only when unavoidable:
 
 - repeated item separation
-- selected/detail framing
 - dialog, popover, sheet, or drawer containment
 - concise notice or true emphasis
 
 Before using a card, try open sections, rows, dividers, tonal bands, tables, drawers, sheets, dialogs, or detail routes. If that works, the card is not allowed.
+
+A bordered rounded region occupying a major area of the page is a card even if `Card` is not imported.
 
 ## Layout Patterns
 
@@ -83,7 +90,7 @@ Good defaults:
 - open context/header zone plus one main working section
 - one dominant operational object
 - table/list rows with generous rhythm
-- selected lane or selected row for focus
+- selected row, inline lane, or drawer for focus
 - sparse command bar for filters/actions
 - tinted band for focus instead of another panel
 
@@ -91,15 +98,25 @@ Avoid:
 
 - title + filters + KPI strip + card grid + table
 - permanent inspector unless simultaneous detail is required
+- large bordered hero block
+- large bordered detail block
 - helper panels added to fill whitespace
 - generic left-sidebar shell
 - dense equal-weight modules
+- giant chart, ring, gauge, or infographic as the whole answer unless the product truly requires it
 
 ## Depth
 
-- Prefer no shadow plus low-contrast divider/border.
+- Prefer no shadow plus a clear tonal step and soft border.
 - Use crisp contact-edge depth only for selected rows, floating controls, popovers, sheets, dialogs, or one focal surface.
+- If a card is truly unavoidable, give it intentional tonal contrast from the canvas. Same-white cards with faint borders fail.
 - Avoid heavy drop shadows, broad blur, glow, glassmorphism, and decorative gradients.
+- Avoid lift-style shadows. Depth should read as edge contact, not floating.
+
+## Hard Avoids
+
+- decorative blobs, scenic art, lifestyle imagery, plant shadows, or marketing-style atmosphere inside operational UI
+- giant hero treatment that makes the app feel like a landing page instead of working software
 
 ## Completion Check
 
@@ -107,8 +124,11 @@ Reject and revise if:
 
 - the screen is mostly cards/panels
 - any avoidable card remains
+- a large hero/detail/inspector region still reads like a card
 - a sidebar exists without explicit requirement
 - the app ignores available brand colors
+- surface separation depends mostly on borders
+- same-white blending makes major surfaces merge together
 - spacing feels cramped
 - all modules have equal visual weight
 - the UI would still look the same if the domain name changed

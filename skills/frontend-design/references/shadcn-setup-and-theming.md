@@ -46,12 +46,14 @@ Map tokens by role. Do not copy brand colors into every variable.
 - Page background: tinted pale gray, stone, cream, porcelain, glacier, or brand-derived tint.
 - App canvas: lighter off-white/porcelain, not raw white everywhere.
 - Navigation chrome: quiet tone, not saturated slab.
-- Focal surface: subtle tonal difference, not repeated large cards.
+- Focal surface: clear tonal difference, not a repeated large card.
 - Inputs: near-white and clearly editable.
-- Borders: low-contrast and selective.
+- Borders: soft but visible and selective.
 - Popovers/sheets/dialogs: clear separation with contact-edge depth.
 
 Do not use the same white for body, app frame, cards, popovers, inputs, and controls.
+Navigation chrome must remain visibly distinct from the main canvas.
+Do not rely on a faint border alone to separate a major surface from the canvas.
 
 ## Brand Mapping
 
@@ -84,8 +86,10 @@ Do not import `Card` by default.
 - No card grids.
 - No cards inside cards.
 - Do not use card wrappers as generic spacing/grouping.
+- No large rounded bordered hero/detail/inspector regions that still read like cards.
 
-If a card-like wrapper remains, justify it inline. Acceptable reasons: unavoidable repeated item separation, selected/detail framing, dialog/popover/sheet containment, concise notice, or true emphasis.
+If a card-like wrapper remains, justify it inline. Acceptable reasons: unavoidable repeated item separation after row/divider options fail, dialog/popover/sheet containment, concise notice, or true emphasis.
+If a card is unavoidable, it must have intentional tonal contrast from the canvas plus a visible but soft border. Same-white cards fail.
 
 ## Sidebars
 
@@ -106,6 +110,7 @@ Use contact-edge depth only:
 - Contact 3: `0 0 0 1px rgba(16,24,40,0.08), 0 2px 3px rgba(16,24,40,0.10)` for floating UI only.
 
 Avoid `shadow-md`, `shadow-lg`, `shadow-xl`, blur halos, muddy gray clouds, colored glows, and heavy card shadows.
+Depth should read as soft, tight edge contact, not lift.
 
 ## shadcn Components
 
@@ -126,6 +131,8 @@ Before finishing:
 - Major groups have generous gaps.
 - No top-level cards exist.
 - Any remaining card is unavoidable and justified.
+- No large hero/detail/inspector surface still reads like a card.
+- Major surfaces separate from the canvas through tone, not only border.
 - No sidebar exists unless explicitly requested or required by selected domain skill.
 - No heavy Tailwind shadows remain.
 - Buttons, links, menus, dialogs, tabs, forms, routes, and localStorage-backed state work.
