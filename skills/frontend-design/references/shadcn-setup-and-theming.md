@@ -45,7 +45,7 @@ Map tokens by role. Do not copy brand colors into every variable.
 
 - Page background: tinted pale gray, stone, cream, porcelain, glacier, or brand-derived tint.
 - App canvas: lighter off-white/porcelain, not raw white everywhere.
-- Navigation chrome: quiet tone, not saturated slab.
+- Navigation chrome: quiet near-white or very light tinted tone, not saturated slab.
 - Focal surface: clear tonal difference, not a repeated large card.
 - Inputs: near-white and clearly editable.
 - Borders: soft but visible and selective.
@@ -54,6 +54,9 @@ Map tokens by role. Do not copy brand colors into every variable.
 Do not use the same white for body, app frame, cards, popovers, inputs, and controls.
 Navigation chrome must remain visibly distinct from the main canvas.
 Do not rely on a faint border alone to separate a major surface from the canvas.
+Inputs, selects, textareas, tables, and nav/header chrome should usually be lighter than the page background in light mode.
+In dark mode, those same working surfaces should usually move to near-black so they still read distinctly against the overall canvas.
+Pure white is not required. Near-white is usually enough when the separation is obvious.
 
 ## Brand Mapping
 
@@ -133,6 +136,7 @@ Before finishing:
 - Any remaining card is unavoidable and justified.
 - No large hero/detail/inspector surface still reads like a card.
 - Major surfaces separate from the canvas through tone, not only border.
+- Inputs and header/nav chrome read clearly against the page background in both light and dark modes.
 - No sidebar exists unless explicitly requested or required by selected domain skill.
 - No heavy Tailwind shadows remain.
 - Buttons, links, menus, dialogs, tabs, forms, routes, and localStorage-backed state work.

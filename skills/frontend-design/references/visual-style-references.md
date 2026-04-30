@@ -27,6 +27,8 @@ At thumbnail scale, the page/stage, app canvas, navigation chrome, and focal sur
 - Derive backgrounds, surfaces, borders, muted text, and statuses from compatible tints.
 - If a surface exists, it must separate from the canvas through tone first, border second, shadow last.
 - White or near-white surface on white or near-white canvas with only a faint border fails.
+- Inputs, controls, and nav/header chrome should usually be lighter than the main page background in light mode and darker than the main page background in dark mode.
+- This does not require pure white. A very light shade close to white is usually better than same-tone blending.
 - Avoid generic purple/blue defaults and loud raw-brand floods.
 
 ## Space
@@ -61,6 +63,7 @@ Prefer:
 
 If a sidebar is required, keep it quiet, narrow, and secondary. Never pair it with a card-heavy workspace.
 Navigation chrome should be tonally distinct from the main canvas. Same-white navigation and content surfaces fail.
+Header/topbar surfaces should usually use a near-white or very light tinted treatment in light mode, and near-black in dark mode, so the chrome reads clearly without becoming a heavy slab.
 
 ## Cards
 
@@ -129,6 +132,7 @@ Reject and revise if:
 - the app ignores available brand colors
 - surface separation depends mostly on borders
 - same-white blending makes major surfaces merge together
+- inputs or header/nav chrome do not read clearly against the page background
 - spacing feels cramped
 - all modules have equal visual weight
 - the UI would still look the same if the domain name changed

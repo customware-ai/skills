@@ -46,6 +46,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 - **No major-region framed surfaces**: Do not turn the main working area, hero, inspector, or detail lane into a big bordered rounded panel. Prefer open layout, split rows, tonal bands, dividers, or a drawer/sheet for secondary detail.
 - **Token-first shadcn**: Configure `app.css`/global CSS variables and Tailwind theme values before component work. Do not accept default shadcn colors as the design.
 - **Strong soft contrast**: If a surface exists, it must separate from the canvas through tone first, border second, shadow last. Same-white or near-white surfaces with faint borders fail.
+- **Interactive surface contrast**: Inputs, selects, textareas, tables, and header/nav chrome must read as distinct working surfaces. In light mode they should usually sit on a near-white or very light brand-tinted surface; in dark mode they should usually sit on a near-black surface. Do not let controls or header chrome disappear into the page background.
 - **Contact depth only**: Avoid `shadow-md`, `shadow-lg`, `shadow-xl`, broad blur, glow, halo, glassmorphism, and heavy card shadows. Use soft, tight, contact-edge depth only when needed. Depth should read as edge contact, not lift.
 - **Domain specificity**: The UI should not look unchanged if the domain name and labels are swapped.
 
@@ -63,6 +64,7 @@ Do not code until all answers are acceptable.
 - Am I avoiding large framed hero/detail/inspector surfaces?
 - Is the layout airy with generous spacing, not dense?
 - Do page background, canvas, nav chrome, and any focal surface separate clearly at thumbnail scale?
+- Do inputs, form controls, tables, and header/nav chrome have enough tonal separation from the page background?
 - Are shadows limited to contact-edge depth?
 - Does the design feel specific to this domain and task?
 
@@ -91,6 +93,7 @@ Reject and revise if:
 - The first screen is mostly panels, cards, KPI blocks, helper boxes, or equal-weight modules.
 - Surface separation depends mostly on borders instead of tone.
 - Same-white or near-white panelization makes major surfaces blend together.
+- Inputs, form controls, data rows, or header/nav chrome blend into the page background.
 - Brand colors from `.tasks/domain.md` are not reflected in primary/active/focus treatment.
 - Theme variables were not configured before component styling.
 - The screen feels cramped or all modules have equal weight.
