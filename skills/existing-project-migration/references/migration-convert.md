@@ -10,14 +10,17 @@ Implement the imported product in the Customware full-stack target repo by follo
 
 1. Read project instructions, root `AGENTS.md`, `SKILL.md`, and this reference.
 2. Read `.import/migration-plan.json`.
-3. Re-inspect source files for each workflow before implementing it.
-4. Implement workflows in priority order from the migration plan.
-5. Implement backend contracts, queries, services, router procedures, and Drizzle migrations from the source-derived entities.
-6. Implement frontend routes/pages/components from source-derived workflows.
-7. Add tests mapped to migration-plan verification targets.
-8. Run interactive Playwright verification for migrated workflows.
-9. Run automated validation.
-10. Complete only when source-derived verification targets pass or skipped items are explicitly justified.
+3. Read `.import/migration-checklist.md` from setup, or fail if it is missing.
+4. Re-inspect source files for each workflow before implementing it.
+5. Extend and update `.import/migration-checklist.md` using the conversion sections below.
+6. Implement workflows in priority order from the migration plan.
+7. Implement backend contracts, queries, services, router procedures, and Drizzle migrations from the source-derived entities.
+8. Implement frontend routes/pages/components from source-derived workflows.
+9. Add tests mapped to migration-plan verification targets.
+10. Run interactive Playwright verification for migrated workflows.
+11. Run automated validation.
+12. Clean up temporary migration work files only after source-derived verification succeeds.
+13. Complete only when source-derived verification targets pass or skipped items are explicitly justified.
 
 ## Plan Authority
 
@@ -27,6 +30,65 @@ Implement the imported product in the Customware full-stack target repo by follo
 - Do not invent a new product around org branding.
 - Re-open source files when the plan is ambiguous.
 - If the plan is missing or clearly wrong, fail the task with a concrete summary instead of building a generic app.
+
+## Working Checklist Contract
+
+Use `.import/migration-checklist.md` as the task-local quality gate.
+
+At the start of conversion, append these sections if they are not already present:
+
+```md
+## Conversion Context Reload
+- [ ] Re-read root AGENTS.md
+- [ ] Re-read existing-project-migration SKILL.md
+- [ ] Re-read migration convert reference
+- [ ] Re-read .import/migration-plan.json
+- [ ] Re-read setup warnings from the checklist and plan
+
+## Workflow Implementation
+- [ ] Re-inspect source evidence for each primary workflow before implementing
+- [ ] Implement backend contracts for source-derived workflows
+- [ ] Implement query/service/router layers for source-derived workflows
+- [ ] Implement Drizzle tables and migrations for source-derived entities
+- [ ] Implement frontend routes/pages/components for source-derived workflows
+- [ ] Preserve source labels, statuses, entities, and workflow concepts where practical
+- [ ] Confirm org branding was used only for presentation
+
+## Source-Derived Testing
+- [ ] Add unit/service tests for source-derived backend behavior
+- [ ] Add Playwright tests named after imported workflows
+- [ ] Avoid generic/template-only tests as completion evidence
+- [ ] Run targeted automated tests
+- [ ] Run build/check commands required by the repo
+
+## Interactive Verification
+- [ ] Use playwright-in-sandbox for interactive verification
+- [ ] Verify at least one primary workflow from the migration plan
+- [ ] Record which workflow paths were verified
+- [ ] Record any skipped workflow with a concrete reason
+- [ ] Confirm review/runtime startup does not fail on a fresh SQLite database
+
+## Drift Check
+- [ ] Confirm generated app name/domain match imported zip evidence
+- [ ] Confirm generated tables match source/database evidence
+- [ ] Confirm generated routes/pages match source workflow evidence
+- [ ] Confirm no unrelated org/company domain replaced the imported app domain
+- [ ] Confirm completion summary cites source-derived workflows and verification
+
+## Convert Cleanup
+- [ ] Remove temporary template clones
+- [ ] Remove temporary execution notes
+- [ ] Remove migration-checklist.md after all required boxes are complete
+- [ ] Leave only durable app/source artifacts required by the final repo
+```
+
+Rules:
+
+- Update the checklist continuously, not only at the end.
+- Add workflow-specific checkboxes when the migration plan identifies concrete workflows.
+- Do not complete the task with unchecked required boxes.
+- If a required box cannot be checked, fail the task with the concrete blocker.
+- Remove `.import/migration-checklist.md` as the final successful cleanup step. Do not remove it before final verification passes.
 
 ## Implementation Rules
 
@@ -90,6 +152,8 @@ Playwright should verify at least one primary workflow from `.import/migration-p
 
 Do not treat template smoke tests, generic dashboard tests, or unrelated happy paths as migration validation.
 
+The completion summary must name the exact checklist sections that passed before cleanup.
+
 ## Runtime Startup
 
 Generated full-stack apps must work in a fresh review/runtime sandbox.
@@ -103,11 +167,13 @@ Generated full-stack apps must work in a fresh review/runtime sandbox.
 Fail the task instead of completing if:
 
 - `.import/migration-plan.json` is missing
+- `.import/migration-checklist.md` is missing at convert start
 - source app workflows cannot be identified
 - implementation is based on org/company domain instead of uploaded artifacts
 - no source-derived workflow is testable
 - review/runtime boot cannot be made to work
 - validation only covers generic/template behavior
+- required checklist items remain unchecked
 
 ## Completion Summary
 

@@ -63,6 +63,7 @@ If the task kind is unclear, read both references and determine which one matche
 - Keep the migration zip-driven.
 - Keep org context limited to brand presentation, not app-domain decisions.
 - Keep the target runtime on the fixed Customware full-stack template.
+- Use an agent-owned checklist while working. Do not rely on external validators to decide migration quality.
 - Treat unreadable or raw binary domain content as low-confidence supporting material.
 - Fail rather than complete a task that cannot identify or preserve the imported app's core workflows.
 - Verify source-derived workflows, not generic template screens.
@@ -76,3 +77,5 @@ Before completing a migration task, confirm:
 - The generated app is not generic and not based on unrelated org/company knowledge.
 - Validation covered source-derived workflows.
 - Any skipped workflow is listed with a concrete reason.
+- The working checklist is fully checked for this task.
+- Temporary checklist/work files are cleaned up at the end of `migration_convert` after verification succeeds.
