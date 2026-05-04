@@ -1,0 +1,78 @@
+---
+name: existing-project-migration
+license: MIT
+compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
+metadata:
+  author: customware-ai
+  version: "1.0"
+description: >
+  Use this skill for Customware existing-project migration tasks that convert uploaded
+  `projects.zip`, `database.zip`, and `domain.zip` artifacts into the standard
+  full-stack Customware target app. This skill is for `migration_setup` and
+  `migration_convert` tasks and enforces zip-driven source discovery, migration-plan
+  creation, source-workflow parity, and source-derived Playwright verification.
+---
+
+# Existing Project Migration
+
+Use this skill for the two import migration tasks:
+
+- `migration_setup`
+- `migration_convert`
+
+## Source Authority
+
+The uploaded artifacts drive the migration.
+
+Priority:
+
+1. `.import/project/` from `projects.zip` is the primary source for product behavior, routes, UI, workflows, integrations, and business logic.
+2. `.import/database/` from `database.zip` is the primary source for persisted entities, table shape, and schema inference.
+3. `.import/domain/` and `.import/domain-source.txt` from `domain.zip` are supporting domain context.
+4. Org name, description, logos, colors, and brand context are presentation context only.
+
+Do not let org/company knowledge redefine the imported app's product domain, workflows, entities, or schema.
+
+## Fixed Target Stack
+
+Migrate into the prepared Customware full-stack target:
+
+- Vite
+- React Router
+- TypeScript
+- Zod
+- Node
+- Hono
+- tRPC
+- SQLite via `better-sqlite3`
+- Drizzle ORM and migrations
+
+Do not preserve the uploaded source app's original stack as the runtime stack.
+
+## Required References
+
+Read the reference for the current task before doing any work:
+
+- `migration_setup`: `.agents/skills/existing-project-migration/references/migration-setup.md`
+- `migration_convert`: `.agents/skills/existing-project-migration/references/migration-convert.md`
+
+If the task kind is unclear, read both references and determine which one matches the active task text.
+
+## Shared Rules
+
+- Keep the migration zip-driven.
+- Keep org context limited to brand presentation, not app-domain decisions.
+- Keep the target runtime on the fixed Customware full-stack template.
+- Treat unreadable or raw binary domain content as low-confidence supporting material.
+- Fail rather than complete a task that cannot identify or preserve the imported app's core workflows.
+- Verify source-derived workflows, not generic template screens.
+
+## Completion Gate
+
+Before completing a migration task, confirm:
+
+- The app domain comes from `.import/project/`, `.import/database/`, and `.import/domain/`.
+- Org branding was used only as presentation context.
+- The generated app is not generic and not based on unrelated org/company knowledge.
+- Validation covered source-derived workflows.
+- Any skipped workflow is listed with a concrete reason.
