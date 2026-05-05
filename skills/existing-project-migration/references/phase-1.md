@@ -1,6 +1,6 @@
 # Phase 1 Reference
 
-Use this reference for the `migration_build` task.
+Use this reference for the `Migration build` task.
 
 ## Goal
 
@@ -15,14 +15,19 @@ Complete phase 1 of the migration in one task:
 - add source-derived tests
 - use Playwright interactive verification to prove the migrated app works at a base level
 - leave the repo ready for phase 2 verification
+- preserve the imported app's visible route map, layout language, and styling direction instead of replacing it with a generic migration shell
 
 Phase 1 must be driven to success.
 
 - Do not stop at planning, partial migration, or a broken repo state.
 - Do not stop after only reading or only scaffolding.
 - Do not give up when the first implementation or verification attempt fails.
+- Before writing `.import/migration-checklist.md` or `.import/migration-plan.json`, inspect the extracted source deeply enough to identify the real app root, real backend root, actual route/page structure, and real CSV contents.
+- Before writing `.import/migration-checklist.md` or `.import/migration-plan.json`, enumerate the active frontend's visible route map, navigation labels, top-level pages, and major workflows from source evidence. Do not stop at a smaller subset like four or five workflows when the imported app clearly exposes more surface area.
 - Keep iterating on code, schema, seed data, tests, and Playwright checks until the migrated app works at a basic source-backed level or a concrete blocker makes success impossible.
 - Do not be lazy about finishing the actual migration work. A repo that only partially reflects the imported app is not a successful phase 1 outcome.
+- Do not reduce the product to a narrow vertical slice when the source app clearly contains more visible routes, pages, or workflows. A reduced subset can be a sequencing tactic during implementation, but it is not a valid final phase 1 outcome.
+- Do not introduce migration-themed copy or generic dashboard framing in user-facing UI when the source app already provides product framing, route labels, and layout patterns to preserve.
 
 ## Output Contract While Working
 
@@ -33,7 +38,7 @@ The following files are required working artifacts during the build task:
 
 Rules:
 
-- Read both files near the start of build if they already exist; create only the missing one(s) before broad exploration or template merge.
+- Read both files near the start of build if they already exist; create only the missing one(s) after the required deep source intake and before broad exploration or template merge.
 - Keep them populated continuously while working; they are required migration state.
 - If either file is missing by the time build reaches template merge or implementation work, fail the task.
 - If the plan lacks the required top-level fields, at least one workflow, or at least one verification target, fail the task instead of continuing.
@@ -41,20 +46,25 @@ Rules:
 ## Required Order
 
 1. Read project instructions, `SKILL.md`, this exact reference path, and `.import/verification.json`.
-2. Read existing `.import/migration-checklist.md` and `.import/migration-plan.json` immediately; if either file is missing, create it using the contracts below.
-3. Update the checklist and plan with initial content before broad exploration, even if many values are still provisional.
-4. Inspect only the minimum source intake needed from `.import/project/`, `.import/database/`, and `.import/domain/` to identify the app name, core workflows, CSV tables, major routes, and seed-data sources.
-5. Use `.import/domain-source.txt` only when it contains readable extracted text instead of raw binary or PDF object streams.
-6. Re-read the current root `AGENTS.md`; the working repo is already bootstrapped from `template-be-setup`.
-7. Ignore any `AGENTS.md` files from `.import/project/` or temporary `client-only-spa` clones.
-8. Fill the migration plan from the uploaded artifacts.
-9. Merge template assets only after the source inventory and plan are clear.
-10. Ensure the root `AGENTS.md` remains the `template-be-setup` instruction file. If a temporary template clone is needed inside `/workspace/development`, copy that template `AGENTS.md` to the repo root and ignore imported or client-template `AGENTS.md` files as root instructions.
-11. Clone `client-only-spa` into a temporary folder, remove its `.git` metadata, merge its `app/` contents into the current repo, and preserve `app/lib/trpc-provider.tsx` plus `app/utils/error-logger.ts`.
-12. Create initial Drizzle schema, contracts, queries, services, router procedures, seed data, and implementation slices from source entities and CSV tables.
-13. Use CSV rows when present to seed SQLite. Do not replace row-backed CSV data with unrelated demo content.
-14. Add source-derived tests, run build-task validation, and use Playwright interactive verification to prove the migrated app works at a base level.
-15. Leave `.import/`, the checklist, and the plan in place for phase 2.
+2. Re-read the current root `AGENTS.md`; the working repo is already bootstrapped from `template-be-setup`.
+3. Inspect `.import/project/` deeply enough to find the real source root. Do not assume source files live directly under `.import/project/`; many imports will have one top-level folder such as `.import/project/<app-name>/...`.
+4. Inspect `.import/database/` deeply enough to find the real CSV root. Do not assume CSVs live directly under `.import/database/`; they may also sit under a top-level extracted folder.
+5. Inspect the actual frontend app, actual backend app, actual route/page files, actual API route files, actual schema/entity files, and the actual CSV headers plus representative rows before creating the plan.
+6. Identify the active source app from workspace manifests, app bootstraps, router files, page directories, layout/navigation files, and backend route registration. Do not confuse archived folders or helper packages with the live product.
+7. Read existing `.import/migration-checklist.md` and `.import/migration-plan.json` if they already exist. If either file is missing, create it only after the source intake above using the contracts below.
+8. Update the checklist and plan with initial content immediately after the deep source intake, even if some values are still provisional.
+9. Use `.import/domain-source.txt` only when it contains readable extracted text instead of raw binary or PDF object streams.
+10. Treat `.tasks/domain.md` as low-authority org context. If it conflicts with `.import/project/` or `.import/database/`, record the warning and follow `.import/`.
+11. Ignore any `AGENTS.md` files from `.import/project/` or temporary `client-only-spa` clones.
+12. Fill the migration plan from the uploaded artifacts.
+13. Merge template assets only after the source inventory and plan are clear.
+14. Ensure the root `AGENTS.md` remains the `template-be-setup` instruction file. If a temporary template clone is needed inside `/workspace/development`, copy that template `AGENTS.md` to the repo root and ignore imported or client-template `AGENTS.md` files as root instructions.
+15. Clone `client-only-spa` into a temporary folder, remove its `.git` metadata, merge its `app/` contents into the current repo, and preserve `app/lib/trpc-provider.tsx` plus `app/utils/error-logger.ts`.
+16. Create initial Drizzle schema, contracts, queries, services, router procedures, seed data, and implementation slices from source entities and CSV tables.
+17. Use CSV rows when present to seed SQLite. Do not replace row-backed CSV data with unrelated demo content.
+18. Port the imported app shell, navigation labels, primary routes, and core page hierarchy from the active source app. If some workflows have thinner data support, keep the routes and source-shaped UI with honest empty states or staged wiring instead of deleting them.
+19. Add source-derived tests, run build-task validation, and use Playwright interactive verification to prove the migrated app works at a base level.
+20. Leave `.import/`, the checklist, and the plan in place for phase 2.
 
 Do not treat the first passing build or a partially rendered page as phase 1 completion. Phase 1 completes only when the migrated app is materially implemented, runs, and survives basic source-backed interactive verification.
 
@@ -63,10 +73,16 @@ Do not treat the first passing build or a partially rendered page as phase 1 com
 After the checklist and plan exist with initial content:
 
 - Spend at most two turns on additional read-only source inspection before the first implementation edit.
-- Read only the files needed to implement the first source-backed vertical slice. Do not inspect every workflow before editing.
+- Read only the files needed to implement the first source-backed implementation batch while preserving the active app shell, route map, navigation labels, and product framing. Do not inspect every workflow before editing.
 - If more source context is needed, record the gap in the checklist and keep implementing the already-evidenced workflow.
 - If you cannot make a source-backed implementation edit after the bounded intake, fail the task with the missing evidence instead of continuing exploration.
 - After the first implementation edit, keep moving between implementation, validation, and Playwright verification until the app works at a basic level. Do not stall in repeated read-only diagnosis.
+
+Before the checklist and plan exist:
+
+- Spend the needed turns on deep source intake of `.import/project/` and `.import/database/`.
+- Confirm the real nested root folders, main app entrypoints, backend entrypoints, major routes/pages, and CSV tables before writing the first plan/checklist draft.
+- Do not write a shallow plan from top-level filenames alone.
 
 ## AGENTS.md Rule
 
@@ -84,11 +100,19 @@ The root `AGENTS.md` for the migrated repo must come from `template-be-setup`.
 
 Inspect the imported project before choosing schema or UI direction.
 
+The inspection must be deep enough to identify the actual live app, not just archived or helper folders.
+
+- If `.import/project/` contains a single top-level extracted folder, descend into it and treat that as the effective source root.
+- Distinguish active app folders from `_archived`, legacy, helper, or generated artifacts.
+- Identify which frontend folder is the current app and which backend folder is the current API/service layer.
+
 Record:
 
 - app and package names
 - likely product name
 - source routes and pages
+- active frontend root and active backend root
+- source layout/navigation files
 - API routes and handlers
 - entities and schema files
 - key workflows
@@ -98,10 +122,14 @@ Record:
 - important assets and branding in the source archive
 
 Use org brand files only for presentation context after the source product identity is known.
+Do not let org-brand or `.tasks/domain.md` content rename the product or replace the source route map.
 
 ## Database Inventory
 
 Inspect `.import/database/` CSV files.
+
+- If `.import/database/` contains a nested extracted root folder, descend into it before inspecting CSVs.
+- Read actual headers and representative rows from the important CSVs before inferring schema or workflow meaning.
 
 Record:
 
@@ -139,7 +167,11 @@ Required top-level fields:
 - `sourceSummary`
 - `workflows`
 - `sourceRoutes`
+- `sourceNavigation`
 - `sourcePages`
+- `activeFrontendRoot`
+- `activeBackendRoot`
+- `sourceLayoutFiles`
 - `sourceApiRoutes`
 - `sourceEntities`
 - `sourceIntegrations`
@@ -159,6 +191,7 @@ Each workflow should include:
 - `routesOrPages`
 - `apiRoutes`
 - `verification`
+- `sourceVisibleSurface`
 
 Each proposed table should include:
 
@@ -179,6 +212,8 @@ Each seed data source should include:
 - `warnings`
 
 Keep the plan factual. If evidence is weak, write that explicitly in `warnings`.
+Do not write a plan that only covers a subset of the visible source app without explicitly listing the omitted routes/pages/workflows and the blocker for each omission.
+Do not create a provisional plan that intentionally caps the imported product to an arbitrary subset of workflows when the active source route map already proves the app is broader.
 
 ## Working Checklist Contract
 
@@ -193,13 +228,14 @@ Use this exact top-level section order:
 - [ ] Read root AGENTS.md
 - [ ] Read existing-project-migration SKILL.md
 - [ ] Read phase 1 reference
-- [ ] Read phase 2 reference if needed for handoff shape
 
 ## Source Intake
 - [ ] Inventory .import/project source files
 - [ ] Inventory .import/database CSV files
 - [ ] Inventory .import/domain files and domain-source.txt
 - [ ] Identify imported app name from zip evidence
+- [ ] Identify active frontend root, backend root, and live router files
+- [ ] Enumerate the full active source route map and navigation labels
 - [ ] Identify primary source workflows from zip evidence
 - [ ] Identify source entities and integrations from zip evidence
 - [ ] Mark unreadable or low-confidence artifacts with warnings
@@ -207,6 +243,7 @@ Use this exact top-level section order:
 ## Branding Boundary
 - [ ] Identify org branding inputs, if available
 - [ ] Confirm org context is presentation-only
+- [ ] Confirm .tasks/domain.md does not override imported zip evidence
 - [ ] Confirm app domain/workflows/entities come from imported zips
 
 ## Runtime Instructions
@@ -217,6 +254,8 @@ Use this exact top-level section order:
 ## Migration Plan
 - [ ] Write .import/migration-plan.json
 - [ ] Include source-backed workflows
+- [ ] Include active source route map and visible app surfaces
+- [ ] Include full source navigation labels and route ownership
 - [ ] Include source-backed entities and tables
 - [ ] Include CSV row-backed seed data sources when rows exist
 - [ ] Include verification targets for imported workflows
@@ -234,6 +273,7 @@ Use this exact top-level section order:
 - [ ] Create initial Drizzle schema and contracts from CSV/source evidence
 - [ ] Seed the generated SQLite database from uploaded CSV rows when present
 - [ ] Implement source-derived backend and frontend workflows
+- [ ] Preserve source navigation, route labels, and layout language
 - [ ] Add source-derived tests and validation targets
 - [ ] Use Playwright interactive verification for base-level app behavior
 - [ ] Keep build source-driven, not org-domain-driven
