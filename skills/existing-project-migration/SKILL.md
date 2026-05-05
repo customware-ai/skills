@@ -56,7 +56,8 @@ Read the reference for the current task before doing any work:
 - `migration_setup`: `.agents/skills/existing-project-migration/references/migration-setup.md`
 - `migration_convert`: `.agents/skills/existing-project-migration/references/migration-convert.md`
 
-If the task kind is unclear, read both references and determine which one matches the active task text.
+Do not infer underscore filenames such as `migration_setup.md` or `migration_convert.md`.
+If the task kind is unclear, read both exact reference paths above and determine which one matches the active task text.
 
 ## Shared Rules
 
@@ -70,6 +71,7 @@ If the task kind is unclear, read both references and determine which one matche
 - Verify source-derived workflows, not generic template screens.
 - Treat existing `.import/migration-checklist.md` and `.import/migration-plan.json` as the source of truth when they are already present; only create them if missing.
 - During `migration_setup`, read the existing checklist and plan immediately after reading the setup reference, update them before broad exploration, and do not read the `migration_convert` reference or broad target app/server internals until the checklist and plan files already exist with initial content.
+- During `migration_setup`, treat the current repo root `AGENTS.md` as the `template-be-setup` instructions when the repo has already been bootstrapped from `template-be-setup`; do not search outside `/workspace/development` for template files.
 - Do not spend more than two consecutive turns on read-only exploration without either updating a required migration artifact, changing implementation files, or calling the explicit completion or failure command.
 - If the imported source remains too ambiguous to proceed after the required source intake, fail with a concrete summary instead of continuing exploratory loops.
 

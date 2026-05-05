@@ -8,7 +8,7 @@ Implement the imported product in the Customware full-stack target repo by follo
 
 ## Required Order
 
-1. Read project instructions, root `AGENTS.md`, `SKILL.md`, and this reference.
+1. Read project instructions, root `AGENTS.md`, `SKILL.md`, and this exact reference path.
 2. Read `.import/migration-plan.json`.
 3. Read `.import/migration-checklist.md` from setup, or fail if it is missing.
 4. Re-inspect source files for each workflow before implementing it.

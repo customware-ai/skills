@@ -23,14 +23,12 @@ Rules:
 
 ## Required Order
 
-1. Read project instructions, `SKILL.md`, this reference, and `.import/verification.json`.
+1. Read project instructions, `SKILL.md`, this exact reference path, and `.import/verification.json`.
 2. Read existing `.import/migration-checklist.md` and `.import/migration-plan.json` immediately; if either file is missing, create it using the contracts below.
 3. Update the checklist and plan with initial content before broad exploration, even if many values are still provisional.
 4. Inspect only the minimum source intake needed from `.import/project/`, `.import/database/`, and `.import/domain/` to identify the app name, core workflows, CSV tables, and major routes.
 5. Use `.import/domain-source.txt` only when it contains readable extracted text instead of raw binary/PDF object streams.
-4. Clone or inspect the `template-be-setup` reference repo if it is not already the working base.
-5. Copy `AGENTS.md` from `template-be-setup` into the target repo root.
-6. Re-read the copied root `AGENTS.md` before continuing.
+6. Re-read the current root `AGENTS.md`; the working repo is already bootstrapped from `template-be-setup`.
 7. Ignore any `AGENTS.md` files from `.import/project/` or temporary `client-only-spa` clones.
 8. Fill the migration plan from the uploaded artifacts.
 9. Merge template assets only after the source inventory and plan are clear.
@@ -71,11 +69,14 @@ If evidence is partial but usable:
 
 The root `AGENTS.md` for the migrated repo must come from `template-be-setup`.
 
-- Replace the target repo root `AGENTS.md` with the `template-be-setup` version.
+- The import bootstrap starts from `template-be-setup`, so the current root `AGENTS.md` is already the template instruction file unless there is explicit evidence otherwise.
+- Re-read the current root `AGENTS.md` and record that it is the template instruction file.
+- Do not search outside `/workspace/development` for `template-be-setup` or `AGENTS.md`.
+- Only copy `AGENTS.md` from a `template-be-setup` clone if that clone already exists inside `/workspace/development`.
 - Do not merge root instructions from the uploaded source project.
 - Do not copy `AGENTS.md` from `client-only-spa`.
 - Treat all imported `AGENTS.md` files as reference artifacts only.
-- After replacement, immediately re-read root `AGENTS.md` and follow it for all later work.
+- After confirming the root instructions, follow root `AGENTS.md` for all later work.
 
 ## Source Inventory
 
@@ -193,8 +194,8 @@ Use this exact top-level section order:
 - [ ] Confirm app domain/workflows/entities come from imported zips
 
 ## Runtime Instructions
-- [ ] Copy template-be-setup AGENTS.md to root
-- [ ] Re-read copied root AGENTS.md
+- [ ] Confirm current root AGENTS.md is the template-be-setup instruction file
+- [ ] Re-read root AGENTS.md after confirmation
 - [ ] Confirm imported/client-template AGENTS.md files were ignored as root instructions
 
 ## Migration Plan
