@@ -89,6 +89,7 @@ Rules:
 - Do not complete the task with unchecked required boxes.
 - If a required box cannot be checked, fail the task with the concrete blocker.
 - Remove `.import/migration-checklist.md` as the final successful cleanup step. Do not remove it before final verification passes.
+- Do not spend more than two consecutive turns on read-only exploration without either updating the checklist, implementing workflow code, writing tests, or calling the explicit failure command.
 
 ## Implementation Rules
 
@@ -151,6 +152,8 @@ Required:
 Playwright should verify at least one primary workflow from `.import/migration-plan.json`. Prefer several when the plan has multiple primary workflows.
 
 Do not treat template smoke tests, generic dashboard tests, or unrelated happy paths as migration validation.
+
+If you cannot reach source-derived verification or runnable implementation with the available evidence, fail with a concrete summary instead of looping in more source exploration.
 
 The completion summary must name the exact checklist sections that passed before cleanup.
 

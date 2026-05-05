@@ -64,9 +64,13 @@ If the task kind is unclear, read both references and determine which one matche
 - Keep org context limited to brand presentation, not app-domain decisions.
 - Keep the target runtime on the fixed Customware full-stack template.
 - Use an agent-owned checklist while working. Do not rely on external validators to decide migration quality.
+- Re-read this skill plus `.import/migration-checklist.md` and `.import/migration-plan.json` after any interruption or compaction before continuing work.
 - Treat unreadable or raw binary domain content as low-confidence supporting material.
 - Fail rather than complete a task that cannot identify or preserve the imported app's core workflows.
 - Verify source-derived workflows, not generic template screens.
+- Create the required migration checklist and migration plan artifacts early, then keep them updated as the source of truth while working.
+- Do not spend more than two consecutive turns on read-only exploration without either updating a required migration artifact, changing implementation files, or calling the explicit completion or failure command.
+- If the imported source remains too ambiguous to proceed after the required source intake, fail with a concrete summary instead of continuing exploratory loops.
 
 ## Completion Gate
 
@@ -79,3 +83,4 @@ Before completing a migration task, confirm:
 - Any skipped workflow is listed with a concrete reason.
 - The working checklist is fully checked for this task.
 - Temporary checklist/work files are cleaned up at the end of `migration_convert` after verification succeeds.
+- If the checklist still has required unchecked items, do not continue into the next task and do not complete successfully.

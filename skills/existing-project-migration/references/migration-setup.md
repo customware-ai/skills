@@ -6,6 +6,21 @@ Use this reference for the `migration_setup` task.
 
 Prepare the target repo for conversion by combining templates, installing the correct root instructions, and producing a source-driven migration plan before schema or app implementation proceeds.
 
+## Output Contract While Working
+
+The following files are required working artifacts for setup:
+
+- `.import/migration-checklist.md`
+- `.import/migration-plan.json`
+
+Rules:
+
+- Create both files near the start of setup before broad template merge or dependency exploration.
+- Keep them populated continuously while working; they are not optional notes.
+- Do not treat them as extra docs. They are required migration state.
+- If either file is missing by the time setup reaches template merge or schema work, fail the task.
+- If the plan lacks the required top-level fields, at least one workflow, or at least one verification target, fail the task instead of continuing.
+
 ## Required Order
 
 1. Read project instructions, `SKILL.md`, and this reference.
@@ -19,6 +34,34 @@ Prepare the target repo for conversion by combining templates, installing the co
 9. Merge template assets only after the source inventory and plan are clear.
 10. Create initial Drizzle schema/contracts from source entities and CSV tables.
 11. Run static validation relevant to setup.
+
+## Required Setup Scope
+
+Before the checklist and plan shells exist:
+
+- Limit inspection to `.import/project/`, `.import/database/`, `.import/domain/`, `.import/domain-source.txt`, and the template foundation files actually needed for merge decisions.
+- Prefer targeted evidence reads such as source routes, schema files, API handlers, CSV headers, and generated contract/type files over broad directory wandering.
+- Do not spend multiple turns hunting optional template dependencies before the checklist and migration plan exist.
+
+After the checklist and plan shells exist:
+
+- Stop broad exploration once you have enough evidence to name the app, identify primary workflows, list CSV tables, and record warnings.
+- Move directly into plan completion, template merge, schema/contracts, and validation.
+
+## Missing Context Gating
+
+Fail the task with a concrete summary instead of continuing if any of the following remain unresolved after required source intake:
+
+- imported app identity cannot be determined from zip evidence
+- no primary workflows can be identified from source files
+- no usable entity/table evidence can be extracted from source code or CSVs
+- required checklist/plan fields cannot be populated without guessing
+
+If evidence is partial but usable:
+
+- continue with warnings
+- record each weak or missing area in `.import/migration-plan.json`
+- do not let org branding fill source-domain gaps
 
 ## AGENTS.md Rule
 
@@ -182,6 +225,7 @@ Rules:
 - Add task-specific checkboxes only when a discovered requirement is real.
 - Do not remove `.import/migration-checklist.md` during setup. It is handoff state for `migration_convert`.
 - Do not use the checklist to justify weak work; unchecked items must be completed or explained in the task failure summary.
+- Do not spend more than two consecutive turns on read-only exploration without checking or updating at least one concrete checklist item.
 
 ## Template Merge
 
@@ -210,3 +254,5 @@ Before completing:
 - setup validation commands pass
 
 Completion summary must list the app name, detected workflows, proposed tables, root `AGENTS.md` source, and any warnings.
+
+Do not complete setup successfully unless the summary is an explicit pass over the checklist and plan contract.
