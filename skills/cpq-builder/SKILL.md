@@ -4,17 +4,18 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "4.5"
+  version: "4.7"
 description: >
-  Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the patterns,
-  minimum standards, layout patterns, business rule templates, and mapping rules for
-  transforming a DOMAIN.md into a CPQ-shaped application. Targeted at SMB customers
-  (5-50 employees) migrating from spreadsheets and email-based quoting workflows. The
-  prototype must feel dramatically better than Excel without feeling enterprise-overcomplicated.
-  Patterns are defaults, not mandates — adapt them when the actual workflow deviates.
-  Trigger signals: quoting, pricing, product configuration, calculators, guided intake forms,
-  assessment tools, estimate builders, proposal workflows, eligibility checkers, any
-  "fill in fields → calculate → produce a deliverable" pattern.
+  Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines patterns,
+  minimum standards, layout patterns, lifecycle indicators, product configurator patterns,
+  business rule templates, and mapping rules for transforming a DOMAIN.md into a CPQ-shaped
+  application. Targeted at SMB customers (5-50 employees) migrating from spreadsheets and
+  email-based quoting workflows. The prototype must feel dramatically better than Excel
+  without feeling enterprise-overcomplicated. Patterns are defaults, not mandates — adapt
+  them when the actual workflow deviates. Trigger signals: quoting, pricing, product
+  configuration, calculators, guided intake forms, assessment tools, estimate builders,
+  proposal workflows, eligibility checkers, any "fill in fields → calculate → produce a
+  deliverable" pattern.
 ---
 
 # CPQ Builder Skill
@@ -42,6 +43,14 @@ The builder reads this skill, reads the DOMAIN.md for the specific domain termin
 
 ## Customer Context
 
+Customware's CPQ customers span many domains: industrial equipment dealers, custom apparel and signage shops, food/beverage wholesalers, professional services firms (legal, consulting, design), IT and managed service providers, construction and trades businesses, manufacturers, distributors. The CPQ pattern fits all of them.
+
+**Examples in this skill rotate across multiple domains** — industrial equipment, services, consumer goods, software, custom goods. This is deliberate. The patterns are domain-agnostic; the examples illustrate by analogy. When applying this skill, ignore the specific domain in any given example and pull out the structural pattern. Your DOMAIN.md determines the specific vocabulary, products, rules, and roles for the build.
+
+A "single girder crane requires a motor" rule has the same shape as "custom hoodie requires a printing method" or "managed service contract requires a tier" or "dog treat order requires a packaging size." The rule is "parent product requires child component selection." Build that pattern; let DOMAIN.md fill in the words.
+
+### The customer profile
+
 Customware's CPQ customers are typically **SMB businesses (5-50 employees)** going through growing pains. They are NOT migrating from another CPQ system. They are migrating from:
 
 - Excel spreadsheets that have grown unwieldy (multiple tabs, copy-paste errors, broken formulas)
@@ -56,7 +65,7 @@ This positioning shapes every design decision in this skill:
 
 - Inline line editing IS the comparison point. Excel users expect a grid they can edit directly.
 - Live totals matter. Customers have been doing math in formulas; they expect to see numbers update as they change inputs.
-- Role gating is impressive. Customers have never had "only Jeff can approve over $50K" enforced by software — it was a verbal rule that got broken.
+- Role gating is impressive. Customers have never had "only the owner can approve over $50K" enforced by software — it was a verbal rule that got broken.
 - Branded PDF output is impressive. Customers have been hand-formatting Word docs.
 - Customer-facing portals, AI suggestions, e-signature integrations are NOT impressive at this stage. They're enterprise complexity that solves problems the customer doesn't have yet.
 
@@ -92,7 +101,7 @@ If the four criteria don't hold, do not force-fit the patterns below. Build from
 
 Most CPQ-shaped workflows fall into one of two domain types. Identify which type the build is before applying patterns:
 
-**Product domain.** The user configures sellable products/services. Pricing is the central calculation. Output is a quote document with line items, totals, tax, and terms. Examples: equipment sales (HB Material Handling cranes), service proposals (consulting bids), software licensing.
+**Product domain.** The user configures sellable products/services. Pricing is the central calculation. Output is a quote document with line items, totals, tax, and terms. Examples: equipment sales, custom apparel orders, food/CPG wholesale, service proposals (consulting bids, managed services), software licensing, custom packaging.
 
 **Calculator/intake domain.** The user enters case/applicant details. Calculation applies guidelines/rules/rate tables. Output is a summary report with inputs, calculated values, and disclaimers. Examples: spousal support calculators (Clarity Legal), insurance estimators, loan qualification, benefits eligibility.
 
@@ -110,7 +119,7 @@ These are the capabilities that make the prototype feel dramatically better than
 
 **1. Direct inline line-item editing.** A spreadsheet-style table where users add rows, edit any cell, and see totals update live. NOT a "Configure form → Add to Quote → Build Quote table → Edit" round trip. The line items table IS the workspace. See "Section Pattern" below for the canonical implementation.
 
-**2. Bundle / required-child products.** When a parent product requires a child component (HB Material Handling: "single girder crane requires Motor A or Motor C"), the child selection is part of configuring the parent. The line item shows the parent + the chosen child as one cohesive entry. Never two separate line items where the user might forget the child.
+**2. Bundle / required-child products with appropriate configurator pattern.** When a parent product requires a child component (e.g., "industrial unit requires a motor selection," "custom hoodie requires a printing method," "managed service contract requires a tier," "dog treat order requires a packaging size"), the child selection is part of configuring the parent. The line item shows the parent + the chosen child as one cohesive entry. Never two separate line items where the user might forget the child. For products with 4+ configuration attributes or cascading dependencies (typical industrial equipment, custom goods, and tiered services often go 3-4 levels deep), use the appropriate configurator pattern — see "Product Configurator Pattern" below for inline-expand vs side-drawer vs full-page decisions.
 
 **3. Constraint rules surfaced visibly.** Requires / excludes / recommends rules from DOMAIN.md must be visible to the user — not just enforced silently. When the user adds a crane, the UI shows "Motor selection required (BR-001)" before they can save. When they try to add an excluded combination, the UI shows the rule and rationale. Customers used to Excel have NEVER had rules enforced — making the rules visible is half the value.
 
@@ -128,7 +137,7 @@ Each discount is a row; the math is transparent. Customers used to negotiating d
 
 **6. Branded quote document.** Generated PDF/print view with the customer's logo, line items table, totals, terms, and any required disclaimers. This replaces the hand-formatted Word document. Quality bar: it should look like a quote a real business would send.
 
-**7. Multi-tier approval routing.** Most SMB workflows have 2+ levels of approval (rep configures → manager reviews → owner approves). Even simple cases have at least one approver and one final-signoff role. The prototype must show role-based routing that respects DOMAIN.md's stakeholder map. HB Material Handling routes through Jeff → Andy/Dre/Manish based on request type — that's multi-tier and table stakes.
+**7. Multi-tier approval routing.** Most SMB workflows have 2+ levels of approval (rep configures → manager reviews → owner approves). Even simple cases have at least one approver and one final-signoff role. The prototype must show role-based routing that respects DOMAIN.md's stakeholder map. Routing often branches by request type — e.g., one company might route "custom configurations through a senior reviewer, inspections through the service manager, and maintenance through the operations manager, with the owner as final approver on all paths." That kind of conditional multi-tier routing is table stakes.
 
 **8. Multi-quote management.** Users have multiple quotes in flight simultaneously. The prototype must show a list of quotes with status indicators, support filtering/sorting, and let the user click into any quote to edit. NOT just a single-quote workspace with a "saved quotes" sidebar list.
 
@@ -261,7 +270,7 @@ When configuration and line-item assembly are done by different people (e.g., en
 3. **Approve** — manager role approves
 4. **Quote Document** — the deliverable
 
-Use this only when DOMAIN.md describes genuine handoffs between roles at each stage. HB Material Handling does NOT need this — Jeff can configure, build, and approve. Use three sections.
+Use this only when DOMAIN.md describes genuine handoffs between roles at each stage. Most SMB CPQ does NOT need this — one person can configure, build, and approve. Use three sections.
 
 ### Calculator Domain Section Structure
 
@@ -303,17 +312,17 @@ The Edit Quote section uses an **Excel-like line items table** as the primary wo
 | # | Description | Configuration | Qty | List Price | Discount | Net Price | Line Total | Actions |
 |---|---|---|---|---|---|---|---|---|
 
-The Description column shows the product name. The Configuration column shows the chosen options (e.g., "Motor A — Standard Duty"). For products with required configurations (bundle/required-child pattern), clicking the row opens a configurator drawer/popover where the user picks options before the row is committed. The configuration shows inline once chosen, and is editable by clicking it again.
+The Description column shows the product name. The Configuration column shows the chosen options (e.g., "Premium tier — 50 users" or "Tri-blend, DTG print"). For products with required configurations (bundle/required-child pattern), clicking the row opens a configurator drawer/popover where the user picks options before the row is committed. The configuration shows inline once chosen, and is editable by clicking it again.
 
 **Required behavior for bundle / required-child products:**
 
-When DOMAIN.md describes a parent product that requires a child component (e.g., "single girder crane requires Motor A or Motor C"):
+When DOMAIN.md describes a parent product that requires a child component — for example, "industrial unit requires a motor selection," "custom hoodie requires a printing method," "managed service contract requires a tier," or "dog treat order requires a packaging size":
 
 - Adding the parent automatically prompts for the required child
-- The line item displays as one cohesive entry: "Single Girder Crane — Motor A — Standard Duty"
+- The line item displays as one cohesive entry: "[Parent Product] — [Required Child] — [Variant]"
 - The price aggregates: parent base price + child upcharge
 - The user cannot save the line until the required child is selected
-- A visible rule indicator surfaces: "Motor selection required (BR-001)"
+- A visible rule indicator surfaces: "[Component name] selection required (BR-001)"
 
 **Required behavior for constraint rules:**
 
@@ -325,6 +334,177 @@ When DOMAIN.md has requires / excludes / recommends rules:
 - Each rule shows its rule ID (BR-001, BR-002) so the user can trace back to the source
 
 This visible rule enforcement is one of the biggest "wow" moments for customers coming from Excel. Make it prominent.
+
+### Product Configurator Pattern
+
+When a product has multiple configuration attributes (3+ decisions) or when configurations cascade (Level 1 selection determines Level 2 options, which determine Level 3, etc.), the inline dropdown-in-a-cell pattern isn't enough. The user needs a real configurator.
+
+Real product configuration often goes 3-4 levels deep across many domains:
+
+- **Industrial equipment**: type → capacity → motor → hoist → controls
+- **Custom apparel**: garment style → fabric → size set → printing/embroidery method → finishing
+- **IT services**: service tier → user count → modules → SLA level → integrations
+- **Food/CPG wholesale**: product family → flavor or variant → packaging size → case quantity → shipping cold/ambient
+- **Professional services**: engagement type → scope tier → team composition → duration → deliverable format
+- **Custom signage / packaging**: substrate → dimensions → finish → printing method → mounting hardware
+
+Each level constrains the next. Pick a 5-ton industrial unit → only certain motors fit → only certain controls match. Pick a tri-blend hoodie fabric → only certain printing methods compatible → only certain finishing options. Pick the Premium service tier → unlocks certain modules → requires the higher SLA. The shape is the same. DOMAIN.md tells the agent what's actually being configured.
+
+For configurations of this depth, three patterns are appropriate, picked based on configuration complexity:
+
+#### Pattern A — Inline expandable row (2-4 attributes, no cascading)
+
+When a product has a small number of independent attributes (e.g., quantity, color, size, or one configuration choice), the line item row expands inline to reveal them. Click the row → expands to show attribute selectors → fill them out → row collapses with the configuration summarized in the Configuration column.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1  [Product Name]    [Variant ▾]    1   $X,XXX.XX  ...     │  ← collapsed
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ 1  [Product Name]    [Variant ▾]    1   $X,XXX.XX  ...     │
+│    ┌───────────────────────────────────────────────────┐    │  ← expanded
+│    │ Variant:      ( ) Option A    ( ) Option B        │    │
+│    │ Quantity:     [  1  ]                             │    │
+│    │ Description:  [                              ]    │    │
+│    └───────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Use when:
+- 2-4 attributes total
+- Attributes are independent (no cascading dependencies)
+- All attributes fit visually within ~200px of vertical space when expanded
+
+Examples of products that fit Pattern A: a t-shirt with size and color, a service add-on with hours and rate, a software license seat-count, a wholesale case quantity selection, a printed banner with one finishing option.
+
+#### Pattern B — Side drawer with vertical stepper (4-7 attributes, cascading allowed)
+
+When configuration has cascading dependencies or 4-7 attributes, click the row → a side drawer slides in from the right covering ~40% of the screen. The drawer has a vertical stepper down its left side showing each configuration level.
+
+```
+                           ┌────────────────────────────────┐
+                           │ Configure [Product]            │
+                           │                                │
+                           │ ●━━━ Step 1: Foundation         │
+                           │ │    [Selected value]           │
+                           │ │                              │
+                           │ ●━━━ Step 2: Sizing             │
+                           │ │    [Selected value]           │
+                           │ │                              │
+                           │ ◉━━━ Step 3: Core Component     │
+                           │ │    [ Option A ]  [ Option B ] │
+                           │ │                              │
+                           │ ○━━━ Step 4: Dependent Choice   │
+                           │ │    (Complete Step 3 first)    │
+                           │ │                              │
+                           │ ○━━━ Step 5: Finishing           │
+                           │                                │
+                           │           [Cancel]  [Save]     │
+                           └────────────────────────────────┘
+```
+
+Drawer behavior:
+- Vertical stepper on the left within the drawer (NOT in the main app sidebar)
+- Steps are clickable when their dependencies are satisfied; greyed out when not
+- Each step's content appears to the right of the stepper inside the drawer
+- Cascading dependencies: changing an upstream selection invalidates and clears downstream selections (with a confirmation toast: "Changing [upstream] will reset [downstream] selections")
+- "Save" commits the configuration to the line item; "Cancel" discards
+- The line item shows the assembled configuration summary in the Configuration column
+
+This is the pattern for genuinely cascading configuration. Examples that fit Pattern B: industrial equipment with type/capacity/motor/controls, custom apparel with garment/fabric/printing-method/finishing, IT services with tier/users/modules/SLA, custom signage with substrate/dimensions/printing/mounting. The drawer gives the configurator room to breathe without taking the user out of the quote workspace context. The vertical stepper inside the drawer makes the cascade visible without consuming app-level navigation.
+
+Why a drawer and not a modal:
+- Drawers feel less interruptive than modals
+- The user can still see the line items table on the left as context
+- The drawer can be dismissed by clicking outside (modal-style "save before close" friction is avoided)
+- Drawers compose well with React Router — open as a route, close returns to parent
+
+#### Pattern C — Full-page configurator (8+ attributes, complex cascading)
+
+When configuration is genuinely complex — 8+ attributes, multi-stage cascading, requires diagrams or visualizations — the configurator deserves its own page. Click "Configure" → navigate to `/quotes/{id}/lines/{lineId}/configure` → full page with horizontal step indicator at the top, configuration body in the middle, summary/preview rail on the right.
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ ← Back to Quote                                                  │
+│                                                                  │
+│ ●━━━━━━●━━━━━━●━━━━━━◉━━━━━━○━━━━━━○                            │
+│ Step 1  Step 2  Step 3  Step 4  Step 5  Review                   │
+│                                                                  │
+│ ┌─────────────────────────────────────┬──────────────────────┐  │
+│ │                                     │ Selected so far:     │  │
+│ │  Configuration content for          │                      │  │
+│ │  current step                       │ Step 1: [value]      │  │
+│ │                                     │ Step 2: [value]      │  │
+│ │                                     │ Step 3: [value]      │  │
+│ │                                     │ Step 4: (selecting)  │  │
+│ │                                     │                      │  │
+│ │                                     │ Running price:       │  │
+│ │                                     │ $X,XXX.XX            │  │
+│ └─────────────────────────────────────┴──────────────────────┘  │
+│                                                                  │
+│                          [Back]  [Continue →]                    │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+Full-page is the only pattern that works for genuinely complex configuration. The horizontal step indicator at the top works HERE (in a dedicated wizard-like flow) where it would be wrong at the quote-detail level — because here the user genuinely IS doing one step at a time before moving to the next.
+
+Use when:
+- 8+ attributes
+- Configuration involves visual elements (diagrams, dimensions, photos, color swatches, layout previews)
+- Configuration takes more than 30 seconds — long enough to deserve a dedicated focus surface
+- The configuration result is significant enough to warrant a "review before confirming" step
+
+Examples that fit Pattern C: a custom kitchen with dozens of cabinet, surface, appliance, and finish decisions; a configurable bicycle with frame, drivetrain, wheels, brakes, accessories, color; an enterprise software contract with modules, user tiers, integrations, support levels, term length; a custom packaging order with substrate, dimensions, structural design, printing, finishing, quantity, shipping.
+
+#### Picking the pattern
+
+```
+IF product has 2-4 independent attributes, no cascading:
+  → Pattern A: Inline expandable row
+
+IF product has 4-7 attributes, cascading dependencies, configuration takes <30s:
+  → Pattern B: Side drawer with vertical stepper
+
+IF product has 8+ attributes, visual/diagram component, takes >30s:
+  → Pattern C: Full-page configurator with horizontal step indicator
+
+WHEN IN DOUBT:
+  → Pattern A for simple-looking products
+  → Pattern B for industrial equipment, services with options
+  → Pattern C reserved for genuinely complex configurators
+```
+
+#### Cascading dependency rules
+
+For Patterns B and C, when configuration cascades:
+
+1. **Show downstream steps as disabled** until upstream selections are made. Don't let the user click into Step 4 if Step 2 is empty.
+2. **When an upstream selection changes**, clear downstream selections and show a confirmation: "Changing capacity from 5 ton to 10 ton will reset motor and hoist selections. Continue?"
+3. **Show the rule basis at each step**: "Available motors are filtered based on your 5 ton capacity selection (BR-007)." Make the filtering rule visible.
+4. **Auto-select when only one option exists**: if the cascade narrows to one valid choice, pre-select it and note "(only option available based on previous selections)."
+
+This makes the cascade feel intelligent, not confusing. Customers used to Excel often have these rules in their head — "if it's the larger size, you can't use the basic component," "if it's the premium service tier, embedded support is included," "if it's the food-safe substrate, only water-based inks apply" — and surfacing the rule explicitly is more impressive than enforcing it silently.
+
+#### Configuration summary in the line item
+
+After the configurator commits (drawer saves, full-page confirms), the line item displays the assembled configuration in the Configuration column. For 3-4 deep configurations, this can get long:
+
+```
+[Industrial equipment example]
+Industrial Lift — 5 ton, 40ft span
+└─ Standard motor, Type 2 hoist, 480V controls, festoon system
+
+[Custom apparel example]
+Premium Hoodie — Tri-blend, M-XL run
+└─ DTG print, 4-color front, sleeve embroidery, polybag
+
+[IT services example]
+Managed Services — Premium Tier, 50 users
+└─ Security module, Backup module, 4-hr SLA, Slack integration
+```
+
+Show this as a compact summary text, with a "Edit configuration" link that re-opens the configurator. Don't try to fit every attribute as separate columns in the line items table — that doesn't scale beyond 2-3 attributes.
 
 **Reference implementation pattern:**
 
@@ -437,9 +617,9 @@ Most SMB CPQ workflows have 2+ approval levels. The prototype must reflect this.
 
 DOMAIN.md describes approvers in the Stakeholder Map. The prototype derives the approval chain from this map:
 
-- **Single approver** → simple gate ("Pending approval from Jeff")
-- **Sequential approvers** → chain ("Pending approval from Jeff, then Mary")
-- **Conditional approvers** → routing based on quote attributes ("Routes to Andy if standard, Dre if inspection, Manish if maintenance")
+- **Single approver** → simple gate ("Pending approval from [Owner]")
+- **Sequential approvers** → chain ("Pending approval from [Sales Manager], then [Owner]")
+- **Conditional approvers** → routing based on quote attributes ("Routes to [Reviewer A] for standard configurations, [Reviewer B] for service requests, [Reviewer C] for maintenance")
 
 ### Approval Chain UI
 
@@ -448,10 +628,10 @@ Surface the chain visibly so users understand where the quote is and what's next
 ```
 Quote Status: Pending Approval
 ─────────────────────────────────────────
-✓ Submitted by Sarah               (May 5, 2:30 PM)
-✓ Approved by Jeff (Quoting)       (May 5, 3:15 PM)
-○ Pending approval from Mary (Finance)
-○ Pending final signoff from Tom (Owner)
+✓ Submitted by [Sales Rep]              (May 5, 2:30 PM)
+✓ Approved by [Sales Manager]            (May 5, 3:15 PM)
+○ Pending approval from [Finance Lead]
+○ Pending final signoff from [Owner]
 ```
 
 Each approver:
@@ -470,32 +650,32 @@ Each approver:
 
 ### Approval Routing Rules
 
-When DOMAIN.md describes routing rules ("route maintenance requests to Manish, inspection requests to Dre"), the prototype implements the routing:
+When DOMAIN.md describes routing rules — for example, "route maintenance requests to the service manager, inspection requests to the field supervisor" — the prototype implements the routing. Example logic (using placeholder names that DOMAIN.md replaces):
 
 ```javascript
-// Example routing logic from DOMAIN.md:
-// - Standard quotes: route to Andy
-// - Inspection requests: route to Dre  
-// - Maintenance requests: route to Manish
-// - All quotes finalized by Jeff
+// Example routing logic derived from DOMAIN.md stakeholder map:
+// - Standard quotes: route to [Sales Manager]
+// - Inspection requests: route to [Field Supervisor]
+// - Maintenance requests: route to [Service Manager]
+// - All quotes finalized by [Owner]
 
 function getApprovalChain(quote) {
   const chain = [];
   
   if (quote.requestType === 'inspection') {
-    chain.push({ role: 'inspection-reviewer', name: 'Dre' });
+    chain.push({ role: 'inspection-reviewer', name: '[Field Supervisor]' });
   } else if (quote.requestType === 'maintenance') {
-    chain.push({ role: 'maintenance-reviewer', name: 'Manish' });
+    chain.push({ role: 'maintenance-reviewer', name: '[Service Manager]' });
   } else {
-    chain.push({ role: 'quoting-reviewer', name: 'Andy' });
+    chain.push({ role: 'sales-reviewer', name: '[Sales Manager]' });
   }
   
-  chain.push({ role: 'final-approver', name: 'Jeff' }); // Always Jeff at end
+  chain.push({ role: 'final-approver', name: '[Owner]' }); // Always final-signoff at end
   return chain;
 }
 ```
 
-The prototype shows the chain explicitly in the Approve section so the user can see the routing logic. This is one of the highest-value features for SMB customers — they've never had automatic routing before.
+In the actual build, replace the placeholder names with the real names from DOMAIN.md's Stakeholder Map. The prototype shows the chain explicitly in the Approve section so the user can see the routing logic. This is one of the highest-value features for SMB customers — they've never had automatic routing before.
 
 ---
 
@@ -520,7 +700,7 @@ When user clicks a quote, they navigate to a detail route:
 
 ```
 +--------------------------------------------------------------+
-| Header: HB Material Handling | Q-2026-0001 | Status: Draft   |
+| Header: [Company Name] | Q-2026-0001 | Status: Draft         |
 | ← All Quotes                                                  |
 +--------------------------------------------------------------+
 | [Edit Quote] [Approve] [Quote Document]   tabs               |
@@ -599,7 +779,7 @@ When using list/detail, the sidebar shifts based on whether the user is in list 
 
 **Detail view:** section navigation (Edit Quote → Approve → Quote Document), back-to-list link at the top.
 
-Use `SidebarContent` for both — swap the contents based on route, don't add a second sidebar. This is the bug seen in the HB build (April 2026): the agent mounted MainLayout inside the detail route, producing duplicate sidebars. Don't do that.
+Use `SidebarContent` for both — swap the contents based on route, don't add a second sidebar. This is a common implementation bug: an agent mounts MainLayout inside the detail route, producing duplicate sidebars. Don't do that.
 
 ### Right Rail Collapsible
 
@@ -611,6 +791,109 @@ Default state by section:
 - Quote Document: collapsed (document is the summary)
 
 User can toggle anytime via header trigger button.
+
+---
+
+## Quote Lifecycle Indicator
+
+Once the user enters the detail view of a quote, they need to orient themselves: where is this quote in its lifecycle, and how do I navigate between its different views (edit, document, approval)?
+
+These are two distinct concerns, and they need two distinct affordances.
+
+### Concern 1 — Workflow state ("where is this quote in its lifecycle?")
+
+The quote moves through states: Draft → Awaiting Approval → Approved → Sent (or Rejected). The user needs to see the current state at all times.
+
+**Default pattern: status badge near the page title.**
+
+Place a `Badge` next to the quote reference number showing the current state. Color-coded by state:
+- Draft → outline / gray
+- Awaiting Approval → default / amber
+- Approved → secondary / green
+- Rejected → destructive / red
+- Sent / Finalized → secondary / blue
+
+This is the minimum. It's already present in the v4.5 build and works.
+
+**Optional enhancement: horizontal status flow.**
+
+For workflows where the lifecycle has 4+ visible states and the customer benefits from at-a-glance progress, add a horizontal status row below the page title:
+
+```
+●━━━━━━━━━━━━━●━━━━━━━━━━━━━◉━━━━━━━━━━━━━○━━━━━━━━━━━━━○
+Draft         [Reviewer]     [Approver]     Approved      Sent
+(complete)    (complete)     (current)
+```
+
+Use filled circles for completed states, an outlined circle with a fill for current, empty circles for future. Show approver names in the approval-pending stages so the user sees who's holding the quote.
+
+Skip this when the lifecycle is simple (3 states or fewer) — the status badge alone is sufficient. Adding a 3-step status flow is decoration, not information.
+
+### Concern 2 — View navigation ("how do I switch between Edit and Document views?")
+
+The user needs to move between the editable workspace, the read-only customer-facing document, and any other views (approval queue, history). These are *peer views of the same quote*, not sequential phases.
+
+**Default pattern: tabs at the top of the detail page.**
+
+Place `Tabs` below the page title and above the main content area:
+
+```
+[Edit Quote]  [Document]  [Approval]  [History]
+═══════════
+```
+
+The active tab is underlined or filled. Inactive tabs are clickable. This is the right pattern because:
+
+- Tabs say "peer views" — no implied sequence
+- Switching is one click, no modal or page transition
+- Each tab can show a count or status badge ("Approval (1 pending)", "History (5)")
+- Disabled state is meaningful — "Document" can be disabled until line items exist
+- It scales to 6 tabs comfortably; beyond that, the workflow probably has too many phases
+
+**Tab availability rules:**
+
+- **Edit** — always available
+- **Document** — disabled until at least one line item exists (the document is empty otherwise)
+- **Approval** — only visible when the quote is in an approval state OR has approval history
+- **History** — visible when the quote has any state changes (edits, approvals, rejections)
+
+Don't show empty tabs. Don't show "coming soon" tabs.
+
+### When NOT to use tabs — use a vertical stepper instead
+
+A vertical stepper (numbered steps in a left rail, like the v4.3 build) is appropriate when:
+
+- The workflow has **4+ truly sequential steps** that cannot be done out of order
+- The user is **doing each step once** before moving to the next (a wizard, not a workspace)
+- There's **a natural end** — the user finishes step N and the quote is done
+
+Most CPQ does NOT meet these criteria. Quotes are workspaces — the user revisits them, edits them, comes back later. Tabs match that mental model. A vertical stepper at the app level forces a wizard mental model on a workspace workflow, and produces visual problems (squished step labels, awkward use of sidebar real estate) as a side effect. Earlier iterations of this skill made this mistake; the current pattern reserves vertical steppers for the configurator drawer, not the app shell.
+
+Reserve the vertical stepper for genuine wizards: an onboarding flow, a one-time setup, an enterprise multi-stage deal where each stage is a different person's responsibility.
+
+### When NOT to use tabs OR a stepper — use breadcrumb only
+
+A breadcrumb shows hierarchy/location, not workflow phases. Use breadcrumb when the user is navigating *down a tree* (Quotes › Q-2026-0007 › Line Items), but not as a substitute for phase navigation.
+
+In practice, both can coexist: a breadcrumb at the very top showing location, tabs below showing peer views of the current item.
+
+### When the workflow is too simple for any of these
+
+Some workflows have one surface (the calculator-style single-page layout). No tabs needed. The page IS the work. The status badge alone communicates state. The Quote Document opens in a separate route or modal when requested.
+
+Don't add a tab strip just to fill the layout. If there's only one tab, there are no tabs.
+
+### Summary
+
+| Workflow shape | Pattern |
+|---|---|
+| Multi-view workspace (Edit/Document/Approval) | **Tabs** at top of detail + status badge near title |
+| Multi-view workspace + complex lifecycle (4+ states) | **Tabs** + status badge + horizontal status flow row |
+| True wizard with sequential steps | **Vertical stepper** in left rail |
+| Hierarchical navigation | **Breadcrumb** (paired with tabs if peer views also exist) |
+| Single-page workflow | **Status badge** only |
+
+Most product CPQ uses pattern row 1 — multi-view workspace. Tabs for Edit/Document/Approval, status badge near the title.
 
 ---
 
@@ -659,9 +942,9 @@ Calculator: mandatory legal/regulatory disclaimers from DOMAIN.md.
 **6. Approval chain block** — show the approval history:
 ```
 Approved by:
-  ✓ Jeff (Quoting Reviewer) — May 5, 2026
-  ✓ Mary (Finance) — May 6, 2026
-  ✓ Tom (Owner) — May 6, 2026
+  ✓ [Reviewer Name] (Sales Manager) — May 5, 2026
+  ✓ [Reviewer Name] (Finance) — May 6, 2026
+  ✓ [Reviewer Name] (Owner) — May 6, 2026
 ```
 
 This is impressive to customers — proof the quote went through proper channels.
@@ -974,14 +1257,16 @@ FOR EACH role in DOMAIN.md User Roles:
   "type": "approval-chain",
   "trigger": "submitForApproval",
   "chain": [
-    { "role": "quoting-reviewer", "name": "Andy", "condition": { "quote.requestType": "standard" } },
-    { "role": "inspection-reviewer", "name": "Dre", "condition": { "quote.requestType": "inspection" } },
-    { "role": "maintenance-reviewer", "name": "Manish", "condition": { "quote.requestType": "maintenance" } },
-    { "role": "final-approver", "name": "Jeff" }
+    { "role": "sales-reviewer", "name": "[Sales Manager]", "condition": { "quote.requestType": "standard" } },
+    { "role": "inspection-reviewer", "name": "[Field Supervisor]", "condition": { "quote.requestType": "inspection" } },
+    { "role": "maintenance-reviewer", "name": "[Service Manager]", "condition": { "quote.requestType": "maintenance" } },
+    { "role": "final-approver", "name": "[Owner]" }
   ],
-  "message": "Routed through quoting reviewer based on request type, finalized by Jeff"
+  "message": "Routed through reviewer based on request type, finalized by [Owner]"
 }
 ```
+
+In the actual config, replace the placeholder names with real names from DOMAIN.md's Stakeholder Map.
 
 ### Calculator Formula
 ```json
@@ -1017,7 +1302,7 @@ Before completing the build, verify all Tier 1 standards are met:
 
 ```
 [ ] Direct inline editing — line items table with editable cells, no Configure-then-Build round trip
-[ ] Bundle / required-child — parent products with required children handled in single line
+[ ] Bundle / required-child — parent products with required children handled in single line; configurator pattern matches complexity (inline / drawer / full-page)
 [ ] Constraint rules visible — requires/excludes/recommends surfaced with rationale and rule IDs
 [ ] Discount stack — visible math, layered calculation, no hidden formulas
 [ ] Live quote summary — totals update in real-time as user edits
@@ -1026,6 +1311,7 @@ Before completing the build, verify all Tier 1 standards are met:
 [ ] Multi-quote management — list view with filters, drill into detail
 [ ] Save / load / clone — all persisted to localStorage
 [ ] Role-based gating — view filters, action gating, sensitive field hiding
+[ ] Quote lifecycle indicator — tabs for view navigation + status badge for state; horizontal status flow when 4+ states
 ```
 
 If any Tier 1 standard is missing, the build is incomplete. Fix before completing.
@@ -1050,7 +1336,7 @@ After executing the mapping rules, produce a mapping log:
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v4.5
+**Skill:** cpq-builder v4.7
 **DOMAIN.md:** [company name]
 **Domain type:** [product / calculator / hybrid / ambiguous]
 **Vertical preset:** [manufacturing / wholesale / services / legal / financial / assessment / none]
@@ -1077,6 +1363,13 @@ After executing the mapping rules, produce a mapping log:
 
 ### Discount stack configured:
 - [list discount types and thresholds]
+
+### Configurator pattern used:
+- [inline-expand / drawer-with-stepper / full-page] — [rationale based on attribute count and cascading]
+
+### Lifecycle indicator pattern:
+- Tabs: [Edit / Document / Approval / History — list which are present]
+- Status flow: [included / omitted — rationale]
 
 ### Skipped entities: [N]
 - [entity name] — [reason]
