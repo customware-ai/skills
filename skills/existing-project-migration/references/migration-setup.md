@@ -15,7 +15,7 @@ The following files are required working artifacts for setup:
 
 Rules:
 
-- Create both files near the start of setup before broad template merge or dependency exploration.
+- Read both files near the start of setup if they already exist; create only the missing one(s) before broad template merge or dependency exploration.
 - Keep them populated continuously while working; they are not optional notes.
 - Do not treat them as extra docs. They are required migration state.
 - If either file is missing by the time setup reaches template merge or schema work, fail the task.
@@ -24,8 +24,8 @@ Rules:
 ## Required Order
 
 1. Read project instructions, `SKILL.md`, this reference, and `.import/verification.json`.
-2. Create `.import/migration-checklist.md` using the contract below.
-3. Create an initial `.import/migration-plan.json` shell with the required top-level fields, even if many values are still provisional.
+2. Read existing `.import/migration-checklist.md` and `.import/migration-plan.json` immediately; if either file is missing, create it using the contracts below.
+3. Update the checklist and plan with initial content before broad exploration, even if many values are still provisional.
 4. Inspect only the minimum source intake needed from `.import/project/`, `.import/database/`, and `.import/domain/` to identify the app name, core workflows, CSV tables, and major routes.
 5. Use `.import/domain-source.txt` only when it contains readable extracted text instead of raw binary/PDF object streams.
 4. Clone or inspect the `template-be-setup` reference repo if it is not already the working base.
@@ -39,7 +39,7 @@ Rules:
 
 ## Required Setup Scope
 
-Before the checklist and plan shells exist:
+Before the checklist and plan shells exist with initial content:
 
 - Limit inspection to `.import/project/`, `.import/database/`, `.import/domain/`, `.import/domain-source.txt`, and the template foundation files actually needed for merge decisions.
 - Prefer targeted evidence reads such as source routes, schema files, API handlers, CSV headers, and generated contract/type files over broad directory wandering.
@@ -47,7 +47,7 @@ Before the checklist and plan shells exist:
 - Do not read the `migration_convert` reference before the checklist and plan shells exist.
 - Do not read broad target `app/` or `server/` internals before the checklist and plan shells exist, except for the smallest merge-critical files needed to preserve `app/lib/trpc-provider.tsx` and `app/utils/error-logger.ts`.
 
-After the checklist and plan shells exist:
+After the checklist and plan shells exist with initial content:
 
 - Stop broad exploration once you have enough evidence to name the app, identify primary workflows, list CSV tables, and record warnings.
 - Move directly into plan completion, template merge, schema/contracts, and validation.
@@ -165,7 +165,7 @@ Keep the plan factual. If evidence is weak, write that explicitly in `warnings`.
 
 ## Working Checklist Contract
 
-Create `.import/migration-checklist.md` near the start of setup and update it as work proceeds.
+Read existing `.import/migration-checklist.md` near the start of setup, or create it if missing, and update it as work proceeds.
 
 Use this exact top-level section order:
 
