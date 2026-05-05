@@ -4,16 +4,17 @@ license: MIT
 compatibility: Works with any AI coding assistant that supports the Agent Skills specification. Requires a running Customware SPA instance to consume the generated config.
 metadata:
   author: ryan-price
-  version: "4.4"
+  version: "4.5"
 description: >
-  Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines section
-  patterns, layout patterns, business rule templates, and mapping rules for transforming
-  a DOMAIN.md into a CPQ-shaped application. The patterns are defaults, not mandates —
-  adapt them when the actual workflow deviates. Use this skill when the Builder Agent
-  classifies a customer's domain as a "guided intake → calculation/rules → reviewable
-  deliverable → handoff" workflow. Trigger signals: quoting, pricing, product configuration,
-  calculators, guided intake forms, assessment tools, estimate builders, proposal workflows,
-  eligibility checkers, any "fill in fields → calculate → produce a deliverable" pattern.
+  Configure-Price-Quote (CPQ) vertical skill for the Customware SPA. Defines the patterns,
+  minimum standards, layout patterns, business rule templates, and mapping rules for
+  transforming a DOMAIN.md into a CPQ-shaped application. Targeted at SMB customers
+  (5-50 employees) migrating from spreadsheets and email-based quoting workflows. The
+  prototype must feel dramatically better than Excel without feeling enterprise-overcomplicated.
+  Patterns are defaults, not mandates — adapt them when the actual workflow deviates.
+  Trigger signals: quoting, pricing, product configuration, calculators, guided intake forms,
+  assessment tools, estimate builders, proposal workflows, eligibility checkers, any
+  "fill in fields → calculate → produce a deliverable" pattern.
 ---
 
 # CPQ Builder Skill
@@ -35,7 +36,31 @@ CPQ is NOT limited to product pricing. The same structural pattern covers:
 
 The builder reads this skill, reads the DOMAIN.md for the specific domain terminology and rules, and generates a working prototype. The DOMAIN.md determines whether the tool is about crane quotes or divorce calculations; this skill provides the structural pattern that fits.
 
-**The patterns in this skill are defaults, not mandates.** When the actual workflow deviates from the canonical CPQ shape — has fewer stages, has a different layout, produces a different output — adapt the patterns. Each major section below names the deviations explicitly.
+**The patterns in this skill are defaults, not mandates.** When the actual workflow deviates from the canonical CPQ shape — has fewer stages, has a different layout, produces a different output — adapt the patterns. Each major section names the deviations explicitly.
+
+---
+
+## Customer Context
+
+Customware's CPQ customers are typically **SMB businesses (5-50 employees)** going through growing pains. They are NOT migrating from another CPQ system. They are migrating from:
+
+- Excel spreadsheets that have grown unwieldy (multiple tabs, copy-paste errors, broken formulas)
+- Word document quote templates that get manually edited per customer
+- Email-based approval workflows where the boss approves a quote in a reply-all thread
+- Tribal knowledge about which products require which accessories, which lives in the senior rep's head
+- Hand-keyed pricing where margin gets eroded through inconsistent discounting
+
+The prototype's job is to feel **dramatically better than spreadsheets** without feeling **enterprise-overcomplicated**. A small team that's been quoting in Excel for 5 years should look at the prototype and immediately think "this is so much faster" — not "this looks complicated."
+
+This positioning shapes every design decision in this skill:
+
+- Inline line editing IS the comparison point. Excel users expect a grid they can edit directly.
+- Live totals matter. Customers have been doing math in formulas; they expect to see numbers update as they change inputs.
+- Role gating is impressive. Customers have never had "only Jeff can approve over $50K" enforced by software — it was a verbal rule that got broken.
+- Branded PDF output is impressive. Customers have been hand-formatting Word docs.
+- Customer-facing portals, AI suggestions, e-signature integrations are NOT impressive at this stage. They're enterprise complexity that solves problems the customer doesn't have yet.
+
+Build for the customer who's tired of broken Excel formulas, not the customer migrating from Salesforce.
 
 ---
 
@@ -53,43 +78,13 @@ If criterion 2 is missing → it's a data entry form, not CPQ. Bail.
 If criterion 3 is missing → it's "intake-and-deliver" — apply CPQ patterns but skip the Approve section.
 If criterion 4 is missing → it's a personal calculator/utility, not CPQ. Bail.
 
-**When this skill doesn't fit:** the picker prompt may have loaded this skill based on surface signals ("quoting tool," "calculator," "estimator") that don't actually match the workflow shape. If the four criteria don't hold, do not force-fit the patterns below. Build from the task description and DOMAIN.md using frontend-design's principles instead.
-
 **Common false positives:**
 - A "stock quote viewer" — has the word "quote" but is a display tool (criterion 1 missing)
 - A "tax calculator" with no review step — utility, not CPQ (criterion 3 + 4 missing)
 - A "product catalog" with prices — display, not CPQ (criterion 2 + 3 missing)
 - A "feedback form" — data entry, not CPQ (criterion 2 missing)
 
----
-
-## When to Use This Skill
-
-When the four criteria above hold AND the customer's DOMAIN.md contains:
-
-**Classic CPQ signals:**
-- Products or services that are quoted/priced for customers
-- Configuration options (sizes, models, variants, materials)
-- Dependencies between products (requires, recommends, excludes)
-- Markup or margin-based pricing (cost-plus, vendor list + percentage)
-- A quoting or proposal workflow (draft → review → approve → send)
-
-**Broader "configure-calculate-output" signals:**
-- A calculator, estimator, or assessment tool with a review/handoff step
-- Guided intake forms where inputs drive calculated outputs
-- Multi-step data collection with rules applied to produce results
-- Output documents (reports, summaries, estimates, proposals)
-- A preparer/reviewer workflow (client fills in → professional reviews)
-- "Fill out this form based on these guidelines and get an estimate"
-
-**Classification signals from the Clarence transcript:**
-- "quoting is a mess," "inconsistent pricing," "reps don't know what goes with what"
-- "calculator," "estimator," "guided form," "step-through guide"
-- "fill out fields and get a result," "apply the guidelines," "produce a report"
-- "client submits, then the [professional] reviews"
-- Products with accessories, parts, or services that must go together
-
-**Do NOT use this skill when** the domain is primarily about inventory tracking (use ERP skill), ongoing project execution with field tracking and payments (use trades-builder), online product sales (use e-commerce skill), or customer relationship management (use CRM skill).
+If the four criteria don't hold, do not force-fit the patterns below. Build from the task description and DOMAIN.md using frontend-design's principles instead.
 
 ---
 
@@ -105,9 +100,121 @@ The skill's patterns adapt to both. When a section or rule is domain-specific, t
 
 ---
 
+## Minimum Standards
+
+Every CPQ build MUST meet Tier 1 standards. Tier 2 standards are built when DOMAIN.md signals the need. Tier 3 capabilities are mentioned in the completion summary as future work but not built in the prototype.
+
+### Tier 1 — Non-negotiable (every CPQ build)
+
+These are the capabilities that make the prototype feel dramatically better than Excel + Word. If any are missing, the build is incomplete regardless of how clean the UI looks.
+
+**1. Direct inline line-item editing.** A spreadsheet-style table where users add rows, edit any cell, and see totals update live. NOT a "Configure form → Add to Quote → Build Quote table → Edit" round trip. The line items table IS the workspace. See "Section Pattern" below for the canonical implementation.
+
+**2. Bundle / required-child products.** When a parent product requires a child component (HB Material Handling: "single girder crane requires Motor A or Motor C"), the child selection is part of configuring the parent. The line item shows the parent + the chosen child as one cohesive entry. Never two separate line items where the user might forget the child.
+
+**3. Constraint rules surfaced visibly.** Requires / excludes / recommends rules from DOMAIN.md must be visible to the user — not just enforced silently. When the user adds a crane, the UI shows "Motor selection required (BR-001)" before they can save. When they try to add an excluded combination, the UI shows the rule and rationale. Customers used to Excel have NEVER had rules enforced — making the rules visible is half the value.
+
+**4. Discount stack with visible math.** When discounts apply, show the layered calculation:
+```
+List Price:                  $15,000.00
+Volume Discount (5%):           -$750.00
+Promotional Discount (3%):      -$427.50
+─────────────────────────────────────
+Net Price:                   $13,822.50
+```
+Each discount is a row; the math is transparent. Customers used to negotiating discounts in email threads with no audit trail need to see exactly how the price was reached.
+
+**5. Live quote summary.** Running totals (subtotal, tax, grand total) update in real-time as the user edits line items. No "click Calculate" button. This is the single biggest "wow" moment for Excel-coming customers — the totals just update.
+
+**6. Branded quote document.** Generated PDF/print view with the customer's logo, line items table, totals, terms, and any required disclaimers. This replaces the hand-formatted Word document. Quality bar: it should look like a quote a real business would send.
+
+**7. Multi-tier approval routing.** Most SMB workflows have 2+ levels of approval (rep configures → manager reviews → owner approves). Even simple cases have at least one approver and one final-signoff role. The prototype must show role-based routing that respects DOMAIN.md's stakeholder map. HB Material Handling routes through Jeff → Andy/Dre/Manish based on request type — that's multi-tier and table stakes.
+
+**8. Multi-quote management.** Users have multiple quotes in flight simultaneously. The prototype must show a list of quotes with status indicators, support filtering/sorting, and let the user click into any quote to edit. NOT just a single-quote workspace with a "saved quotes" sidebar list.
+
+**9. Save / load / clone quotes.** localStorage-backed. The user can create a new quote, save it, load a saved quote, and clone an existing quote as a starting point for a similar one. Excel users do this by copying tabs; the prototype gives them a Clone button.
+
+**10. Role-based view and action gating.** Different roles see different things. Approvers see Approve buttons; preparers don't. Sensitive numbers (margin, cost) hide from non-approver roles. This is the "only the boss can see margin" pattern that customers know intuitively but have never had enforced.
+
+### Tier 2 — Build when DOMAIN.md justifies it
+
+These are valuable capabilities but only worth building when DOMAIN.md provides clear signals.
+
+- **Guided selling** (step-through Q&A for complex configurations) — when DOMAIN.md describes a discovery flow with the customer
+- **Volume / tier pricing** — when DOMAIN.md mentions volume breaks, quantity tiers, or bulk discounts
+- **Customer-facing read-only quote link** — when DOMAIN.md mentions emailing/sharing quotes with customers
+- **Subscription / renewal handling** — when the domain is SaaS-like with recurring revenue
+- **Multiple pricing models in one build** (cost-plus + catalog + custom) — when DOMAIN.md describes mixed pricing strategies
+- **Quote document templates by customer type** — when DOMAIN.md describes different output formats per audience
+
+### Tier 3 — Future work (mention in completion summary, don't build)
+
+These belong in production builds, not prototypes. The completion summary should name them so the customer knows what comes next.
+
+- AI-suggested quotes from CRM/email/call context
+- Quote versioning and amendment tracking
+- Subscription billing logic and proration
+- CRM/ERP integration (handled in full-stack phase)
+- E-signature integration (DocuSign, HelloSign, etc.)
+- Tax engine integration (Avalara, Vertex)
+- Multi-currency with dynamic FX
+- Self-serve customer configuration portal
+- Deal Rooms / branded proposal microsites
+- Native mobile app
+
+### Completion Summary Template
+
+Every CPQ build's completion summary must include:
+
+```markdown
+## What this prototype includes
+
+**Tier 1 (always built):**
+- [confirm each Tier 1 capability is present, or note why a specific one was omitted]
+
+**Tier 2 (built for this domain):**
+- [list any Tier 2 capabilities that were built and why]
+
+## What this prototype does NOT include
+
+This is a frontend prototype demonstrating the core CPQ workflow. The following capabilities
+would come in production:
+
+- [list relevant Tier 3 items based on the customer's likely future needs]
+
+To move from prototype to production, add: real authentication, CRM/ERP integration,
+e-signature, real PDF generation, and any Tier 3 capabilities listed above.
+```
+
+This sets honest expectations and shows the customer that more is coming, while being clear about what was delivered.
+
+---
+
+## When to Use This Skill
+
+When the four criteria in "Is This Even CPQ?" hold AND the customer's DOMAIN.md contains:
+
+**Classic CPQ signals:**
+- Products or services that are quoted/priced for customers
+- Configuration options (sizes, models, variants, materials)
+- Dependencies between products (requires, recommends, excludes)
+- Markup or margin-based pricing (cost-plus, vendor list + percentage)
+- A quoting or proposal workflow (draft → review → approve → send)
+
+**Broader "configure-calculate-output" signals:**
+- A calculator, estimator, or assessment tool with a review/handoff step
+- Guided intake forms where inputs drive calculated outputs
+- Multi-step data collection with rules applied to produce results
+- Output documents (reports, summaries, estimates, proposals)
+- A preparer/reviewer workflow (client fills in → professional reviews)
+
+**Do NOT use this skill when** the domain is primarily about inventory tracking (use ERP skill), ongoing project execution with field tracking and payments (use trades-builder), online product sales (use e-commerce skill), or customer relationship management (use CRM skill).
+
+---
+
 ## Template Contract
 
-Before you start building, understand what the template gives you and what this skill adds. This is the contract:
+Before you start building, understand what the template gives you and what this skill adds:
 
 **The template (`app/layouts/MainLayout.tsx`) ships with:**
 - `SidebarProvider`, `Sidebar`, `SidebarContent`, `SidebarInset`, `SidebarTrigger` — already wired
@@ -116,241 +223,336 @@ Before you start building, understand what the template gives you and what this 
 - `ModeToggle` and user menu in the header's right cluster
 
 **This skill fills:**
-- `SidebarContent` — with section navigation (see Layout Pattern below)
-- The brand slot in the header — with the client's logo and company name from DOMAIN.md
+- `SidebarContent` — with section navigation appropriate to the chosen layout
+- The brand slot — with the client's logo and company name from DOMAIN.md
 - The header's right cluster — adds a role switcher `DropdownMenu` before the existing user menu when the workflow has multiple roles
 - The `<Outlet />` in `<main>` — via route components for each section
 
 **This skill does NOT:**
 - Add a second `Sidebar` component. There is one sidebar.
 - Put a brand tile inside `SidebarContent`. Brand lives in the header only.
-- Rewire `SidebarProvider` or replace the collapsible behavior. Use what's there.
+- Mount MainLayout inside route components. Routes render in `<Outlet />`; the layout is the parent. Mounting MainLayout inside a route causes duplicate sidebars/headers.
+- Rewire `SidebarProvider` or replace the collapsible behavior.
 
-If the workflow doesn't fit a sidebar layout (see Layout Pattern alternatives below), the build may use a different shell. In that case, document the deviation in the completion summary.
+If the workflow doesn't fit a sidebar layout (see Layout Pattern alternatives below), the build may use a different shell. Document the deviation in the completion summary.
 
 ---
 
 ## Section Pattern
 
-The canonical CPQ workflow has four sections in this order:
+The default CPQ workflow has **three logical phases**: configure inputs, review/approve, deliver document. The default UI maps these to three or four sections depending on whether the user benefits from a separate "review/edit lines" stage.
 
-1. **Configure** — collect structured inputs
-2. **Build Quote** (or **Calculate**) — assemble/review the calculated result
-3. **Approve** — review/approval gate
-4. **Quote Document** (or **Output Document**) — final formatted deliverable
+### Default Section Structure (SMB direct-editing model)
 
-This is the default. Adapt to the actual workflow:
+For SMB CPQ where one role takes the quote from creation through approval (the most common case), the default is **three sections**:
+
+1. **Edit Quote** — direct inline editing of all line items + customer details. This is the primary workspace where the user spends 90% of their time. Line items are added, edited, removed inline. Customer info, terms, and notes are inline. Live totals on the right or below.
+2. **Approve** — review and approve action. Surfaces the final state, runs gating checks, and produces the approve action. May show change history if quote was previously approved/amended.
+3. **Quote Document** — the deliverable. Read-only, printable, brand-formatted.
+
+This collapses the v4.3 "Configure → Build Quote" round-trip into one direct-editing surface. **Most SMB CPQ builds should use this three-section model.**
+
+### Four-Section Structure (when handoff between roles exists)
+
+When configuration and line-item assembly are done by different people (e.g., engineer configures → sales rep prices → manager approves), four sections are appropriate:
+
+1. **Configure** — engineer or technical role specs the products
+2. **Build Quote** — sales role adds pricing, terms, customer info
+3. **Approve** — manager role approves
+4. **Quote Document** — the deliverable
+
+Use this only when DOMAIN.md describes genuine handoffs between roles at each stage. HB Material Handling does NOT need this — Jeff can configure, build, and approve. Use three sections.
+
+### Calculator Domain Section Structure
+
+For calculator/intake domains (Clarity Legal pattern):
+
+1. **Submission Details** — the intake form (client-facing)
+2. **Calculation** — the computed result (auto-generated from inputs)
+3. **Lawyer Review** — the reviewer-facing approval (lawyer-facing)
+4. **Final Report** — the delivered output
+
+The structural pattern is the same; the labels and components adapt to the domain.
 
 ### Deviations
 
-**Skip Build Quote / Calculate** when configuration directly produces the output. Example: a simple two-input calculator (income A + income B → support estimate) where there's nothing to "build" between input and output. Configure → Approve → Output. Three sections.
+**Skip "Approve"** when the workflow has no review gate (self-service flow). Edit Quote → Document.
+**Skip "Quote Document"** when the deliverable isn't a document (push to system, inline result, confirmation page).
+**Add Discover/Intake before Edit Quote** when the workflow has a discovery phase before configuration.
+**Pick the section count that matches the actual workflow.** Don't pad to four. Don't truncate to fit.
 
-**Skip Approve** when the workflow has no review gate. Example: a self-service calculator where the user just wants their own estimate. Configure → Calculate → Output. Three sections. (This is the "intake-and-deliver" case — criterion 3 from "Is This Even CPQ?" is borderline-missing.)
+### Edit Quote Section — Direct Inline Editing (Tier 1 mandatory)
 
-**Replace Quote Document with the actual deliverable** when the output isn't a document. Examples:
-- A confirmation page ("Your application has been submitted")
-- An order summary that pushes to a downstream system
-- An inline result panel (no separate "document" view, just a results section)
+The Edit Quote section uses an **Excel-like line items table** as the primary workspace. This is non-negotiable for product CPQ.
 
-**Add a Discover or Intake section before Configure** when the workflow has a discovery phase. Example: enterprise quoting that captures customer requirements before configuration begins. Discover → Configure → Build Quote → Approve → Quote Document. Five sections.
+**Required behavior:**
 
-**Add a Submit or Send section after Quote Document** when the workflow has an explicit handoff step. Example: legal calculators that submit to a lawyer queue after the report is generated.
+- Each line item is a row in a table
+- Cells are editable inline — click a cell, edit value, totals update
+- Add a new row via "+ Add Line" button below the table (or auto-add when user clicks into an empty placeholder row)
+- Remove a row via row-action menu (trash icon, "Remove" option)
+- Clone a row via row-action menu ("Duplicate" option)
+- Total computes per row (qty × unit price - discount)
+- Footer row computes subtotal across all line items
+- Discount stack appears below subtotal (if applicable)
+- Tax line appears below discount (if DOMAIN.md mentions tax)
+- Grand total appears in bold at the bottom
 
-**Pick the section count that matches the actual workflow.** A three-section build that fits is better than a four-section build that's padded. A five-section build that captures real workflow phases is better than collapsing them into four.
+**Required columns (product domain):**
 
-### Canonical Four-Section Definition (use as starting point)
+| # | Description | Configuration | Qty | List Price | Discount | Net Price | Line Total | Actions |
+|---|---|---|---|---|---|---|---|---|
 
-The configuration below is the default pattern for product/pricing domains. Adapt section count, names, and components based on the deviations above.
+The Description column shows the product name. The Configuration column shows the chosen options (e.g., "Motor A — Standard Duty"). For products with required configurations (bundle/required-child pattern), clicking the row opens a configurator drawer/popover where the user picks options before the row is committed. The configuration shows inline once chosen, and is editable by clicking it again.
 
-```json
-{
-  "sections": [
-    {
-      "id": "configure",
-      "label": "Configure",
-      "icon": "Settings2",
-      "order": 1,
-      "component": "selector",
-      "componentConfig": {
-        "itemLayout": "grid",
-        "showPrice": true,
-        "showDescription": true,
-        "showOptions": true,
-        "selectionMode": "add-to-list",
-        "groupBy": "category",
-        "capturePricing": true
-      },
-      "dataSource": "data.products",
-      "actions": [
-        { "label": "Add to Quote", "action": "addSelected", "variant": "primary" }
-      ]
-    },
-    {
-      "id": "quote",
-      "label": "Build Quote",
-      "icon": "FileText",
-      "order": 2,
-      "component": "data-table",
-      "componentConfig": {
-        "columns": [
-          { "key": "product", "label": "Product", "width": "auto" },
-          { "key": "options", "label": "Configuration", "width": "auto" },
-          { "key": "quantity", "label": "Qty", "width": "80px", "editable": true },
-          { "key": "unitPrice", "label": "Unit Price", "width": "120px", "format": "currency", "editable": true },
-          { "key": "total", "label": "Total", "width": "120px", "format": "currency", "computed": true }
-        ],
-        "showRowActions": true,
-        "rowActions": ["edit", "duplicate", "remove"],
-        "showTotalsFooter": true
-      },
-      "dataSource": "data.lineItems",
-      "actions": [
-        { "label": "Continue to Approval", "action": "navigateTo:approve", "variant": "primary" },
-        { "label": "Clear All", "action": "clearItems", "variant": "ghost", "confirm": true }
-      ]
-    },
-    {
-      "id": "approve",
-      "label": "Approve",
-      "icon": "CheckCircle",
-      "order": 3,
-      "component": "form",
-      "componentConfig": {
-        "fields": [
-          { "key": "customerName", "label": "Customer Name", "type": "text", "required": true },
-          { "key": "customerEmail", "label": "Customer Email", "type": "email" },
-          { "key": "paymentTerms", "label": "Payment Terms", "type": "select", "default": "net30" },
-          { "key": "notes", "label": "Notes", "type": "textarea" },
-          { "key": "validUntil", "label": "Valid Until", "type": "date" }
-        ],
-        "confirmBeforeSubmit": true
-      },
-      "dataSource": "data.quoteSettings",
-      "gated": {
-        "requires": ["customerName", "hasLineItems", "hasPricing", "noErrors"],
-        "message": "Complete these before approving: customer name, at least one product with unit price, no unresolved dependency errors."
-      },
-      "actions": [
-        { "label": "Approve & Send", "action": "approveQuote", "variant": "primary", "confirm": true },
-        { "label": "Save Draft", "action": "saveDraft", "variant": "secondary" }
-      ]
-    },
-    {
-      "id": "document",
-      "label": "Quote Document",
-      "icon": "FileOutput",
-      "order": 4,
-      "component": "quote-document",
-      "componentConfig": {
-        "readOnly": true,
-        "printable": true,
-        "showBrandHeader": true,
-        "showLineItemsTable": true,
-        "showTotalsBlock": true,
-        "showTermsBlock": true
-      },
-      "dataSource": "data.currentQuote",
-      "actions": [
-        { "label": "Back to Approve", "action": "navigateTo:approve", "variant": "ghost" }
-      ]
-    }
-  ],
-  "navMode": "stepper"
+**Required behavior for bundle / required-child products:**
+
+When DOMAIN.md describes a parent product that requires a child component (e.g., "single girder crane requires Motor A or Motor C"):
+
+- Adding the parent automatically prompts for the required child
+- The line item displays as one cohesive entry: "Single Girder Crane — Motor A — Standard Duty"
+- The price aggregates: parent base price + child upcharge
+- The user cannot save the line until the required child is selected
+- A visible rule indicator surfaces: "Motor selection required (BR-001)"
+
+**Required behavior for constraint rules:**
+
+When DOMAIN.md has requires / excludes / recommends rules:
+
+- "Requires" rules block save until satisfied; show inline "Required: [explanation]"
+- "Excludes" rules block invalid combinations; show inline "Cannot combine X with Y because [rationale]"
+- "Recommends" rules surface as a soft suggestion; show "Customers often add Z with this. Add?"
+- Each rule shows its rule ID (BR-001, BR-002) so the user can trace back to the source
+
+This visible rule enforcement is one of the biggest "wow" moments for customers coming from Excel. Make it prominent.
+
+**Reference implementation pattern:**
+
+```tsx
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Description</th>
+      <th>Configuration</th>
+      <th>Qty</th>
+      <th className="text-right">List Price</th>
+      <th className="text-right">Discount</th>
+      <th className="text-right">Net Price</th>
+      <th className="text-right">Line Total</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {lineItems.map((item, i) => (
+      <tr key={item.id}>
+        <td>{i + 1}</td>
+        <td>
+          <ProductPicker value={item.productId} onChange={(p) => updateItem(item.id, { productId: p })} />
+        </td>
+        <td>
+          <ConfigurationCell item={item} onChange={(config) => updateItem(item.id, { configuration: config })} />
+          {item.requiredRules.map(rule => (
+            <RuleIndicator key={rule.id} rule={rule} satisfied={item.satisfiedRules.includes(rule.id)} />
+          ))}
+        </td>
+        <td>
+          <Input type="number" value={item.qty} onChange={(e) => updateItem(item.id, { qty: e.target.value })} />
+        </td>
+        <td className="text-right">{formatCurrency(item.listPrice)}</td>
+        <td className="text-right">
+          <DiscountCell item={item} onChange={(d) => updateItem(item.id, { discount: d })} />
+        </td>
+        <td className="text-right">{formatCurrency(item.netPrice)}</td>
+        <td className="text-right font-medium">{formatCurrency(item.lineTotal)}</td>
+        <td>
+          <RowActions onClone={() => cloneItem(item.id)} onRemove={() => removeItem(item.id)} />
+        </td>
+      </tr>
+    ))}
+  </tbody>
+  <tfoot>
+    <tr><td colSpan={7} className="text-right">Subtotal:</td><td className="text-right">{formatCurrency(subtotal)}</td><td /></tr>
+    {discountRows.map(d => (
+      <tr key={d.id}><td colSpan={7} className="text-right text-muted-foreground">{d.label}:</td><td className="text-right">-{formatCurrency(d.amount)}</td><td /></tr>
+    ))}
+    {taxRate > 0 && (
+      <tr><td colSpan={7} className="text-right">{taxName} ({taxRate}%):</td><td className="text-right">{formatCurrency(taxAmount)}</td><td /></tr>
+    )}
+    <tr className="font-bold text-lg"><td colSpan={7} className="text-right">Total:</td><td className="text-right">{formatCurrency(grandTotal)} {currency}</td><td /></tr>
+  </tfoot>
+</table>
+
+<Button onClick={addNewLine}>+ Add Line</Button>
+```
+
+The customer info, payment terms, valid-until date, and notes appear as a section below the line items table — inline on the same page, NOT a separate route or step.
+
+---
+
+## Discount Stack Pattern (Tier 1 mandatory when discounts apply)
+
+When DOMAIN.md mentions any form of discount (volume, promotional, manual, negotiated), the build must show discounts as a layered, transparent calculation.
+
+**Required visible math:**
+
+```
+List Price (5 × $15,000):       $75,000.00
+─────────────────────────────────────────
+Volume Discount (5%):              -$3,750.00
+Promotional Discount (3%):         -$2,137.50
+Manual Discount ($1,000):          -$1,000.00
+─────────────────────────────────────────
+Net Price:                       $68,112.50
+HST (13%):                         $8,854.63
+─────────────────────────────────────────
+Total:                           $76,967.13 CAD
+```
+
+**Required behavior:**
+
+- Each discount is a separate row in the totals stack
+- Each row shows: discount type, percentage or amount, the dollar amount removed
+- Discounts apply in stacked order (volume → promotional → manual)
+- Manual discount triggers approval routing if it exceeds DOMAIN.md's threshold
+- The user sees what was removed and why; nothing is hidden in formulas
+
+**Discount approval thresholds:**
+
+When DOMAIN.md describes discount approval rules ("discounts over 15% require manager approval"), the prototype enforces them:
+
+- Discount under threshold → user can apply without approval
+- Discount at/above threshold → user can apply but quote enters "Pending Approval" status
+- The approval routing routes to the role authorized at that discount level
+
+This is the most common "we lose margin" complaint from SMB businesses. Surfacing the rule in the UI is high-value.
+
+---
+
+## Multi-Tier Approval Chain Pattern (Tier 1 mandatory)
+
+Most SMB CPQ workflows have 2+ approval levels. The prototype must reflect this.
+
+### Approval Chain Definition
+
+DOMAIN.md describes approvers in the Stakeholder Map. The prototype derives the approval chain from this map:
+
+- **Single approver** → simple gate ("Pending approval from Jeff")
+- **Sequential approvers** → chain ("Pending approval from Jeff, then Mary")
+- **Conditional approvers** → routing based on quote attributes ("Routes to Andy if standard, Dre if inspection, Manish if maintenance")
+
+### Approval Chain UI
+
+Surface the chain visibly so users understand where the quote is and what's next:
+
+```
+Quote Status: Pending Approval
+─────────────────────────────────────────
+✓ Submitted by Sarah               (May 5, 2:30 PM)
+✓ Approved by Jeff (Quoting)       (May 5, 3:15 PM)
+○ Pending approval from Mary (Finance)
+○ Pending final signoff from Tom (Owner)
+```
+
+Each approver:
+- Sees the quote in their queue (filtered list view: "Awaiting My Approval")
+- Can approve, reject, or request changes
+- Their action advances or halts the chain
+- A rejected/changed quote returns to the previous approver with notes
+
+**Required for the build:**
+
+- The approval chain is derived from DOMAIN.md's Stakeholder Map automatically
+- The role switcher lets the user view as any approver to see how the queue looks
+- The "Awaiting My Approval" filter in the multi-quote list shows quotes pending the active role
+- Approval actions update the chain state and trigger toast confirmations
+- Rejection/changes capture a comment that's visible to the next/previous role
+
+### Approval Routing Rules
+
+When DOMAIN.md describes routing rules ("route maintenance requests to Manish, inspection requests to Dre"), the prototype implements the routing:
+
+```javascript
+// Example routing logic from DOMAIN.md:
+// - Standard quotes: route to Andy
+// - Inspection requests: route to Dre  
+// - Maintenance requests: route to Manish
+// - All quotes finalized by Jeff
+
+function getApprovalChain(quote) {
+  const chain = [];
+  
+  if (quote.requestType === 'inspection') {
+    chain.push({ role: 'inspection-reviewer', name: 'Dre' });
+  } else if (quote.requestType === 'maintenance') {
+    chain.push({ role: 'maintenance-reviewer', name: 'Manish' });
+  } else {
+    chain.push({ role: 'quoting-reviewer', name: 'Andy' });
+  }
+  
+  chain.push({ role: 'final-approver', name: 'Jeff' }); // Always Jeff at end
+  return chain;
 }
 ```
 
-For calculator/intake domains, the equivalent shape uses different labels and components:
-
-```json
-{
-  "sections": [
-    { "id": "intake", "label": "Submission Details", "component": "form" },
-    { "id": "calculate", "label": "Calculation", "component": "results-panel" },
-    { "id": "review", "label": "Lawyer Review", "component": "review-form" },
-    { "id": "report", "label": "Final Report", "component": "summary-document" }
-  ]
-}
-```
-
-The skill's structural pattern is the same; the labels, components, and data shapes adapt to the domain.
-
-### Pricing/Calculation Capture
-
-The "calculation" step is the heart of the CPQ pattern. Skipping it means the build is intake routing, not CPQ.
-
-**For product domains** — pricing capture is mandatory when DOMAIN.md has any pricing signal:
-
-- Entity Registry mentions prices, rates, or costs ("Example price: $15,000")
-- Approved Pricing Reference, rate card, or pricing table is present
-- Business Rules reference monetary thresholds or calculations
-- The customer mentioned currency, tax, payment terms, quotes, estimates, proposals
-
-What the build must include:
-
-1. **Unit price field** — number input or product picker that loads price from a pricing table. Never as a hardcoded constant.
-2. **Quantity field** — defaults to 1, editable.
-3. **Line total** — unit price × quantity, displayed per line and as footer subtotal.
-4. **Tax line** — IF DOMAIN.md mentions tax. Tax name (HST, GST, VAT, Sales Tax) and rate from DOMAIN.md. If rate not specified but tax type is, default to jurisdiction standard (HST → 13% Ontario, GST → 5% Canada-wide). If DOMAIN.md doesn't mention tax at all, omit the tax line — don't invent one.
-5. **Grand total** — subtotal + tax (or just subtotal if no tax).
-6. **Payment terms** — from DOMAIN.md.
-7. **Currency** — from DOMAIN.md.
-
-**For calculator/intake domains** — calculation capture is mandatory:
-
-1. **Calculation logic** — implements the guidelines/formulas/rate tables from DOMAIN.md as actual JavaScript. The calculation must produce real outputs from real inputs, not placeholder values.
-2. **Result display** — calculated values (estimate ranges, scores, recommendations) shown clearly with the formula or rule basis labeled.
-3. **Disclaimers** — any mandatory legal/regulatory language from DOMAIN.md (e.g., "This calculator provides estimates only. Consult a qualified [professional] for [advice type].").
-
-**When calculation info is partial:** if the domain is clearly a calculation domain but DOMAIN.md doesn't have specific rates/values, build the calculation UI with placeholder rates and note the gap in the completion summary. Don't skip the calculation logic.
-
-**Failure mode to avoid (product domain):** A prototype showing "Quote Document" with Customer/Product/Motor/Status/Terms but no price/subtotal/tax/grand total. That's routing masquerading as a quote.
-
-**Failure mode to avoid (calculator domain):** A prototype showing "Calculation Result" with $0 or "TBD" because the formulas weren't implemented. That's a form, not a calculator.
+The prototype shows the chain explicitly in the Approve section so the user can see the routing logic. This is one of the highest-value features for SMB customers — they've never had automatic routing before.
 
 ---
 
 ## Layout Pattern
 
-The default CPQ layout is **three panels** (left sidebar nav + main content + right context panel) with **section navigation in the sidebar**. This is the most common because most CPQ workflows are sequential and benefit from persistent navigation + persistent context.
+The default layout is **list/detail** because SMB CPQ users always have multiple quotes in flight. They need to see their queue and drill into individual quotes.
 
-The default isn't always right. Pick the layout that fits the workflow:
-
-### Default: Sidebar Stepper Layout
+### Default: List/Detail Layout
 
 ```
-+----------+--------------------------------+--------------------+
-|          |                                 |                   |
-| Stepper  |  [Active section panel]         |  Live summary     |
-|          |  (configure / build / approve   |  Workflow notes   |
-| Saved    |   / document — only one         |                   |
-| items    |   shows at a time)              |                   |
-|          |                                 |                   |
-+----------+--------------------------------+--------------------+
++----------+--------------------------------+
+|          | [List of quotes]               |
+| Filters  | row (status badge)             |
+| Quick    | row                            |
+| filters  | row                            |
+|          |                                 |
+|          | + New Quote                     |
++----------+--------------------------------+
 ```
 
-Use when:
-- Workflow has 3+ sequential sections
-- Each section has substantial UI (forms, tables, document views)
-- Users move through sections in roughly forward order
-- Persistent context (running totals, saved items) helps the user
-
-This covers most product CPQ and most preparer/reviewer calculator workflows.
-
-### Alternative 1: Catalog-Driven Layout
+When user clicks a quote, they navigate to a detail route:
 
 ```
-+----------+--------------------------------+--------------------+
-|          |                                 |                   |
-| Category |  [Product browse / pick]        |  Cart / line      |
-| nav      |                                 |  items            |
-|          |                                 |                   |
-|          |                                 |  [Checkout]       |
-+----------+--------------------------------+--------------------+
++--------------------------------------------------------------+
+| Header: HB Material Handling | Q-2026-0001 | Status: Draft   |
+| ← All Quotes                                                  |
++--------------------------------------------------------------+
+| [Edit Quote] [Approve] [Quote Document]   tabs               |
+| ──────────────────────────────────────────────────────────── |
+|                                                               |
+| [Active section content — line items table by default]        |
+|                                                               |
+| [Live totals on right or below — collapsible]                |
++--------------------------------------------------------------+
 ```
 
-Use when the user browses a catalog and adds to a quote like a shopping cart. Replaces the stepper with category navigation. Build → Approve → Document still happen but as discrete actions from the cart, not stepper steps.
+**Why list/detail is the default:**
 
-### Alternative 2: Calculator-Style Layout
+- Customers come from Excel where they have multiple tabs/files for different quotes
+- They need to see all in-flight quotes at a glance (queue view)
+- They need filters: by status, by customer, by approver, by date
+- Drilling into one quote should not lose the queue context (back button always works)
+- Approval queues are list-shaped by nature ("show me everything awaiting my approval")
+
+**Sidebar in list view:** filters, role switcher, saved-quote shortcuts, link to "+ New Quote." NOT the workflow stepper (no active quote yet).
+
+**Sidebar in detail view:** the four-section / three-section nav (Edit Quote / Approve / Quote Document). Or use top tabs in the detail view instead of sidebar — both are acceptable; pick based on visual density.
+
+**Right rail / live summary:** collapsible. Default expanded on Edit Quote (totals are essential context). Default collapsed on Quote Document (the document IS the summary).
+
+### Alternative: Single-Quote Layout
+
+When DOMAIN.md describes a workflow where users only ever work on one quote at a time (rare for CPQ but valid for some calculators), use a single-page layout without a list view. The quote is the page.
+
+### Alternative: Calculator-Style Layout (calculator domains)
+
+For calculator/intake domains where the calculation is the primary feature:
 
 ```
 +--------------------------------------------------------------+
@@ -371,216 +573,106 @@ Use when the user browses a catalog and adds to a quote like a shopping cart. Re
 +--------------------------------------------------------------+
 ```
 
-Use when:
-- The calculation is simple enough to show inline alongside the inputs
-- There's no separate "build" or "approve" stage from the user's perspective (they fill, they submit)
-- A multi-section stepper would feel like over-engineering
+The Clarity Legal client-facing flow uses this. The lawyer-facing review flow uses list/detail.
 
-The Clarity Legal spousal support calculator client-facing flow fits this pattern (intake form with progress indicator across the top, results inline). The reviewer-facing flow uses the default sidebar stepper.
-
-### Alternative 3: List/Detail with Workflow Inside
+### Layout Decision Rules
 
 ```
-+----------+--------------------------------+--------------------+
-|          | [List of quotes/submissions]   |  [Detail of       |
-| Sidebar  |                                 |   selected item]  |
-| (filters | row                             |                   |
-|  / nav)  | row                             |  [Stepper appears |
-|          | row                             |   inside this     |
-|          |                                 |   detail panel]   |
-|          |                                 |                   |
-+----------+--------------------------------+--------------------+
+IF the user manages multiple in-flight workflows in parallel (almost all CPQ):
+  → List/Detail layout (DEFAULT)
+
+IF the calculation is the primary feature AND can be shown inline with inputs:
+  → Calculator-Style layout
+
+IF the user only ever works on one item at a time (rare):
+  → Single-Page layout
+
+IF in doubt:
+  → List/Detail layout
 ```
 
-Use when the primary surface is managing many quotes/submissions in parallel. The stepper applies to individual quotes, not as a global navigation. This is what the Clarity Legal lawyer review portal uses (Submission Review list with status sections).
+### Sidebar Behavior
 
-### Picking the Layout
+When using list/detail, the sidebar shifts based on whether the user is in list view or detail view:
 
-If the workflow is single-quote-at-a-time and sequential → Default Stepper.
-If the user shops a catalog → Catalog-Driven.
-If the calculation is the primary feature and it's simple → Calculator-Style.
-If managing multiple in-flight workflows is the primary use → List/Detail.
+**List view:** filters, role switcher, "+ New Quote" button, optional saved-filter shortcuts.
 
-When in doubt → Default Stepper. It's the most common because it works for most CPQ shapes.
+**Detail view:** section navigation (Edit Quote → Approve → Quote Document), back-to-list link at the top.
 
-### Sidebar Stepper Details (when using the default layout)
+Use `SidebarContent` for both — swap the contents based on route, don't add a second sidebar. This is the bug seen in the HB build (April 2026): the agent mounted MainLayout inside the detail route, producing duplicate sidebars. Don't do that.
 
-The template ships `SidebarProvider`, `Sidebar`, `SidebarContent`, and `SidebarTrigger` already wired. `SidebarContent` is empty — that's the slot this skill fills. Do not re-wire the sidebar, do not add a second `Sidebar` component, and do not put a brand tile inside it.
+### Right Rail Collapsible
 
-**Sidebar heading:** Use a contextual label like "Quote workflow" or "Submission workflow" — not the company name. The heading describes what the navigation IS.
+The Quote Summary panel is a **collapsible right sidebar**, not a fixed panel. Use shadcn's `Sidebar` component with `side="right"`, or a `Sheet` for off-canvas behavior.
 
-| Component | Content |
-|---|---|
-| **Stepper** | Vertical list of all sections inside `SidebarContent`. Each step shows: step number, label, subtitle, completion state (pending / active / done with checkmark). All steps clickable at any time (not a wizard). Approve step shows gating indicators when requirements aren't met. Document step becomes clickable once approved/saved. |
-| **Saved items** | List of saved records from localStorage. Shows name + status badge. "New" button at top. Pin to bottom of sidebar via flexbox. Double-click to rename. Label matches domain: "Saved quotes," "Saved submissions," "Saved estimates." |
+Default state by section:
+- Edit Quote: expanded (totals are essential)
+- Approve: expanded (final review needs context)
+- Quote Document: collapsed (document is the summary)
 
-**Implementation:** use a `currentStep` state variable. Render only the active panel. When user clicks a stepper step, update `currentStep` and only that panel appears.
-
-```tsx
-{currentStep === "configure" && <ConfigurePanel />}
-{currentStep === "build" && <BuildQuotePanel />}
-{currentStep === "approve" && <ApprovePanel />}
-{currentStep === "document" && <DocumentPanel />}
-```
-
-Define the `WorkflowStep` type to match the actual sections in this build (3, 4, or 5 — whatever the deviations produced).
-
-### Main Content Behavior
-
-**Only the active section renders.** Do not stack sections on a single scrolling page. Do not render sections as side-by-side cards.
-
-| Section | What renders |
-|---|---|
-| **Configure** | Inputs. Product domain: product/options selector with unit price fields. Calculator domain: form sections with input fields, dropdowns, validation. |
-| **Build Quote / Calculate** | Assembly/review. Product domain: line items table with editable quantities, unit prices, computed totals, totals footer. Calculator domain: results panel showing inputs → applied rules → outputs. |
-| **Approve / Review** | Approval owner display, status badge, approve/reject buttons. Gated by data presence and role. Confirmation dialog on approve summarizing the deliverable. |
-| **Document / Report** | Final formatted output — see Output Document section below. |
-
-### Right Sidebar (when using default layout)
-
-| Component | Content |
-|---|---|
-| **Live summary** | Live-updating context. Product: selected product, options, running subtotal, tax, total. Calculator: key inputs entered so far, preliminary results. Updates immediately when inputs change. |
-| **Workflow notes** | Business rules and routing info from DOMAIN.md as compact contextual notes. For calculators: "Guidelines applied" or rule basis. |
-
-If the layout doesn't have a right sidebar (calculator-style, list/detail), inline the live summary into the main content area instead. The function is necessary; the sidebar position is not.
+User can toggle anytime via header trigger button.
 
 ---
 
-## Output Document
+## Quote Document (Final Output)
 
-The final formatted deliverable. This is what the user receives, prints, or sends downstream. The default name is "Quote Document" for product domains; for calculator/intake domains, name it according to what the deliverable actually is — "Summary Report," "Estimate Report," "Eligibility Result," "Qualification Letter," "Final Report."
+The deliverable. For product domains, this is the customer-facing quote PDF. For calculator domains, this is the summary report.
 
-Treat it as a real document, not a summary card. **Minimum quality bar:** if you would be embarrassed to email this to the customer/recipient as "the deliverable," it is not done.
+Treat as a real document, not a summary card. **Quality bar:** if you would be embarrassed to email this to the customer as "the quote/report," it is not done.
 
 ### Layout (top to bottom)
 
-**1. Document header block** — two columns:
-- Left: brand logo (with onError fallback to a tinted initials square — never a bare img tag). Company name. Company address (placeholder if not in DOMAIN.md).
-- Right: document title (matches the deliverable type — "Quote," "Estimate," "Summary Report," etc.). Reference number (auto-generated, e.g., "Q-2026-0001," "EST-2026-0042," "SS-2026-0103"). Document date. Validity date if applicable.
+**1. Document header** — two columns:
+- Left: brand logo (with onError fallback to a tinted initials square — never a bare img tag). Company name. Company address.
+- Right: document title ("Quote", "Estimate", "Summary Report", etc.). Reference number (auto-generated, e.g., "Q-2026-0001"). Document date. Validity date if applicable.
 
-**2. Prepared-for block** — labeled section with the recipient's name, contact email, any company name. Visual weight — most important identity on the document.
+**2. Prepared-for block** — recipient's name, contact email, customer company. Visual weight.
 
-**3. Content block** — domain-specific:
+**3. Content block:**
 
-For **product domains**: line items table.
-| Column | Content |
-|---|---|
-| # | Line number |
-| Description | Product name + configuration |
-| Qty | Quantity |
-| Unit Price | Per-unit, formatted with currency |
-| Line Total | Qty × Unit Price |
+For product domains: line items table.
+| # | Description | Configuration | Qty | Unit Price | Line Total |
 
-For **calculator/intake domains**: inputs table + results table.
-- Inputs table: each input field name → value (e.g., "Your Annual Gross Income → $45,000"; "Spouse's Annual Gross Income → $95,000")
-- Results table: each calculated output → value with rule basis (e.g., "Low Estimate → $1,250 / month"; "Mid Estimate → $1,625 / month"; "High Estimate → $2,000 / month")
+For calculator domains: inputs table + results table. (See Clarity Legal pattern.)
 
-**4. Totals or Summary block** — domain-specific:
+**4. Totals/Summary block:**
 
-Product domain: right-aligned totals stack:
+Product domain — right-aligned totals stack with full discount math:
 ```
-Subtotal:                    $XX,XXX.00
-HST (13%):                    $X,XXX.00      [omit if no tax]
-─────────────────────────────────────────
-Total:                       $XX,XXX.00 CAD
+Subtotal:                         $75,000.00
+Volume Discount (5%):              -$3,750.00
+Promotional Discount (3%):         -$2,137.50
+─────────────────────────────────────
+Net Subtotal:                     $69,112.50
+HST (13%):                         $8,984.63
+─────────────────────────────────────
+Total:                            $78,097.13 CAD
 ```
 
-Calculator domain: prominent display of the primary calculated value (or value range). Three-card layout (Low / Mid / High) with the primary value visually emphasized works well for range outputs. Single bold display works for single-value outputs.
+Calculator domain — prominent display of the primary calculated value or value range. Three-card layout (Low/Mid/High) with primary value emphasized works well for ranges.
 
-**5. Terms or Disclaimer block** — clearly delimited:
+**5. Terms / Disclaimer block:**
 
-Product domain: payment terms, currency, validity period, mandatory terms.
+Product: payment terms, currency, validity period.
+Calculator: mandatory legal/regulatory disclaimers from DOMAIN.md.
 
-Calculator/intake domain: **mandatory disclaimers from DOMAIN.md**. Legal calculators must include "this is an estimate, not legal advice." Insurance estimators must include actuarial disclaimer language. The disclaimers are not optional — they're often regulatory requirements.
+**6. Approval chain block** — show the approval history:
+```
+Approved by:
+  ✓ Jeff (Quoting Reviewer) — May 5, 2026
+  ✓ Mary (Finance) — May 6, 2026
+  ✓ Tom (Owner) — May 6, 2026
+```
 
-**6. Status block** — status badge (Draft / Awaiting Review / Approved / Finalized). Approved-by name and date if applicable.
+This is impressive to customers — proof the quote went through proper channels.
 
-**7. Footer** — small print, contact info, signature lines if domain requires.
+**7. Status badge** — Draft / Awaiting Review / Approved / Finalized. Visible.
+
+**8. Footer** — small print, contact info, signature lines if domain requires.
 
 ### Read-only
 
-No edit controls on the document view. Only action available is "Back to [previous section]" or "Print" / "Download PDF."
-
-### Reference Implementation (product domain)
-
-```tsx
-<article className="bg-background border rounded-lg p-8 max-w-4xl mx-auto print:border-0 print:shadow-none">
-  {/* 1. Header */}
-  <header className="flex justify-between items-start pb-6 border-b">
-    <div className="flex items-center gap-4">
-      {BRAND_LOGO_URL ? (
-        <img
-          src={BRAND_LOGO_URL}
-          alt={COMPANY_NAME}
-          className="h-10 w-auto"
-          onError={(e) => { e.currentTarget.style.display = 'none'; }}
-        />
-      ) : (
-        <div className="flex size-10 items-center justify-center rounded-md bg-primary/10 text-sm font-semibold text-primary">
-          {COMPANY_INITIALS}
-        </div>
-      )}
-      <div>
-        <h1 className="text-xl font-bold">{COMPANY_NAME}</h1>
-        <p className="text-sm text-muted-foreground">{COMPANY_ADDRESS}</p>
-      </div>
-    </div>
-    <div className="text-right">
-      <h2 className="text-2xl font-bold">{DOCUMENT_TITLE}</h2>
-      <p className="text-sm">{quote.ref}</p>
-      <p className="text-sm text-muted-foreground">Date: {quote.date}</p>
-      {quote.validUntil && <p className="text-sm text-muted-foreground">Valid until: {quote.validUntil}</p>}
-    </div>
-  </header>
-
-  {/* 2. Prepared for */}
-  <section className="py-6">
-    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-      Prepared for
-    </h3>
-    <p className="text-lg font-medium">{quote.customerName}</p>
-    {quote.customerEmail && <p className="text-sm">{quote.customerEmail}</p>}
-  </section>
-
-  {/* 3. Line items (product domain) OR inputs+results (calculator domain) */}
-  {/* For product domain — see Table example below */}
-  {/* For calculator domain — replace with inputs table + results table */}
-
-  {/* 4. Totals — for product domain */}
-  <section className="flex justify-end py-6">
-    <dl className="w-80 space-y-2">
-      <div className="flex justify-between text-sm">
-        <dt>Subtotal:</dt>
-        <dd>{formatCurrency(quote.subtotal, quote.currency)}</dd>
-      </div>
-      {quote.taxRate > 0 && (
-        <div className="flex justify-between text-sm">
-          <dt>{quote.taxName} ({quote.taxRate}%):</dt>
-          <dd>{formatCurrency(quote.taxAmount, quote.currency)}</dd>
-        </div>
-      )}
-      <div className="flex justify-between text-lg font-bold pt-2 border-t">
-        <dt>Total:</dt>
-        <dd>{formatCurrency(quote.total, quote.currency)} {quote.currency}</dd>
-      </div>
-    </dl>
-  </section>
-
-  {/* 5. Terms / Disclaimer */}
-  {/* 6. Status */}
-</article>
-```
-
-For calculator domains, replace the line items + totals blocks with the inputs + results pattern. The header, prepared-for, terms/disclaimer, status, and footer are the same.
-
-### Failure Modes
-
-**Product domain failure:** A 5-line key-value list "Customer: X, Product: Y, Motor: Z, Status: Awaiting Review, Terms: Net 45" inside a single card. Not a Quote Document — a summary blurb.
-
-**Calculator domain failure:** A "Final Report" with placeholder values, missing inputs, no rule basis labels, missing disclaimers. Not a Report — an empty template.
-
-If your output document would fit inside the Live Summary panel, you have not built an output document.
+No edit controls on the document view. Only available actions: "Back to Edit Quote," "Print," "Download PDF" (placeholder action with toast in prototype).
 
 ---
 
@@ -588,45 +680,45 @@ If your output document would fit inside the Live Summary panel, you have not bu
 
 When the workflow has multiple roles:
 
-- Seed localStorage with roles from DOMAIN.md User Roles or Stakeholder Map.
-- **Role switcher** is a single `DropdownMenu` in the header. Trigger shows active role name and badge. Dropdown lists all roles. One trigger, one menu.
-- **Approval gating:** if DOMAIN.md says "only Andy or Jeff can approve," disable Approve when viewing as Dre or Manish. Show a clear message: "You are viewing as [Name]. Only [approver names] can approve."
-- **Routing visibility:** if a role handles specific work types, show relevant routing info when that role is active.
+- Seed localStorage with roles from DOMAIN.md User Roles or Stakeholder Map
+- Role switcher is a single `DropdownMenu` in the header. Active role + badge in trigger
+- **View gating:** different roles see different list filters by default ("Awaiting My Approval" for approvers; "My Drafts" for preparers)
+- **Action gating:** approval buttons only appear for roles authorized to approve
+- **Field gating:** sensitive numbers (cost, margin) hide from non-approver roles
+- **Routing visibility:** when a role handles specific work types, show relevant routing info when active
 
-When the workflow has only one role (single-role calculators, lawyer-as-user apps), omit the role switcher entirely. Don't fabricate roles to fill the UI.
+When DOMAIN.md describes only one role or no roles, omit the role switcher. Don't fabricate roles to fill UI.
 
-When the workflow has roles but no approval gate (criterion 3 borderline), the role switcher is informational — it changes what content the user sees but doesn't gate actions.
+The action-oriented messaging when a role lacks permission:
+
+- ❌ Disabled button (mystery — user doesn't know why)
+- ✓ "Switch to the [approver role] role to [action]" (for prototype with role switcher)
+- ✓ "This action requires the [approver role]. Contact [name] for approval." (for production)
 
 ---
 
-## shadcn/ui component mapping
+## shadcn/ui Component Mapping
 
-Use these shadcn/ui components for each CPQ element. Import from `~/components/ui/*`.
+Use these shadcn/ui components. Import from `~/components/ui/*`. Treat cards as exception, not default — see frontend-design skill for visual quality bar.
 
-Treat cards as an exception, not the default layout primitive. Inline content into the page body whenever possible. Use cards only when something truly needs emphasis, separation, repetition, or framing. This aligns with the frontend-design skill's zero-card bias — see that skill for the full visual quality bar.
-
-| CPQ Element | Component | Source | Usage Notes |
-|---|---|---|---|
-| Product/options selector | `RadioGroup`, `Checkbox`, `Select`, `Table` | shadcn | Show product name, description, base price, configuration fields inline. Use a card only for genuine emphasis. |
-| Mutually exclusive options | `RadioGroup`, `RadioGroupItem` | shadcn | Show price next to each label. Inline or compact list. |
-| Optional toggles | `Checkbox` with label | shadcn | Description below label. |
-| Status badges | `Badge` | shadcn | `variant="outline"` Draft, `variant="default"` Awaiting, `variant="secondary"` Approved. Semantic colors via className. |
-| Role badges | `Badge` | shadcn | `variant="outline"` Staff, `variant="default"` Approver, `variant="secondary"` View only. |
-| Line items table | `Table`, `TableHeader`, `TableRow`, `TableCell` | shadcn | Right-align price columns. `TableFooter` for subtotal. |
-| Saved quotes list | Custom list with `Badge` | shadcn | Clickable rows with status badges. `ScrollArea` if overflow. |
-| Form inputs | `Input`, `Label` | shadcn | Stack label above input. |
-| Dropdowns | `Select`, `SelectContent`, `SelectItem` | shadcn | Compact alternative to RadioGroup. |
-| Action buttons | `Button` | shadcn | Primary `default` (brand accent). Secondary `outline`. Destructive `destructive`. |
-| Section dividers | `Separator` | shadcn | Subtle horizontal between panel sections. |
-| Stepper navigation | Custom | — | Vertical clickable list inside `SidebarContent`. `cn()` for state. Step number circle, label, subtitle, checkmark. |
-| Role switcher | `DropdownMenu` | shadcn | Header. Active role name + badge in trigger. |
-| Live summary sidebar | Inline label/value rows | shadcn primitives | Labels `text-muted-foreground text-sm`. Values `font-medium`. Total `text-lg font-semibold`. |
-| Workflow notes | Compact muted note block | shadcn primitives | Reference material. Small text, muted. |
-| Confirmation dialogs | `AlertDialog` | shadcn | Destructive actions. |
-| Toast notifications | `Sonner` / `toast()` | shadcn | After save/approve/reject/delete. |
-| Output document header | Header block with logo fallback + company name | shadcn primitives | Brand logo from DOMAIN.md with onError. Placeholder address below. |
-| Output document table | `Table` with `TableFooter` | shadcn | Itemized rows. Footer shows subtotal. Totals block below with bold total. |
-| Notes | `Textarea` | shadcn | Plain text editing. |
+| CPQ Element | Component | Notes |
+|---|---|---|
+| Line items table | `Table` with `TableHeader`, `TableBody`, `TableFooter` | Inline editable cells. `TableFooter` for totals stack. |
+| Editable cell (number) | `Input type="number"` | Full-width within cell. Update on blur or change. |
+| Editable cell (select) | `Select` | For dropdowns within table cells. |
+| Configuration cell | Custom popover/drawer | Click to open configurator, shows summary inline. |
+| Row actions | `DropdownMenu` | Trash icon trigger, options: Edit / Duplicate / Remove. |
+| Add line button | `Button variant="outline"` | Below the table. Adds blank row or opens picker. |
+| Status badges | `Badge` | `outline` Draft, `default` Awaiting, `secondary` Approved. |
+| Role switcher | `DropdownMenu` | Header. Active role + badge. |
+| Right sidebar (collapsible) | `Sidebar side="right"` | Or `Sheet` for off-canvas. Toggle from header. |
+| Approval chain display | Custom list with status icons | Step-by-step visual with checkmarks/pending circles. |
+| Quote list | `Table` or row list | Status filter chips above. Row click → detail route. |
+| Filters | Chip group / `Select` | Above quote list. By status, customer, approver. |
+| Confirmation dialogs | `AlertDialog` | Destructive actions (delete, reject). |
+| Toast notifications | `Sonner` / `toast()` | After save, approve, reject, clone. |
+| Quote document | Print-styled article | `print:border-0`, branded header, totals stack. |
+| Discount row in stack | Inline label/value | Muted color for discount lines. |
 
 ---
 
@@ -636,37 +728,61 @@ See `references/config-schema.md` for full TypeScript interfaces. Summary:
 
 ```
 config
-├── app                    ← Branding, theme (from brandfetch)
-├── sections[]             ← Section definitions (3-5 depending on workflow)
+├── app                    ← Branding, theme
+├── sections[]             ← Sections (3 default for SMB direct-editing)
+├── layout                 ← list-detail | calculator-style | single-page
 ├── data
-│   ├── products[]         ← Product domain — catalog with options
-│   ├── inputSections[]    ← Calculator domain — input field groups
-│   ├── lineItems[]        ← Product domain — current quote contents
-│   ├── currentSubmission  ← Calculator domain — current submission state
-│   └── quoteSettings      ← Currency, tax, terms, markup (product) OR calculation settings (calculator)
-├── rules[]                ← Business rules (dependencies, validations, calculations)
-└── roles[]                ← User roles and permissions (when multi-role)
+│   ├── products[]         ← Catalog with options, required-children
+│   ├── inputSections[]    ← Calculator domain inputs
+│   ├── quotes[]           ← All quotes (multi-quote management)
+│   └── quoteSettings      ← Currency, tax, terms, markup
+├── rules[]                ← Constraint rules + business rules + discount rules
+├── approvalChain          ← Multi-tier approval routing
+└── roles[]                ← Roles with permissions and view filters
 ```
 
 ---
 
 ## Deterministic Mapping Rules
 
-The Builder Agent follows these rules mechanically to transform DOMAIN.md into config.json. No reasoning, no interpretation — execute the rules.
-
 ### Domain Type Detection
 
 ```
-INSPECT DOMAIN.md to determine domain type:
-
+INSPECT DOMAIN.md:
   IF Entity Registry has products with prices/options/accessories:
     → DOMAIN TYPE: product
-  ELSE IF Entity Registry has input fields with rules and DOMAIN.md has guidelines/formulas/rate tables:
+  ELSE IF Entity Registry has input fields with rules and DOMAIN.md has guidelines/formulas:
     → DOMAIN TYPE: calculator
-  ELSE IF Entity Registry has both products AND extensive input fields:
-    → DOMAIN TYPE: hybrid (rare — usually one dominates; pick the dominant)
+  ELSE IF both:
+    → DOMAIN TYPE: hybrid (rare — pick dominant)
   ELSE:
     → AMBIGUOUS — note in completion summary, default to product
+```
+
+### Section Count Decision
+
+```
+EVALUATE workflow handoffs:
+  IF same role does configure + line management + approval:
+    → 3 sections: Edit Quote, Approve, Quote Document (DEFAULT for SMB)
+  IF different roles for configure vs line management:
+    → 4 sections: Configure, Build Quote, Approve, Quote Document
+  IF no review gate exists:
+    → Skip Approve section
+  IF deliverable isn't a document:
+    → Replace Quote Document with appropriate output (confirmation, push-to-system, inline result)
+```
+
+### Layout Decision
+
+```
+PICK based on workflow:
+  IF user manages multiple quotes in parallel (almost all CPQ):
+    → List/Detail layout (DEFAULT)
+  IF calculation is primary feature, simple inputs/outputs:
+    → Calculator-Style layout
+  IF single-item workflow (rare):
+    → Single-Page layout
 ```
 
 ### Entity → Configurable Item Mapping
@@ -674,158 +790,96 @@ INSPECT DOMAIN.md to determine domain type:
 ```
 FOR EACH entity in DOMAIN.md Entity Registry:
 
-  — PRODUCT DOMAIN:
-  WHERE entity description suggests a sellable product, equipment, service, or part:
+  PRODUCT DOMAIN:
+  WHERE entity is sellable product/service/part:
     → CREATE config.data.products[] entry
-    → SET id = slugify(entity name)
-    → SET name = entity name (exact, from DOMAIN.md)
-    → SET category = entity parent grouping or category
-    → SET basePrice = entity price if stated
-    → SET pricingSource = determine from context:
-        IF "price list" or "vendor list" or "catalog price" → "catalog"
-        IF "get a quote from vendor" or "depends on specs" → "vendor_rfq"
-        IF "we know our cost and mark it up" → "cost_plus"
-        IF no pricing discussed → "tbd"
-    → SET options[] = from entity's "what varies" attributes
+    → SET id, name, category, basePrice, pricingSource
+    → SET options[] from entity's "what varies" attributes
+    → SET requiredChildren[] from "must include" relationships (e.g., crane requires motor)
+    → SET optionalChildren[] from "may include" relationships
 
-  — CALCULATOR DOMAIN:
-  WHERE entity description suggests an input field, data point, or parameter:
-    → CREATE config.data.inputSections[] entry (grouping related inputs)
-    → SET field.id = slugify(field name)
-    → SET field.label = field name (exact, from DOMAIN.md)
-    → SET field.type = infer from context:
-        enumerated values → "select"
-        yes/no → "checkbox"
-        date → "date"
-        number → "number"
-        free text → "text"
-    → SET field.required = true if DOMAIN.md marks it mandatory
-    → SET field.validation = from business rules
-
-  WHERE entity has NO price, NO options, NO input role, and is NOT referenced:
-    → SKIP — probably not configurable
-    → ADD to Open Questions
+  CALCULATOR DOMAIN:
+  WHERE entity is input field/parameter:
+    → CREATE config.data.inputSections[] entry
+    → GROUP related inputs into sections
+    → SET field id, label, type, required, validation
 ```
 
 ### Relationship → Rule Mapping
 
 ```
-FOR EACH relationship in DOMAIN.md Relationship Map:
-
-  IF relationship type = "requires":
-    → CREATE config.rules[] entry (type: "requires", severity: "error")
-
-  IF relationship type = "recommends":
-    → CREATE config.rules[] entry (type: "recommends", severity: "warning")
-
-  IF relationship type = "excludes":
-    → CREATE config.rules[] entry (type: "excludes", severity: "error")
+FOR EACH relationship:
+  "requires" → config.rules[] (type: requires, severity: error, surface visibly)
+  "recommends" → config.rules[] (type: recommends, severity: info, surface as suggestion)
+  "excludes" → config.rules[] (type: excludes, severity: error, block invalid combo)
+  "includes child" → config.products[].requiredChildren[] (bundle pattern)
 ```
 
-### Business Rule → Validation Mapping
+### Discount Stack Mapping
 
 ```
-FOR EACH rule in DOMAIN.md Business Rules:
+FOR EACH discount type in DOMAIN.md:
+  → CREATE config.data.discountTypes[] entry
+  → SET id, label, type (percentage|amount), rate, conditions
+  → IF discount has approval threshold:
+      → CREATE config.rules[] entry (type: approval-required, threshold: X)
 
-  IF rule mentions "approval" or "requires authorization":
-    → CREATE config.rules[] entry (type: "validates", action: requireApproval)
-
-  IF rule mentions "cannot" or "must not" or "not allowed":
-    → CREATE config.rules[] entry (type: "validates", action: block)
-
-  IF rule mentions pricing/calculation constraint:
-    → CREATE config.rules[] entry (type: "computes")
+EXAMPLES:
+  "5% volume discount over 10 units" → percentage discount with quantity condition
+  "Promotional 3% in Q4" → percentage discount with date condition  
+  "Discounts over 15% require manager approval" → approval-required rule, threshold 0.15
 ```
 
-### Section Count Decision
+### Approval Chain Mapping
 
 ```
-EVALUATE the workflow against the four canonical sections:
-
-  Configure: Always present (the input collection step)
-  Build/Calculate: Present IF there's an assembly/review stage between input and approval
-                   ABSENT IF input directly produces output (simple calculator)
-  Approve: Present IF there's a review/approval gate
-           ABSENT IF self-service flow with no review
-  Output Document: Present IF the deliverable is a formatted document
-                   REPLACED IF the deliverable is a confirmation, push to system, or inline result
-
-Count the sections that apply. Section count = 2 (rare) to 5 (rare). Default = 4.
-
-Add Discover/Intake before Configure IF the workflow has a discovery phase.
-Add Submit/Send after Output Document IF the workflow has explicit handoff.
-```
-
-### Layout Decision
-
-```
-PICK layout based on workflow shape:
-
-  IF section count >= 3 AND user works on one quote/submission at a time AND sections are sequential:
-    → Default Stepper layout
-
-  IF user browses a catalog and adds to cart-like quote:
-    → Catalog-Driven layout
-
-  IF section count <= 2 AND calculation can be shown inline with inputs:
-    → Calculator-Style layout
-
-  IF user manages many in-flight workflows in parallel:
-    → List/Detail layout (stepper applies inside detail panel)
-
-  WHEN IN DOUBT:
-    → Default Stepper
+FROM DOMAIN.md Stakeholder Map and routing rules:
+  → CREATE config.approvalChain entry per quote type
+  → IF routing rules exist (e.g., "inspections to Dre, maintenance to Manish"):
+      → CREATE conditional routing in approvalChain
+  → ALWAYS append final approver if DOMAIN.md describes one
+  → SURFACE the chain visually in the Approve section
 ```
 
 ### State Model → Workflow Mapping
 
 ```
-IF DOMAIN.md State Models contains payment terms or approval statuses:
-  → MAP to config.data.quoteSettings.availableTerms[]
-  → SET defaultTerms = the default mentioned
-
-IF DOMAIN.md State Models contains workflow statuses:
-  → MAP to section gating logic
+IF DOMAIN.md State Models contain workflow statuses:
+  → MAP to quote.status enum (Draft, Awaiting Approval, Approved, Rejected, Finalized)
+  → MAP transitions to action availability
 ```
 
 ### Branding → Theme Mapping
 
 ```
-→ SET config.app.companyName = DOMAIN.md Project Overview company name
-→ SET config.app.theme.primaryColor = from brandfetch (or fallback)
-→ SET config.app.theme.accentColor = from brandfetch (or fallback)
-→ SET config.app.theme.logoUrl = from brandfetch
+→ SET config.app.companyName from DOMAIN.md Project Overview
+→ SET config.app.theme.primaryColor from brandfetch
+→ SET config.app.theme.accentColor from brandfetch
+→ SET config.app.theme.logoUrl from brandfetch (with onError fallback in BrandMark)
 → SET config.app.theme.mode = "light"
 ```
 
-### Quote/Calculation Settings Mapping
+### Quote Settings Mapping
 
 ```
-For product domains:
-→ SET config.data.quoteSettings.currency = from DOMAIN.md (or "USD" default)
-→ SET config.data.quoteSettings.taxEnabled = true ONLY IF DOMAIN.md mentions tax
-→ SET config.data.quoteSettings.taxLabel = from DOMAIN.md (e.g., "HST")
-→ SET config.data.quoteSettings.taxRate = from DOMAIN.md
-→ SET config.data.quoteSettings.defaultTerms = from DOMAIN.md
-→ SET config.data.quoteSettings.markup = from DOMAIN.md
-→ SET config.data.quoteSettings.quoteFormat = "itemized" (default)
+Product domain:
+→ SET currency, taxEnabled (only if DOMAIN.md mentions tax), taxLabel, taxRate
+→ SET defaultTerms, markup, quoteFormat
 
-For calculator domains:
-→ SET config.data.calculationSettings.formulas = the rules/guidelines from DOMAIN.md
-→ SET config.data.calculationSettings.outputFormat = match the deliverable type
-→ SET config.data.calculationSettings.disclaimers = mandatory legal/regulatory text from DOMAIN.md
+Calculator domain:
+→ SET formulas from DOMAIN.md guidelines
+→ SET outputFormat per deliverable type
+→ SET disclaimers from DOMAIN.md mandatory text
 ```
 
 ### Role Mapping
 
 ```
 FOR EACH role in DOMAIN.md User Roles:
-  → CREATE config.roles[] entry (id, label, permissions inferred from description)
-  → IF permissions cannot be inferred → SET permissions = ["createQuote", "editQuote"]
-
-IF DOMAIN.md has only one role OR no roles defined:
-  → CREATE one default role
-  → SKIP role switcher in UI (single-role workflow)
+  → CREATE config.roles[] entry
+  → SET id, label, permissions, viewFilters, fieldVisibility
+  → IF role appears in approval chain → mark as approver
+  → IF only one role or no roles → omit role switcher in UI
 ```
 
 ### Edge Cases
@@ -833,20 +887,19 @@ IF DOMAIN.md has only one role OR no roles defined:
 ```
 → IF entity has no price → SET pricingSource = "tbd", ADD to openQuestions
 → IF relationship rationale missing → SET message = "[source] [rel] [target] — rationale not captured"
-→ IF entity cannot be classified → SKIP, ADD to openQuestions
+→ IF entity unclassifiable → SKIP, ADD to openQuestions
 → IF DOMAIN.md has Open Questions → COPY to config.metadata.openQuestions
-→ IF only one role or no roles → CREATE default, OMIT role switcher
-→ IF no pricing AND domain is product type → SET markup = 0, ADD to openQuestions
-→ IF no calculation formulas AND domain is calculator type → BUILD with placeholder formulas, ADD to openQuestions
+→ IF only one role → CREATE default role, OMIT role switcher
+→ IF no pricing AND domain is product → SET markup = 0, ADD to openQuestions
+→ IF no calculation formulas AND domain is calculator → BUILD with placeholder formulas, ADD to openQuestions
+→ IF DOMAIN.md mentions discounts but no approval thresholds → use 15% default for "requires approval"
 ```
 
 ---
 
 ## Business Rule Templates
 
-Common CPQ rule patterns. Use when DOMAIN.md describes rules in natural language.
-
-### Product Dependency (hard)
+### Product Dependency (hard requires)
 ```json
 {
   "id": "BR-XXX",
@@ -855,7 +908,8 @@ Common CPQ rule patterns. Use when DOMAIN.md describes rules in natural language
   "condition": { "item.category": "[source_category]" },
   "action": { "suggest": "[target_product_id]", "matchField": "[matching_attribute]" },
   "message": "[rationale from DOMAIN.md]",
-  "severity": "error"
+  "severity": "error",
+  "surfaceVisibly": true
 }
 ```
 
@@ -868,7 +922,8 @@ Common CPQ rule patterns. Use when DOMAIN.md describes rules in natural language
   "condition": { "item.category": "[source_category]" },
   "action": { "suggest": "[target_product_id]" },
   "message": "[rationale from DOMAIN.md]",
-  "severity": "warning"
+  "severity": "info",
+  "surfaceVisibly": true
 }
 ```
 
@@ -881,37 +936,54 @@ Common CPQ rule patterns. Use when DOMAIN.md describes rules in natural language
   "condition": { "item.category": "[source_category]" },
   "action": { "block": "[target_product_id]" },
   "message": "[rationale from DOMAIN.md]",
+  "severity": "error",
+  "surfaceVisibly": true
+}
+```
+
+### Bundle / Required Child
+```json
+{
+  "id": "BR-XXX",
+  "type": "requires-child",
+  "parent": "[parent_product_id]",
+  "child": "[child_product_id_or_category]",
+  "selectionMode": "required-one-of",
+  "message": "[rationale]",
   "severity": "error"
 }
 ```
 
-### Approval Gate
+### Discount Threshold Approval Gate
 ```json
 {
   "id": "BR-XXX",
-  "type": "validates",
-  "trigger": "[gated_action]",
-  "condition": { "[field]": { "$ne": "[default_value]" } },
-  "action": { "requireApproval": "[role_id]" },
-  "message": "[rationale from DOMAIN.md]",
+  "type": "approval-required",
+  "trigger": "discountApplied",
+  "condition": { "discount.percentage": { "$gte": 0.15 } },
+  "action": { "requireApproval": "[approver_role_id]" },
+  "message": "Discounts over 15% require [approver name] approval",
   "severity": "warning"
 }
 ```
 
-### Price Computation
+### Multi-Tier Approval Chain
 ```json
 {
   "id": "BR-XXX",
-  "type": "computes",
-  "trigger": "priceCalculation",
-  "condition": { "item.pricingSource": "cost_plus" },
-  "action": { "compute": "sellingPrice = cost * (1 + markup)" },
-  "message": "Cost-plus pricing: [markup]% markup applied",
-  "severity": "info"
+  "type": "approval-chain",
+  "trigger": "submitForApproval",
+  "chain": [
+    { "role": "quoting-reviewer", "name": "Andy", "condition": { "quote.requestType": "standard" } },
+    { "role": "inspection-reviewer", "name": "Dre", "condition": { "quote.requestType": "inspection" } },
+    { "role": "maintenance-reviewer", "name": "Manish", "condition": { "quote.requestType": "maintenance" } },
+    { "role": "final-approver", "name": "Jeff" }
+  ],
+  "message": "Routed through quoting reviewer based on request type, finalized by Jeff"
 }
 ```
 
-### Calculator Formula (calculator domain)
+### Calculator Formula
 ```json
 {
   "id": "BR-XXX",
@@ -919,7 +991,7 @@ Common CPQ rule patterns. Use when DOMAIN.md describes rules in natural language
   "trigger": "inputChange",
   "condition": { "fields": ["incomeA", "incomeB", "duration"] },
   "action": { "compute": "supportLow = (incomeB - incomeA) * 0.015 * yearsOfMarriage" },
-  "message": "[formula basis from DOMAIN.md — e.g., 'Federal Spousal Support Advisory Guidelines, with-children formula']",
+  "message": "[formula basis from DOMAIN.md]",
   "severity": "info"
 }
 ```
@@ -928,40 +1000,83 @@ Common CPQ rule patterns. Use when DOMAIN.md describes rules in natural language
 
 ## Vertical Presets
 
-See `references/vertical-presets.md` for full details. Summary:
+| Vertical | Domain Type | Common Layout | Key Tier 1 Features |
+|---|---|---|---|
+| **Manufacturing / BOM** | Product | List/Detail | Bundle (parent + accessories), discount stack, multi-tier approval |
+| **Wholesale / Distribution** | Product | List/Detail | Volume tiers (Tier 2), discount stack, customer-pricing |
+| **Services / Integrator** | Product | List/Detail | Equipment + labor + materials bundle, approval chain |
+| **Legal / Compliance** | Calculator | Calculator-Style + List/Detail | Formula calculation, mandatory disclaimers, lawyer review queue |
+| **Financial / Insurance** | Calculator | Calculator-Style + List/Detail | Rate tables, eligibility rules, range output |
+| **Assessment / Eligibility** | Calculator | Calculator-Style | Scoring models, threshold rules, recommendation output |
 
-| Vertical | Domain Type | "Configure" | Calculation Model | Output Style |
-|---|---|---|---|---|
-| **Manufacturing / BOM** | Product | Products with options, accessories | Cost-plus or vendor RFQ | Itemized quote with scope |
-| **Wholesale / Distribution** | Product | Catalog items, bulk goods | Price list with volume tiers | Itemized quote with quantity breaks |
-| **Services / Integrator** | Product | Equipment + installation + PM | Mixed (catalog + labor rates) | Itemized quote with service schedule |
-| **Legal / Compliance** | Calculator | Case details, financial data | Guideline formulas, statutory tables | Summary report with calculations + disclaimer |
-| **Financial / Insurance** | Calculator | Coverage details, risk factors | Rate tables, actuarial formulas | Estimate document with ranges + terms |
-| **Assessment / Eligibility** | Calculator | Personal/business details | Scoring models, threshold rules | Assessment report with recommendations |
+---
 
-The Builder Agent uses the vertical preset as a starting point, then overrides with specifics from DOMAIN.md.
+## Verification Before Completion
+
+Before completing the build, verify all Tier 1 standards are met:
+
+```
+[ ] Direct inline editing — line items table with editable cells, no Configure-then-Build round trip
+[ ] Bundle / required-child — parent products with required children handled in single line
+[ ] Constraint rules visible — requires/excludes/recommends surfaced with rationale and rule IDs
+[ ] Discount stack — visible math, layered calculation, no hidden formulas
+[ ] Live quote summary — totals update in real-time as user edits
+[ ] Branded quote document — logo, line items, totals, terms, approval chain, professional print layout
+[ ] Multi-tier approval routing — chain derived from DOMAIN.md, surfaced visually
+[ ] Multi-quote management — list view with filters, drill into detail
+[ ] Save / load / clone — all persisted to localStorage
+[ ] Role-based gating — view filters, action gating, sensitive field hiding
+```
+
+If any Tier 1 standard is missing, the build is incomplete. Fix before completing.
+
+```
+[ ] No duplicate sidebars — verify by routing through to detail view, count Sidebar components (should be 1)
+[ ] No mounted MainLayout inside route — routes render in <Outlet />
+[ ] Light mode set in BOTH app.css AND ThemeProvider default
+[ ] BrandMark component used everywhere a logo appears (no bare <img>)
+[ ] Currency uses Intl.NumberFormat with thousands separators
+[ ] Footer text appears once, not duplicated by layout nesting
+```
+
+These are common implementation bugs that pass `npm run build` but break the user experience.
 
 ---
 
 ## Mapping Log
 
-After executing the mapping rules, produce a brief mapping log:
+After executing the mapping rules, produce a mapping log:
 
 ```markdown
 ## Mapping Log
 
-**Skill:** cpq-builder v4.4
+**Skill:** cpq-builder v4.5
 **DOMAIN.md:** [company name]
 **Domain type:** [product / calculator / hybrid / ambiguous]
 **Vertical preset:** [manufacturing / wholesale / services / legal / financial / assessment / none]
-**Section count:** [N] (deviations: [list])
-**Layout:** [stepper / catalog / calculator-style / list-detail]
+**Section count:** [3 / 4 / 5] (deviations: [list])
+**Layout:** [list-detail / calculator-style / single-page]
+
+### Tier 1 standards: [all met / list any gaps]
+- [confirm or note gap]
+
+### Tier 2 capabilities built: [N]
+- [list with rationale]
+
+### Tier 3 capabilities mentioned in completion summary: [N]
+- [list]
 
 ### Items mapped: [N]
-- [entity name] → config.data.[products|inputSections][0]
+- [entity name] → config.data.products[0] (with [N] required children, [N] options)
 
 ### Rules mapped: [N]
-- BR-001: [source] [rel] [target] → severity: [error|warning|info]
+- BR-001: [source] [rel] [target] → [severity, action]
+
+### Approval chain configured:
+- [chain description]
+
+### Discount stack configured:
+- [list discount types and thresholds]
 
 ### Skipped entities: [N]
 - [entity name] — [reason]
@@ -969,8 +1084,6 @@ After executing the mapping rules, produce a brief mapping log:
 ### Open questions carried forward: [N]
 - [question from DOMAIN.md]
 ```
-
-This log is NOT part of the config. It's an audit trail.
 
 ---
 
