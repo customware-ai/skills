@@ -30,6 +30,7 @@ Use `.import/migration-checklist.md` as the phase-2 execution gate.
 - Record the verified workflows and commands run in this phase.
 - Record the checklist score, failed item numbers, and pass/fail call for the phase-2 rubric.
 - Keep the fidelity ledger current as QA reveals drift.
+- Keep one row per verified source-visible screen, plus shared shell or runtime rows when needed.
 - Run and record the adversarial final pass once the migration seems done.
 
 ## Open-Gaps Rules
@@ -37,7 +38,7 @@ Use `.import/migration-checklist.md` as the phase-2 execution gate.
 `migration-open-gaps.md` remains the signoff-blocking ledger.
 
 - Update it after every meaningful verification pass.
-- Keep route drift, nav drift, filler-page drift, style drift, data drift, runtime failures, and missing coverage in the ledger until verified fixed.
+- Keep route drift, nav drift, structure drift, control-surface drift, copy drift, filler-page drift, style drift, data drift, runtime failures, and missing coverage in the ledger until verified fixed.
 - If a verified workflow still has a known issue, it belongs in this file.
 - If this file still contains unresolved ordinary gaps, signoff is blocked.
 

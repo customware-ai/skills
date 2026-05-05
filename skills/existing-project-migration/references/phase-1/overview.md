@@ -10,13 +10,13 @@ Phase 1 is the first full migration pass.
 - create the migration artifacts
 - merge the required template foundation
 - implement source-derived schema, data flows, routes, pages, and workflows
-- directly translate the source frontend UI into the new stack with near one-to-one screen fidelity
-- preserve the source product's visible route map, navigation, shell, and styling language
+- directly translate the source frontend route-by-route into the new stack with no intentional UI or UX change
+- preserve the source product's visible route map, navigation, shell, styling language, and concrete screen contracts
 - run base Playwright verification
 - earn a passing phase-1 grade
 - leave the repo ready for phase 2
 
-This is not a planning-only phase and not a vertical-slice phase. Phase 1 must end with a runnable, source-shaped migrated app whose UI is already very close to the source app, or a concrete blocker.
+This is not a planning-only phase and not a vertical-slice phase. Phase 1 must end with a runnable, source-faithful migrated app that a source user would recognize as the same product, or a concrete blocker.
 
 ## Required Order
 
@@ -26,16 +26,18 @@ This is not a planning-only phase and not a vertical-slice phase. Phase 1 must e
 4. Inspect `.import/database/` deeply enough to find the real CSV root. Read actual headers and representative rows before inferring schema.
 5. Inspect the active source router/bootstrap, layout/navigation files, theme/root CSS or tokens, representative pages, brand assets, backend routes, entities, and integrations before planning implementation.
 6. After that source intake, create or update `.import/migration-plan.json`, `.import/migration-checklist.md`, `.import/migration-review.md`, and `.import/migration-open-gaps.md` from the required contracts.
-7. Record the full visible source route map, navigation labels, page inventory, workflows, CSV tables, preservation targets, and verification targets. Do not cap the product to an arbitrary subset.
+7. Record the full visible source route map, navigation labels, page inventory, workflows, CSV tables, preservation targets, verification targets, and per-screen translation targets. Do not cap the product to an arbitrary subset.
 8. Merge the `client-only-spa` `app/` into the prepared repo and preserve `app/lib/trpc-provider.tsx` plus `app/utils/error-logger.ts`.
 9. Implement the source-derived schema, contracts, queries, routers, pages, and workflow surfaces on the Customware stack.
-10. Translate the source frontend screen-by-screen. Preserve route-level layout composition, headings, controls, copy, interaction model, and styling direction as directly as the new stack allows.
-11. Seed from CSV rows when present. Do not replace row-backed data with unrelated demo data.
-12. Remove or rewrite conflicting template demo leftovers, placeholder copy, fake compatibility layers, and template-only tests.
-13. Run the relevant build or validation commands.
-14. Run Playwright interactive verification on the highest-priority source workflows and representative routes.
-15. Grade the migration against the phase-1 rubric, update the review and open-gaps artifacts, fix the failures, and re-grade until it passes.
-16. Leave `.import/`, `.import/migration-plan.json`, and any still-needed migration artifacts in place for phase 2.
+10. Translate the source frontend screen-by-screen. Preserve route-level layout composition, section ordering, headings, controls, labels, filters, forms, tables, charts, actions, copy, interaction model, and styling tokens as directly as the new stack allows.
+11. When data is sparse or staged, keep the original screen chrome and control surface. Do not replace the page with generic summary cards, placeholder prose, or review/status shells.
+12. Seed from CSV rows when present. Do not replace row-backed data with unrelated demo data.
+13. Remove or rewrite conflicting template demo leftovers, placeholder copy, fake compatibility layers, and template-only tests.
+14. Run the relevant build or validation commands.
+15. Compare representative migrated screens directly against source code and screenshots before signoff. Fix visible drift before calling the phase close.
+16. Run Playwright interactive verification on the highest-priority source workflows and representative routes.
+17. Grade the migration against the phase-1 rubric, update the review and open-gaps artifacts, fix the failures, and re-grade until it passes.
+18. Leave `.import/`, `.import/migration-plan.json`, and any still-needed migration artifacts in place for phase 2.
 
 ## Execution Budget
 
@@ -54,5 +56,8 @@ Fail the task instead of completing if:
 - the visible source route map or workflows cannot be identified
 - the implementation drifts to org/company domain instead of uploaded product evidence
 - the migrated app is still a reduced generic subset when broader source evidence exists
+- any source-visible screen is reinterpreted into a different screen type or generic substitute
+- any shipped UI still contains migration or provenance copy
+- any major source screen still differs in visible structure, controls, or copy without an explicit unavoidable blocker
 - the app does not run and meaningful fixes are still possible but were not attempted
 - the phase-1 rubric still fails

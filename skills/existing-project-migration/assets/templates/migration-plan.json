@@ -18,6 +18,22 @@
   "sourceRoutes": [],
   "sourceNavigation": [],
   "sourcePages": [],
+  "screenTranslationTargets": [
+    {
+      "route": "",
+      "name": "",
+      "sourceFiles": [],
+      "sourceEvidence": [],
+      "requiredLayoutBlocks": [],
+      "requiredControls": [],
+      "requiredCopy": [],
+      "requiredInteractions": [],
+      "requiredVisualTokens": [],
+      "allowedDeviations": [],
+      "status": "planned",
+      "warnings": []
+    }
+  ],
   "sourceTheme": {
     "summary": "",
     "tokens": [],

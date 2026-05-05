@@ -4,14 +4,15 @@ license: MIT
 compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
 metadata:
   author: customware-ai
-  version: "2.0"
+  version: "2.1"
 description: >
   Use this skill for Customware existing-project migration tasks that move uploaded
   customer apps from other builders into the standard Customware stack while
-  preserving the source product's routes, workflows, UI, UX, and styling as
-  closely as possible. This skill covers both `Migration build` and
-  `Migration verify` and includes self-grading quality gates that must pass
-  before the task can complete.
+  preserving the source product's routes, workflows, UI, UX, and styling with
+  no intentional user-facing changes while replacing only the runtime
+  foundation. This skill covers both `Migration build` and `Migration verify`
+  and includes self-grading quality gates that must pass before the task can
+  complete.
 ---
 
 # Existing Project Migration
@@ -24,11 +25,13 @@ This skill is for tech stack migration, not product redesign.
 
 - The customer already has an app.
 - The job is to reorganize that app into the Customware stack.
-- The source product's routes, workflows, labels, layout shell, visual language, and styling direction should survive the migration as closely as practical.
+- The source product's routes, workflows, labels, layout shell, visual language, and styling should survive as a source-faithful port. The default expectation is no intentional user-facing UI or UX change.
 - The runtime stack must change to the prepared Customware stack built from `template-be-setup` plus the required `client-only-spa` merge rule.
 
 Do not treat this task like a fresh app build, a domain reinterpretation, or a chance to simplify the product into a smaller generic dashboard.
 Do not encode expectations from any previous migration. This skill must work for whatever app the customer uploaded. Derive the preservation target fresh from the current imported source each time.
+A customer familiar with the source app should feel they are using the same app on a new stack, not a remake.
+If literal parity is blocked by a real stack constraint, a missing source artifact, or a source bug, keep the difference minimal and record it explicitly as a named deviation.
 
 ## Source Authority
 
@@ -80,12 +83,15 @@ If the task text is unclear, read both phase overview files first, determine whi
 These are hard rules.
 
 - This is a stack migration. Preserve the source product; replace the runtime foundation.
-- Preserve the imported app's visible route map, navigation labels, page hierarchy, major layout blocks, workflows, typography direction, theme tokens, and logo usage unless the fixed stack makes an exact copy impossible.
-- Preserve the imported app's actual screen archetypes from source. If the source page is a calendar, keep it calendar-first. If it is a dense table workspace, keep that structure. If it is a real config form, keep the form-driven structure. Do not swap one screen archetype for another just because they serve a similar business area.
-- Treat the imported frontend as the visual and information-architecture authority. Read the active router/bootstrap, layout/navigation files, theme/root CSS files, key assets, and representative page files before deciding UI direction.
+- Preserve the imported app's visible route map, route paths, navigation labels, page hierarchy, headings, section ordering, control surfaces, workflows, typography, theme tokens, and logo usage. Default assumption: zero intentional user-facing change.
+- Preserve the imported app's actual screen archetypes and concrete page contracts from source. If the source page is a calendar, keep it calendar-first. If it is a dense table workspace, keep that structure. If it is a real config form, keep the same form-driven surface. Do not swap one screen archetype for another just because it covers a similar business area.
+- Treat the imported frontend as the visual and information-architecture authority, and treat the source route/page files as translation targets. Read the active router/bootstrap, layout/navigation files, theme/root CSS files, key assets, and representative page files before deciding UI direction.
+- Port the source page structure and styling tokens directly. Do not paraphrase the source UI into new summaries, helper text, explanatory panels, or generic product copy.
+- When a user-noticeable UI difference is truly unavoidable, keep it minimal and log it explicitly in `migration-plan.json`, `migration-review.md`, and `migration-open-gaps.md`. Unrecorded drift is a fail.
 - Do not invent migration-themed copy such as `Imported App Migration`, `Migration slice`, or any similar framing.
+- No user-facing copy may mention imported, migrated, source, preserved, phase, CSV, seed, staging, readiness, review, or any equivalent provenance narrative unless the source app itself used that language.
 - Do not collapse the imported app into a narrow vertical slice just because the CSV exports cover only part of the data model.
-- Do not replace source-visible pages with generic hero cards, placeholder dashboards, or filler prose.
+- Do not replace source-visible pages with generic hero cards, placeholder dashboards, filler prose, summary cards, readiness panels, or generic review/status shells.
 - Do not keep legacy runtimes, back-compat handlers, or extra validator services just to make the migration look successful.
 - Remove template demo pages, placeholder copy, and template-only tests when they no longer match the imported product.
 - Use CSV rows from `.import/database/` as seed-data authority when present.
@@ -113,6 +119,7 @@ Rules:
 - `Migration build` creates any missing artifact only after deep source intake.
 - `Migration verify` fails if any required artifact is missing at verify start.
 - Update `migration-review.md` and `migration-open-gaps.md` after every meaningful implementation or verification pass.
+- The review and open-gaps ledgers must track every source-visible screen individually, plus any shared shell or runtime rows needed for context.
 - Do not replace the ledger tables in the templates with vague prose.
 - The first real grading pass is not allowed to declare zero gaps unless an adversarial pass is already recorded and it genuinely found no blocking drift.
 - If any critical rubric item fails, if the score threshold is missed, or if `migration-open-gaps.md` still contains ordinary migration drift, the task is not done.
@@ -124,9 +131,9 @@ Rules:
   - Migration plan and checklist
   - Template merge
   - Source-derived schema, routes, pages, and workflows
-  - Source-derived UI translation with near one-to-one screen fidelity
+  - Source-derived UI translation with route-by-route source-screen fidelity
   - Base Playwright verification
-  - First passing migration grade
+  - First passing migration grade with no unresolved user-visible drift
 - `Migration verify` is phase 2.
   - Reload phase-1 artifacts
   - Interactive full-app QA
@@ -138,8 +145,9 @@ Rules:
 Both phases must loop until the score threshold passes, all critical items pass, and no ordinary open gaps remain.
 Do not run the rubric a couple of times, notice it is still failing, and stop. The point of grading is to force more iteration. Keep fixing and re-grading until the result clears the passing bar with a strong score, roughly in the high-pass range rather than barely scraping by.
 
-Phase 1 already owns UI preservation. Do not defer meaningful UI fidelity to phase 2. By the end of phase 1, the migrated app should already be a near one-to-one translation of the source app's visible screens, structure, copy, controls, and styling direction, adapted only as needed for the new stack.
-Because the agent can read the source frontend code directly, treat the original UI implementation as translation input, not just inspiration. Port screen structure, route-level composition, component hierarchy, labels, actions, and style tokens as directly as the new stack allows. Do not redesign, summarize, or simplify screens that the source code already defines concretely.
+Phase 1 already owns exact UI preservation. Do not defer meaningful screen parity to phase 2. By the end of phase 1, the migrated app should already look and behave like the same app with only the runtime swapped.
+Because the agent can read the source frontend code directly, treat the original UI implementation as translation input, not inspiration. Port route-level composition, component ordering, labels, actions, filters, forms, tables, charts, empty states, and style tokens as directly as the new stack allows.
+A screen that is only visually close, only in the same business area, or explained with migration or provenance copy is a fail.
 
 ## Non-Negotiables
 
@@ -147,6 +155,7 @@ Because the agent can read the source frontend code directly, treat the original
 - Keep org context limited to presentation context, not product-authority context.
 - Keep the runtime on the fixed Customware stack.
 - Preserve `app/lib/trpc-provider.tsx` and `app/utils/error-logger.ts` when merging `client-only-spa` `app/`.
+- No shipped route or page may contain migration-aware narrative or provenance commentary.
 - Do not search outside the prepared workspace for alternate template instructions unless the workspace already contains an allowed clone.
 - Leave `.import/` source artifacts in place through phase 2 unless explicit task instructions say otherwise.
 - Fail with a concrete blocker rather than self-approving a weak migration.
