@@ -23,14 +23,16 @@ Rules:
 
 ## Required Order
 
-1. Read project instructions, `SKILL.md`, and this reference.
+1. Read project instructions, `SKILL.md`, this reference, and `.import/verification.json`.
 2. Create `.import/migration-checklist.md` using the contract below.
-3. Inspect `.import/project/`, `.import/database/`, `.import/domain/`, and `.import/domain-source.txt`.
+3. Create an initial `.import/migration-plan.json` shell with the required top-level fields, even if many values are still provisional.
+4. Inspect only the minimum source intake needed from `.import/project/`, `.import/database/`, and `.import/domain/` to identify the app name, core workflows, CSV tables, and major routes.
+5. Use `.import/domain-source.txt` only when it contains readable extracted text instead of raw binary/PDF object streams.
 4. Clone or inspect the `template-be-setup` reference repo if it is not already the working base.
 5. Copy `AGENTS.md` from `template-be-setup` into the target repo root.
 6. Re-read the copied root `AGENTS.md` before continuing.
 7. Ignore any `AGENTS.md` files from `.import/project/` or temporary `client-only-spa` clones.
-8. Build `.import/migration-plan.json` from the uploaded artifacts.
+8. Fill the migration plan from the uploaded artifacts.
 9. Merge template assets only after the source inventory and plan are clear.
 10. Create initial Drizzle schema/contracts from source entities and CSV tables.
 11. Run static validation relevant to setup.
@@ -42,6 +44,8 @@ Before the checklist and plan shells exist:
 - Limit inspection to `.import/project/`, `.import/database/`, `.import/domain/`, `.import/domain-source.txt`, and the template foundation files actually needed for merge decisions.
 - Prefer targeted evidence reads such as source routes, schema files, API handlers, CSV headers, and generated contract/type files over broad directory wandering.
 - Do not spend multiple turns hunting optional template dependencies before the checklist and migration plan exist.
+- Do not read the `migration_convert` reference before the checklist and plan shells exist.
+- Do not read broad target `app/` or `server/` internals before the checklist and plan shells exist, except for the smallest merge-critical files needed to preserve `app/lib/trpc-provider.tsx` and `app/utils/error-logger.ts`.
 
 After the checklist and plan shells exist:
 

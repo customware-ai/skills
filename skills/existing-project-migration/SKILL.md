@@ -69,6 +69,7 @@ If the task kind is unclear, read both references and determine which one matche
 - Fail rather than complete a task that cannot identify or preserve the imported app's core workflows.
 - Verify source-derived workflows, not generic template screens.
 - Create the required migration checklist and migration plan artifacts early, then keep them updated as the source of truth while working.
+- During `migration_setup`, do not read the `migration_convert` reference or broad target app/server internals until the checklist and plan files already exist with initial content.
 - Do not spend more than two consecutive turns on read-only exploration without either updating a required migration artifact, changing implementation files, or calling the explicit completion or failure command.
 - If the imported source remains too ambiguous to proceed after the required source intake, fail with a concrete summary instead of continuing exploratory loops.
 
