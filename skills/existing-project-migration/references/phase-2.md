@@ -23,6 +23,7 @@ Phase 2 must be driven to success.
 - Keep iterating until the migrated app has been verified thoroughly enough that phase 2 can honestly claim success, or fail with a concrete blocker that cannot be resolved from the available evidence and tools.
 - A phase 2 outcome is not successful if the app still has obvious broken workflows, missing critical coverage, or unexplained drift from the imported source.
 - A phase 2 outcome is not successful if the visible route map, navigation, headings, or styling language still look like a generic migration shell instead of the imported app.
+- A phase 2 outcome is not successful if the migrated pages still look like generic filler versions of the source pages instead of preserving the imported app's concrete layout blocks, controls, and visual identity.
 
 ## Required Order
 
@@ -71,6 +72,7 @@ At the start of verification, append these sections if they are not already pres
 - [ ] Compare behavior against `.import/` evidence when validating flows
 - [ ] Compare route map, navigation labels, and page hierarchy against the active source frontend
 - [ ] Compare theme tokens, typography, and layout framing against the active source frontend
+- [ ] Compare logo usage, nav sections, and representative page structures against the active source frontend
 - [ ] Record which workflow paths were verified
 - [ ] Record any skipped workflow with a concrete reason
 
@@ -89,6 +91,7 @@ At the start of verification, append these sections if they are not already pres
 - [ ] Confirm generated tables and seed data match source/database evidence
 - [ ] Confirm generated routes/pages match source workflow evidence
 - [ ] Confirm source-visible routes were not collapsed into a smaller generic app
+- [ ] Confirm source-visible pages were not reduced to generic filler cards or placeholder dashboards
 - [ ] Confirm no migration-themed user-facing copy replaced source product framing
 - [ ] Confirm no unrelated org/company domain replaced the imported app domain
 - [ ] Confirm completion summary cites source-derived workflows and verification

@@ -15,7 +15,7 @@ Complete phase 1 of the migration in one task:
 - add source-derived tests
 - use Playwright interactive verification to prove the migrated app works at a base level
 - leave the repo ready for phase 2 verification
-- preserve the imported app's visible route map, layout language, and styling direction instead of replacing it with a generic migration shell
+- preserve the imported app's visible route map, layout language, styling direction, and page-level structure instead of replacing it with a generic migration shell
 
 Phase 1 must be driven to success.
 
@@ -28,6 +28,8 @@ Phase 1 must be driven to success.
 - Do not be lazy about finishing the actual migration work. A repo that only partially reflects the imported app is not a successful phase 1 outcome.
 - Do not reduce the product to a narrow vertical slice when the source app clearly contains more visible routes, pages, or workflows. A reduced subset can be a sequencing tactic during implementation, but it is not a valid final phase 1 outcome.
 - Do not introduce migration-themed copy or generic dashboard framing in user-facing UI when the source app already provides product framing, route labels, and layout patterns to preserve.
+- Do not invent a new visual concept for the migrated app when the source frontend already provides the theme, logo, typography, navigation sections, and layout shell. Preserve those source decisions as closely as the target stack allows.
+- Do not use route-preservation as an excuse for shallow filler pages. If a visible source page exists, port its main layout blocks, headings, controls, and page intent instead of replacing it with generic placeholder metrics or prose.
 
 ## Output Contract While Working
 
@@ -49,7 +51,7 @@ Rules:
 2. Re-read the current root `AGENTS.md`; the working repo is already bootstrapped from `template-be-setup`.
 3. Inspect `.import/project/` deeply enough to find the real source root. Do not assume source files live directly under `.import/project/`; many imports will have one top-level folder such as `.import/project/<app-name>/...`.
 4. Inspect `.import/database/` deeply enough to find the real CSV root. Do not assume CSVs live directly under `.import/database/`; they may also sit under a top-level extracted folder.
-5. Inspect the actual frontend app, actual backend app, actual route/page files, actual API route files, actual schema/entity files, and the actual CSV headers plus representative rows before creating the plan.
+5. Inspect the actual frontend app, actual backend app, actual route/page files, actual API route files, actual schema/entity files, the active frontend router/bootstrap, the active layout/navigation component, the root CSS or theme-token files, key source assets, and the actual CSV headers plus representative rows before creating the plan.
 6. Identify the active source app from workspace manifests, app bootstraps, router files, page directories, layout/navigation files, and backend route registration. Do not confuse archived folders or helper packages with the live product.
 7. Read existing `.import/migration-checklist.md` and `.import/migration-plan.json` if they already exist. If either file is missing, create it only after the source intake above using the contracts below.
 8. Update the checklist and plan with initial content immediately after the deep source intake, even if some values are still provisional.
@@ -63,8 +65,9 @@ Rules:
 16. Create initial Drizzle schema, contracts, queries, services, router procedures, seed data, and implementation slices from source entities and CSV tables.
 17. Use CSV rows when present to seed SQLite. Do not replace row-backed CSV data with unrelated demo content.
 18. Port the imported app shell, navigation labels, primary routes, and core page hierarchy from the active source app. If some workflows have thinner data support, keep the routes and source-shaped UI with honest empty states or staged wiring instead of deleting them.
-19. Add source-derived tests, run build-task validation, and use Playwright interactive verification to prove the migrated app works at a base level.
-20. Leave `.import/`, the checklist, and the plan in place for phase 2.
+19. Preserve the active source frontend's concrete visual identity: logo usage, nav grouping, route labels, typography direction, root theme tokens, and page-level layout patterns. Do not swap these for a new generic shell.
+20. Add source-derived tests, run build-task validation, and use Playwright interactive verification to prove the migrated app works at a base level.
+21. Leave `.import/`, the checklist, and the plan in place for phase 2.
 
 Do not treat the first passing build or a partially rendered page as phase 1 completion. Phase 1 completes only when the migrated app is materially implemented, runs, and survives basic source-backed interactive verification.
 
@@ -112,7 +115,10 @@ Record:
 - likely product name
 - source routes and pages
 - active frontend root and active backend root
+- active frontend router/bootstrap file
 - source layout/navigation files
+- source theme-token or root CSS files
+- source brand assets and logos
 - API routes and handlers
 - entities and schema files
 - key workflows
@@ -169,6 +175,8 @@ Required top-level fields:
 - `sourceRoutes`
 - `sourceNavigation`
 - `sourcePages`
+- `sourceTheme`
+- `sourceBrandAssets`
 - `activeFrontendRoot`
 - `activeBackendRoot`
 - `sourceLayoutFiles`
@@ -236,6 +244,7 @@ Use this exact top-level section order:
 - [ ] Identify imported app name from zip evidence
 - [ ] Identify active frontend root, backend root, and live router files
 - [ ] Enumerate the full active source route map and navigation labels
+- [ ] Capture source theme tokens, brand assets, layout shell, and navigation sections
 - [ ] Identify primary source workflows from zip evidence
 - [ ] Identify source entities and integrations from zip evidence
 - [ ] Mark unreadable or low-confidence artifacts with warnings
@@ -274,6 +283,7 @@ Use this exact top-level section order:
 - [ ] Seed the generated SQLite database from uploaded CSV rows when present
 - [ ] Implement source-derived backend and frontend workflows
 - [ ] Preserve source navigation, route labels, and layout language
+- [ ] Preserve source theme, logo usage, and page-level layout structure
 - [ ] Add source-derived tests and validation targets
 - [ ] Use Playwright interactive verification for base-level app behavior
 - [ ] Keep build source-driven, not org-domain-driven

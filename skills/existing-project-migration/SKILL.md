@@ -4,7 +4,7 @@ license: MIT
 compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
 metadata:
   author: customware-ai
-  version: "1.7"
+  version: "1.8"
 description: >
   Use this skill for Customware existing-project migration tasks that convert uploaded
   `projects.zip`, `database.zip`, and `domain.zip` artifacts into the standard
@@ -67,8 +67,12 @@ If the task kind is unclear, read both exact reference paths above and determine
 - Treat `.import/project/` and `.import/database/` as the real extracted source authority, not as shallow placeholders. Inspect them thoroughly before making migration decisions.
 - Do not assume the extracted zip contents are flat. The imported source may sit under one top-level folder inside `.import/project/`, and the CSV files may also sit under a nested root folder inside `.import/database/`. Find the real source roots before planning or implementing.
 - Treat the imported frontend app as the visual authority. Preserve its route map, navigation structure, labels, typography, theme tokens, layout patterns, and page hierarchy unless the fixed Customware stack makes an exact copy impossible.
+- Read the active frontend router/bootstrap, layout/navigation component, root CSS or theme-token files, source assets, and representative major page files before proposing any UI direction. Those files are the visual and information-architecture authority.
+- If the imported frontend already uses a distinctive visual system or component stack, preserve that concrete direction. Do not replace it with a newly invented theme, shell, or layout concept.
 - Enumerate the full visible source app surface from the active frontend before planning implementation. Do not arbitrarily cap the route list, workflow list, or page list to a smaller subset such as “four or five workflows”.
 - Do not invent user-facing migration framing such as “Imported App Migration”, “Migration slice”, “Preserving the uploaded...”, or generic migration dashboards. The shipped app should look like the imported product, not like an AI migration demo.
+- Do not preserve route count with filler content alone. For each visible source route, port the core layout blocks, headings, navigation context, primary actions, and page intent from the source app. Use honest source-shaped empty states only when real data or integrations are unavailable.
+- Do not replace source page structure with generic metric cards, hero panels, placeholder dashboards, or generic prose unless that exact structure is already present in the imported frontend.
 - Do not collapse the imported product into a narrow vertical slice just because the CSV exports cover only part of the data model. If the source app exposes visible routes, pages, and workflows beyond the CSV-backed data, preserve those surfaces using the best available source-backed implementation, empty states, or staged integration wiring rather than deleting them.
 - Do not use “vertical slice”, “smallest slice”, “first slice”, or “reduced subset” reasoning to redefine the required phase-1 scope. You may sequence implementation internally, but the shipped phase-1 result must still preserve the imported product’s visible shell, route map, navigation, and core workflows.
 - Missing seed data is not permission to delete source-visible routes, navigation items, or product areas that are clearly present in `.import/project/`.
