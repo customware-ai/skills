@@ -11,9 +11,9 @@ Implement the imported product in the Customware full-stack target repo by follo
 1. Read project instructions, root `AGENTS.md`, `SKILL.md`, and this exact reference path.
 2. Read `.import/migration-plan.json`.
 3. Read `.import/migration-checklist.md` from setup, or fail if it is missing.
-4. Re-inspect source files for each workflow before implementing it.
-5. Extend and update `.import/migration-checklist.md` using the conversion sections below.
-6. Implement workflows in priority order from the migration plan.
+4. Extend and update `.import/migration-checklist.md` using the conversion sections below.
+5. Re-inspect only the source files needed for the top two workflows and the CSV-backed entities before implementing.
+6. Implement a source-backed vertical slice immediately after that bounded intake.
 7. Implement backend contracts, queries, services, router procedures, and Drizzle migrations from the source-derived entities.
 8. Implement frontend routes/pages/components from source-derived workflows.
 9. Add tests mapped to migration-plan verification targets.
@@ -21,6 +21,24 @@ Implement the imported product in the Customware full-stack target repo by follo
 11. Run automated validation.
 12. Clean up temporary migration work files only after source-derived verification succeeds.
 13. Complete only when source-derived verification targets pass or skipped items are explicitly justified.
+
+## Execution Budget
+
+After reading the plan and checklist:
+
+- Spend at most two turns on additional read-only source inspection before the first implementation edit.
+- Read only the files needed to implement the first vertical slice. Do not inspect every workflow before editing.
+- If more source context is needed, record the gap in the checklist and keep implementing the already-evidenced workflow.
+- If you cannot make a source-backed implementation edit after the bounded intake, fail the task with the missing evidence instead of continuing exploration.
+- Do not read generic template files unless they are directly needed for the next edit.
+
+First vertical slice requirements:
+
+- Replace the generic template landing page with the imported app name and source-derived navigation.
+- Implement at least two primary workflows from `.import/migration-plan.json`.
+- Wire those workflows through real target-stack code, not static screenshots or generic cards.
+- Use CSV-backed entities when available before inventing new persisted shapes.
+- Keep labels, statuses, and entity names recognizable from the uploaded source.
 
 ## Plan Authority
 
@@ -90,6 +108,7 @@ Rules:
 - If a required box cannot be checked, fail the task with the concrete blocker.
 - Remove `.import/migration-checklist.md` as the final successful cleanup step. Do not remove it before final verification passes.
 - Do not spend more than two consecutive turns on read-only exploration without either updating the checklist, implementing workflow code, writing tests, or calling the explicit failure command.
+- If the source intake exceeds two read-only turns after the checklist has conversion sections, stop reading and make the next action an implementation edit or task failure.
 
 ## Implementation Rules
 

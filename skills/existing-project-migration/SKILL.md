@@ -74,6 +74,8 @@ If the task kind is unclear, read both exact reference paths above and determine
 - During `migration_setup`, treat the current repo root `AGENTS.md` as the `template-be-setup` instructions when the repo has already been bootstrapped from `template-be-setup`; do not search outside `/workspace/development` for template files.
 - Do not spend more than two consecutive turns on read-only exploration without either updating a required migration artifact, changing implementation files, or calling the explicit completion or failure command.
 - If the imported source remains too ambiguous to proceed after the required source intake, fail with a concrete summary instead of continuing exploratory loops.
+- Treat more than two read-only turns after the migration plan is loaded as a task failure unless the next turn updates the checklist or edits implementation files.
+- Prefer a source-backed vertical slice over exhaustive migration analysis. Implement the smallest runnable version that preserves the primary source workflows, then iterate from tests and Playwright evidence.
 
 ## Completion Gate
 
