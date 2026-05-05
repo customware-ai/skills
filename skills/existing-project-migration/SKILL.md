@@ -28,6 +28,7 @@ This skill is for tech stack migration, not product redesign.
 - The runtime stack must change to the prepared Customware stack built from `template-be-setup` plus the required `client-only-spa` merge rule.
 
 Do not treat this task like a fresh app build, a domain reinterpretation, or a chance to simplify the product into a smaller generic dashboard.
+Do not encode expectations from any previous migration. This skill must work for whatever app the customer uploaded. Derive the preservation target fresh from the current imported source each time.
 
 ## Source Authority
 
@@ -80,6 +81,7 @@ These are hard rules.
 
 - This is a stack migration. Preserve the source product; replace the runtime foundation.
 - Preserve the imported app's visible route map, navigation labels, page hierarchy, major layout blocks, workflows, typography direction, theme tokens, and logo usage unless the fixed stack makes an exact copy impossible.
+- Preserve the imported app's actual screen archetypes from source. If the source page is a calendar, keep it calendar-first. If it is a dense table workspace, keep that structure. If it is a real config form, keep the form-driven structure. Do not swap one screen archetype for another just because they serve a similar business area.
 - Treat the imported frontend as the visual and information-architecture authority. Read the active router/bootstrap, layout/navigation files, theme/root CSS files, key assets, and representative page files before deciding UI direction.
 - Do not invent migration-themed copy such as `Imported App Migration`, `Migration slice`, or any similar framing.
 - Do not collapse the imported app into a narrow vertical slice just because the CSV exports cover only part of the data model.
@@ -88,6 +90,7 @@ These are hard rules.
 - Remove template demo pages, placeholder copy, and template-only tests when they no longer match the imported product.
 - Use CSV rows from `.import/database/` as seed-data authority when present.
 - Use the agent-owned review artifacts below as the enforcement layer. If the score fails or ordinary drift remains open, the phase is still open.
+- Judge fidelity against the current imported app only. Do not let lessons from earlier migrations become hidden product requirements for later ones.
 
 ## Required Enforcement Artifacts
 
@@ -121,6 +124,7 @@ Rules:
   - Migration plan and checklist
   - Template merge
   - Source-derived schema, routes, pages, and workflows
+  - Source-derived UI translation with near one-to-one screen fidelity
   - Base Playwright verification
   - First passing migration grade
 - `Migration verify` is phase 2.
@@ -133,6 +137,9 @@ Rules:
 
 Both phases must loop until the score threshold passes, all critical items pass, and no ordinary open gaps remain.
 Do not run the rubric a couple of times, notice it is still failing, and stop. The point of grading is to force more iteration. Keep fixing and re-grading until the result clears the passing bar with a strong score, roughly in the high-pass range rather than barely scraping by.
+
+Phase 1 already owns UI preservation. Do not defer meaningful UI fidelity to phase 2. By the end of phase 1, the migrated app should already be a near one-to-one translation of the source app's visible screens, structure, copy, controls, and styling direction, adapted only as needed for the new stack.
+Because the agent can read the source frontend code directly, treat the original UI implementation as translation input, not just inspiration. Port screen structure, route-level composition, component hierarchy, labels, actions, and style tokens as directly as the new stack allows. Do not redesign, summarize, or simplify screens that the source code already defines concretely.
 
 ## Non-Negotiables
 

@@ -93,6 +93,7 @@ Remove placeholder values from the template once real source evidence is availab
 - Update it after every meaningful implementation or verification pass.
 - Record the checklist score, failed item numbers, pass/fail call, verified workflows, and commands run.
 - The fidelity ledger must cite source evidence and current evidence.
+- For phase 1, treat source frontend code and source screenshots as first-class evidence for UI fidelity. Review the migrated screen against the source screen directly, not only at the domain/workflow level.
 - The adversarial table must contain five suspected drifts once the migration seems close.
 - If the review says `fail`, keep iterating.
 

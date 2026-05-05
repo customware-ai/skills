@@ -15,7 +15,7 @@ Phase 2 is the independent verification and hardening pass after phase 1.
 - earn a passing phase-2 grade
 - clean up temporary migration-only review artifacts only after the grade passes
 
-Phase 2 is not a quick smoke test. If real drift or runtime breakage is found, fix it and re-run the relevant checks.
+Phase 2 is not a quick smoke test. If real drift or runtime breakage is found, fix it and re-run the relevant checks. But phase 2 is hardening, not the first point where UI fidelity becomes important. Phase 1 should already have produced a close UI translation.
 
 ## Required Order
 
