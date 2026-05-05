@@ -1,24 +1,32 @@
-# Migration Setup Reference
+# Migration Build Reference
 
-Use this reference for the `migration_setup` task.
+Use this reference for the `migration_build` task.
 
 ## Goal
 
-Prepare the target repo for conversion by combining templates, installing the correct root instructions, and producing a source-driven migration plan before schema or app implementation proceeds.
+Prepare the target repo and fully migrate the imported product in one task:
+
+- build the migration plan
+- merge the template foundation
+- install the correct root instructions
+- create schema and contracts
+- seed from CSV rows when present
+- implement source-derived workflows
+- add source-derived tests
+- leave the repo ready for a separate QA verify task
 
 ## Output Contract While Working
 
-The following files are required working artifacts for setup:
+The following files are required working artifacts during the build task:
 
 - `.import/migration-checklist.md`
 - `.import/migration-plan.json`
 
 Rules:
 
-- Read both files near the start of setup if they already exist; create only the missing one(s) before broad template merge or dependency exploration.
-- Keep them populated continuously while working; they are not optional notes.
-- Do not treat them as extra docs. They are required migration state.
-- If either file is missing by the time setup reaches template merge or schema work, fail the task.
+- Read both files near the start of build if they already exist; create only the missing one(s) before broad exploration or template merge.
+- Keep them populated continuously while working; they are required migration state.
+- If either file is missing by the time build reaches template merge or implementation work, fail the task.
 - If the plan lacks the required top-level fields, at least one workflow, or at least one verification target, fail the task instead of continuing.
 
 ## Required Order
@@ -26,44 +34,24 @@ Rules:
 1. Read project instructions, `SKILL.md`, this exact reference path, and `.import/verification.json`.
 2. Read existing `.import/migration-checklist.md` and `.import/migration-plan.json` immediately; if either file is missing, create it using the contracts below.
 3. Update the checklist and plan with initial content before broad exploration, even if many values are still provisional.
-4. Inspect only the minimum source intake needed from `.import/project/`, `.import/database/`, and `.import/domain/` to identify the app name, core workflows, CSV tables, and major routes.
-5. Use `.import/domain-source.txt` only when it contains readable extracted text instead of raw binary/PDF object streams.
+4. Inspect only the minimum source intake needed from `.import/project/`, `.import/database/`, and `.import/domain/` to identify the app name, core workflows, CSV tables, major routes, and seed-data sources.
+5. Use `.import/domain-source.txt` only when it contains readable extracted text instead of raw binary or PDF object streams.
 6. Re-read the current root `AGENTS.md`; the working repo is already bootstrapped from `template-be-setup`.
 7. Ignore any `AGENTS.md` files from `.import/project/` or temporary `client-only-spa` clones.
 8. Fill the migration plan from the uploaded artifacts.
 9. Merge template assets only after the source inventory and plan are clear.
-10. Create initial Drizzle schema/contracts from source entities and CSV tables.
-11. Run static validation relevant to setup.
+10. Create initial Drizzle schema, contracts, queries, services, router procedures, seed data, and implementation slices from source entities and CSV tables.
+11. Add source-derived tests and run build-task validation.
+12. Leave the checklist and plan in place for the verify task.
 
-## Required Setup Scope
+## Execution Budget
 
-Before the checklist and plan shells exist with initial content:
+After the checklist and plan exist with initial content:
 
-- Limit inspection to `.import/project/`, `.import/database/`, `.import/domain/`, `.import/domain-source.txt`, and the template foundation files actually needed for merge decisions.
-- Prefer targeted evidence reads such as source routes, schema files, API handlers, CSV headers, and generated contract/type files over broad directory wandering.
-- Do not spend multiple turns hunting optional template dependencies before the checklist and migration plan exist.
-- Do not read the `migration_convert` reference before the checklist and plan shells exist.
-- Do not read broad target `app/` or `server/` internals before the checklist and plan shells exist, except for the smallest merge-critical files needed to preserve `app/lib/trpc-provider.tsx` and `app/utils/error-logger.ts`.
-
-After the checklist and plan shells exist with initial content:
-
-- Stop broad exploration once you have enough evidence to name the app, identify primary workflows, list CSV tables, and record warnings.
-- Move directly into plan completion, template merge, schema/contracts, and validation.
-
-## Missing Context Gating
-
-Fail the task with a concrete summary instead of continuing if any of the following remain unresolved after required source intake:
-
-- imported app identity cannot be determined from zip evidence
-- no primary workflows can be identified from source files
-- no usable entity/table evidence can be extracted from source code or CSVs
-- required checklist/plan fields cannot be populated without guessing
-
-If evidence is partial but usable:
-
-- continue with warnings
-- record each weak or missing area in `.import/migration-plan.json`
-- do not let org branding fill source-domain gaps
+- Spend at most two turns on additional read-only source inspection before the first implementation edit.
+- Read only the files needed to implement the first source-backed vertical slice. Do not inspect every workflow before editing.
+- If more source context is needed, record the gap in the checklist and keep implementing the already-evidenced workflow.
+- If you cannot make a source-backed implementation edit after the bounded intake, fail the task with the missing evidence instead of continuing exploration.
 
 ## AGENTS.md Rule
 
@@ -76,7 +64,6 @@ The root `AGENTS.md` for the migrated repo must come from `template-be-setup`.
 - Do not merge root instructions from the uploaded source project.
 - Do not copy `AGENTS.md` from `client-only-spa`.
 - Treat all imported `AGENTS.md` files as reference artifacts only.
-- After confirming the root instructions, follow root `AGENTS.md` for all later work.
 
 ## Source Inventory
 
@@ -84,7 +71,7 @@ Inspect the imported project before choosing schema or UI direction.
 
 Record:
 
-- app/package names
+- app and package names
 - likely product name
 - source routes and pages
 - API routes and handlers
@@ -92,7 +79,7 @@ Record:
 - key workflows
 - integrations
 - source tests or screenshots
-- auth/user model hints
+- auth or user model hints
 - important assets and branding in the source archive
 
 Use org brand files only for presentation context after the source product identity is known.
@@ -105,28 +92,31 @@ Record:
 
 - table names
 - columns
+- whether each CSV has data rows available for seeding
 - obvious primary keys
 - obvious foreign keys
-- enum/status columns
-- dates/timestamps
-- monetary/numeric columns
-- user/customer identity columns
+- enum or status columns
+- dates or timestamps
+- monetary or numeric columns
+- user or customer identity columns
 - missing or partial tables
 
 Do not fail because CSVs are incomplete if there is enough source code to infer the migration plan. Add warnings instead.
+
+If a CSV has rows, record that it must be used as seed data by the build task. Do not treat row-bearing CSVs as schema-only evidence.
 
 ## Domain Inventory
 
 Inspect `.import/domain/` and `.import/domain-source.txt`.
 
 - Use extracted readable text when available.
-- Treat raw PDF/object streams as low-confidence.
+- Treat raw PDF or object streams as low-confidence.
 - Do not let unreadable domain material override source code and CSV evidence.
-- Use org name, description, logo, colors, and brand tone only for visual/presentation context.
+- Use org name, description, logo, colors, and brand tone only for visual or presentation context.
 
 ## Migration Plan Contract
 
-Write `.import/migration-plan.json` before implementing schema/contracts.
+Write `.import/migration-plan.json` before broad implementation work.
 
 Required top-level fields:
 
@@ -139,6 +129,7 @@ Required top-level fields:
 - `sourceEntities`
 - `sourceIntegrations`
 - `csvTables`
+- `seedDataSources`
 - `proposedDrizzleTables`
 - `verificationTargets`
 - `warnings`
@@ -162,22 +153,32 @@ Each proposed table should include:
 - `relationships`
 - `warnings`
 
+Each seed data source should include:
+
+- `tableName`
+- `csvPath`
+- `rowCount`
+- `keyColumns`
+- `relationshipHints`
+- `seedUse`
+- `warnings`
+
 Keep the plan factual. If evidence is weak, write that explicitly in `warnings`.
 
 ## Working Checklist Contract
 
-Read existing `.import/migration-checklist.md` near the start of setup, or create it if missing, and update it as work proceeds.
+Read existing `.import/migration-checklist.md` near the start of build, or create it if missing, and update it as work proceeds.
 
 Use this exact top-level section order:
 
 ```md
 # Existing Project Migration Checklist
 
-## Context Reload
+## Build Context Reload
 - [ ] Read root AGENTS.md
 - [ ] Read existing-project-migration SKILL.md
-- [ ] Read migration setup reference
-- [ ] Read migration convert reference if needed for handoff shape
+- [ ] Read migration build reference
+- [ ] Read migration verify reference if needed for handoff shape
 
 ## Source Intake
 - [ ] Inventory .import/project source files
@@ -202,35 +203,39 @@ Use this exact top-level section order:
 - [ ] Write .import/migration-plan.json
 - [ ] Include source-backed workflows
 - [ ] Include source-backed entities and tables
+- [ ] Include CSV row-backed seed data sources when rows exist
 - [ ] Include verification targets for imported workflows
 - [ ] Include warnings and confidence
 
-## Template Setup
+## Template Foundation
 - [ ] Merge client-only-spa app files without copying .git metadata
 - [ ] Preserve template-be-setup backend wiring
 - [ ] Preserve app/lib/trpc-provider.tsx
 - [ ] Preserve app/utils/error-logger.ts
 - [ ] Remove temporary template clone leftovers
 
-## Setup Implementation
-- [ ] Create initial Drizzle schema/contracts from CSV/source evidence
-- [ ] Keep setup source-driven, not org-domain-driven
-- [ ] Run setup validation commands
+## Build Implementation
+- [ ] Create initial Drizzle schema and contracts from CSV/source evidence
+- [ ] Seed the generated SQLite database from uploaded CSV rows when present
+- [ ] Implement source-derived backend and frontend workflows
+- [ ] Add source-derived tests and validation targets
+- [ ] Keep build source-driven, not org-domain-driven
+- [ ] Run build-task validation commands
 
-## Setup Handoff
+## Verify Handoff
 - [ ] Summarize imported app name
 - [ ] Summarize detected workflows
 - [ ] Summarize proposed tables
-- [ ] Summarize warnings for convert
+- [ ] Summarize CSV seed data sources
+- [ ] Summarize remaining verify focus areas
 ```
 
 Rules:
 
 - Keep checkboxes concrete and continuously updated.
 - Add task-specific checkboxes only when a discovered requirement is real.
-- Do not remove `.import/migration-checklist.md` during setup. It is handoff state for `migration_convert`.
+- Do not remove `.import/migration-checklist.md` during build. It is handoff state for `migration_verify`.
 - Do not use the checklist to justify weak work; unchecked items must be completed or explained in the task failure summary.
-- Do not spend more than two consecutive turns on read-only exploration without checking or updating at least one concrete checklist item.
 
 ## Template Merge
 
@@ -246,18 +251,17 @@ When copying from `client-only-spa`:
 - remove any copied `.git` metadata
 - ignore client template `AGENTS.md`
 
-## Setup Validation
+## Build Validation
 
 Before completing:
 
 - `.import/migration-plan.json` exists and is source-driven
-- `.import/migration-checklist.md` exists and setup sections are fully checked or clearly failed
+- `.import/migration-checklist.md` exists and build sections are fully checked or clearly failed
 - root `AGENTS.md` is from `template-be-setup`
 - imported/client-template `AGENTS.md` files were not installed as root instructions
-- schema/contracts line up with source entities and CSVs
-- warnings are explicit for missing/low-confidence inputs
-- setup validation commands pass
+- schema, contracts, implementation, and tests line up with source entities and CSVs
+- row-bearing CSVs are recorded as seed sources in the migration plan and used by the build
+- warnings are explicit for missing or low-confidence inputs
+- build-task validation commands pass
 
-Completion summary must list the app name, detected workflows, proposed tables, root `AGENTS.md` source, and any warnings.
-
-Do not complete setup successfully unless the summary is an explicit pass over the checklist and plan contract.
+Completion summary must list the app name, detected workflows, proposed tables, seed-data sources, remaining verify focus areas, and any warnings.
