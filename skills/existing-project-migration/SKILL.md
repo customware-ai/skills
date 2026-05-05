@@ -4,7 +4,7 @@ license: MIT
 compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
 metadata:
   author: customware-ai
-  version: "1.8"
+  version: "1.9"
 description: >
   Use this skill for Customware existing-project migration tasks that convert uploaded
   `projects.zip`, `database.zip`, and `domain.zip` artifacts into the standard
@@ -76,6 +76,8 @@ If the task kind is unclear, read both exact reference paths above and determine
 - Do not collapse the imported product into a narrow vertical slice just because the CSV exports cover only part of the data model. If the source app exposes visible routes, pages, and workflows beyond the CSV-backed data, preserve those surfaces using the best available source-backed implementation, empty states, or staged integration wiring rather than deleting them.
 - Do not use “vertical slice”, “smallest slice”, “first slice”, or “reduced subset” reasoning to redefine the required phase-1 scope. You may sequence implementation internally, but the shipped phase-1 result must still preserve the imported product’s visible shell, route map, navigation, and core workflows.
 - Missing seed data is not permission to delete source-visible routes, navigation items, or product areas that are clearly present in `.import/project/`.
+- Treat template-only demo pages, leftover placeholder copy, and template test fixtures as disposable unless they are required runtime plumbing for the fixed Customware stack. The imported product, not the template demo surface, is what must survive.
+- Do not spend migration effort preserving or satisfying unrelated template unit tests, demo modules, or fake compatibility layers that are not part of the imported product. Remove or rewrite irrelevant template leftovers so validation reflects the migrated app instead of the template's old assumptions.
 - Keep the migration zip-driven.
 - Keep org context limited to brand presentation, not app-domain decisions.
 - Keep the target runtime on the fixed Customware full-stack template.

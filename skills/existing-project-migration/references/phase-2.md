@@ -24,6 +24,7 @@ Phase 2 must be driven to success.
 - A phase 2 outcome is not successful if the app still has obvious broken workflows, missing critical coverage, or unexplained drift from the imported source.
 - A phase 2 outcome is not successful if the visible route map, navigation, headings, or styling language still look like a generic migration shell instead of the imported app.
 - A phase 2 outcome is not successful if the migrated pages still look like generic filler versions of the source pages instead of preserving the imported app's concrete layout blocks, controls, and visual identity.
+- A phase 2 outcome is not successful if validation still depends on unrelated template tests, template demo routes, or fake compatibility layers that were kept only to satisfy the template rather than the imported product.
 
 ## Required Order
 
@@ -94,6 +95,7 @@ At the start of verification, append these sections if they are not already pres
 - [ ] Confirm source-visible pages were not reduced to generic filler cards or placeholder dashboards
 - [ ] Confirm no migration-themed user-facing copy replaced source product framing
 - [ ] Confirm no unrelated org/company domain replaced the imported app domain
+- [ ] Confirm no unrelated template demo tests or placeholder modules remain as completion crutches
 - [ ] Confirm completion summary cites source-derived workflows and verification
 
 ## Verify Cleanup
@@ -131,6 +133,7 @@ Interactive verification should be persistent, not ceremonial.
 - If behavior drifts from the imported source, keep iterating until the drift is removed or explicitly failed with evidence.
 
 Do not treat template smoke tests, generic dashboard tests, or unrelated happy paths as migration validation.
+Do not keep unrelated template test suites alive by bending the migrated app back toward the template's previous fake domain.
 Do not accept a run where only a subset of the source routes survived unless every omitted route has a source-backed blocker recorded in the checklist and completion summary.
 
 If you cannot reach source-derived verification or runnable implementation with the available evidence, fail with a concrete summary instead of looping in more source exploration.

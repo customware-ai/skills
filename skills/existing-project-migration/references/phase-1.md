@@ -30,6 +30,7 @@ Phase 1 must be driven to success.
 - Do not introduce migration-themed copy or generic dashboard framing in user-facing UI when the source app already provides product framing, route labels, and layout patterns to preserve.
 - Do not invent a new visual concept for the migrated app when the source frontend already provides the theme, logo, typography, navigation sections, and layout shell. Preserve those source decisions as closely as the target stack allows.
 - Do not use route-preservation as an excuse for shallow filler pages. If a visible source page exists, port its main layout blocks, headings, controls, and page intent instead of replacing it with generic placeholder metrics or prose.
+- Do not chase unrelated template leftovers during migration. If legacy template tests, demo pages, or placeholder modules fail after the imported app is wired in, remove or rewrite those irrelevant template artifacts so validation reflects the migrated product instead of the template's previous assumptions.
 
 ## Output Contract While Working
 
@@ -66,8 +67,9 @@ Rules:
 17. Use CSV rows when present to seed SQLite. Do not replace row-backed CSV data with unrelated demo content.
 18. Port the imported app shell, navigation labels, primary routes, and core page hierarchy from the active source app. If some workflows have thinner data support, keep the routes and source-shaped UI with honest empty states or staged wiring instead of deleting them.
 19. Preserve the active source frontend's concrete visual identity: logo usage, nav grouping, route labels, typography direction, root theme tokens, and page-level layout patterns. Do not swap these for a new generic shell.
-20. Add source-derived tests, run build-task validation, and use Playwright interactive verification to prove the migrated app works at a base level.
-21. Leave `.import/`, the checklist, and the plan in place for phase 2.
+20. Remove or rewrite leftover template demo code, placeholder copy, and template-only tests when they no longer match the imported product. Do not keep the template's previous app assumptions alive through fake compatibility layers.
+21. Add source-derived tests, run build-task validation, and use Playwright interactive verification to prove the migrated app works at a base level.
+22. Leave `.import/`, the checklist, and the plan in place for phase 2.
 
 Do not treat the first passing build or a partially rendered page as phase 1 completion. Phase 1 completes only when the migrated app is materially implemented, runs, and survives basic source-backed interactive verification.
 
@@ -284,6 +286,7 @@ Use this exact top-level section order:
 - [ ] Implement source-derived backend and frontend workflows
 - [ ] Preserve source navigation, route labels, and layout language
 - [ ] Preserve source theme, logo usage, and page-level layout structure
+- [ ] Remove or rewrite irrelevant template demo pages, copy, and tests
 - [ ] Add source-derived tests and validation targets
 - [ ] Use Playwright interactive verification for base-level app behavior
 - [ ] Keep build source-driven, not org-domain-driven
