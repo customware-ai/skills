@@ -1,17 +1,26 @@
-# Migration Verify Reference
+# Phase 2 Reference
 
 Use this reference for the `migration_verify` task.
 
 ## Goal
 
-Independently QA the migrated app after the main build task:
+Complete phase 2 of the migration after phase 1:
 
 - re-check the source-derived workflows against the built app
-- run interactive verification in the sandbox
+- use full-app interactive verification in the sandbox
 - confirm runtime or review startup works on a fresh SQLite database
-- add or repair missing Playwright end-to-end coverage for verified workflows
+- compare behavior against the import files and migration plan
+- add or repair basic but strong Playwright end-to-end coverage across the app pages and verified workflows
 - fix migration issues uncovered by QA
 - remove temporary migration checklist artifacts only after the app actually passes
+
+Phase 2 must be driven to success.
+
+- Do not stop at a quick smoke test, a single happy path, or a partial QA pass.
+- Do not give up after finding issues; fix them and re-run the relevant verification.
+- Do not be lazy about interactive testing, runtime checks, or end-to-end coverage.
+- Keep iterating until the migrated app has been verified thoroughly enough that phase 2 can honestly claim success, or fail with a concrete blocker that cannot be resolved from the available evidence and tools.
+- A phase 2 outcome is not successful if the app still has obvious broken workflows, missing critical coverage, or unexplained drift from the imported source.
 
 ## Required Order
 
@@ -22,10 +31,13 @@ Independently QA the migrated app after the main build task:
 5. Re-read the build warnings and verify focus areas from the checklist and plan.
 6. Run interactive verification quickly on the highest-priority source workflows.
 7. If verification fails, fix the repo and re-run the relevant checks.
-8. If a verified source workflow lacks end-to-end coverage, add or update the matching Playwright coverage.
-9. Run automated validation again after fixes.
-10. Remove `.import/migration-checklist.md` only after all required verify boxes are complete.
-11. Complete only when source-derived verification targets pass or skipped items are explicitly justified.
+8. Check the imported reference files when behavior looks suspicious or incomplete, then fix the repo and re-verify.
+9. If a verified source workflow or app page lacks end-to-end coverage, add or update the matching Playwright coverage.
+10. Run automated validation again after fixes.
+11. Remove `.import/migration-checklist.md` only after all required verify boxes are complete.
+12. Complete only when source-derived verification targets pass or skipped items are explicitly justified.
+
+Do not treat an initial runtime boot, a passing template test, or a superficial UI render as enough. Phase 2 completes only after full-app interactive verification, fixes, and coverage updates are done for the important source-backed flows.
 
 ## Execution Budget
 
@@ -34,6 +46,7 @@ After reading the plan and checklist:
 - Spend at most two turns on additional read-only inspection before the first interactive verification or code/test edit.
 - If the build looks obviously broken, move directly into the smallest fix needed to make verification meaningful.
 - If a workflow cannot be verified because the source evidence or runtime is insufficient, fail with a concrete blocker instead of looping in more exploration.
+- After verification starts, keep alternating between interactive testing, fixes, and coverage work until the verify checklist is complete. Do not stall in repeated observation-only loops.
 
 ## Working Checklist Contract
 
@@ -45,19 +58,20 @@ At the start of verification, append these sections if they are not already pres
 ## Verify Context Reload
 - [ ] Re-read root AGENTS.md
 - [ ] Re-read existing-project-migration SKILL.md
-- [ ] Re-read migration verify reference
+- [ ] Re-read phase 2 reference
 - [ ] Re-read .import/migration-plan.json
 - [ ] Re-read build warnings and verify handoff notes
 
 ## Interactive Verification
 - [ ] Use playwright-in-sandbox for interactive verification
 - [ ] Verify the highest-priority source workflows from the migration plan
+- [ ] Compare behavior against `.import/` evidence when validating flows
 - [ ] Record which workflow paths were verified
 - [ ] Record any skipped workflow with a concrete reason
 
 ## End-to-End Coverage
 - [ ] Inspect existing Playwright coverage against verified workflows
-- [ ] Add or repair missing end-to-end coverage for verified workflows
+- [ ] Add or repair missing end-to-end coverage for verified workflows and app pages
 - [ ] Avoid generic/template-only tests as completion evidence
 
 ## Runtime Readiness
@@ -76,6 +90,7 @@ At the start of verification, append these sections if they are not already pres
 - [ ] Remove temporary template clones
 - [ ] Remove temporary execution notes
 - [ ] Remove migration-checklist.md after all required boxes are complete
+- [ ] Leave `.import/` source artifacts in place unless explicit task instructions say otherwise
 - [ ] Leave only durable app/source artifacts required by the final repo
 ```
 
@@ -98,6 +113,12 @@ Required:
 - automated validation after any verification fixes
 - runtime or review startup verification on a fresh SQLite database
 
+Interactive verification should be persistent, not ceremonial.
+
+- If a flow breaks, inspect the source evidence, fix the app, and retry the flow.
+- If coverage is missing for a verified page or workflow, add it before completion.
+- If behavior drifts from the imported source, keep iterating until the drift is removed or explicitly failed with evidence.
+
 Do not treat template smoke tests, generic dashboard tests, or unrelated happy paths as migration validation.
 
 If you cannot reach source-derived verification or runnable implementation with the available evidence, fail with a concrete summary instead of looping in more source exploration.
@@ -114,6 +135,7 @@ Fail the task instead of completing if:
 - review or runtime boot cannot be made to work
 - validation only covers generic/template behavior
 - required checklist items remain unchecked
+- the app is still only partially verified when more meaningful QA and fixes were still possible
 
 ## Completion Summary
 

@@ -1,10 +1,10 @@
-# Migration Build Reference
+# Phase 1 Reference
 
 Use this reference for the `migration_build` task.
 
 ## Goal
 
-Prepare the target repo and fully migrate the imported product in one task:
+Complete phase 1 of the migration in one task:
 
 - build the migration plan
 - merge the template foundation
@@ -13,7 +13,16 @@ Prepare the target repo and fully migrate the imported product in one task:
 - seed from CSV rows when present
 - implement source-derived workflows
 - add source-derived tests
-- leave the repo ready for a separate QA verify task
+- use Playwright interactive verification to prove the migrated app works at a base level
+- leave the repo ready for phase 2 verification
+
+Phase 1 must be driven to success.
+
+- Do not stop at planning, partial migration, or a broken repo state.
+- Do not stop after only reading or only scaffolding.
+- Do not give up when the first implementation or verification attempt fails.
+- Keep iterating on code, schema, seed data, tests, and Playwright checks until the migrated app works at a basic source-backed level or a concrete blocker makes success impossible.
+- Do not be lazy about finishing the actual migration work. A repo that only partially reflects the imported app is not a successful phase 1 outcome.
 
 ## Output Contract While Working
 
@@ -40,9 +49,14 @@ Rules:
 7. Ignore any `AGENTS.md` files from `.import/project/` or temporary `client-only-spa` clones.
 8. Fill the migration plan from the uploaded artifacts.
 9. Merge template assets only after the source inventory and plan are clear.
-10. Create initial Drizzle schema, contracts, queries, services, router procedures, seed data, and implementation slices from source entities and CSV tables.
-11. Add source-derived tests and run build-task validation.
-12. Leave the checklist and plan in place for the verify task.
+10. Ensure the root `AGENTS.md` remains the `template-be-setup` instruction file. If a temporary template clone is needed inside `/workspace/development`, copy that template `AGENTS.md` to the repo root and ignore imported or client-template `AGENTS.md` files as root instructions.
+11. Clone `client-only-spa` into a temporary folder, remove its `.git` metadata, merge its `app/` contents into the current repo, and preserve `app/lib/trpc-provider.tsx` plus `app/utils/error-logger.ts`.
+12. Create initial Drizzle schema, contracts, queries, services, router procedures, seed data, and implementation slices from source entities and CSV tables.
+13. Use CSV rows when present to seed SQLite. Do not replace row-backed CSV data with unrelated demo content.
+14. Add source-derived tests, run build-task validation, and use Playwright interactive verification to prove the migrated app works at a base level.
+15. Leave `.import/`, the checklist, and the plan in place for phase 2.
+
+Do not treat the first passing build or a partially rendered page as phase 1 completion. Phase 1 completes only when the migrated app is materially implemented, runs, and survives basic source-backed interactive verification.
 
 ## Execution Budget
 
@@ -52,6 +66,7 @@ After the checklist and plan exist with initial content:
 - Read only the files needed to implement the first source-backed vertical slice. Do not inspect every workflow before editing.
 - If more source context is needed, record the gap in the checklist and keep implementing the already-evidenced workflow.
 - If you cannot make a source-backed implementation edit after the bounded intake, fail the task with the missing evidence instead of continuing exploration.
+- After the first implementation edit, keep moving between implementation, validation, and Playwright verification until the app works at a basic level. Do not stall in repeated read-only diagnosis.
 
 ## AGENTS.md Rule
 
@@ -177,8 +192,8 @@ Use this exact top-level section order:
 ## Build Context Reload
 - [ ] Read root AGENTS.md
 - [ ] Read existing-project-migration SKILL.md
-- [ ] Read migration build reference
-- [ ] Read migration verify reference if needed for handoff shape
+- [ ] Read phase 1 reference
+- [ ] Read phase 2 reference if needed for handoff shape
 
 ## Source Intake
 - [ ] Inventory .import/project source files
@@ -209,6 +224,7 @@ Use this exact top-level section order:
 
 ## Template Foundation
 - [ ] Merge client-only-spa app files without copying .git metadata
+- [ ] Keep template-be-setup AGENTS.md at the repo root
 - [ ] Preserve template-be-setup backend wiring
 - [ ] Preserve app/lib/trpc-provider.tsx
 - [ ] Preserve app/utils/error-logger.ts
@@ -219,6 +235,7 @@ Use this exact top-level section order:
 - [ ] Seed the generated SQLite database from uploaded CSV rows when present
 - [ ] Implement source-derived backend and frontend workflows
 - [ ] Add source-derived tests and validation targets
+- [ ] Use Playwright interactive verification for base-level app behavior
 - [ ] Keep build source-driven, not org-domain-driven
 - [ ] Run build-task validation commands
 
@@ -234,7 +251,7 @@ Rules:
 
 - Keep checkboxes concrete and continuously updated.
 - Add task-specific checkboxes only when a discovered requirement is real.
-- Do not remove `.import/migration-checklist.md` during build. It is handoff state for `migration_verify`.
+- Do not remove `.import/`, `.import/migration-checklist.md`, or `.import/migration-plan.json` during phase 1. They are required handoff state for `migration_verify`.
 - Do not use the checklist to justify weak work; unchecked items must be completed or explained in the task failure summary.
 
 ## Template Merge
@@ -263,5 +280,7 @@ Before completing:
 - row-bearing CSVs are recorded as seed sources in the migration plan and used by the build
 - warnings are explicit for missing or low-confidence inputs
 - build-task validation commands pass
+- basic Playwright interactive verification has been run against source-backed behavior, not only template boot
+- the repo is not left in a half-migrated or obviously broken state
 
 Completion summary must list the app name, detected workflows, proposed tables, seed-data sources, remaining verify focus areas, and any warnings.
