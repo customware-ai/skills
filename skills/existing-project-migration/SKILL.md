@@ -4,21 +4,30 @@ license: MIT
 compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
 metadata:
   author: customware-ai
-  version: "1.9"
+  version: "2.0"
 description: >
-  Use this skill for Customware existing-project migration tasks that convert uploaded
-  `projects.zip`, `database.zip`, and `domain.zip` artifacts into the standard
-  full-stack Customware target app. This skill is for phase 1 build migration work
-  and phase 2 verify migration work. The skill must be followed rigorously until the
-  assigned phase actually succeeds.
+  Use this skill for Customware existing-project migration tasks that move uploaded
+  customer apps from other builders into the standard Customware stack while
+  preserving the source product's routes, workflows, UI, UX, and styling as
+  closely as possible. This skill covers both `Migration build` and
+  `Migration verify` and includes self-grading quality gates that must pass
+  before the task can complete.
 ---
 
 # Existing Project Migration
 
-Use this skill for the two import migration tasks:
+## Core Idea
 
-- `Migration build`
-- `Migration verify`
+Re-read this `SKILL.md` after every compaction before continuing work. Do not assume conversational memory is sufficient.
+
+This skill is for tech stack migration, not product redesign.
+
+- The customer already has an app.
+- The job is to reorganize that app into the Customware stack.
+- The source product's routes, workflows, labels, layout shell, visual language, and styling direction should survive the migration as closely as practical.
+- The runtime stack must change to the prepared Customware stack built from `template-be-setup` plus the required `client-only-spa` merge rule.
+
+Do not treat this task like a fresh app build, a domain reinterpretation, or a chance to simplify the product into a smaller generic dashboard.
 
 ## Source Authority
 
@@ -26,12 +35,13 @@ The uploaded artifacts drive the migration.
 
 Priority:
 
-1. `.import/project/` from `projects.zip` is the primary source for product behavior, routes, UI, workflows, integrations, and business logic.
-2. `.import/database/` from `database.zip` is the primary source for persisted entities, table shape, schema inference, and seed data when CSV rows exist.
-3. `.import/domain/` and `.import/domain-source.txt` from `domain.zip` are supporting domain context.
-4. `.tasks/domain.md` and org name, description, logos, colors, and brand context are presentation context only.
+1. `.import/project/` from `projects.zip` is the primary authority for product behavior, routes, UI, workflows, integrations, and business logic.
+2. `.import/database/` from `database.zip` is the primary authority for persisted entities, schema inference, and seed data when CSV rows exist.
+3. `.import/domain/` and `.import/domain-source.txt` from `domain.zip` are supporting context only.
+4. `.tasks/domain.md` plus org name, org description, logos, colors, and brand context are low-authority presentation context only.
 
-Do not let org/company knowledge or `.tasks/domain.md` redefine the imported app's product domain, routes, workflows, entities, integrations, or schema.
+Do not let org/company knowledge or `.tasks/domain.md` redefine the imported product's domain, routes, workflows, schema, or product framing. This migration intentionally does not rely on the domain skill as product authority.
+While `.tasks/domain.md` may exist, treat it as effectively ignorable for product-definition decisions during migration. The real source of truth is the imported codebase in `.import/project/` plus the imported database files in `.import/database/`. Use domain material only if it helps clarify minor presentation context and never let it outrank source code or source data.
 
 ## Fixed Target Stack
 
@@ -47,71 +57,89 @@ Migrate into the prepared Customware full-stack target:
 - SQLite via `better-sqlite3`
 - Drizzle ORM and migrations
 
-Do not preserve the uploaded source app's original stack as the runtime stack.
+Do not preserve the uploaded source app's original runtime stack.
 
-## Required References
+## Required Phase References
 
-Read the reference for the current task before doing any work:
+Read the exact files for the active task before doing work.
 
-- `Migration build`: `.agents/skills/existing-project-migration/references/phase-1.md`
-- `Migration verify`: `.agents/skills/existing-project-migration/references/phase-2.md`
+- `Migration build`
+  - `.agents/skills/existing-project-migration/references/phase-1/overview.md`
+  - `.agents/skills/existing-project-migration/references/phase-1/artifacts.md`
+  - `.agents/skills/existing-project-migration/references/phase-1/grading.md`
+- `Migration verify`
+  - `.agents/skills/existing-project-migration/references/phase-2/overview.md`
+  - `.agents/skills/existing-project-migration/references/phase-2/artifacts.md`
+  - `.agents/skills/existing-project-migration/references/phase-2/grading.md`
 
-Do not infer alternate or underscore filenames.
-If the task kind is unclear, read both exact reference paths above and determine which one matches the active task text.
+If the task text is unclear, read both phase overview files first, determine which phase is active, then load the matching artifact and grading references.
 
-## Shared Rules
+## Critical Migration Invariant
 
-- Follow this skill rigorously. Do not stop halfway, do not give up early, and do not settle for partial progress when the assigned phase can still be completed.
-- Treat success as required. Keep working until the assigned phase either succeeds with evidence or fails with a concrete blocker that cannot be resolved from the repo, sandbox, source artifacts, or available tools.
-- Do not be lazy about source intake, implementation, testing, or verification. If the app is not working yet, the phase is not done.
-- Treat `.import/project/` and `.import/database/` as the real extracted source authority, not as shallow placeholders. Inspect them thoroughly before making migration decisions.
-- Do not assume the extracted zip contents are flat. The imported source may sit under one top-level folder inside `.import/project/`, and the CSV files may also sit under a nested root folder inside `.import/database/`. Find the real source roots before planning or implementing.
-- Treat the imported frontend app as the visual authority. Preserve its route map, navigation structure, labels, typography, theme tokens, layout patterns, and page hierarchy unless the fixed Customware stack makes an exact copy impossible.
-- Read the active frontend router/bootstrap, layout/navigation component, root CSS or theme-token files, source assets, and representative major page files before proposing any UI direction. Those files are the visual and information-architecture authority.
-- If the imported frontend already uses a distinctive visual system or component stack, preserve that concrete direction. Do not replace it with a newly invented theme, shell, or layout concept.
-- Enumerate the full visible source app surface from the active frontend before planning implementation. Do not arbitrarily cap the route list, workflow list, or page list to a smaller subset such as “four or five workflows”.
-- Do not invent user-facing migration framing such as “Imported App Migration”, “Migration slice”, “Preserving the uploaded...”, or generic migration dashboards. The shipped app should look like the imported product, not like an AI migration demo.
-- Do not preserve route count with filler content alone. For each visible source route, port the core layout blocks, headings, navigation context, primary actions, and page intent from the source app. Use honest source-shaped empty states only when real data or integrations are unavailable.
-- Do not replace source page structure with generic metric cards, hero panels, placeholder dashboards, or generic prose unless that exact structure is already present in the imported frontend.
-- Do not collapse the imported product into a narrow vertical slice just because the CSV exports cover only part of the data model. If the source app exposes visible routes, pages, and workflows beyond the CSV-backed data, preserve those surfaces using the best available source-backed implementation, empty states, or staged integration wiring rather than deleting them.
-- Do not use “vertical slice”, “smallest slice”, “first slice”, or “reduced subset” reasoning to redefine the required phase-1 scope. You may sequence implementation internally, but the shipped phase-1 result must still preserve the imported product’s visible shell, route map, navigation, and core workflows.
-- Missing seed data is not permission to delete source-visible routes, navigation items, or product areas that are clearly present in `.import/project/`.
-- Treat template-only demo pages, leftover placeholder copy, and template test fixtures as disposable unless they are required runtime plumbing for the fixed Customware stack. The imported product, not the template demo surface, is what must survive.
-- Do not spend migration effort preserving or satisfying unrelated template unit tests, demo modules, or fake compatibility layers that are not part of the imported product. Remove or rewrite irrelevant template leftovers so validation reflects the migrated app instead of the template's old assumptions.
+These are hard rules.
+
+- This is a stack migration. Preserve the source product; replace the runtime foundation.
+- Preserve the imported app's visible route map, navigation labels, page hierarchy, major layout blocks, workflows, typography direction, theme tokens, and logo usage unless the fixed stack makes an exact copy impossible.
+- Treat the imported frontend as the visual and information-architecture authority. Read the active router/bootstrap, layout/navigation files, theme/root CSS files, key assets, and representative page files before deciding UI direction.
+- Do not invent migration-themed copy such as `Imported App Migration`, `Migration slice`, or any similar framing.
+- Do not collapse the imported app into a narrow vertical slice just because the CSV exports cover only part of the data model.
+- Do not replace source-visible pages with generic hero cards, placeholder dashboards, or filler prose.
+- Do not keep legacy runtimes, back-compat handlers, or extra validator services just to make the migration look successful.
+- Remove template demo pages, placeholder copy, and template-only tests when they no longer match the imported product.
+- Use CSV rows from `.import/database/` as seed-data authority when present.
+- Use the agent-owned review artifacts below as the enforcement layer. If the score fails or ordinary drift remains open, the phase is still open.
+
+## Required Enforcement Artifacts
+
+These files are mandatory quality gates during migration:
+
+- `.import/migration-plan.json`
+- `.import/migration-checklist.md`
+- `.import/migration-review.md`
+- `.import/migration-open-gaps.md`
+
+Use these templates directly:
+
+- `.agents/skills/existing-project-migration/assets/templates/migration-plan.json`
+- `.agents/skills/existing-project-migration/assets/templates/migration-checklist.md`
+- `.agents/skills/existing-project-migration/assets/templates/migration-review.md`
+- `.agents/skills/existing-project-migration/assets/templates/migration-open-gaps.md`
+
+Rules:
+
+- `Migration build` creates any missing artifact only after deep source intake.
+- `Migration verify` fails if any required artifact is missing at verify start.
+- Update `migration-review.md` and `migration-open-gaps.md` after every meaningful implementation or verification pass.
+- Do not replace the ledger tables in the templates with vague prose.
+- The first real grading pass is not allowed to declare zero gaps unless an adversarial pass is already recorded and it genuinely found no blocking drift.
+- If any critical rubric item fails, if the score threshold is missed, or if `migration-open-gaps.md` still contains ordinary migration drift, the task is not done.
+
+## Phase Model
+
+- `Migration build` is phase 1.
+  - Deep source intake
+  - Migration plan and checklist
+  - Template merge
+  - Source-derived schema, routes, pages, and workflows
+  - Base Playwright verification
+  - First passing migration grade
+- `Migration verify` is phase 2.
+  - Reload phase-1 artifacts
+  - Interactive full-app QA
+  - Fresh-database runtime verification
+  - Playwright coverage repair or expansion
+  - Final passing migration grade
+  - Cleanup of temporary migration-only review artifacts
+
+Both phases must loop until the score threshold passes, all critical items pass, and no ordinary open gaps remain.
+Do not run the rubric a couple of times, notice it is still failing, and stop. The point of grading is to force more iteration. Keep fixing and re-grading until the result clears the passing bar with a strong score, roughly in the high-pass range rather than barely scraping by.
+
+## Non-Negotiables
+
 - Keep the migration zip-driven.
-- Keep org context limited to brand presentation, not app-domain decisions.
-- Keep the target runtime on the fixed Customware full-stack template.
-- Use an agent-owned checklist while working. Do not rely on external validators to decide migration quality.
-- Re-read this skill plus `.import/migration-checklist.md` and `.import/migration-plan.json` after any interruption or compaction before continuing work.
-- Treat unreadable or raw binary domain content as low-confidence supporting material.
-- Fail rather than complete a task that cannot identify or preserve the imported app's core workflows.
-- Verify source-derived workflows, not generic template screens.
-- Use CSV rows from `.import/database/` as seed data when present; do not replace real uploaded rows with unrelated demo data.
-- Treat existing `.import/migration-checklist.md` and `.import/migration-plan.json` as the source of truth when they are already present; only create them if missing.
-- During `migration_build`, treat the work as phase 1. Read any existing checklist and plan after the required deep source intake. If they are missing, create them only after the required deep source intake. Do not drift into broad target app/server internals until the checklist and plan exist with source-backed initial content.
-- During `migration_build`, do not read the phase-2 reference near the start of the task. Phase 1 should be planned from phase-1 requirements plus the imported artifacts. Only consult phase 2 near the end if a handoff detail is genuinely needed.
-- During `migration_build`, treat the current repo root `AGENTS.md` as the `template-be-setup` instructions when the repo has already been bootstrapped from `template-be-setup`; do not search outside `/workspace/development` for template files.
-- During `migration_build`, use Playwright interactive verification to prove the migrated app works at a base level before completing phase 1. Phase 1 is not done until the migrated app is actually runnable and basic source-backed flows have been exercised.
-- During `migration_build`, do not remove `.import/`, `.import/migration-checklist.md`, or `.import/migration-plan.json`; phase 2 must still use them.
-- During `migration_verify`, treat the work as phase 2. Focus on independent full-app runtime and interactive QA. If a missed end-to-end path is discovered, add or fix the corresponding Playwright coverage before completing. Phase 2 is not done until the app has been interactively verified more thoroughly and the remaining gaps have been fixed or explicitly failed.
-- Do not spend more than two consecutive turns on read-only exploration without either updating a required migration artifact, changing implementation or test files, or calling the explicit completion or failure command.
-- If the imported source remains too ambiguous to proceed after the required source intake, fail with a concrete summary instead of continuing exploratory loops.
-- Treat more than two read-only turns after the migration plan is loaded as a task failure unless the next turn updates the checklist, edits implementation files, or starts the required interactive verification.
-- Prefer focused, source-backed implementation over endless analysis, but keep the visible source app shell, route map, and product framing intact. Do not replace the imported product with a smaller generic dashboard.
-- If implementation or verification reveals breakage, keep iterating on code and tests instead of stopping at a diagnosis. Reading the problem is not completion.
-
-## Completion Gate
-
-Before completing a migration task, confirm:
-
-- The app domain comes from `.import/project/`, `.import/database/`, and `.import/domain/`.
-- Org branding was used only as presentation context.
-- The generated app is not generic and not based on unrelated org/company knowledge.
-- The generated app preserves the imported product's visible route map, navigation labels, and overall visual language at a meaningful level.
-- Validation covered source-derived workflows.
-- Any skipped workflow is listed with a concrete reason.
-- The working checklist is fully checked for this task.
-- The task did not stop at a partial or halfway state while unresolved runnable issues still remained.
-- `.import/` artifacts remain available through phase 2.
-- Temporary checklist or work files are cleaned up only at the end of `migration_verify` after verification succeeds.
-- If the checklist still has required unchecked items, do not complete successfully.
+- Keep org context limited to presentation context, not product-authority context.
+- Keep the runtime on the fixed Customware stack.
+- Preserve `app/lib/trpc-provider.tsx` and `app/utils/error-logger.ts` when merging `client-only-spa` `app/`.
+- Do not search outside the prepared workspace for alternate template instructions unless the workspace already contains an allowed clone.
+- Leave `.import/` source artifacts in place through phase 2 unless explicit task instructions say otherwise.
+- Fail with a concrete blocker rather than self-approving a weak migration.

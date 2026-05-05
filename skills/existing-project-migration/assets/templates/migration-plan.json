@@ -1,0 +1,67 @@
+{
+  "appName": "",
+  "sourceSummary": "",
+  "workflows": [
+    {
+      "id": "",
+      "name": "",
+      "sourceEvidence": [],
+      "entities": [],
+      "routesOrPages": [],
+      "apiRoutes": [],
+      "verification": [],
+      "sourceVisibleSurface": "",
+      "status": "planned",
+      "warnings": []
+    }
+  ],
+  "sourceRoutes": [],
+  "sourceNavigation": [],
+  "sourcePages": [],
+  "sourceTheme": {
+    "summary": "",
+    "tokens": [],
+    "typography": [],
+    "logos": []
+  },
+  "sourceBrandAssets": [],
+  "activeFrontendRoot": "",
+  "activeBackendRoot": "",
+  "sourceLayoutFiles": [],
+  "sourceApiRoutes": [],
+  "sourceEntities": [],
+  "sourceIntegrations": [],
+  "csvTables": [
+    {
+      "name": "",
+      "path": "",
+      "columns": [],
+      "rowCount": 0,
+      "notes": []
+    }
+  ],
+  "seedDataSources": [
+    {
+      "tableName": "",
+      "csvPath": "",
+      "rowCount": 0,
+      "keyColumns": [],
+      "relationshipHints": [],
+      "seedUse": "",
+      "warnings": []
+    }
+  ],
+  "preservationTargets": [],
+  "proposedDrizzleTables": [
+    {
+      "name": "",
+      "sourceEvidence": [],
+      "columns": [],
+      "relationships": [],
+      "warnings": []
+    }
+  ],
+  "verificationTargets": [],
+  "warnings": [],
+  "confidence": ""
+}
