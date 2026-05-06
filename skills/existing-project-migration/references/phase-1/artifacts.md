@@ -108,10 +108,11 @@ Remove placeholder values from the template once real source evidence is availab
 `migration-review.md` is the grading artifact.
 
 - Update it after every meaningful implementation or verification pass.
-- Record the checklist score, failed item numbers, pass/fail call, verified workflows, and commands run.
+- Record the checklist score, failed item numbers, pass/fail call, verified workflows, commands run, and the verification host or URL used.
 - The fidelity ledger must cite source evidence and current evidence.
 - Use one row per source-visible screen, plus shared shell or runtime rows when needed. Do not group unrelated screens into a single row.
 - For phase 1, treat source frontend code and source screenshots as first-class evidence for UI fidelity. Review the migrated screen against the source screen directly, not only at the domain/workflow level.
+- Record the first-user boot result explicitly: `/`, `/login`, seeded login, first landing page, and fatal console/runtime error status.
 - Any user-noticeable difference, even if it seems minor, must be called out under `Drift found`.
 - An intentional deviation is allowed only when the exact source evidence and stack reason are recorded.
 - The adversarial table must contain five suspected drifts once the migration seems close.
@@ -122,7 +123,7 @@ Remove placeholder values from the template once real source evidence is availab
 `migration-open-gaps.md` is the signoff-blocking ledger.
 
 - Every ordinary product drift, workflow gap, runtime gap, or user-visible UI difference belongs here until verified fixed.
-- Keep source-visible route loss, nav drift, structure drift, control-surface drift, copy drift, filler pages, style drift, seed-data issues, and runtime issues in this file until they are resolved.
+- Keep source-visible route loss, nav drift, structure drift, control-surface drift, copy drift, filler pages, style drift, seed-data issues, runtime issues, blank first-page issues, blank login issues, and fatal console/runtime boot issues in this file until they are resolved.
 - If a route exists but its section ordering, controls, labels, styling, or copy drift from source, keep that row open.
 - If a screen was replaced by summary cards, generic empty-state prose, or a review/status shell, keep that row open.
 - The first real grading pass must record the visible gaps it can see.

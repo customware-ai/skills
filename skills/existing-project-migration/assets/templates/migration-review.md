@@ -5,10 +5,13 @@
 - Source app:
 - Comparison pass number:
 - Review inputs:
+- Verification host or URL:
 - Checklist critical result: `pass` | `fail`
 - Checklist score:
 - Failed item numbers:
 - Verified workflows:
+- First-user boot result (`/`, `/login`, seeded login, first landing page):
+- Fatal console or runtime errors seen:
 - Commands run:
 - Pass/fail call:
 - Short rationale:
@@ -26,6 +29,7 @@ If a deviation is claimed as unavoidable, record the exact source evidence and s
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | App shell and branding |  |  |  |  |  |  |  |  |
 | Navigation and route map |  |  |  |  |  |  |  |  |
+| First-user boot and login flow |  |  |  |  |  |  |  |  |
 | Runtime and target stack |  |  |  |  |  |  |  |  |
 |  |  |  |  |  |  |  |  |  |
 
@@ -48,4 +52,5 @@ Do not replace this table with a narrative paragraph.
 - Why:
 - Are any source-visible drifts still unresolved?:
 - Are any user-visible UI or UX differences still unresolved?:
+- Did the real review or preview app boot cleanly for an unauthenticated user?:
 - Does this file still use the required ledger tables?:

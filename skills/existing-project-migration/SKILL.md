@@ -4,7 +4,7 @@ license: MIT
 compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
 metadata:
   author: customware-ai
-  version: "2.1"
+  version: "2.2"
 description: >
   Use this skill for Customware existing-project migration tasks that move uploaded
   customer apps from other builders into the standard Customware stack while
@@ -92,6 +92,9 @@ These are hard rules.
 - No user-facing copy may mention imported, migrated, source, preserved, phase, CSV, seed, staging, readiness, review, or any equivalent provenance narrative unless the source app itself used that language.
 - Do not collapse the imported app into a narrow vertical slice just because the CSV exports cover only part of the data model.
 - Do not replace source-visible pages with generic hero cards, placeholder dashboards, filler prose, summary cards, readiness panels, or generic review/status shells.
+- Interactive verification is always from the end-user perspective. Start from the first user-visible page on the actual review or preview host when that host exists, usually `/` while unauthenticated.
+- If a review or preview URL exists, localhost-only or debug-port-only verification is insufficient for signoff.
+- A blank first page, blank login page, failed seeded login, failed first in-app navigation, fatal console error, or hydration/runtime boot error is an automatic failure.
 - Do not keep legacy runtimes, back-compat handlers, or extra validator services just to make the migration look successful.
 - Remove template demo pages, placeholder copy, and template-only tests when they no longer match the imported product.
 - Use CSV rows from `.import/database/` as seed-data authority when present.
@@ -132,11 +135,11 @@ Rules:
   - Template merge
   - Source-derived schema, routes, pages, and workflows
   - Source-derived UI translation with route-by-route source-screen fidelity
-  - Base Playwright verification
+  - Base Playwright verification from the user perspective
   - First passing migration grade with no unresolved user-visible drift
 - `Migration verify` is phase 2.
   - Reload phase-1 artifacts
-  - Interactive full-app QA
+  - Interactive full-app QA from the user perspective
   - Fresh-database runtime verification
   - Playwright coverage repair or expansion
   - Final passing migration grade
@@ -156,6 +159,7 @@ A screen that is only visually close, only in the same business area, or explain
 - Keep the runtime on the fixed Customware stack.
 - Preserve `app/lib/trpc-provider.tsx` and `app/utils/error-logger.ts` when merging `client-only-spa` `app/`.
 - No shipped route or page may contain migration-aware narrative or provenance commentary.
+- No phase may pass if the real review or preview app boots to a blank screen or crashes before a user can reach login or the first post-login page.
 - Do not search outside the prepared workspace for alternate template instructions unless the workspace already contains an allowed clone.
 - Leave `.import/` source artifacts in place through phase 2 unless explicit task instructions say otherwise.
 - Fail with a concrete blocker rather than self-approving a weak migration.

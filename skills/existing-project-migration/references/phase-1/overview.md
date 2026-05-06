@@ -12,7 +12,7 @@ Phase 1 is the first full migration pass.
 - implement source-derived schema, data flows, routes, pages, and workflows
 - directly translate the source frontend route-by-route into the new stack with no intentional UI or UX change
 - preserve the source product's visible route map, navigation, shell, styling language, and concrete screen contracts
-- run base Playwright verification
+- run base user-perspective verification on the real app host
 - earn a passing phase-1 grade
 - leave the repo ready for phase 2
 
@@ -34,10 +34,13 @@ This is not a planning-only phase and not a vertical-slice phase. Phase 1 must e
 12. Seed from CSV rows when present. Do not replace row-backed data with unrelated demo data.
 13. Remove or rewrite conflicting template demo leftovers, placeholder copy, fake compatibility layers, and template-only tests.
 14. Run the relevant build or validation commands.
-15. Compare representative migrated screens directly against source code and screenshots before signoff. Fix visible drift before calling the phase close.
-16. Run Playwright interactive verification on the highest-priority source workflows and representative routes.
-17. Grade the migration against the phase-1 rubric, update the review and open-gaps artifacts, fix the failures, and re-grade until it passes.
-18. Leave `.import/`, `.import/migration-plan.json`, and any still-needed migration artifacts in place for phase 2.
+15. Determine the actual user-facing verification host. If the task provides a review or preview URL, use that. Do not treat localhost or an internal debug port as sufficient signoff evidence when an external host exists.
+16. Verify the real first-user flow while unauthenticated: open `/`, confirm a visible first page, confirm `/login` renders visibly when applicable, log in with seeded credentials, and confirm the first post-login landing page renders visibly.
+17. Fail immediately on blank screens, broken first paint, missing login surface, failed seeded login, failed first in-app navigation, hydration errors, or fatal console errors. Fix them before calling the phase close.
+18. Compare representative migrated screens directly against source code and screenshots before signoff. Fix visible drift before calling the phase close.
+19. Run Playwright interactive verification on the highest-priority source workflows and representative routes.
+20. Grade the migration against the phase-1 rubric, update the review and open-gaps artifacts, fix the failures, and re-grade until it passes.
+21. Leave `.import/`, `.import/migration-plan.json`, and any still-needed migration artifacts in place for phase 2.
 
 ## Execution Budget
 
@@ -59,5 +62,6 @@ Fail the task instead of completing if:
 - any source-visible screen is reinterpreted into a different screen type or generic substitute
 - any shipped UI still contains migration or provenance copy
 - any major source screen still differs in visible structure, controls, or copy without an explicit unavoidable blocker
+- the user-facing review or preview app boots blank, crashes on first paint, or cannot show login or the first post-login page
 - the app does not run and meaningful fixes are still possible but were not attempted
 - the phase-1 rubric still fails
