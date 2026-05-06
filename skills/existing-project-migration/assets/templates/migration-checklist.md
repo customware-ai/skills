@@ -35,12 +35,17 @@
 - [ ] Preserve page hierarchy, major layout blocks, and workflows
 - [ ] Preserve styling language, theme tokens, typography direction, and logos
 - [ ] Avoid migration-themed or generic filler UI
+- [ ] Run a pre-interactive code or screenshot fidelity pass for shared shell and every source-visible screen
+- [ ] Fix code-visible omissions before browser QA
 
 ## Phase 1 Interactive Verification
 - [ ] Determine the real review or preview host for phase-1 verification when available
 - [ ] Exercise `/`, `/login`, seeded login, and the first post-login landing page interactively
+- [ ] Confirm expected shared shell elements such as sidebar, navigation, and headers are visibly rendered where the source app had them
 - [ ] Visit every available migrated page route interactively
+- [ ] Confirm expected layout blocks and key controls are visibly rendered on each visited route
 - [ ] Exercise at least one basic page-native action on every visited route or record a blocker
+- [ ] Do not count hidden text or merely attached DOM nodes as interactive proof
 - [ ] Record the visited routes and exercised actions in `.import/migration-review.md`
 - [ ] Update `.import/migration-review.md` after each grading pass
 - [ ] Update `.import/migration-open-gaps.md` after each grading pass

@@ -35,7 +35,7 @@ This rubric is the phase-2 hard gate. Record the result in `.import/migration-re
 
 10. `CRITICAL` Phase 2 sanity-check verification started from the actual review or preview host when available, from the first user-visible page while unauthenticated. Localhost-only or debug-port-only evidence is insufficient when an external host exists.
 11. `CRITICAL` `/`, `/login`, seeded login, and the first post-login landing page render visibly with no blank screen, hydration failure, fatal console error, or runtime boot error.
-12. `CRITICAL` The phase-1 exhaustive interactive verification report was used as the route and workflow evidence baseline, and any route not rechecked in phase 2 still has trustworthy phase-1 evidence recorded.
+12. `CRITICAL` The phase-1 exhaustive interactive verification report and phase-1 pre-interactive code fidelity evidence were used as the route and workflow evidence baseline, and any route not rechecked in phase 2 still has trustworthy phase-1 evidence recorded.
 13. Representative high-risk or newly changed routes or workflows were sanity-checked interactively in phase 2, or explicitly blocked with reasons.
 14. Data-backed screens use seeded or imported data when available, or the original source screen chrome and control surface when data is sparse.
 15. The migrated app is not still a collapsed vertical slice when broader source evidence exists.
@@ -52,7 +52,7 @@ This rubric is the phase-2 hard gate. Record the result in `.import/migration-re
 
 21. `CRITICAL` Automated validation, unit tests, and Playwright end-to-end suites were re-run after the final fixes.
 22. `CRITICAL` Unit tests and Playwright end-to-end coverage exist or were repaired for the workflows and routes proven in phase 1, and the suites pass.
-23. `CRITICAL` `migration-review.md` records score, failed items, pass/fail call, verified workflows, commands run, the verification host or URL used, explicit first-user boot results, the phase-1 evidence relied on, and one row per verified source-visible screen or documented blocker.
+23. `CRITICAL` `migration-review.md` records score, failed items, pass/fail call, verified workflows, commands run, the verification host or URL used, explicit first-user boot results, the phase-1 evidence relied on including pre-interactive code fidelity evidence, and one row per verified source-visible screen or documented blocker.
 24. `CRITICAL` `migration-open-gaps.md` was updated after verification passes and no ordinary unresolved gap, including user-visible drift, boot/login failure, or missing automated coverage, remains open.
 25. The first real verify pass did not falsely declare zero gaps without adversarial review.
 26. The adversarial final pass evaluated at least five suspected route or screen drifts and either fixed them or justified them specifically.

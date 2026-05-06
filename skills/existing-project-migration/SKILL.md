@@ -4,7 +4,7 @@ license: MIT
 compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
 metadata:
   author: customware-ai
-  version: "2.3"
+  version: "2.4"
 description: >
   Use this skill for Customware existing-project migration tasks that move uploaded
   customer apps from other builders into the standard Customware stack while
@@ -87,12 +87,15 @@ These are hard rules.
 - Preserve the imported app's actual screen archetypes and concrete page contracts from source. If the source page is a calendar, keep it calendar-first. If it is a dense table workspace, keep that structure. If it is a real config form, keep the same form-driven surface. Do not swap one screen archetype for another just because it covers a similar business area.
 - Treat the imported frontend as the visual and information-architecture authority, and treat the source route/page files as translation targets. Read the active router/bootstrap, layout/navigation files, theme/root CSS files, key assets, and representative page files before deciding UI direction.
 - Port the source page structure and styling tokens directly. Do not paraphrase the source UI into new summaries, helper text, explanatory panels, or generic product copy.
+- Before any interactive verification pass, run a pre-interactive fidelity review directly against the source frontend code, migrated code, and any available source screenshots. Confirm the shared shell plus every source-visible screen still contains the expected layout blocks, headings, labels, controls, actions, tables, charts, forms, tabs, and style direction before opening the browser.
+- Treat code-visible omissions as failures before interactive QA. If the source code clearly shows a sidebar, navigation section, header, table, filter row, form block, chart, or other visible element and the migrated code does not preserve it, the phase is still open even if the page can technically render.
 - When a user-noticeable UI difference is truly unavoidable, keep it minimal and log it explicitly in `migration-plan.json`, `migration-review.md`, and `migration-open-gaps.md`. Unrecorded drift is a fail.
 - Do not invent migration-themed copy such as `Imported App Migration`, `Migration slice`, or any similar framing.
 - No user-facing copy may mention imported, migrated, source, preserved, phase, CSV, seed, staging, readiness, review, or any equivalent provenance narrative unless the source app itself used that language.
 - Do not collapse the imported app into a narrow vertical slice just because the CSV exports cover only part of the data model.
 - Do not replace source-visible pages with generic hero cards, placeholder dashboards, filler prose, summary cards, readiness panels, or generic review/status shells.
 - Interactive verification is always from the end-user perspective. Start from the first user-visible page on the actual review or preview host when that host exists, usually `/` while unauthenticated.
+- Interactive verification must prove visible parity, not just DOM existence. A route counts as covered only when the expected shell, layout blocks, and key controls are visibly rendered on screen and at least one basic page-native action works. Hidden text, detached UI, or merely attached DOM nodes do not count as success.
 - Phase 1 verification is exhaustive interactive QA, not broad automated suite authoring. Visit every available migrated page route from the user perspective, exercise at least one basic page-native action on each route, and cover common flows such as login, sign-out, navigation, search, filter, tabs, forms, detail views, and integration or configuration actions where those surfaces exist.
 - Automated unit tests and end-to-end suites belong primarily to phase 2. Phase 1 may add or repair tests only when needed to unblock the migration or interactive QA, but phase-1 signoff depends on exhaustive interactive evidence rather than automated suite breadth.
 - If a review or preview URL exists, localhost-only or debug-port-only verification is insufficient for signoff.
@@ -137,6 +140,7 @@ Rules:
   - Template merge
   - Source-derived schema, routes, pages, and workflows
   - Source-derived UI translation with route-by-route source-screen fidelity
+  - Pre-interactive adversarial self-grading against source code and screenshots before browser QA
   - Exhaustive interactive verification from the user perspective across every available migrated page route
   - First passing migration grade with no unresolved user-visible drift
 - `Migration verify` is phase 2.
@@ -159,6 +163,7 @@ Phase 2 should turn that evidence into durable unit and end-to-end coverage, do 
 Phase 1 already owns exact UI preservation. Do not defer meaningful screen parity to phase 2. By the end of phase 1, the migrated app should already look and behave like the same app with only the runtime swapped.
 Because the agent can read the source frontend code directly, treat the original UI implementation as translation input, not inspiration. Port route-level composition, component ordering, labels, actions, filters, forms, tables, charts, empty states, and style tokens as directly as the new stack allows.
 A screen that is only visually close, only in the same business area, or explained with migration or provenance copy is a fail.
+Do not wait for the browser pass to notice basic structural drift that the code already reveals. If the source app clearly has a persistent sidebar, navigation sections, a header block, a filter bar, a table, a form, or another major visible surface, confirm that the migrated code still contains it before the interactive pass.
 
 ## Non-Negotiables
 
@@ -168,6 +173,7 @@ A screen that is only visually close, only in the same business area, or explain
 - Preserve `app/lib/trpc-provider.tsx` and `app/utils/error-logger.ts` when merging `client-only-spa` `app/`.
 - No shipped route or page may contain migration-aware narrative or provenance commentary.
 - No phase may pass if the real review or preview app boots to a blank screen or crashes before a user can reach login or the first post-login page.
+- No phase may pass from attached-only or hidden-element checks. Verification evidence must show the expected UI is visibly rendered and usable from the user perspective.
 - Do not search outside the prepared workspace for alternate template instructions unless the workspace already contains an allowed clone.
 - Keep `.import/` and other temporary migration evidence through phase 1 and during phase-2 verification, then remove them in the final phase-2 cleanup step unless the task explicitly requires durable retention.
 - Fail with a concrete blocker rather than self-approving a weak migration.

@@ -10,12 +10,12 @@ This rubric is the phase-1 hard gate. Record the result in `.import/migration-re
 2. Judge source fidelity and runnable-state fidelity together. A pretty UI with missing workflows or unvisited routes fails. A working stack with generic filler UI also fails.
 3. Mark each item `pass` or `fail`.
 4. If any critical item fails, phase 1 fails immediately.
-5. Treat phase 1 as passed only when all critical items pass and at least `24/25` items pass.
+5. Treat phase 1 as passed only when all critical items pass and at least `26/27` items pass.
 6. Do not stop after only a few failed grading passes. A failing grade means more implementation and more verification work is required. Keep iterating until the score is comfortably in the passing range, not just near it.
 7. Apply this rubric against the currently imported app only. Do not import assumptions from previous migrations or previous customer apps.
 8. Automated unit and end-to-end suite authoring are not the main phase-1 gate. Add or repair tests only when needed to unblock the migration. The required phase-1 test surface is exhaustive interactive verification.
 
-## 25-Point Checklist
+## 27-Point Checklist
 
 ### A. Source Intake And Planning
 
@@ -53,14 +53,16 @@ This rubric is the phase-1 hard gate. Record the result in `.import/migration-re
 
 ### E. Verification And Readiness
 
-23. `CRITICAL` User-perspective verification was run from the actual review or preview host when available, starting unauthenticated from the first user-visible page. Localhost-only or debug-port-only evidence is insufficient when an external host exists.
-24. `CRITICAL` `/`, `/login`, seeded login, and the first post-login landing page render visibly with no blank screen, hydration failure, fatal console error, or runtime boot error.
-25. `CRITICAL` Every available migrated page route was visited interactively from the real user perspective, common flows such as login were completed, and at least one basic page-native action per route was exercised or explicitly blocked and recorded.
+23. `CRITICAL` Before browser QA, a pre-interactive fidelity self-grade compared source code, migrated code, and available source screenshots for every source-visible screen and shared shell element. Code-visible omissions were fixed before signoff.
+24. `CRITICAL` User-perspective verification was run from the actual review or preview host when available, starting unauthenticated from the first user-visible page. Localhost-only or debug-port-only evidence is insufficient when an external host exists.
+25. `CRITICAL` `/`, `/login`, seeded login, and the first post-login landing page render visibly with no blank screen, hydration failure, fatal console error, or runtime boot error, and the expected shared shell such as sidebar, navigation, or header is visibly present on routes where the source app had it.
+26. `CRITICAL` Every available migrated page route was visited interactively from the real user perspective, the expected layout blocks and key controls were visibly present on each route, common flows such as login were completed, and at least one basic page-native action per route was exercised or explicitly blocked and recorded.
+27. `CRITICAL` Interactive evidence did not rely on hidden text, merely attached DOM nodes, or other DOM-existence-only checks as proof that a route passed.
 
 ## What To Do On Failure
 
 - If a critical item fails, keep iterating.
-- If the score is below `24/25`, keep iterating.
+- If the score is below `26/27`, keep iterating.
 - If repeated grading passes still miss the target, keep using the failed items and open-gaps ledger as the next-fix queue instead of treating repeated failure as completion permission.
 - If the migration is close but fails on named gaps, update `migration-open-gaps.md`, fix those gaps, and re-grade.
-- Do not approve phase 1 from overall vibe, partial parity, broad workflow similarity, or a single passing smoke test.
+- Do not approve phase 1 from overall vibe, partial parity, broad workflow similarity, a single passing smoke test, or an attached-only DOM assertion.

@@ -12,6 +12,7 @@ Phase 1 is the first full migration pass.
 - implement source-derived schema, data flows, routes, pages, and workflows
 - directly translate the source frontend route-by-route into the new stack with no intentional UI or UX change
 - preserve the source product's visible route map, navigation, shell, styling language, and concrete screen contracts
+- prove code-level UI fidelity before browser QA by comparing source and migrated screens directly
 - run exhaustive user-perspective interactive verification on the real app host across every available migrated page route
 - earn a passing phase-1 grade
 - leave the repo ready for phase 2
@@ -33,15 +34,17 @@ This is not a planning-only phase and not a vertical-slice phase. Phase 1 must e
 11. When data is sparse or staged, keep the original screen chrome and control surface. Do not replace the page with generic summary cards, placeholder prose, or review/status shells.
 12. Seed from CSV rows when present. Do not replace row-backed data with unrelated demo data.
 13. Remove or rewrite conflicting template demo leftovers, placeholder copy, fake compatibility layers, and template-only tests.
-14. Run the relevant build or validation commands.
-15. Determine the actual user-facing verification host. If the task provides a review or preview URL, use that. Do not treat localhost or an internal debug port as sufficient signoff evidence when an external host exists.
-16. Verify the real first-user flow while unauthenticated: open `/`, confirm a visible first page, confirm `/login` renders visibly when applicable, log in with seeded credentials, and confirm the first post-login landing page renders visibly.
-17. Fail immediately on blank screens, broken first paint, missing login surface, failed seeded login, failed first in-app navigation, hydration errors, or fatal console errors. Fix them before calling the phase close.
-18. Compare representative migrated screens directly against source code and screenshots before signoff. Fix visible drift before calling the phase close.
-19. Run exhaustive user-perspective interactive verification on the real app host. Visit every available migrated page route, confirm it renders, and exercise at least one basic page-native action per route such as navigation, tab changes, search, filters, forms, details, buttons, or integration controls when those surfaces exist.
-20. Record the visited routes, the actions exercised, and any blocked routes or actions in the review and open-gaps artifacts.
-21. Grade the migration against the phase-1 rubric, update the review and open-gaps artifacts, fix the failures, and re-grade until it passes.
-22. Leave `.import/`, `.import/migration-plan.json`, and any still-needed migration artifacts in place for phase 2.
+14. Before browser QA, run a pre-interactive self-grade directly against source code, migrated code, and any available source screenshots. For every source-visible screen and shared shell element, confirm the required layout blocks, sidebar or navigation, headings, labels, controls, forms, tables, charts, tabs, and actions still exist in the migrated implementation. Fix code-visible drift first.
+15. Run the relevant build or validation commands.
+16. Determine the actual user-facing verification host. If the task provides a review or preview URL, use that. Do not treat localhost or an internal debug port as sufficient signoff evidence when an external host exists.
+17. Verify the real first-user flow while unauthenticated: open `/`, confirm a visible first page, confirm `/login` renders visibly when applicable, log in with seeded credentials, and confirm the first post-login landing page renders visibly together with the expected shared shell.
+18. Fail immediately on blank screens, broken first paint, missing login surface, missing shared shell, failed seeded login, failed first in-app navigation, hydration errors, or fatal console errors. Fix them before calling the phase close.
+19. Compare representative migrated screens directly against source code and screenshots before signoff. Fix visible drift before calling the phase close.
+20. Run exhaustive user-perspective interactive verification on the real app host. Visit every available migrated page route, confirm the expected shell, layout blocks, and key controls are visibly rendered, and exercise at least one basic page-native action per route such as navigation, tab changes, search, filters, forms, details, buttons, or integration controls when those surfaces exist.
+21. Do not treat hidden text, merely attached DOM nodes, or off-screen elements as proof that a route passed. Interactive coverage must prove the route is visibly usable from the user perspective.
+22. Record the visited routes, visible layout or control checks, actions exercised, and any blocked routes or actions in the review and open-gaps artifacts.
+23. Grade the migration against the phase-1 rubric, update the review and open-gaps artifacts, fix the failures, and re-grade until it passes.
+24. Leave `.import/`, `.import/migration-plan.json`, and any still-needed migration artifacts in place for phase 2.
 
 ## Execution Budget
 
@@ -63,7 +66,9 @@ Fail the task instead of completing if:
 - any source-visible screen is reinterpreted into a different screen type or generic substitute
 - any shipped UI still contains migration or provenance copy
 - any major source screen still differs in visible structure, controls, or copy without an explicit unavoidable blocker
+- the pre-interactive code or screenshot self-grade was skipped or did not confirm shared shell and per-screen structure before browser QA
 - every available migrated page route was not visited interactively, with at least one basic page-native action exercised or a concrete blocker recorded
+- interactive verification only proved attached DOM text or hidden elements instead of visibly rendered UI
 - the user-facing review or preview app boots blank, crashes on first paint, or cannot show login or the first post-login page
 - the app does not run and meaningful fixes are still possible but were not attempted
 - the phase-1 rubric still fails

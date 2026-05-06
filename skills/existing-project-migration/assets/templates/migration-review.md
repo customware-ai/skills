@@ -5,12 +5,15 @@
 - Source app:
 - Comparison pass number:
 - Review inputs:
+- Pre-interactive code fidelity pass:
+- Shared shell elements checked before browser QA:
 - Verification host or URL:
 - Checklist critical result: `pass` | `fail`
 - Checklist score:
 - Failed item numbers:
 - Verified workflows:
 - Routes visited interactively in this pass:
+- Visible layout or control markers checked in this pass:
 - Basic page-native actions exercised in this pass:
 - First-user boot result (`/`, `/login`, seeded login, first landing page):
 - Fatal console or runtime errors seen:
@@ -27,6 +30,7 @@ Do not replace this table with freeform prose.
 Each row must judge product fidelity, workflow fidelity, and stack/runtime fidelity together when relevant.
 Any user-noticeable difference must be called out under `Drift found`, even if it seems minor.
 If a deviation is claimed as unavoidable, record the exact source evidence and stack reason.
+If a visible source element such as sidebar, header, nav group, filter bar, form section, table, chart, or action row is missing, record it as drift even if other nearby text exists in the DOM.
 
 | Route or screen | Source evidence | Current evidence | Required source contract | What matches | Drift found | Severity (`blocking` or `non-blocking`) | Next fix | Resolved? |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -55,5 +59,6 @@ Do not replace this table with a narrative paragraph.
 - Why:
 - Are any source-visible drifts still unresolved?:
 - Are any user-visible UI or UX differences still unresolved?:
+- Did the pre-interactive code fidelity pass confirm shared shell and route-level structure before browser QA?:
 - Did the real review or preview app boot cleanly for an unauthenticated user?:
 - Does this file still use the required ledger tables?:
