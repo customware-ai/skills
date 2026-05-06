@@ -7,7 +7,7 @@ Delete or mark resolved items only after the fix is verified in a new run, scree
 Do not mark this file empty on the first real grading pass.
 Do not replace this ledger with a prose summary.
 If a route exists but still uses generic filler, keep that row open.
-If structure is correct but styling, product framing, copy, controls, or workflow behavior still drifts, keep that row open.
+If structure is correct but named sections, section order, section styling, product framing, copy, controls, or workflow behavior still drifts, keep that row open.
 If a page still uses summary cards, placeholder prose, or a review/status shell instead of the source screen structure, keep that row open.
 If a source-visible shared shell element such as the sidebar, nav grouping, header, or route-level control bar is missing or not visibly rendered, keep that row open.
 If a route was marked passed only because text was attached in the DOM while the visible UI was still wrong, keep that row open.

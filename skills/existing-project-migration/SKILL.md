@@ -4,7 +4,7 @@ license: MIT
 compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
 metadata:
   author: customware-ai
-  version: "2.4"
+  version: "2.6"
 description: >
   Use this skill for Customware existing-project migration tasks that move uploaded
   customer apps from other builders into the standard Customware stack while
@@ -25,7 +25,7 @@ This skill is for tech stack migration, not product redesign.
 
 - The customer already has an app.
 - The job is to reorganize that app into the Customware stack.
-- The source product's routes, workflows, labels, layout shell, visual language, and styling should survive as a source-faithful port. The default expectation is no intentional user-facing UI or UX change.
+- The source product's routes, workflows, labels, layout shell, page sections, section ordering, visual language, and styling should survive as a source-faithful port. The default expectation is no intentional user-facing UI or UX change.
 - The runtime stack must change to the prepared Customware stack built from `template-be-setup` plus the required `client-only-spa` merge rule.
 
 Do not treat this task like a fresh app build, a domain reinterpretation, or a chance to simplify the product into a smaller generic dashboard.
@@ -83,12 +83,14 @@ If the task text is unclear, read both phase overview files first, determine whi
 These are hard rules.
 
 - This is a stack migration. Preserve the source product; replace the runtime foundation.
-- Preserve the imported app's visible route map, route paths, navigation labels, page hierarchy, headings, section ordering, control surfaces, workflows, typography, theme tokens, and logo usage. Default assumption: zero intentional user-facing change.
+- Preserve the imported app's visible route map, route paths, navigation labels, page hierarchy, headings, page sections, section ordering, section styling, control surfaces, workflows, typography, theme tokens, and logo usage. Default assumption: zero intentional user-facing change.
 - Preserve the imported app's actual screen archetypes and concrete page contracts from source. If the source page is a calendar, keep it calendar-first. If it is a dense table workspace, keep that structure. If it is a real config form, keep the same form-driven surface. Do not swap one screen archetype for another just because it covers a similar business area.
 - Treat the imported frontend as the visual and information-architecture authority, and treat the source route/page files as translation targets. Read the active router/bootstrap, layout/navigation files, theme/root CSS files, key assets, and representative page files before deciding UI direction.
 - Port the source page structure and styling tokens directly. Do not paraphrase the source UI into new summaries, helper text, explanatory panels, or generic product copy.
-- Before any interactive verification pass, run a pre-interactive fidelity review directly against the source frontend code, migrated code, and any available source screenshots. Confirm the shared shell plus every source-visible screen still contains the expected layout blocks, headings, labels, controls, actions, tables, charts, forms, tabs, and style direction before opening the browser.
-- Treat code-visible omissions as failures before interactive QA. If the source code clearly shows a sidebar, navigation section, header, table, filter row, form block, chart, or other visible element and the migrated code does not preserve it, the phase is still open even if the page can technically render.
+- Before any interactive verification pass, run a pre-interactive fidelity review directly against the source frontend code, migrated code, and any available source screenshots. Confirm the shared shell plus every source-visible screen still contains the expected layout blocks, named sections, section order, headings, labels, controls, actions, tables, charts, forms, tabs, and style direction before opening the browser.
+- For each source-visible screen, extract the exact screen contract before implementation or grading. That contract must include exact button labels, tab labels, filter labels, section titles, table columns, key actions, named sections, and section order taken from the source app.
+- Treat code-visible omissions as failures before interactive QA. If the source code clearly shows a sidebar, navigation section, header, tab strip, table header, filter row, form block, chart block, action cluster, or other visible section and the migrated code does not preserve it, the phase is still open even if the page can technically render.
+- If any extracted exact contract item is missing, renamed, reordered, restyled beyond recognition, or replaced with a different surface without an explicit blocker, that grading pass fails. Use those failed exact items as the mandatory next-fix queue and keep iterating until the screen passes.
 - When a user-noticeable UI difference is truly unavoidable, keep it minimal and log it explicitly in `migration-plan.json`, `migration-review.md`, and `migration-open-gaps.md`. Unrecorded drift is a fail.
 - Do not invent migration-themed copy such as `Imported App Migration`, `Migration slice`, or any similar framing.
 - No user-facing copy may mention imported, migrated, source, preserved, phase, CSV, seed, staging, readiness, review, or any equivalent provenance narrative unless the source app itself used that language.
@@ -161,9 +163,10 @@ Phase 1 should produce the source-faithful app plus exhaustive user-perspective 
 Phase 2 should turn that evidence into durable unit and end-to-end coverage, do only a light sanity recheck interactively, and then leave the repo clean.
 
 Phase 1 already owns exact UI preservation. Do not defer meaningful screen parity to phase 2. By the end of phase 1, the migrated app should already look and behave like the same app with only the runtime swapped.
-Because the agent can read the source frontend code directly, treat the original UI implementation as translation input, not inspiration. Port route-level composition, component ordering, labels, actions, filters, forms, tables, charts, empty states, and style tokens as directly as the new stack allows.
+Because the agent can read the source frontend code directly, treat the original UI implementation as translation input, not inspiration. Port route-level composition, named page sections, section ordering, labels, actions, filters, forms, tables, charts, empty states, and style tokens as directly as the new stack allows.
 A screen that is only visually close, only in the same business area, or explained with migration or provenance copy is a fail.
-Do not wait for the browser pass to notice basic structural drift that the code already reveals. If the source app clearly has a persistent sidebar, navigation sections, a header block, a filter bar, a table, a form, or another major visible surface, confirm that the migrated code still contains it before the interactive pass.
+Do not wait for the browser pass to notice basic structural drift that the code already reveals. If the source app clearly has a persistent sidebar, navigation sections, a header block, a tab strip, a filter bar, a full table section, a table header band, a form section, or another major visible surface, confirm that the migrated code still contains it in roughly the same arrangement before the interactive pass.
+Per-screen grading must be concrete, not impressionistic. Compare the migrated screen against the extracted exact contract item by item, fail the round on mismatches, fix them, and re-grade until the screen passes.
 
 ## Non-Negotiables
 

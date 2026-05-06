@@ -19,6 +19,7 @@
 ## Migration Planning
 - [ ] Create or update `.import/migration-plan.json`
 - [ ] Record full source routes, pages, and workflows
+- [ ] Record named page sections and section order for each source-visible screen
 - [ ] Record seed data sources and proposed Drizzle tables
 - [ ] Record preservation targets, warnings, and verification targets
 
@@ -33,6 +34,7 @@
 - [ ] Preserve product name and domain framing from the imported source
 - [ ] Preserve visible route map and navigation labels
 - [ ] Preserve page hierarchy, major layout blocks, and workflows
+- [ ] Preserve named sections, section order, and section styling
 - [ ] Preserve styling language, theme tokens, typography direction, and logos
 - [ ] Avoid migration-themed or generic filler UI
 - [ ] Run a pre-interactive code or screenshot fidelity pass for shared shell and every source-visible screen
@@ -43,6 +45,7 @@
 - [ ] Exercise `/`, `/login`, seeded login, and the first post-login landing page interactively
 - [ ] Confirm expected shared shell elements such as sidebar, navigation, and headers are visibly rendered where the source app had them
 - [ ] Visit every available migrated page route interactively
+- [ ] Confirm expected named sections and section order are visibly rendered on each visited route
 - [ ] Confirm expected layout blocks and key controls are visibly rendered on each visited route
 - [ ] Exercise at least one basic page-native action on every visited route or record a blocker
 - [ ] Do not count hidden text or merely attached DOM nodes as interactive proof

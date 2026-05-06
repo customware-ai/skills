@@ -65,6 +65,14 @@ Each screen translation target must include:
 - `sourceFiles`
 - `sourceEvidence`
 - `requiredLayoutBlocks`
+- `requiredSections`
+- `requiredSectionOrder`
+- `requiredButtonLabels`
+- `requiredTabLabels`
+- `requiredFilterLabels`
+- `requiredSectionTitles`
+- `requiredTableColumns`
+- `requiredKeyActions`
 - `requiredControls`
 - `requiredCopy`
 - `requiredInteractions`
@@ -93,6 +101,10 @@ Each proposed table must include:
 
 Remove placeholder values from the template once real source evidence is available.
 
+- Each `requiredSections` entry must capture a named page section, where it appears on the page, which blocks and controls it contains, and what visual traits make it recognizably the same section as the source.
+- Use `requiredSectionOrder` to record the section sequence from top to bottom or left to right when that ordering is visible and meaningful in the source.
+- `requiredButtonLabels`, `requiredTabLabels`, `requiredFilterLabels`, `requiredSectionTitles`, `requiredTableColumns`, and `requiredKeyActions` must capture the exact visible screen contract for that route. Do not paraphrase these into general descriptions.
+
 ## Checklist Rules
 
 `migration-checklist.md` is the running execution gate.
@@ -111,14 +123,16 @@ Remove placeholder values from the template once real source evidence is availab
 
 - Update it after every meaningful implementation or verification pass.
 - Record the checklist score, failed item numbers, pass/fail call, verified workflows, commands run, and the verification host or URL used.
-- Record the pre-interactive fidelity pass explicitly, including which shared shell elements and route-level screen contracts were checked in code before browser QA.
+- Record the pre-interactive fidelity pass explicitly, including which shared shell elements, named sections, and route-level screen contracts were checked in code before browser QA.
+- Record which exact labels, titles, columns, and actions were checked for each screen before browser QA.
 - The fidelity ledger must cite source evidence and current evidence.
 - Use one row per source-visible screen, plus shared shell or runtime rows when needed. Do not group unrelated screens into a single row.
 - For phase 1, treat source frontend code and source screenshots as first-class evidence for UI fidelity. Review the migrated screen against the source screen directly, not only at the domain/workflow level.
 - Record the first-user boot result explicitly: `/`, `/login`, seeded login, first landing page, and fatal console/runtime error status.
-- Record the route-by-route interactive visit coverage explicitly, including the visible layout or control markers checked and the basic page-native action exercised on each visited route.
+- Record the route-by-route interactive visit coverage explicitly, including the visible section markers, layout or control markers checked, and the basic page-native action exercised on each visited route.
 - The phase-1 review must show that every available migrated page route was visited interactively or explicitly blocked.
 - If a route was treated as passed because text was only attached, hidden, or off-screen, record it as a failure instead of a pass.
+- If an exact extracted contract item such as a button label, tab label, filter label, section title, table column, or key action drifted from source, record it as a failure instead of smoothing it over as a close match.
 - Any user-noticeable difference, even if it seems minor, must be called out under `Drift found`.
 - An intentional deviation is allowed only when the exact source evidence and stack reason are recorded.
 - The adversarial table must contain five suspected drifts once the migration seems close.
@@ -129,7 +143,8 @@ Remove placeholder values from the template once real source evidence is availab
 `migration-open-gaps.md` is the signoff-blocking ledger.
 
 - Every ordinary product drift, workflow gap, runtime gap, or user-visible UI difference belongs here until verified fixed.
-- Keep source-visible route loss, nav drift, structure drift, missing shared shell elements, control-surface drift, copy drift, filler pages, style drift, seed-data issues, runtime issues, blank first-page issues, blank login issues, attached-only fake passes, and fatal console/runtime boot issues in this file until they are resolved.
+- Keep source-visible route loss, nav drift, structure drift, section-order drift, missing shared shell elements, control-surface drift, copy drift, filler pages, style drift, seed-data issues, runtime issues, blank first-page issues, blank login issues, attached-only fake passes, and fatal console/runtime boot issues in this file until they are resolved.
+- Keep exact-contract drift such as wrong button labels, wrong tab labels, wrong filter labels, wrong section titles, wrong table columns, or wrong key actions open here until verified fixed.
 - If a route was not visited interactively, or no page-native action was exercised on it yet, keep that gap open here until it is covered or explicitly blocked.
 - If a route exists but its section ordering, controls, labels, styling, or copy drift from source, keep that row open.
 - If a screen was replaced by summary cards, generic empty-state prose, or a review/status shell, keep that row open.

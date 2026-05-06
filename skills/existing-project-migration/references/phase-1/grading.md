@@ -23,7 +23,7 @@ This rubric is the phase-1 hard gate. Record the result in `.import/migration-re
 2. `CRITICAL` The visible source route map and navigation structure were recorded without shrinking the app to an arbitrary subset.
 3. Source shell, layout, representative pages, theme files, typography direction, and brand assets were inspected before major implementation choices.
 4. CSV tables, headers, representative rows, and seed-data authority were recorded before schema and seed decisions.
-5. `CRITICAL` Every source-visible screen has a recorded translation target with required layout blocks, controls, copy, interactions, and any allowed deviations.
+5. `CRITICAL` Every source-visible screen has a recorded translation target with required layout blocks, named sections, section order, exact button labels, tab labels, filter labels, section titles, table columns, key actions, controls, copy, interactions, and any allowed deviations.
 
 ### B. Migration Framing
 
@@ -42,21 +42,21 @@ This rubric is the phase-1 hard gate. Record the result in `.import/migration-re
 ### D. Product Fidelity
 
 14. `CRITICAL` Primary source routes and navigation labels are present in the migrated app, and direct route load works for them.
-15. `CRITICAL` The page hierarchy, shell, and major layout blocks match the source app at a meaningful route-by-route level.
+15. `CRITICAL` The page hierarchy, shell, named sections, section order, and major layout blocks match the source app at a meaningful route-by-route level.
 16. `CRITICAL` Source screen archetypes are preserved. Calendar pages stay calendar-first, workspace/table pages stay workspace-first, configuration pages stay configuration-first, analytics pages stay analytics-first, and so on according to the actual imported source.
 17. `CRITICAL` The visual language, theme tokens, typography direction, and logo usage meaningfully reflect the source app.
-18. `CRITICAL` No intentional UI or UX changes were introduced to headings, section ordering, controls, labels, filters, form fields, tables, charts, buttons, or page copy unless the deviation is explicitly recorded as unavoidable.
+18. `CRITICAL` No intentional UI or UX changes were introduced to headings, named sections, section ordering, section styling, controls, exact button labels, tab labels, filter labels, section titles, table columns, key actions, form fields, tables, charts, buttons, or page copy unless the deviation is explicitly recorded as unavoidable.
 19. `CRITICAL` Source route-level composition is directly translated from source frontend code rather than reinterpreted into summary cards, readiness panels, or review/status shells.
 20. `CRITICAL` Source-visible workflows are materially implemented and their concrete screen surfaces still exist.
-21. `CRITICAL` Any remaining user-visible drift is explicitly recorded per screen in the review and open-gaps artifacts. Nothing merely "close enough" is left implicit.
+21. `CRITICAL` Any remaining user-visible drift is explicitly recorded per screen in the review and open-gaps artifacts. Nothing merely "close enough" is left implicit, including exact label, title, column, and action drift.
 22. Data-thin screens still keep the original source screen chrome and control surface instead of being replaced by generic filler or prose.
 
 ### E. Verification And Readiness
 
-23. `CRITICAL` Before browser QA, a pre-interactive fidelity self-grade compared source code, migrated code, and available source screenshots for every source-visible screen and shared shell element. Code-visible omissions were fixed before signoff.
+23. `CRITICAL` Before browser QA, a pre-interactive fidelity self-grade compared source code, migrated code, and available source screenshots for every source-visible screen and shared shell element. Named sections, section order, exact labels, titles, columns, actions, and code-visible omissions were fixed before signoff.
 24. `CRITICAL` User-perspective verification was run from the actual review or preview host when available, starting unauthenticated from the first user-visible page. Localhost-only or debug-port-only evidence is insufficient when an external host exists.
 25. `CRITICAL` `/`, `/login`, seeded login, and the first post-login landing page render visibly with no blank screen, hydration failure, fatal console error, or runtime boot error, and the expected shared shell such as sidebar, navigation, or header is visibly present on routes where the source app had it.
-26. `CRITICAL` Every available migrated page route was visited interactively from the real user perspective, the expected layout blocks and key controls were visibly present on each route, common flows such as login were completed, and at least one basic page-native action per route was exercised or explicitly blocked and recorded.
+26. `CRITICAL` Every available migrated page route was visited interactively from the real user perspective, the expected named sections, section order, exact labels, titles, columns, layout blocks, and key controls were visibly present on each route, common flows such as login were completed, and at least one basic page-native action per route was exercised or explicitly blocked and recorded.
 27. `CRITICAL` Interactive evidence did not rely on hidden text, merely attached DOM nodes, or other DOM-existence-only checks as proof that a route passed.
 
 ## What To Do On Failure
@@ -64,5 +64,6 @@ This rubric is the phase-1 hard gate. Record the result in `.import/migration-re
 - If a critical item fails, keep iterating.
 - If the score is below `26/27`, keep iterating.
 - If repeated grading passes still miss the target, keep using the failed items and open-gaps ledger as the next-fix queue instead of treating repeated failure as completion permission.
+- If exact screen-contract items fail, treat those failed items as the mandatory next-fix queue and do not move on until the screen passes.
 - If the migration is close but fails on named gaps, update `migration-open-gaps.md`, fix those gaps, and re-grade.
 - Do not approve phase 1 from overall vibe, partial parity, broad workflow similarity, a single passing smoke test, or an attached-only DOM assertion.

@@ -25,6 +25,24 @@
       "sourceFiles": [],
       "sourceEvidence": [],
       "requiredLayoutBlocks": [],
+      "requiredSections": [
+        {
+          "name": "",
+          "requiredPosition": "",
+          "requiredBlocks": [],
+          "requiredControls": [],
+          "requiredCopy": [],
+          "requiredVisualTraits": [],
+          "warnings": []
+        }
+      ],
+      "requiredSectionOrder": [],
+      "requiredButtonLabels": [],
+      "requiredTabLabels": [],
+      "requiredFilterLabels": [],
+      "requiredSectionTitles": [],
+      "requiredTableColumns": [],
+      "requiredKeyActions": [],
       "requiredControls": [],
       "requiredCopy": [],
       "requiredInteractions": [],

@@ -25,7 +25,7 @@ This rubric is the phase-2 hard gate. Record the result in `.import/migration-re
 
 3. `CRITICAL` The visible route map matches the source app, direct route load works for the source-visible routes, or every omission has a concrete blocker recorded.
 4. `CRITICAL` Navigation labels and sections match the source app at a meaningful level.
-5. `CRITICAL` Page hierarchy, headings, section ordering, and major layout blocks match the source app's visible intent.
+5. `CRITICAL` Page hierarchy, headings, named sections, section ordering, and major layout blocks match the source app's visible intent.
 6. `CRITICAL` Source screen archetypes and concrete control surfaces still match the source app. Do not replace a calendar with a list, a config form with a generic status shell, a dense workspace with summary cards, or any equivalent source-shaped interaction model with a different pattern.
 7. `CRITICAL` The shell, theme, typography direction, and logo usage still reflect the source app instead of a generic template shell.
 8. `CRITICAL` No migration-themed copy, provenance copy, or generic imported-app framing remains.
