@@ -7,12 +7,13 @@ This rubric is the phase-1 hard gate. Record the result in `.import/migration-re
 ## Required Scoring Method
 
 1. Compare the migrated repo directly against `.import/project/`, `.import/database/`, and the migration plan.
-2. Judge source fidelity and runnable-state fidelity together. A pretty UI with missing workflows fails. A working stack with generic filler UI also fails.
+2. Judge source fidelity and runnable-state fidelity together. A pretty UI with missing workflows or unvisited routes fails. A working stack with generic filler UI also fails.
 3. Mark each item `pass` or `fail`.
 4. If any critical item fails, phase 1 fails immediately.
 5. Treat phase 1 as passed only when all critical items pass and at least `24/25` items pass.
 6. Do not stop after only a few failed grading passes. A failing grade means more implementation and more verification work is required. Keep iterating until the score is comfortably in the passing range, not just near it.
 7. Apply this rubric against the currently imported app only. Do not import assumptions from previous migrations or previous customer apps.
+8. Automated unit and end-to-end suite authoring are not the main phase-1 gate. Add or repair tests only when needed to unblock the migration. The required phase-1 test surface is exhaustive interactive verification.
 
 ## 25-Point Checklist
 
@@ -54,7 +55,7 @@ This rubric is the phase-1 hard gate. Record the result in `.import/migration-re
 
 23. `CRITICAL` User-perspective verification was run from the actual review or preview host when available, starting unauthenticated from the first user-visible page. Localhost-only or debug-port-only evidence is insufficient when an external host exists.
 24. `CRITICAL` `/`, `/login`, seeded login, and the first post-login landing page render visibly with no blank screen, hydration failure, fatal console error, or runtime boot error.
-25. Source-derived tests or runtime checks were added or updated for the migrated behavior, and remaining non-blocking warnings were recorded concretely in the migration artifacts.
+25. `CRITICAL` Every available migrated page route was visited interactively from the real user perspective, common flows such as login were completed, and at least one basic page-native action per route was exercised or explicitly blocked and recorded.
 
 ## What To Do On Failure
 

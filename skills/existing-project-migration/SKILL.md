@@ -4,7 +4,7 @@ license: MIT
 compatibility: Requires git, npm, Node.js, access to the prepared Customware migration workspace, and the extracted import artifacts under `.import/`.
 metadata:
   author: customware-ai
-  version: "2.2"
+  version: "2.3"
 description: >
   Use this skill for Customware existing-project migration tasks that move uploaded
   customer apps from other builders into the standard Customware stack while
@@ -93,6 +93,8 @@ These are hard rules.
 - Do not collapse the imported app into a narrow vertical slice just because the CSV exports cover only part of the data model.
 - Do not replace source-visible pages with generic hero cards, placeholder dashboards, filler prose, summary cards, readiness panels, or generic review/status shells.
 - Interactive verification is always from the end-user perspective. Start from the first user-visible page on the actual review or preview host when that host exists, usually `/` while unauthenticated.
+- Phase 1 verification is exhaustive interactive QA, not broad automated suite authoring. Visit every available migrated page route from the user perspective, exercise at least one basic page-native action on each route, and cover common flows such as login, sign-out, navigation, search, filter, tabs, forms, detail views, and integration or configuration actions where those surfaces exist.
+- Automated unit tests and end-to-end suites belong primarily to phase 2. Phase 1 may add or repair tests only when needed to unblock the migration or interactive QA, but phase-1 signoff depends on exhaustive interactive evidence rather than automated suite breadth.
 - If a review or preview URL exists, localhost-only or debug-port-only verification is insufficient for signoff.
 - A blank first page, blank login page, failed seeded login, failed first in-app navigation, fatal console error, or hydration/runtime boot error is an automatic failure.
 - Do not keep legacy runtimes, back-compat handlers, or extra validator services just to make the migration look successful.
@@ -135,18 +137,24 @@ Rules:
   - Template merge
   - Source-derived schema, routes, pages, and workflows
   - Source-derived UI translation with route-by-route source-screen fidelity
-  - Base Playwright verification from the user perspective
+  - Exhaustive interactive verification from the user perspective across every available migrated page route
   - First passing migration grade with no unresolved user-visible drift
 - `Migration verify` is phase 2.
   - Reload phase-1 artifacts
-  - Interactive full-app QA from the user perspective
+  - Reload phase-1 interactive QA evidence
+  - Brief user-perspective sanity recheck after verify fixes
   - Fresh-database runtime verification
-  - Playwright coverage repair or expansion
+  - Unit-test authoring or repair
+  - Playwright end-to-end coverage repair or expansion
   - Final passing migration grade
-  - Cleanup of temporary migration-only review artifacts
+  - Cleanup of `.import/`, Playwright outputs, and temporary migration-only artifacts as the last step
 
 Both phases must loop until the score threshold passes, all critical items pass, and no ordinary open gaps remain.
 Do not run the rubric a couple of times, notice it is still failing, and stop. The point of grading is to force more iteration. Keep fixing and re-grading until the result clears the passing bar with a strong score, roughly in the high-pass range rather than barely scraping by.
+
+Phase 1 is interactive-test-heavy. Phase 2 is automated-test-heavy.
+Phase 1 should produce the source-faithful app plus exhaustive user-perspective route coverage evidence.
+Phase 2 should turn that evidence into durable unit and end-to-end coverage, do only a light sanity recheck interactively, and then leave the repo clean.
 
 Phase 1 already owns exact UI preservation. Do not defer meaningful screen parity to phase 2. By the end of phase 1, the migrated app should already look and behave like the same app with only the runtime swapped.
 Because the agent can read the source frontend code directly, treat the original UI implementation as translation input, not inspiration. Port route-level composition, component ordering, labels, actions, filters, forms, tables, charts, empty states, and style tokens as directly as the new stack allows.
@@ -161,5 +169,5 @@ A screen that is only visually close, only in the same business area, or explain
 - No shipped route or page may contain migration-aware narrative or provenance commentary.
 - No phase may pass if the real review or preview app boots to a blank screen or crashes before a user can reach login or the first post-login page.
 - Do not search outside the prepared workspace for alternate template instructions unless the workspace already contains an allowed clone.
-- Leave `.import/` source artifacts in place through phase 2 unless explicit task instructions say otherwise.
+- Keep `.import/` and other temporary migration evidence through phase 1 and during phase-2 verification, then remove them in the final phase-2 cleanup step unless the task explicitly requires durable retention.
 - Fail with a concrete blocker rather than self-approving a weak migration.

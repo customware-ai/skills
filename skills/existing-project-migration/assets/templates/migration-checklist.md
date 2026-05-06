@@ -36,9 +36,12 @@
 - [ ] Preserve styling language, theme tokens, typography direction, and logos
 - [ ] Avoid migration-themed or generic filler UI
 
-## Base Verification
-- [ ] Run the app locally
-- [ ] Exercise the highest-priority source workflows with Playwright
+## Phase 1 Interactive Verification
+- [ ] Determine the real review or preview host for phase-1 verification when available
+- [ ] Exercise `/`, `/login`, seeded login, and the first post-login landing page interactively
+- [ ] Visit every available migrated page route interactively
+- [ ] Exercise at least one basic page-native action on every visited route or record a blocker
+- [ ] Record the visited routes and exercised actions in `.import/migration-review.md`
 - [ ] Update `.import/migration-review.md` after each grading pass
 - [ ] Update `.import/migration-open-gaps.md` after each grading pass
 - [ ] Reach a passing phase 1 grade
@@ -52,19 +55,20 @@
 - [ ] Re-read `.import/migration-plan.json`
 - [ ] Re-read build warnings and open gaps
 
-## Interactive Verification
-- [ ] Verify the highest-priority source workflows interactively
-- [ ] Verify representative secondary routes or workflows
-- [ ] Compare route map and navigation against the source frontend
-- [ ] Compare page hierarchy and major layout blocks against the source frontend
-- [ ] Compare theme, typography, shell, and logo usage against the source frontend
-- [ ] Record verified workflows and skipped workflows with reasons
+## Phase 2 Sanity Recheck
+- [ ] Re-read the phase-1 interactive verification evidence and open gaps
+- [ ] Recheck `/`, `/login`, seeded login, and the first post-login landing page on the real host
+- [ ] Sanity-check the highest-risk or newly changed routes after phase-2 fixes
+- [ ] Compare route map and navigation against the source frontend and phase-1 report
+- [ ] Compare page hierarchy, shell, and major layout blocks against the source frontend and phase-1 report
+- [ ] Record rechecked workflows and skipped workflows with reasons
 
 ## Runtime And Coverage
 - [ ] Confirm runtime or review startup works on a fresh SQLite database
 - [ ] Confirm migrations and seed paths work on a fresh database
-- [ ] Add or repair Playwright coverage for verified workflows
-- [ ] Re-run automated validation after fixes
+- [ ] Add or repair unit tests for verified workflows
+- [ ] Add or repair Playwright end-to-end coverage for verified workflows
+- [ ] Re-run automated validation and automated test suites after fixes
 
 ## Final Drift Check
 - [ ] Confirm the migrated app still matches the imported product framing
@@ -76,7 +80,6 @@
 
 ## Verify Cleanup
 - [ ] Remove temporary template clones or execution notes
-- [ ] Remove `.import/migration-checklist.md` after final pass if cleanup is expected
-- [ ] Remove `.import/migration-review.md` after final pass if cleanup is expected
-- [ ] Remove `.import/migration-open-gaps.md` after final pass if cleanup is expected
-- [ ] Leave `.import/` source artifacts and durable migration records as instructed
+- [ ] Remove generated Playwright screenshots, traces, videos, and other temporary verification output
+- [ ] Remove `.import/` after final pass unless explicit instructions require retaining it
+- [ ] Leave only durable application code, tests, and intentional repo files

@@ -99,6 +99,7 @@ Remove placeholder values from the template once real source evidence is availab
 
 - Update it continuously, not only at the end.
 - Per-screen translation work cannot be hand-waved. If a source-visible screen has no checklist coverage or blocker note, phase 1 is still open.
+- Every available migrated page route also needs interactive visit coverage or an explicit blocker note. Partial smoke-test coverage is not enough for phase 1.
 - Do not mark verify-only sections complete during phase 1 unless that work truly happened.
 - If a required box cannot be checked, record the blocker explicitly.
 - If the checklist says the app still has open migration drift, the phase is still open.
@@ -113,6 +114,8 @@ Remove placeholder values from the template once real source evidence is availab
 - Use one row per source-visible screen, plus shared shell or runtime rows when needed. Do not group unrelated screens into a single row.
 - For phase 1, treat source frontend code and source screenshots as first-class evidence for UI fidelity. Review the migrated screen against the source screen directly, not only at the domain/workflow level.
 - Record the first-user boot result explicitly: `/`, `/login`, seeded login, first landing page, and fatal console/runtime error status.
+- Record the route-by-route interactive visit coverage explicitly, including the basic page-native action exercised on each visited route.
+- The phase-1 review must show that every available migrated page route was visited interactively or explicitly blocked.
 - Any user-noticeable difference, even if it seems minor, must be called out under `Drift found`.
 - An intentional deviation is allowed only when the exact source evidence and stack reason are recorded.
 - The adversarial table must contain five suspected drifts once the migration seems close.
@@ -124,6 +127,7 @@ Remove placeholder values from the template once real source evidence is availab
 
 - Every ordinary product drift, workflow gap, runtime gap, or user-visible UI difference belongs here until verified fixed.
 - Keep source-visible route loss, nav drift, structure drift, control-surface drift, copy drift, filler pages, style drift, seed-data issues, runtime issues, blank first-page issues, blank login issues, and fatal console/runtime boot issues in this file until they are resolved.
+- If a route was not visited interactively, or no page-native action was exercised on it yet, keep that gap open here until it is covered or explicitly blocked.
 - If a route exists but its section ordering, controls, labels, styling, or copy drift from source, keep that row open.
 - If a screen was replaced by summary cards, generic empty-state prose, or a review/status shell, keep that row open.
 - The first real grading pass must record the visible gaps it can see.

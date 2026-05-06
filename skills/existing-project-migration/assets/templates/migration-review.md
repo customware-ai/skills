@@ -10,8 +10,11 @@
 - Checklist score:
 - Failed item numbers:
 - Verified workflows:
+- Routes visited interactively in this pass:
+- Basic page-native actions exercised in this pass:
 - First-user boot result (`/`, `/login`, seeded login, first landing page):
 - Fatal console or runtime errors seen:
+- Automated test suites run:
 - Commands run:
 - Pass/fail call:
 - Short rationale:

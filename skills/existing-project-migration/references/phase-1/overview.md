@@ -12,7 +12,7 @@ Phase 1 is the first full migration pass.
 - implement source-derived schema, data flows, routes, pages, and workflows
 - directly translate the source frontend route-by-route into the new stack with no intentional UI or UX change
 - preserve the source product's visible route map, navigation, shell, styling language, and concrete screen contracts
-- run base user-perspective verification on the real app host
+- run exhaustive user-perspective interactive verification on the real app host across every available migrated page route
 - earn a passing phase-1 grade
 - leave the repo ready for phase 2
 
@@ -38,9 +38,10 @@ This is not a planning-only phase and not a vertical-slice phase. Phase 1 must e
 16. Verify the real first-user flow while unauthenticated: open `/`, confirm a visible first page, confirm `/login` renders visibly when applicable, log in with seeded credentials, and confirm the first post-login landing page renders visibly.
 17. Fail immediately on blank screens, broken first paint, missing login surface, failed seeded login, failed first in-app navigation, hydration errors, or fatal console errors. Fix them before calling the phase close.
 18. Compare representative migrated screens directly against source code and screenshots before signoff. Fix visible drift before calling the phase close.
-19. Run Playwright interactive verification on the highest-priority source workflows and representative routes.
-20. Grade the migration against the phase-1 rubric, update the review and open-gaps artifacts, fix the failures, and re-grade until it passes.
-21. Leave `.import/`, `.import/migration-plan.json`, and any still-needed migration artifacts in place for phase 2.
+19. Run exhaustive user-perspective interactive verification on the real app host. Visit every available migrated page route, confirm it renders, and exercise at least one basic page-native action per route such as navigation, tab changes, search, filters, forms, details, buttons, or integration controls when those surfaces exist.
+20. Record the visited routes, the actions exercised, and any blocked routes or actions in the review and open-gaps artifacts.
+21. Grade the migration against the phase-1 rubric, update the review and open-gaps artifacts, fix the failures, and re-grade until it passes.
+22. Leave `.import/`, `.import/migration-plan.json`, and any still-needed migration artifacts in place for phase 2.
 
 ## Execution Budget
 
@@ -62,6 +63,7 @@ Fail the task instead of completing if:
 - any source-visible screen is reinterpreted into a different screen type or generic substitute
 - any shipped UI still contains migration or provenance copy
 - any major source screen still differs in visible structure, controls, or copy without an explicit unavoidable blocker
+- every available migrated page route was not visited interactively, with at least one basic page-native action exercised or a concrete blocker recorded
 - the user-facing review or preview app boots blank, crashes on first paint, or cannot show login or the first post-login page
 - the app does not run and meaningful fixes are still possible but were not attempted
 - the phase-1 rubric still fails
