@@ -41,6 +41,7 @@ Set or verify:
 - chart/status colors when used
 
 Map tokens by role. Do not copy brand colors into every variable.
+Foreground tokens must be derived for readability, not copied from the brand palette. Every `*-foreground` token must have clear contrast against its paired background token.
 If the selected domain skill does not define a sharper or specific radius system, set `--radius` and component radii to a clearly rounded modern default rather than timid enterprise values.
 For CPQ, CRM, trades, and similar business/domain skills, preserve the selected skill's required product structure while enforcing the theme rules: brand-aware tokens, actual logo usage, airy spacing, strong input contrast, rounded controls, soft/tight shadows, cardless defaults, and authored composition where the domain skill leaves room.
 Use theme tokens to create a cohesive, vivid, authored aesthetic rather than a neutral default.
@@ -72,7 +73,9 @@ Set `--input` so it is visibly lighter than `--background` in light mode and vis
 ## Brand Mapping
 
 - Main brand/accent -> `--primary`, primary buttons, links, active navigation, selected records, focus.
+- `--primary-foreground` -> high-contrast text/icon color over `--primary`; derive it for contrast, do not reuse another brand color just because it is in the palette.
 - Secondary brand colors -> supporting accents only when useful.
+- `--secondary-foreground`, `--accent-foreground`, `--card-foreground`, `--popover-foreground`, and `--muted-foreground` must remain readable on their paired surfaces.
 - Compatible tints -> backgrounds, muted surfaces, borders, status colors.
 - Destructive stays red.
 - No generic purple/blue unless brand/domain supports it.
@@ -104,6 +107,7 @@ Use custom CSS classes when Tailwind utilities make the UI too generic, cramped,
 - Keep custom CSS in the app's normal stylesheet path, usually `app.css` or the project equivalent.
 - Custom CSS is appropriate for authored backgrounds, layered surfaces, table rhythm, sidebar layout, complex responsive grids, input contrast, and shadcn component refinements.
 - Do not hardcode unrelated one-off colors, radii, or shadows when an existing token should express the system.
+- Do not hardcode low-contrast foreground colors. If custom CSS uses a brand background, set a high-contrast foreground with the appropriate token or a readable derived color.
 - Prefer custom classes over long unreadable Tailwind strings when the design needs precision.
 
 ## Cards
@@ -181,6 +185,8 @@ Before finishing:
 - Any remaining card is unavoidable and justified.
 - No large hero/detail/inspector surface still reads like a card.
 - Major surfaces separate from the canvas through tone, not only border.
+- Foreground/background token pairs are readable: primary, secondary, accent, card, popover, muted, input, sidebar, and destructive.
+- Text, icons, labels, placeholders, disabled text, badges, buttons, table text, and data values have enough contrast against their actual rendered background.
 - Inputs, search/filter controls, and header/nav chrome read clearly against the page background in both light and dark modes.
 - Editable controls use near-white/lightest-surface backgrounds in light mode and near-black backgrounds in dark mode.
 - Normal inputs, textareas, search fields, and selects all share the same contrast rule; selects cannot be the only controls with proper surface contrast.

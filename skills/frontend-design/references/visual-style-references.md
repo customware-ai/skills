@@ -31,6 +31,11 @@ Tailwind utilities are not the design ceiling. Use custom CSS classes when neede
 - Use the main brand/accent color for primary action, selected state, focus, active navigation, and links.
 - Use secondary brand colors only when they clarify hierarchy.
 - Derive backgrounds, surfaces, borders, muted text, and statuses from compatible tints.
+- Use brand colors for primary, secondary, accent, active, focus, and selected roles. Do not expect the brand palette to provide all text colors.
+- Choose foreground/text colors separately for legibility. Every foreground color must read clearly on its actual background.
+- When a brand color is the background, derive a high-contrast foreground color for it instead of reusing another brand color. Use brand colors as text only when they are clearly readable on that exact surface.
+- Prefer WCAG AA contrast as the minimum: `4.5:1` for normal text and `3:1` for large text, icons, and thick strokes.
+- Labels, placeholders, muted text, disabled text, badge text, button text, table text, and data values must remain readable. Pale text on pale surfaces and muted text on dark brand surfaces fail.
 - First check `public/brand/logos/`. If that folder contains a usable logo file, use the real logo from there in the header or primary chrome. Only create or invent a logo if that folder does not exist or has no usable logo files.
 - Commit to a cohesive aesthetic. Use CSS variables consistently.
 - Dominant colors with sharp accents are usually stronger than timid, evenly distributed palettes.
@@ -198,6 +203,8 @@ Reject and revise if:
 - surface separation depends mostly on borders
 - same-white blending makes major surfaces merge together
 - inputs, search/filter controls, or header/nav chrome do not read clearly against the page background
+- any text, icon, label, placeholder, disabled state, badge, button text, or data value is hard to read against its background
+- brand colors are used without deriving high-contrast foreground/text colors for the actual background
 - editable controls are not near-white/lightest-surface in light mode or near-black in dark mode
 - selects are contrasted but normal text inputs, textareas, or search fields remain page-colored
 - editable controls use transparent, muted, background, or same-fill treatments that hide their control boundary

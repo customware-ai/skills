@@ -40,6 +40,7 @@ Before visual planning or implementation, read both files. Skipping either file 
 ## Non-Negotiables
 
 - **Brand first**: If `.tasks/domain.md` provides brand colors, use them. Map the main brand/accent color to primary actions, active navigation, selected state, focus, and links. Derive neutral surfaces, borders, muted text, and statuses from compatible tints. Do not default to generic purple/blue.
+- **Readable foregrounds always**: Use brand colors for primary, secondary, accent, active, and focus roles, but choose foreground/text colors separately for legibility. Brand palettes usually do not provide all text colors. Every text, icon, label, placeholder, badge, button, disabled state, and data value must have high contrast against its actual background. When a brand color is the background, derive a readable foreground color for it instead of reusing another brand color. Prefer WCAG AA as the minimum: `4.5:1` for normal text and `3:1` for large text/icons.
 - **Domain-skill compatibility**: If the app fits a selected business/domain skill like CPQ, CRM, trades, or similar, follow that skill's required workflow, terminology, and layout structure. For anything the domain skill does not specify, use this skill's visual rules and composition guidance rather than falling back to a generic admin shell.
 - **Authored composition**: Every app should feel intentionally designed. Commit to a cohesive aesthetic, use CSS variables consistently, prefer dominant colors with sharp accents over timid evenly distributed palettes, use motion for high-impact moments, favor asymmetry or unexpected composition where it does not conflict with workflow clarity, and build atmosphere through brand-compatible backgrounds and visual details.
 - **Use the real logo**: First look in `public/brand/logos/`. If that folder contains a usable logo file, use the correct actual logo from that folder in the header or primary app chrome. Only create or invent a logo if `public/brand/logos/` does not exist or has no usable logo files.
@@ -82,6 +83,7 @@ Do not code until all answers are acceptable.
 - If no domain skill overrides radius language, does the UI lean clearly rounded rather than vague enterprise 4/6/8 radii?
 - Does the typography feel distinctive and intentional rather than default/generic?
 - Do page background, canvas, nav chrome, and any focal surface separate clearly at thumbnail scale?
+- Are all foreground colors readable against their backgrounds, including brand-colored areas, disabled states, labels, placeholders, badges, buttons, icons, and muted text?
 - Do inputs, search/filter controls, tables, and header/nav chrome have enough tonal separation from the page background?
 - In light mode, do all editable controls, including normal text inputs and selects, actually use near-white or very light tinted backgrounds rather than page-colored fills?
 - Are editable controls free of `bg-transparent`, `bg-background`, `bg-muted`, and same-token page/panel fills?
@@ -103,6 +105,7 @@ Do not code until all answers are acceptable.
 - Use good readable UI fonts. Avoid typewriter/blog fonts unless the domain explicitly requires that character.
 - Use more expressive composition, stronger accent hierarchy, and more atmospheric backgrounds wherever they do not conflict with required workflow structure or operational clarity.
 - Keep surfaces distinct through tone, spacing, and hierarchy rather than borders and boxes around everything.
+- Choose foreground/text colors for contrast first. Do not treat brand primary/secondary/accent colors as body text colors unless they are clearly readable on that exact surface.
 - Give inputs/selects/textareas/search fields explicit contrasting fills; do not leave them transparent or page-colored.
 - Give summary/inspector/live-summary panels explicit contrasting fills when they are unavoidable.
 - If a header/topbar exists, use token-driven translucent background, `backdrop-blur-md`, and clear contrast rather than a flat same-color strip.
@@ -126,6 +129,8 @@ Reject and revise if:
 - The first screen is mostly panels, cards, KPI blocks, helper boxes, or equal-weight modules.
 - Surface separation depends mostly on borders instead of tone.
 - Same-white or near-white panelization makes major surfaces blend together.
+- Any text, icon, label, placeholder, disabled text, badge, button text, table text, or data value is hard to read against its background.
+- Brand colors are used without deriving a high-contrast foreground/text color for the actual background.
 - Inputs, search/filter controls, data rows, or header/nav chrome blend into the page background.
 - Editable controls in light mode are not near-white or very light tinted and therefore do not read clearly.
 - Selects are contrasted but normal text inputs remain page-colored or muted.
