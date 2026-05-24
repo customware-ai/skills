@@ -80,6 +80,7 @@ If the source has an outer app shell, implement it as the actual product boundar
 Build from `design/source-inventory.md`.
 
 - Every inventory row needs target coverage.
+- The target UI must render from authored repo code, not from the provided source HTML file at runtime.
 - Route labels, headings, section order, primary actions, and state controls must match the source.
 - If the source is state-driven rather than URL-driven, preserve the visible state model in the target even if the route structure is cleaner.
 - Use local state and realistic mock data when no backend is required.

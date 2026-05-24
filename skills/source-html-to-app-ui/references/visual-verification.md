@@ -55,6 +55,7 @@ Critical failures:
 - missing primary route
 - missing mobile implementation
 - missing source interaction family
+- target app depends on the provided source HTML file at runtime to render the product UI
 - static imitation of a visible interactive control
 - target is wrapped in a presentation/gallery shell
 - obvious typography, spacing, surface, or component styling drift on ordinary UI

@@ -3,10 +3,11 @@ name: source-html-to-app-ui
 description: >
   Use this skill when a task provides a self-contained source HTML app file plus
   a design-system JSON and asks the Agent to build a real React/shadcn-style app UI
-  in the current target repository. The skill discovers the source app with
-  Playwright, captures every route and meaningful interaction state, implements
-  the target app from those references, and keeps grading with screenshots until
-  the target is a high-fidelity, interactive reproduction.
+  in the current target repository. The skill uses the source HTML only for
+  Playwright-based discovery, captures every route and meaningful interaction
+  state as a screenshot-backed reference corpus, then implements the target app
+  from that corpus and keeps grading with screenshots until the target is a
+  high-fidelity, interactive reproduction.
 ---
 
 # Source HTML To App UI
@@ -18,6 +19,20 @@ Re-read this `SKILL.md` after every compaction before continuing work. Re-load t
 This skill replaces the image-generation phase of `mock-to-ui` with source-app discovery. The source app already exists as a self-contained HTML file. Open that app with Playwright, learn every visible route and state, capture it as the visual reference set, then build the target app to match those references.
 
 This is a reproduction task, not a redesign task. The output should feel like the same app rebuilt on the target stack, with the supplied design-system JSON used as the token and component styling contract.
+
+The source HTML file is a discovery input, not implementation material. Use it to render the source app in Playwright, inspect behavior, and capture the full reference corpus. Then build the target app from the captured screenshots, section crops, route/state inventory, and design-system JSON.
+
+## Mandatory Workflow Shape
+
+This skill is successful only when the work follows this shape:
+
+1. Launch the provided HTML file in Playwright.
+2. Discover every page, interaction state, desktop view, mobile view, and important page section.
+3. Capture that discovery as a screenshot-backed source corpus plus written route/state/section inventory.
+4. Build the target app as authored repo code that reproduces the corpus.
+5. Verify the target by re-running screenshots and grading source versus target until the written score passes.
+
+The source HTML exists to generate the reference corpus. The reference corpus exists to drive the implementation. The implementation must be authored in the target repo. If the work skips that phase boundary, the run is off track.
 
 ## Source Authority
 
@@ -32,16 +47,20 @@ Use the rendered source app for route, layout, state, and behavior truth. Use th
 
 If the rendered source and JSON disagree, preserve the rendered app's structure and behavior, then use the JSON to resolve theme/token details.
 
+During implementation, the primary working set is the captured source corpus plus the written source inventory. The source HTML file is not part of the target runtime and should not be treated as a render dependency of the finished app.
+
 ## Critical Invariant
 
 This invariant overrides convenience and time pressure:
 
 - The target app must be a real interactive app, not a static visual copy.
+- The target app must be authored in the target repository as real routes, layouts, components, state, styling, and interactions.
 - The target app must be a near one-to-one reproduction of the source screenshots at ordinary visual comparison.
 - Layout fidelity and style fidelity are separate hard gates. Passing one does not excuse failing the other.
 - Route coverage and state coverage are separate hard gates. A matching home screen does not excuse missing dialogs, tabs, filters, drawers, menus, selected states, or mobile navigation.
 - Visible controls in the source must become real target controls with matching states.
 - The target app must own the viewport as the product UI. Do not build a gallery page, poster shell, board frame, device frame, or screenshot viewer around the app.
+- The source HTML file is only for source discovery and reference capture. Once the source corpus is accepted, the target app should no longer need the source HTML file to render the product UI.
 - If the output visibly drifts from the source app, the implementation has failed and the agent must keep iterating.
 - The agent must review the target part by part, route by route, state by state, and area by area. Do not judge only the overall mood.
 - Ordinary UI structure must be exact across the screen: navigation, headers, controls, panels, rows, tables, filters, tabs, dialogs, spacing, and section order.
@@ -105,6 +124,7 @@ The templates in `assets/templates/` are enforcement artifacts. Copy their struc
 5. Create the required artifacts from templates.
 6. Read `references/source-discovery.md`.
 7. Inspect the target repo's real app structure before planning implementation. Prefer existing route, CSS, component, and test conventions.
+8. Treat the provided HTML file as Playwright input for source discovery. Do not wire it into the target app runtime.
 
 Do not implement target UI during this phase.
 
@@ -116,23 +136,27 @@ This phase replaces mock generation and mock approval from `mock-to-ui`. It repe
 2. Capture the default desktop and mobile views.
 3. Discover all routes and meaningful states through real UI interaction.
 4. Capture desktop and mobile screenshots for every discovered route/state.
-5. Record exact source contracts in `design/source-inventory.md`.
+5. Capture focused section crops for the shell, major workflow surfaces, and any dense page areas that need section-level grading later.
+6. Record exact source contracts in `design/source-inventory.md`.
    - Every inventory row must include its visible page sections.
    - Each page section must have a stable section id, source reference, and exact structure/style/behavior contract.
-6. Score the source reference set in `design/source-quality-review.md`.
-7. Apply the source acceptance gate:
+7. Score the source reference set in `design/source-quality-review.md`.
+8. Apply the source acceptance gate:
    - every critical item must pass
    - at least `46/50` checklist items must pass
    - every discovered route has desktop and mobile coverage, unless a concrete source limitation is recorded
    - every visible interactive state family has at least one captured state
-8. If the reference set fails:
+   - every important page section has screenshot evidence strong enough to implement from
+9. If the reference set fails:
    - do not proceed to implementation
    - add the failed checklist rows to the next discovery pass
    - run more Playwright exploration and capture missing states
    - rescore
-9. Stay in this loop until the written source review shows a real pass.
+10. Stay in this loop until the written source review shows a real pass.
 
 The agent is not allowed to approve the source reference set from confidence, vibe, or a single screenshot. Approval is a file-backed score.
+
+The output of this phase is a complete screenshot-backed source reference corpus. Do not build the target app while any important route, state, mobile view, or page section is still missing from that corpus.
 
 ## Phase 2: Implementation Preparation
 
@@ -141,7 +165,10 @@ The agent is not allowed to approve the source reference set from confidence, vi
    - `design/source-inventory.md`
    - `references/target-implementation.md`
 2. Write `design/implementation-reading.md` before coding.
-3. Break the source app into build regions:
+3. From this phase onward, treat the accepted source corpus as the implementation authority.
+   - Build from screenshots, section crops, route/state inventory, and the design-system JSON.
+   - Re-open the source app only when the corpus is ambiguous, then capture more evidence and update the corpus before continuing.
+4. Break the source app into build regions:
    - app shell and viewport ownership
    - navigation
    - header/context
@@ -150,14 +177,14 @@ The agent is not allowed to approve the source reference set from confidence, vi
    - route-specific content
    - mobile composition
    - visible interaction states
-4. Identify target repo extension points:
+5. Identify target repo extension points:
    - routing
    - layout
    - global CSS/theme variables
    - Tailwind/theme config when present
    - shadcn/ui wrapper components when present
    - tests
-5. Define the first pass implementation sequence in the reading artifact.
+6. Define the first pass implementation sequence in the reading artifact.
 
 Do not skip this phase. It prevents coding from memory and then grading only at the end.
 
@@ -179,8 +206,8 @@ Do not accept stock component-library styling when the source app uses a differe
 
 This phase repeats until all routes and states in the source inventory exist in the target app.
 
-1. Implement the source route map and shared navigation.
-2. Implement each source route/state from the inventory.
+1. Implement the source route map and shared navigation as target repo code.
+2. Implement each source route/state from the inventory as target repo code.
 3. Use real local state for interactions:
    - tabs
    - filters
@@ -212,20 +239,22 @@ This is the main enforcement loop. Expect many passes.
    - focused region crops for nav, header, main surface, support modules, and mobile above-the-fold
 2. Compare source and target row-by-row.
 3. Compare every page section listed in `design/source-inventory.md`.
-4. Score the implementation in `design/implementation-review.md`.
-5. Apply the implementation pass gate:
+4. Inspect the target implementation for dependence on the source HTML file or other source-rendering shortcuts.
+5. Score the implementation in `design/implementation-review.md`.
+6. Apply the implementation pass gate:
    - every critical item must pass
    - at least `48/50` checklist items must pass
    - no ordinary unresolved row remains in `design/implementation-open-gaps.md`
    - final desktop and mobile screenshots exist
    - at least one screenshot-backed interaction state exists for every source interaction family
    - every source-listed page section has a passing section-review row or an explicit hard exception
-6. If the implementation fails:
+   - the target app renders from its own authored implementation rather than from the provided source HTML file
+7. If the implementation fails:
    - keep the failed checklist items in the open-gaps ledger
    - fix them
    - rerun Playwright
    - rescore
-7. Continue until the scorecard, page-section ledger, and open-gaps ledger pass together.
+8. Continue until the scorecard, page-section ledger, and open-gaps ledger pass together.
 
 Do not stop because the target feels broadly right. Stop only when the documented gaps are gone.
 
@@ -260,6 +289,7 @@ Signoff is blocked unless all of the following are true:
 - `design/implementation-open-gaps.md` exists and keeps the required mismatch ledger table.
 - `design/implementation-open-gaps.md` contains no ordinary unresolved drift.
 - The target app is interactive rather than static.
+- The target app renders from authored target code rather than from the provided source HTML file.
 - Every source route/state row has matching target evidence.
 - Every source-listed page section has matching target evidence and a passing section-review row.
 - Desktop and mobile final screenshots exist at `mocks/verification/final-desktop.png` and `mocks/verification/final-mobile.png`.
@@ -278,6 +308,8 @@ If any ordinary visible mismatch remains, signoff is not allowed.
 ## Non-Negotiables
 
 - The rendered source app is the product authority.
+- The source HTML file is a discovery artifact, not a target runtime dependency.
+- The captured source corpus is the build contract for implementation.
 - The supplied JSON is the styling-system authority.
 - Do not invent a different product, route map, visual system, or information architecture.
 - Do not ship a static facsimile. Visible controls must behave.
@@ -286,3 +318,15 @@ If any ordinary visible mismatch remains, signoff is not allowed.
 - Do not let review artifacts degrade into prose.
 - Do not let default component-library styling become an excuse for mismatch.
 - Do not use vague success language such as `close enough`, `broadly aligned`, `inspired by`, or `good enough` as a substitute for screenshot-backed proof.
+
+## Disallowed Shortcuts And Automatic Fails
+
+- Do not load, embed, mount, iframe, webview, object, embed tag, or `srcDoc` the provided source HTML file in the target app.
+- Do not fetch, import, read, or otherwise consume the provided source HTML file at target runtime in order to render the product UI.
+- Do not copy the source DOM wholesale into the target app with `dangerouslySetInnerHTML` or equivalent raw HTML injection.
+- Do not ship a wrapper route whose main purpose is to display the source app instead of rebuilding it.
+- Do not treat the provided source HTML file as a production asset of the target app.
+- Do not mark source discovery complete without desktop, mobile, route/state, and section-level screenshot evidence.
+- Do not mark implementation complete without screenshot-backed source-versus-target proof for the same routes, states, and sections.
+
+If any shortcut above appears, the run has failed the skill. Remove the shortcut, return to the intended workflow, rebuild the target UI from the captured source corpus, and re-run verification.
