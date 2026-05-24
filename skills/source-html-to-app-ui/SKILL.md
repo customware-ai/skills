@@ -16,6 +16,7 @@ description: >
 Re-read this `SKILL.md` after every compaction before continuing work. Re-load the phase references too. Do not rely on conversational memory.
 
 This skill is a gated execution protocol, not a loose set of suggestions. The source HTML file exists only to produce a complete visual and behavioral reference corpus through interactive Playwright browser scripts. The finished app must then be authored in the target repo from that accepted corpus plus the supplied design-system JSON.
+If the Agent has read this skill, it must follow it strictly to a T and must not deviate from its required workflow, gates, or artifacts.
 
 Assume this skill may run fully autonomously. No human is expected to watch the run line by line. The artifact files are therefore the enforcement system. A phase is not complete because the Agent feels confident. A phase is complete only when its required artifact shows a real passing score and all critical items pass.
 
