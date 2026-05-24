@@ -1,6 +1,6 @@
 # Target Implementation
 
-Use this reference before and during target repo edits.
+Use this reference for Phase 2, Phase 3, and Phase 4.
 
 ## Target Repo First
 
@@ -8,22 +8,46 @@ Read the target repo `AGENTS.md` before editing. Follow its stack, routing, test
 
 This skill adds source-fidelity gates on top of the repo rules. It does not replace them.
 
+## Implementation Authority
+
+Implementation authority is:
+
+1. accepted source screenshots and section crops
+2. `design/source-inventory.md`
+3. `design/spec.json`
+
+The provided source HTML file is not implementation material. It is discovery input only.
+
+The target UI must render from authored repo code, not from the provided source HTML file at runtime.
+
+## Phase 2: Planning Discipline
+
+Before coding:
+
+- map each source route/state row to target files or target extension points
+- map each visible section to the target component or route region that will own it
+- map each interaction family to a real target interaction model
+- list the highest-risk visual drift areas
+- cite the exact source screenshots the build will follow
+
+If any route, state, or section still lacks evidence strong enough to reproduce confidently, return to discovery.
+
 ## Implementation Order
 
 Build in this order:
 
-1. Design-system JSON into global theme tokens.
-2. Shared component wrappers and primitive states.
-3. App shell and viewport ownership.
-4. Route map.
-5. Route content.
-6. Interaction states.
-7. Mobile behavior.
-8. Fine visual parity.
+1. theme tokens
+2. shared component treatment
+3. shell and viewport ownership
+4. primary routes
+5. route-specific sections
+6. interaction states
+7. mobile behavior
+8. polish and visual parity
 
 ## Theme Translation
 
-Use the supplied JSON as the styling-system contract.
+Use `design/spec.json` as the styling-system contract.
 
 Patch the target repo's real theme entry points, such as:
 
@@ -31,121 +55,124 @@ Patch the target repo's real theme entry points, such as:
 - Tailwind or equivalent theme config
 - font imports or font-family tokens
 - radius tokens
-- shadow/contact-depth tokens
+- border and shadow tokens
+- sidebar, nav, header, and surface tokens
 - status tokens
-- sidebar/header/nav tokens when present
-- chart or data visualization tokens when present
+- chart tokens when visible
 
-If tokens alone do not reproduce the source app, patch shared components too.
+If tokens alone do not reproduce the source style, patch shared components too.
 
 ## Shared Component Translation
 
-Patch shared UI wrappers when the source app has specific styling for:
+Patch shared UI wrappers or primitives when the source app has specific treatment for:
 
 - buttons
 - inputs
 - selects
 - textareas
-- checkboxes and switches
+- switches and checkboxes
 - tabs
 - badges and chips
 - tables and rows
 - cards or panels
-- dialogs
-- drawers/sheets
-- popovers and menus
+- dialogs and drawers
+- menus and popovers
 - tooltips
 - navigation items
 
-Do not scatter one-off class fixes everywhere when a shared component treatment is clearly needed.
-
-Do not accept stock component-library styling if the source app uses a different design language.
+Do not accept stock library styling if the source app uses a different design language.
 
 ## Viewport Ownership
 
 The target must feel like the product app itself.
 
-Failures:
+Blocking failures:
 
-- app placed inside a centered presentation shell
-- extra page padding that makes the product look like an exhibit
-- recreated source screenshot or board frame as literal UI
-- phone/device hardware reproduced as product UI
-- route content trapped inside a demo/catalog wrapper
+- app placed inside a centered showcase shell
+- extra poster padding around the app
+- board frame or device frame recreated as product UI
+- route content trapped inside a demo or catalog wrapper
 
-If the source has an outer app shell, implement it as the actual product boundary.
+If the source app has a shell, implement that shell as the actual product boundary.
 
-## Route And State Reproduction
+## Route, State, And Section Reproduction
 
 Build from `design/source-inventory.md`.
 
-- Every inventory row needs target coverage.
-- The target UI must render from authored repo code, not from the provided source HTML file at runtime.
-- Route labels, headings, section order, primary actions, and state controls must match the source.
-- If the source is state-driven rather than URL-driven, preserve the visible state model in the target even if the route structure is cleaner.
-- Use local state and realistic mock data when no backend is required.
+- every route/state row needs target coverage
+- every page section row needs target coverage
+- labels, section order, major proportions, actions, and support modules must match
+- if the source is state-driven rather than URL-driven, preserve the visible state model
+- use realistic local state when no backend is needed
 
 Visible interactions must be real:
 
 - tabs switch panels
-- filters/search alter visible data or state labels
-- rows/cards can select and show detail state
-- dialogs/drawers open and close
-- dropdowns/menus are actual controls
-- mobile nav opens/collapses
-- forms show focus, disabled, validation, or success states when those appear in the source
+- filters and search change visible results or state labels
+- rows or cards can select and show detail states
+- dialogs and drawers open and close
+- menus are actual controls
+- mobile navigation opens and closes
+- forms show visible focus, disabled, validation, or success states when those appear in the source
 
-Static imitation of interactive states is a failure.
+Static imitation of interactive controls is a failure.
 
-## Checkpoints
+## Phase 3 Score
 
-Each checkpoint should end with screenshots, review updates, and open-gap updates.
+Phase 3 uses `20` points:
 
-### Checkpoint 1: Theme And Shell
+- `5` theme-token fidelity points
+- `5` shell ownership and geometry points
+- `5` shared-component treatment points
+- `5` screenshot and review-discipline points
 
-Done means:
+Critical failures:
 
-- design-system JSON is reflected in the target theme
-- shared shell exists
-- app owns the viewport
-- early desktop screenshot shows the right atmosphere and surface hierarchy
+- target still reads like a stock starter app
+- shell does not own the viewport
+- source shell or navigation is missing
+- no early screenshot evidence exists
 
-### Checkpoint 2: Primary Routes
+Pass gate:
 
-Done means:
+- score is at least `19/20`
+- every critical item passes
+- `mocks/verification/01-theme-shell-desktop.png` exists
 
-- all primary source routes exist
-- navigation reaches them
-- labels and section order match the inventory
-- desktop screenshots exist
+## Phase 4 Score
 
-### Checkpoint 3: Interaction States
+Phase 4 uses `30` points:
 
-Done means:
+- `8` route coverage points
+- `8` page-section coverage points
+- `6` interaction-reality points
+- `4` mobile route/state coverage points
+- `4` artifact-discipline points
 
-- all source interaction families exist
-- at least one screenshot exists per family
-- controls are real components with state
+Critical failures:
 
-### Checkpoint 4: Mobile
+- primary route missing
+- source interaction family missing
+- visible section missing
+- mobile route/state coverage missing
+- target route is placeholder, generic, or fake
+- route/state review rows are missing
 
-Done means:
+Pass gate:
 
-- mobile layout matches source priorities
-- mobile navigation and key states work
-- content does not clip, overflow, or become illegible
+- score is at least `28/30`
+- every critical item passes
+- every source-listed page section has a target review row
 
-### Checkpoint 5: Full Grading
+## Promotion Rule
 
-Done means:
+Phase 5 is blocked until both Phase 3 and Phase 4 have passed in writing.
 
-- target evidence mirrors the full source inventory
-- scorecard passes
-- ordinary open gaps are closed
-- adversarial pass is complete
+Do not treat these as acceptable reasons to advance early:
 
-## Testing
+- the route map exists
+- the page looks broadly similar
+- the build succeeds
+- tests are green
 
-Run the target repo's required checks and tests. If tests are expected for UI changes, write focused tests for the reproduced routes and states.
-
-Do not let automated tests replace visual proof. A green test suite does not mean the target matches the source.
+The target is not ready for visual verification until the authored UI exists across the full accepted route/state and section corpus.

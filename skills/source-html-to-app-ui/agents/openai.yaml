@@ -1,4 +1,4 @@
 interface:
   display_name: "Source HTML to App UI"
-  short_description: "Rebuild source HTML apps with visual QA"
-  default_prompt: "Use $source-html-to-app-ui to reproduce this source HTML app in the current target repo from its design-system JSON."
+  short_description: "Autonomous gated rebuild from source HTML"
+  default_prompt: "Use $source-html-to-app-ui to rebuild the provided source HTML app from Playwright-discovered references and the design-system JSON, following the skill's phase gates exactly."

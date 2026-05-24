@@ -1,15 +1,24 @@
 # Source Discovery
 
-Use this reference before implementing the target app.
+Use this reference for Phase 1.
 
-The goal is to convert the source HTML app into a complete, auditable visual and interaction reference set.
+The goal is to turn the provided source HTML app into an accepted source corpus that a later implementation phase can reproduce without guessing.
+
+## Discovery Rule
+
+Use Playwright as the discovery engine.
+
+- Open the source app in Playwright.
+- Interact with it to reveal routes, states, menus, dialogs, drawers, filters, selected states, and mobile navigation.
+- Capture screenshots only after the launch method is rendering correctly.
+
+Reading the source HTML, CSS, or JS can clarify labels or behavior, but it does not satisfy discovery on its own. Discovery is not complete until the screenshots and written inventory are complete.
 
 ## Launch Contract
 
-- Open the provided source HTML app with Playwright.
-- The source file is expected to be self-contained.
-- If direct file loading breaks in-app navigation, serve the file locally with a minimal SPA fallback.
-- Trust screenshots only after the source app behaves correctly under the chosen launch method.
+- Prefer opening the file directly if it behaves correctly.
+- If file loading breaks navigation or assets, serve it locally with the minimum setup needed for correct behavior.
+- Trust screenshots only after the rendered app behaves like the source app is meant to behave.
 
 ## Required Viewports
 
@@ -18,77 +27,66 @@ Capture at least:
 - Desktop: `1440x960`
 - Mobile: `390x844`
 
-Add route-specific or crop screenshots when those two viewports hide important details.
+Add route-specific or section-specific captures whenever those viewports hide important detail.
 
-## Discovery Inventory
+## Discovery Surface
 
-Inventory every visible route and meaningful state.
+Treat all of these as in scope:
 
-Routes include:
-
-- top-level navigation destinations
-- nested route destinations
-- menu-driven pages
-- hash or History API destinations
-- state-only screens that behave like separate pages
-
-States include:
-
-- tabs
+- top-level destinations
+- nested destinations
+- state-only screens that behave like pages
 - dialogs
 - drawers and sheets
 - dropdowns and menus
-- filters and search results
-- selected row/card/detail states
-- empty/loading/error states when visible
-- mobile nav open and closed
-- form focus, validation, disabled, success, or destructive states when visible
+- tabs
+- search and filter states
+- selected item or detail states
+- empty, loading, disabled, success, warning, and destructive states when visible
+- mobile navigation open and closed
+- mobile versions of major pages
 
-If two states would need different target code or styling, capture them separately.
+If two states would require different target code, different target styling, or different target layout, capture them separately.
 
-## Source Contract Extraction
+## Source Inventory Contract
 
-For every inventory row, record exact visible details:
+For every route/state row in `design/source-inventory.md`, record:
 
-- route or state id
+- stable id
+- visible route or state name
 - how to reach it through the UI
 - desktop screenshot path
 - mobile screenshot path
-- page title and headings
-- section names and section order
-- navigation labels
-- primary and secondary actions
-- tabs, filters, menus, and field labels
-- table columns or list row content
-- visible status labels and badges
-- dialog/drawer content and actions
-- mobile above-the-fold content priority
-- notes on any animation or transition that affects final state
+- visible sections
+- interaction families present
+- exact visible contract
+- coverage status
 
-Do not use generic descriptions like `main panel`, `filters`, or `settings dialog` when exact labels are visible.
+The contract must name real headings, labels, controls, row types, panel roles, and visual priorities. Do not use vague placeholders like `main panel` or `toolbar`.
 
-## Page Section Ledger
+## Page Section Ledger Contract
 
-Every route/state row must enumerate its visible sections. Sections are the units the implementation will later grade one by one.
+Every visible section inside every route/state needs its own row.
 
 For each section record:
 
 - stable section id
 - source route/state id
-- section name or visible heading
+- section name
 - section role
-- desktop source screenshot or crop
-- mobile source screenshot or crop when visible on mobile
+- desktop screenshot or crop
+- mobile screenshot or crop when visible on mobile
 - exact structure contract
 - exact style contract
-- behavior contract when controls exist in that section
+- behavior contract when controls exist
+- coverage status
 
 Common section types:
 
 - shell/navigation
 - header/context
 - toolbar/action row
-- tab/filter area
+- filter/tab area
 - primary workflow surface
 - table/list/grid
 - detail/inspector
@@ -97,48 +95,62 @@ Common section types:
 - mobile top area
 - mobile navigation
 
-If a section is visible, it must be listed. Do not rely on one full-page row to imply section coverage.
+If a section is visible, it must be listed. Full-page screenshots do not remove the need for section rows.
 
 ## Source Acceptance Score
 
-Score `design/source-quality-review.md` against 50 items:
+Score `design/source-quality-review.md` against `50` items:
 
-- 10 route coverage items
-- 10 interaction-state coverage items
-- 10 desktop visual-reference items
-- 10 mobile visual-reference items
-- 10 exact-contract extraction items
+- `10` route coverage items
+- `10` interaction-state coverage items
+- `10` desktop evidence items
+- `10` mobile evidence items
+- `10` section and contract extraction items
 
 Critical failures:
 
-- no desktop source screenshot
-- no mobile source screenshot
+- no desktop source evidence for a discovered route/state
+- no mobile source evidence for a discovered route/state without a real source limitation
 - missing primary route
 - missing obvious interaction family
-- unclear route/state reach steps
-- source screenshots are broken, blank, clipped, or captured in a launch mode that does not match the app behavior
+- unclear reach steps
+- screenshots are blank, clipped, broken, or captured from the wrong launch method
 - visible page sections are not enumerated
+- inventory rows cite non-existent screenshot paths
 
 Pass gate:
 
 - every critical item passes
-- score is at least `46/50`
-- every failed non-critical item is either fixed with more discovery or recorded as a real source limitation
-- every route/state row has section rows detailed enough to grade later
+- score is at least `48/50`
+- every failed non-critical item is either fixed or recorded as a real source limitation
+- every route/state row has section rows detailed enough to implement from
 
-If the score fails, do not implement. Continue source discovery.
+If the score fails, do not implement. Return to Playwright discovery.
+
+## Promotion Rule
+
+Phase 2 is blocked until the source-acceptance score passes in writing.
+
+The following do not count as acceptable substitutes for a passing source corpus:
+
+- route inference from raw HTML
+- DOM inspection alone
+- a single full-page screenshot
+- desktop-only capture
+- prose that refers to screens without screenshot evidence
 
 ## Screenshot Naming
 
-Use stable relative names:
+Use stable names under `mocks/source/`, for example:
 
 - `mocks/source/desktop-home.png`
 - `mocks/source/mobile-home.png`
 - `mocks/source/desktop-settings-dialog.png`
 - `mocks/source/mobile-settings-dialog.png`
+- `mocks/source/desktop-home-table-crop.png`
 
-The exact names can vary, but every artifact table should cite the actual screenshot path.
+Names may vary, but every artifact row must cite the exact path that exists.
 
 ## Discovery Completion
 
-Discovery is complete only when a later implementation agent can build the app from the inventory without guessing what pages, states, labels, or mobile priorities exist.
+Discovery is complete only when a later implementation pass can build every route, state, and section from the accepted source corpus without guessing what is visible, how it behaves, or how mobile reprioritizes it.

@@ -2,12 +2,11 @@
 name: source-html-to-app-ui
 description: >
   Use this skill when a task provides a self-contained source HTML app file plus
-  a design-system JSON and asks the Agent to build a real React/shadcn-style app UI
-  in the current target repository. The skill uses the source HTML only for
-  Playwright-based discovery, captures every route and meaningful interaction
-  state as a screenshot-backed reference corpus, then implements the target app
-  from that corpus and keeps grading with screenshots until the target is a
-  high-fidelity, interactive reproduction.
+  a design-system JSON and asks the Agent to rebuild that app in the current
+  repository. The skill treats the HTML as discovery-only input, forces
+  Playwright-driven route/state capture, then moves through scored gates for
+  source acceptance, implementation planning, authored UI reproduction, visual
+  verification, and adversarial proof before signoff.
 ---
 
 # Source HTML To App UI
@@ -16,104 +15,100 @@ description: >
 
 Re-read this `SKILL.md` after every compaction before continuing work. Re-load the phase references too. Do not rely on conversational memory.
 
-This skill replaces the image-generation phase of `mock-to-ui` with source-app discovery. The source app already exists as a self-contained HTML file. Open that app with Playwright, learn every visible route and state, capture it as the visual reference set, then build the target app to match those references.
+This skill is a gated execution protocol, not a loose set of suggestions. The source HTML file exists only to produce a complete visual and behavioral reference corpus through Playwright. The finished app must then be authored in the target repo from that accepted corpus plus the supplied design-system JSON.
 
-This is a reproduction task, not a redesign task. The output should feel like the same app rebuilt on the target stack, with the supplied design-system JSON used as the token and component styling contract.
+Assume this skill may run fully autonomously. No human is expected to watch the run line by line. The artifact files are therefore the enforcement system. A phase is not complete because the Agent feels confident. A phase is complete only when its required artifact shows a real passing score and all critical items pass.
 
-The source HTML file is a discovery input, not implementation material. Use it to render the source app in Playwright, inspect behavior, and capture the full reference corpus. Then build the target app from the captured screenshots, section crops, route/state inventory, and design-system JSON.
+Never promote work from one phase to the next on optimism, partial evidence, or broad visual similarity.
 
-## Mandatory Workflow Shape
+## Mandatory Process Shape
 
-This skill is successful only when the work follows this shape:
+This workflow shape is not optional:
 
-1. Launch the provided HTML file in Playwright.
-2. Discover every page, interaction state, desktop view, mobile view, and important page section.
-3. Capture that discovery as a screenshot-backed source corpus plus written route/state/section inventory.
-4. Build the target app as authored repo code that reproduces the corpus.
-5. Verify the target by re-running screenshots and grading source versus target until the written score passes.
+1. Launch the provided HTML app in Playwright.
+2. Discover every route, state, desktop view, mobile view, and important page section through real interaction.
+3. Capture that discovery as a screenshot-backed source corpus plus written inventory and source-quality score.
+4. Build the target UI as authored repo code from the accepted corpus and the design-system JSON.
+5. Capture target screenshots, grade them against the source corpus, fix mismatches, and loop until the gates pass.
+6. Run adversarial and functional proof before signoff.
 
-The source HTML exists to generate the reference corpus. The reference corpus exists to drive the implementation. The implementation must be authored in the target repo. If the work skips that phase boundary, the run is off track.
+If the work skips one of those phase boundaries, the run is off track.
 
-## Source Authority
+## Autonomous Run Contract
 
-Priority:
+Treat these rules as always active:
 
-1. The source app as rendered and exercised in Playwright.
-2. The source HTML file's DOM, script, and styles.
-3. The supplied design-system JSON.
-4. The target repository's AGENTS instructions and stack constraints.
+- Every phase must end with an objective gate.
+- Every gate must be recorded in the phase-owned artifact file.
+- Every gate must have both a numeric threshold and critical-item pass requirement.
+- If a gate fails, remain in that phase and keep iterating.
+- If later work reveals missing evidence from an earlier phase, return to that earlier phase, repair it, and re-pass the gate.
+- Do not assume the user will catch a shortcut. The Agent must prevent the shortcut itself.
 
-Use the rendered source app for route, layout, state, and behavior truth. Use the JSON for colors, typography, radius, surfaces, shadows, component roles, and any design dock values.
+## Critical Output Invariant
 
-If the rendered source and JSON disagree, preserve the rendered app's structure and behavior, then use the JSON to resolve theme/token details.
-
-During implementation, the primary working set is the captured source corpus plus the written source inventory. The source HTML file is not part of the target runtime and should not be treated as a render dependency of the finished app.
-
-## Critical Invariant
-
-This invariant overrides convenience and time pressure:
+These are hard constraints:
 
 - The target app must be a real interactive app, not a static visual copy.
-- The target app must be authored in the target repository as real routes, layouts, components, state, styling, and interactions.
-- The target app must be a near one-to-one reproduction of the source screenshots at ordinary visual comparison.
-- Layout fidelity and style fidelity are separate hard gates. Passing one does not excuse failing the other.
-- Route coverage and state coverage are separate hard gates. A matching home screen does not excuse missing dialogs, tabs, filters, drawers, menus, selected states, or mobile navigation.
+- The target app must be authored in the target repo as real routes, layouts, components, state, styling, and interactions.
+- The target app must be a near one-to-one reproduction of the accepted source corpus.
+- Layout fidelity and style fidelity are separate hard gates.
+- Route coverage and state coverage are separate hard gates.
 - Visible controls in the source must become real target controls with matching states.
-- The target app must own the viewport as the product UI. Do not build a gallery page, poster shell, board frame, device frame, or screenshot viewer around the app.
-- The source HTML file is only for source discovery and reference capture. Once the source corpus is accepted, the target app should no longer need the source HTML file to render the product UI.
-- If the output visibly drifts from the source app, the implementation has failed and the agent must keep iterating.
-- The agent must review the target part by part, route by route, state by state, and area by area. Do not judge only the overall mood.
-- Ordinary UI structure must be exact across the screen: navigation, headers, controls, panels, rows, tables, filters, tabs, dialogs, spacing, and section order.
-- Ordinary UI styling must also be exact: typography weight, surface tone, border strength, control proportions, radius, shadow/contact edges, accent use, and density.
-- Hard bespoke illustration or generated-art zones may be the only tolerated approximation. If such a zone exists, preserve its role and composition while holding the surrounding UI to strict fidelity.
-
-Treat these as hard constraints, not suggestions.
+- The target app must own the viewport as the real product UI.
+- The provided source HTML file is discovery input only. The finished app must not depend on it at runtime.
+- Ordinary UI structure must be exact across the screen: navigation, headers, controls, filters, tables, panels, spacing, and section order.
+- Ordinary UI styling must also be exact: typography weight, surface tone, border strength, radii, shadows, density, and control treatment.
+- The Agent must review the app part by part, route by route, state by state, and section by section.
+- If ordinary visible drift remains, the run has not passed.
 
 ## Required References
 
-Load only the phase-relevant references, but load all three for full implementation work:
+Load only the phase-relevant references, but use all three during a full delivery run:
 
-- `references/source-discovery.md`: before opening or grading the source HTML app.
-- `references/target-implementation.md`: before editing the target repository.
-- `references/visual-verification.md`: before screenshot comparison or signoff.
+- `references/source-discovery.md`
+- `references/target-implementation.md`
+- `references/visual-verification.md`
 
 ## Operating Modes
 
 ### Validation Mode
 
-Use this when the user is testing or improving this skill itself.
+Use this when improving or testing the skill itself.
 
-- Use a throwaway target copy.
+- Use a throwaway target app copy.
 - Preserve all source, target, and grading artifacts.
-- Judge repeatability across fresh runs, not one lucky result.
-- If a repeated failure persists, improve this skill's reusable docs before another validation run.
+- Judge repeatability across fresh runs.
+- If the same failure repeats, improve the reusable skill before running again.
 
 ### Delivery Mode
 
 Use this when the user wants the real target app built.
 
-- Work inside the provided target app repository.
-- Treat the source screenshots as the approved visual reference set.
-- Do not sign off until the written scorecard, review, open-gaps ledger, and Playwright evidence pass.
+- Work inside the provided target repo.
+- Treat the accepted source corpus as the design authority.
+- Do not sign off until every gate in this file has passed in writing.
 
 ## Required Artifacts
 
 These are mandatory in delivery mode:
 
-- `mocks/source/`: source screenshots captured from the HTML app.
-- `mocks/verification/`: target screenshots captured from the implemented app.
-- `design/source-inventory.md`: route and state inventory for the source app.
-- `design/source-quality-review.md`: scorecard proving the source reference set is complete enough to implement from.
-- `design/spec.json`: local copy or derived normalization of the supplied design-system JSON.
-- `design/implementation-reading.md`: route/state/visual reading before coding.
-- `design/implementation-review.md`: screenshot-backed route/state and page-section comparison.
-- `design/implementation-open-gaps.md`: every remaining mismatch.
-- `mocks/verification/final-desktop.png`: final desktop evidence.
-- `mocks/verification/final-mobile.png`: final mobile evidence.
+- `mocks/source/`
+- `mocks/verification/`
+- `design/spec.json`
+- `design/source-inventory.md`
+- `design/source-quality-review.md`
+- `design/implementation-reading.md`
+- `design/implementation-review.md`
+- `design/implementation-open-gaps.md`
+- `mocks/verification/final-desktop.png`
+- `mocks/verification/final-mobile.png`
 
-The templates in `assets/templates/` are enforcement artifacts. Copy their structure directly and fill them in. If a required artifact drops its tables, replaces them with prose, or becomes impossible to audit row-by-row, the run fails.
+The templates in `assets/templates/` are enforcement artifacts. Copy their structure directly. If a required table is replaced by prose or stripped down until rows are no longer auditable, the run fails.
 
-## Phase 0: Start-Up And Scope
+## Multi-Phase Protocol
+
+### Phase 0: Start-Up And Artifact Scaffolding
 
 1. Determine mode: validation or delivery.
 2. Read the target repo `AGENTS.md`.
@@ -123,210 +118,249 @@ The templates in `assets/templates/` are enforcement artifacts. Copy their struc
 4. Copy or normalize the design-system JSON into `design/spec.json`.
 5. Create the required artifacts from templates.
 6. Read `references/source-discovery.md`.
-7. Inspect the target repo's real app structure before planning implementation. Prefer existing route, CSS, component, and test conventions.
-8. Treat the provided HTML file as Playwright input for source discovery. Do not wire it into the target app runtime.
+7. Inspect the target repo's real route, layout, theme, and test structure.
+8. Decide how the source HTML app will be launched in Playwright.
+9. Do not edit target app UI files yet.
+10. Do not treat HTML reading as a substitute for the discovery run.
 
-Do not implement target UI during this phase.
+### Phase 0 Gate: Start-Up Gate
 
-## Phase 1: Source Discovery And Acceptance Loop
+This gate is recorded in `design/source-quality-review.md`.
 
-This phase replaces mock generation and mock approval from `mock-to-ui`. It repeats until the source reference set is complete and high-confidence.
+Score this phase as `10/10`.
+
+Pass rule:
+
+- all `10/10` items above are complete
+- no target UI implementation files have been edited yet
+
+If the phase scores below `10/10`, remain in Phase 0.
+
+### Phase 1: Source Discovery And Acceptance Loop
 
 1. Open the source HTML app with Playwright.
 2. Capture the default desktop and mobile views.
-3. Discover all routes and meaningful states through real UI interaction.
+3. Discover every route and meaningful state through real UI interaction.
 4. Capture desktop and mobile screenshots for every discovered route/state.
-5. Capture focused section crops for the shell, major workflow surfaces, and any dense page areas that need section-level grading later.
-6. Record exact source contracts in `design/source-inventory.md`.
-   - Every inventory row must include its visible page sections.
-   - Each page section must have a stable section id, source reference, and exact structure/style/behavior contract.
-7. Score the source reference set in `design/source-quality-review.md`.
-8. Apply the source acceptance gate:
-   - every critical item must pass
-   - at least `46/50` checklist items must pass
-   - every discovered route has desktop and mobile coverage, unless a concrete source limitation is recorded
-   - every visible interactive state family has at least one captured state
-   - every important page section has screenshot evidence strong enough to implement from
-9. If the reference set fails:
-   - do not proceed to implementation
-   - add the failed checklist rows to the next discovery pass
-   - run more Playwright exploration and capture missing states
-   - rescore
-10. Stay in this loop until the written source review shows a real pass.
+5. Capture focused section crops for shell, navigation, header, dense workflow surfaces, dialogs, drawers, and any section that later needs section-level grading.
+6. Fill `design/source-inventory.md`.
+7. Fill `design/source-quality-review.md`.
+8. If coverage is incomplete, return to Playwright and capture more evidence.
+9. Keep looping until the written source-quality gate passes.
 
-The agent is not allowed to approve the source reference set from confidence, vibe, or a single screenshot. Approval is a file-backed score.
+HTML reading, DOM inspection, and script inspection may clarify behavior, but they do not replace Playwright discovery and cannot satisfy this phase on their own.
 
-The output of this phase is a complete screenshot-backed source reference corpus. Do not build the target app while any important route, state, mobile view, or page section is still missing from that corpus.
+### Phase 1 Gate: Source Promotion Gate
 
-## Phase 2: Implementation Preparation
+This gate is owned by `design/source-quality-review.md`.
+
+Pass rule:
+
+- score is at least `48/50`
+- every critical discovery item passes
+- every discovered route/state has desktop evidence
+- every discovered route/state has mobile evidence unless a real source limitation is recorded
+- every visible page section has screenshot evidence and a written contract
+- every route/state row in `design/source-inventory.md` cites actual screenshot paths
+
+If this gate fails, implementation is blocked. Stay in Phase 1.
+
+### Phase 2: Implementation Reading And Build Plan
 
 1. Read:
    - `design/spec.json`
    - `design/source-inventory.md`
+   - `design/source-quality-review.md`
    - `references/target-implementation.md`
 2. Write `design/implementation-reading.md` before coding.
-3. From this phase onward, treat the accepted source corpus as the implementation authority.
-   - Build from screenshots, section crops, route/state inventory, and the design-system JSON.
-   - Re-open the source app only when the corpus is ambiguous, then capture more evidence and update the corpus before continuing.
-4. Break the source app into build regions:
-   - app shell and viewport ownership
-   - navigation
-   - header/context
-   - primary workflow surfaces
-   - supporting modules
-   - route-specific content
-   - mobile composition
-   - visible interaction states
-5. Identify target repo extension points:
-   - routing
-   - layout
-   - global CSS/theme variables
-   - Tailwind/theme config when present
-   - shadcn/ui wrapper components when present
-   - tests
-6. Define the first pass implementation sequence in the reading artifact.
+3. Map the accepted source corpus into target files, routes, sections, and interaction families.
+4. Cite the exact source screenshots the implementation will build from.
+5. List the visual and behavioral risks most likely to drift.
+6. If the corpus is ambiguous, return to Phase 1, capture more evidence, and re-pass the source gate.
 
-Do not skip this phase. It prevents coding from memory and then grading only at the end.
+### Phase 2 Gate: Planning Gate
 
-## Phase 3: Theme And Shared Component Pass
+This gate is owned by `design/implementation-reading.md`.
 
-This phase must happen before route details become dense.
+Pass rule:
 
-1. Translate `design/spec.json` into the target repo's global theme files.
-2. Update shared component wrappers when the source app requires specific control treatment.
-3. Build the app shell enough to capture an early target screenshot.
+- score is at least `19/20`
+- every planned route/state cites source evidence
+- every planned build region maps to concrete target files or extension points
+- no source-critical ambiguity remains unresolved
+
+If this gate fails, implementation is blocked. Stay in Phase 2 or return to Phase 1 if evidence is missing.
+
+### Phase 3: Theme And Shell Reproduction Loop
+
+1. Translate `design/spec.json` into the target repo's real theme entry points.
+2. Update shared component wrappers or primitives where the source app requires custom treatment.
+3. Rebuild the shell so the target owns the viewport as the actual product UI.
 4. Capture `mocks/verification/01-theme-shell-desktop.png`.
-5. Compare it against source shell references.
-6. Update `design/implementation-review.md` and `design/implementation-open-gaps.md`.
-7. Fix obvious theme, viewport, shell, and component-system drift before building all pages.
+5. Update `design/implementation-review.md`.
+6. Update `design/implementation-open-gaps.md`.
+7. Fix shell, theme, and shared-component drift before moving on.
 
-Do not accept stock component-library styling when the source app uses a different visual language.
+### Phase 3 Gate: Theme And Shell Gate
 
-## Phase 4: Route And State Reproduction Loop
+This gate is owned by `design/implementation-review.md`.
 
-This phase repeats until all routes and states in the source inventory exist in the target app.
+Pass rule:
 
-1. Implement the source route map and shared navigation as target repo code.
-2. Implement each source route/state from the inventory as target repo code.
-3. Use real local state for interactions:
-   - tabs
-   - filters
-   - dialogs
-   - drawers/sheets
-   - dropdowns/menus
-   - selected rows/cards
-   - mobile navigation
-   - form states
-4. After each meaningful route group, capture target screenshots for the same route/state rows.
-5. Update:
-   - `design/implementation-review.md`
-   - `design/implementation-open-gaps.md`
-6. If any route/state is missing, renamed beyond recognition, reordered without source support, or static when the source is interactive, the phase remains open.
+- score is at least `19/20`
+- no critical shell-ownership issue remains
+- `mocks/verification/01-theme-shell-desktop.png` exists
+- open gaps for shell/theme are explicitly recorded or resolved
 
-This phase is not done when the home page works. It is done only when the source inventory has target coverage.
+If this gate fails, stay in Phase 3.
 
-## Phase 5: Visual Verification And Grading Loop
+### Phase 4: Route, State, And Section Reproduction Loop
 
-Read `references/visual-verification.md` before this phase.
+1. Implement every accepted route/state from `design/source-inventory.md`.
+2. Implement every listed page section, not just the outer page layout.
+3. Use real local state and real interactions for tabs, filters, dialogs, drawers, menus, row selection, and mobile navigation.
+4. After each meaningful pass, capture matching target screenshots.
+5. Update `design/implementation-review.md`.
+6. Update `design/implementation-open-gaps.md`.
+7. If a source route, state, or section is still missing, generic, or fake, keep iterating.
 
-This is the main enforcement loop. Expect many passes.
+### Phase 4 Gate: Route And State Gate
 
-1. Capture the full target evidence set:
-   - desktop route screenshots
-   - mobile route screenshots
-   - interaction state screenshots
-   - focused section crops for every source-listed page section where a full viewport screenshot is not enough to judge fidelity
-   - focused region crops for nav, header, main surface, support modules, and mobile above-the-fold
-2. Compare source and target row-by-row.
-3. Compare every page section listed in `design/source-inventory.md`.
-4. Inspect the target implementation for dependence on the source HTML file or other source-rendering shortcuts.
-5. Score the implementation in `design/implementation-review.md`.
-6. Apply the implementation pass gate:
-   - every critical item must pass
-   - at least `48/50` checklist items must pass
-   - no ordinary unresolved row remains in `design/implementation-open-gaps.md`
-   - final desktop and mobile screenshots exist
-   - at least one screenshot-backed interaction state exists for every source interaction family
-   - every source-listed page section has a passing section-review row or an explicit hard exception
-   - the target app renders from its own authored implementation rather than from the provided source HTML file
-7. If the implementation fails:
-   - keep the failed checklist items in the open-gaps ledger
-   - fix them
-   - rerun Playwright
-   - rescore
-8. Continue until the scorecard, page-section ledger, and open-gaps ledger pass together.
+This gate is owned by `design/implementation-review.md`.
 
-Do not stop because the target feels broadly right. Stop only when the documented gaps are gone.
+Pass rule:
 
-## Phase 6: Adversarial Final Pass
+- score is at least `28/30`
+- every critical route/state item passes
+- every primary route exists as real target UI
+- every source interaction family exists as real target interaction
+- every source-listed page section has a target counterpart and review row
+- mobile route/state coverage exists for the accepted mobile corpus
 
-After the implementation appears done:
+If this gate fails, stay in Phase 4.
 
-1. Assume the target is still wrong.
-2. Try to find at least five differences across:
-   - route coverage
-   - mobile behavior
-   - interaction states
-   - shell ownership
-   - typography
-   - spacing and density
-   - control styling
-   - border/radius/shadow treatment
-3. Either record and fix each difference, or document specifically why it is not a true blocking mismatch.
-4. Record this pass in `design/implementation-review.md`.
+### Phase 5: Visual Verification Loop
 
-The final pass cannot dismiss shell/layout ownership, missing states, or style-system drift as acceptable simplification.
+1. Read `references/visual-verification.md`.
+2. Start the target app using the repo's normal command.
+3. Capture target screenshots that mirror the accepted source inventory.
+4. Capture focused section evidence where full-page screenshots are not enough.
+5. Compare source and target route by route, state by state, and section by section.
+6. Update `design/implementation-review.md`.
+7. Update `design/implementation-open-gaps.md`.
+8. Fix mismatches.
+9. Rerun Playwright from a clean process.
+10. Keep looping until the written verification gate passes.
 
-## Phase 7: Final Signoff
+### Phase 5 Gate: Visual Fidelity Gate
 
-Signoff is blocked unless all of the following are true:
+This gate is owned by `design/implementation-review.md`.
 
-- `design/source-inventory.md` is complete and current.
-- `design/source-quality-review.md` passes the source acceptance gate.
-- `design/spec.json` is current.
-- `design/implementation-reading.md` exists.
-- `design/implementation-review.md` exists and keeps the required scorecard, route/state review, page-section review, and adversarial tables.
-- `design/implementation-open-gaps.md` exists and keeps the required mismatch ledger table.
-- `design/implementation-open-gaps.md` contains no ordinary unresolved drift.
-- The target app is interactive rather than static.
-- The target app renders from authored target code rather than from the provided source HTML file.
-- Every source route/state row has matching target evidence.
-- Every source-listed page section has matching target evidence and a passing section-review row.
-- Desktop and mobile final screenshots exist at `mocks/verification/final-desktop.png` and `mocks/verification/final-mobile.png`.
-- Focused region screenshots exist for shell/nav, header/context, dominant workflow surface, support modules, and mobile above-the-fold.
-- The adversarial final pass is documented.
-- Target repo checks and tests required by `AGENTS.md` have run, or any inability to run them is explicitly recorded.
+Pass rule:
 
-If any ordinary visible mismatch remains, signoff is not allowed.
+- score is at least `49/50`
+- every critical verification item passes
+- every source route/state row has target evidence
+- every source-listed page section has target evidence and a passing section-review row
+- `design/implementation-open-gaps.md` contains no unresolved ordinary drift
+- final desktop and mobile screenshots exist
 
-## Reference Map
+If this gate fails, stay in Phase 5.
 
-- `references/source-discovery.md`: source app launch, route/state inventory, source scoring.
-- `references/target-implementation.md`: theme, shared components, routes, real interactions, checkpoints.
-- `references/visual-verification.md`: screenshot comparison, scoring, open-gaps discipline, final signoff.
+### Phase 6: Adversarial And Functional Proof Loop
 
-## Non-Negotiables
+1. Assume the implementation is still wrong.
+2. Find at least five serious possible mismatches.
+3. Check each against the accepted source corpus.
+4. Fix true mismatches.
+5. Record defended non-blocking differences with concrete reasoning.
+6. Exercise each visible interaction family with real user input.
+7. Capture at least one proof screenshot per interaction family.
+8. Update the adversarial and functional sections of `design/implementation-review.md`.
 
-- The rendered source app is the product authority.
-- The source HTML file is a discovery artifact, not a target runtime dependency.
-- The captured source corpus is the build contract for implementation.
-- The supplied JSON is the styling-system authority.
-- Do not invent a different product, route map, visual system, or information architecture.
-- Do not ship a static facsimile. Visible controls must behave.
-- Do not proceed from source discovery until the source quality score passes.
-- Do not sign off implementation while the scorecard fails or ordinary gaps remain open.
-- Do not let review artifacts degrade into prose.
-- Do not let default component-library styling become an excuse for mismatch.
-- Do not use vague success language such as `close enough`, `broadly aligned`, `inspired by`, or `good enough` as a substitute for screenshot-backed proof.
+### Phase 6 Gate: Adversarial Proof Gate
+
+This gate is owned by `design/implementation-review.md`.
+
+Pass rule:
+
+- score is at least `19/20`
+- at least five serious suspected mismatches were checked
+- every checked mismatch was either fixed or explicitly defended
+- every visible interaction family has functional proof
+- mobile is included in the adversarial pass
+
+If this gate fails, stay in Phase 6 and keep iterating.
+
+### Phase 7: Final Signoff
+
+Before signoff:
+
+1. Re-check that every earlier phase gate passed in writing.
+2. Re-check that required artifacts still use their required tables.
+3. Re-check that the app is authored repo code rather than source-file reuse.
+4. Re-check that final screenshots exist.
+5. Run the target repo's required checks when code changed.
+6. If any ordinary mismatch remains, return to the failing phase.
+
+### Phase 7 Gate: Signoff Gate
+
+This gate is owned by `design/implementation-review.md`.
+
+Score this phase as `12/12`.
+
+Pass rule:
+
+- all earlier gates passed and remain current
+- all required artifacts exist
+- final desktop and mobile screenshots exist
+- open gaps contain no unresolved ordinary drift
+- required review tables remain intact
+- repo checks required for code changes have been run
+- the app is interactive
+- the app does not depend on the provided source HTML file at runtime
+- the app owns the viewport as the product UI
+- no placeholder or generic route remains
+- no ordinary section remains unreviewed
+- no critical item remains failing
+
+If the phase scores below `12/12`, signoff is blocked.
 
 ## Disallowed Shortcuts And Automatic Fails
 
-- Do not load, embed, mount, iframe, webview, object, embed tag, or `srcDoc` the provided source HTML file in the target app.
-- Do not fetch, import, read, or otherwise consume the provided source HTML file at target runtime in order to render the product UI.
-- Do not copy the source DOM wholesale into the target app with `dangerouslySetInnerHTML` or equivalent raw HTML injection.
-- Do not ship a wrapper route whose main purpose is to display the source app instead of rebuilding it.
-- Do not treat the provided source HTML file as a production asset of the target app.
-- Do not mark source discovery complete without desktop, mobile, route/state, and section-level screenshot evidence.
-- Do not mark implementation complete without screenshot-backed source-versus-target proof for the same routes, states, and sections.
+These shortcuts automatically fail the run:
 
-If any shortcut above appears, the run has failed the skill. Remove the shortcut, return to the intended workflow, rebuild the target UI from the captured source corpus, and re-run verification.
+- moving to implementation before the source gate passes
+- moving past planning before the planning gate passes
+- moving past theme/shell before the theme gate passes
+- moving past route/state build before the route/state gate passes
+- signing off before the visual and adversarial gates pass
+- reading the HTML file and inferring the app without Playwright discovery
+- embedding, fetching, or rendering the provided source HTML file at runtime
+- using `iframe`, `srcDoc`, `object`, `embed`, `webview`, or injected raw HTML as the product UI
+- building a screenshot viewer, design board, gallery shell, poster shell, or device frame around the app
+- treating route existence as proof of route fidelity
+- treating a green test suite or a successful build as proof of visual fidelity
+- replacing required audit tables with prose
+- leaving ordinary mismatches undocumented in the open-gaps ledger
+- treating visible interactive controls as static markup
+- skipping mobile discovery, mobile implementation, or mobile grading
+- approving work from overall vibe rather than row-by-row evidence
+
+## Reference Map
+
+- `references/source-discovery.md`: Phase 1 discovery and source acceptance.
+- `references/target-implementation.md`: Phase 2 planning plus Phase 3 and Phase 4 reproduction.
+- `references/visual-verification.md`: Phase 5 visual QA plus Phase 6 adversarial and functional proof.
+- `assets/templates/source-inventory.md`
+- `assets/templates/source-quality-review.md`
+- `assets/templates/implementation-reading.md`
+- `assets/templates/implementation-review.md`
+- `assets/templates/implementation-open-gaps.md`
+
+## Non-Negotiables
+
+- Use the phase gates exactly.
+- Keep the artifacts auditable.
+- Return to earlier phases when evidence is weak.
+- Do not let the provided source HTML leak into the finished runtime.

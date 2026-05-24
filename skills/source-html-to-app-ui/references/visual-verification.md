@@ -1,22 +1,22 @@
 # Visual Verification
 
-Use this reference for implementation grading and final signoff.
+Use this reference for Phase 5, Phase 6, and final signoff.
 
-The purpose is to compare the working target app against the source screenshots, not merely prove that the target loads.
+The purpose is to prove parity against the accepted source corpus, not merely to prove that the target app loads.
 
-## Main Loop
+## Main Verification Loop
 
 1. Start the target app using the repo's normal command.
-2. Capture target screenshots matching every source inventory row.
-3. Capture focused section screenshots or crops for every source-listed page section that cannot be judged reliably from the full viewport.
+2. Capture target screenshots matching every accepted source route/state row.
+3. Capture focused target evidence for every accepted source section that cannot be judged well from the full viewport.
 4. Compare source and target route by route, state by state, and section by section.
 5. Update `design/implementation-review.md`.
 6. Update `design/implementation-open-gaps.md`.
 7. Fix mismatches.
-8. Rerun from a clean Playwright process.
+8. Rerun Playwright from a clean process.
 9. Rescore.
 
-Five to ten passes are normal. More are acceptable. Do not stop while ordinary drift remains.
+Five to ten passes are normal. More are acceptable. Do not stop while ordinary visible drift remains.
 
 ## Required Evidence
 
@@ -35,19 +35,19 @@ Also capture focused evidence for:
 - support/secondary modules
 - each interaction family
 - mobile above-the-fold
-- every source-listed page section, either through full-viewport evidence or a focused section crop
+- every source-listed page section that needs a focused crop
 
-## Implementation Score
+## Phase 5 Score
 
-Score `design/implementation-review.md` against 50 items:
+Phase 5 uses `50` items:
 
-- 8 route coverage items
-- 8 interaction fidelity items
-- 8 layout and scale items
-- 8 styling-system items
-- 6 mobile fidelity items
-- 6 component-state items
-- 6 artifact and verification discipline items
+- `8` route coverage items
+- `8` interaction fidelity items
+- `8` layout and scale items
+- `8` styling-system items
+- `6` mobile fidelity items
+- `6` component-state items
+- `6` artifact and verification-discipline items
 
 Critical failures:
 
@@ -55,22 +55,24 @@ Critical failures:
 - missing primary route
 - missing mobile implementation
 - missing source interaction family
-- target app depends on the provided source HTML file at runtime to render the product UI
+- target app depends on the provided source HTML file at runtime
 - static imitation of a visible interactive control
-- target is wrapped in a presentation/gallery shell
+- target is wrapped in a presentation or gallery shell
 - obvious typography, spacing, surface, or component styling drift on ordinary UI
 - missing or failing page-section review row for any visible source section
-- `design/implementation-open-gaps.md` has unresolved ordinary drift
+- unresolved ordinary drift remains in `design/implementation-open-gaps.md`
 - required review tables have been replaced by prose
 
 Pass gate:
 
 - every critical item passes
-- score is at least `48/50`
+- score is at least `49/50`
 - final desktop and mobile screenshots exist
-- every source inventory row has target evidence
+- every source route/state row has target evidence
 - every source-listed page section has target evidence and a passing section-review row
-- open gaps contain no unresolved ordinary drift
+- `design/implementation-open-gaps.md` has no unresolved ordinary drift
+
+If the score is below `49/50`, stay in the verification loop.
 
 ## Comparison Checklist
 
@@ -81,22 +83,22 @@ For each route/state row compare:
 - same shell ownership
 - same major regions and proportions
 - same section order
-- same headings and control labels
+- same headings and labels
 - same data density
 - same typography hierarchy and weight
-- same surface/background/chrome roles
+- same surface and chrome roles
 - same border strength
 - same radius language
-- same shadow/contact treatment
-- same accent/status color roles
-- same button/input/chip/tab styling
-- same dialog/drawer/menu geometry
-- same table/list row rhythm
-- same mobile stacking and above-the-fold priority
+- same shadow or contact treatment
+- same accent and status roles
+- same control styling
+- same dialog, drawer, and menu geometry
+- same table or list rhythm
+- same mobile stacking and priority
 - same real interaction behavior
 
-If the layout is close but styling reads like a different design system, the row fails.
-If styling is close but a source state is missing or fake, the row fails.
+If structure is close but styling reads like a different design system, the row fails.
+If styling is close but source states are missing or fake, the row fails.
 
 ## Page Section Review
 
@@ -104,15 +106,15 @@ Every visible section from `design/source-inventory.md` must have a matching row
 
 For each section compare:
 
-- section exists in the target
+- section exists
 - section sits in the same route/state and relative order
 - section proportions match
 - internal spacing and density match
 - headings, labels, and action placement match
 - component styling matches
 - borders, radius, shadows, and surface tone match
-- interactive controls in the section behave like the source
-- mobile behavior matches when the section appears on mobile
+- interactive controls behave like the source
+- mobile behavior matches when visible on mobile
 
 Section rows fail independently from route rows. A route cannot pass if any ordinary section in that route fails.
 
@@ -122,6 +124,7 @@ Section rows fail independently from route rows. A route cannot pass if any ordi
 
 Each unresolved gap must include:
 
+- phase
 - route or state
 - page section when applicable
 - source reference
@@ -131,47 +134,48 @@ Each unresolved gap must include:
 - next fix
 - resolved status
 
-Do not replace the table with prose. When ordinary gaps are resolved, keep the template's explicit `None | n/a | ...` row.
+Do not replace the table with prose.
 
-The first real comparison pass is not allowed to declare the ledger empty. If it appears empty, run the adversarial pass first and document why no blocking differences were found.
+The first real comparison pass is not allowed to declare the ledger empty. If it appears empty, run the adversarial pass first and explain why no blocking differences were found.
 
-## Scale Calibration
+## Phase 6: Adversarial And Functional Proof
 
-After the first complete desktop and mobile screenshots, explicitly inspect:
-
-- shell width and page margins
-- navigation item height and icon size
-- header height and control sizes
-- primary surface proportions
-- row heights
-- table/list density
-- dialog/drawer dimensions
-- mobile header, nav, row, card, and action density
-
-Make at least one deliberate scale/polish pass unless the match is already extremely tight and the review explains why.
-
-## Adversarial Pass
-
-After the target seems done:
+After the UI seems done:
 
 1. Hide optimism.
-2. Find at least five possible mismatches.
-3. Check each against source screenshots.
+2. Find at least five serious possible mismatches.
+3. Check each against source evidence.
 4. Fix true mismatches.
-5. Record non-blocking suspected differences with concrete reasoning.
+5. Defend only real non-blocking differences.
+6. Exercise each interaction family with real user input.
+7. Capture at least one proof screenshot per interaction family.
+8. Include mobile in the pass.
 
-The adversarial pass must include mobile and at least one interaction state.
+Phase 6 uses `20` points:
 
-## Functional Checks
+- `8` adversarial-search points
+- `8` functional-proof points
+- `4` artifact-discipline points
 
-Visual fidelity is not enough. Exercise source-matched controls with real user input:
+Critical failures:
 
-- click tabs
-- type in search/filter inputs
-- open and close dialogs/drawers
-- open menus
-- select rows/cards
-- use mobile navigation
-- submit or trigger visible form actions when present
+- fewer than five serious suspected mismatches were checked
+- a checked mismatch is ignored without resolution or defense
+- an interaction family lacks functional proof
+- mobile is not included
 
-Record at least one functional proof screenshot per interaction family.
+Pass gate:
+
+- every critical item passes
+- score is at least `19/20`
+
+## Signoff Rule
+
+Verification is complete only when all of the following pass together:
+
+- Phase 5 score gate
+- page-section review gate
+- open-gaps gate
+- Phase 6 adversarial gate
+
+A generally good-looking page is never enough to pass.
