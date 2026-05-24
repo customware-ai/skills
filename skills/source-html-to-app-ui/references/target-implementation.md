@@ -8,6 +8,8 @@ Read the target repo `AGENTS.md` before editing. Follow its stack, routing, test
 
 This skill adds source-fidelity gates on top of the repo rules. It does not replace them.
 
+When this reference sends the Agent back to source or target browser work, use `references/playwright-interactive.md`. In this skill, that browser work is standalone interactive Playwright scripts, not the repo's normal Playwright E2E test flow.
+
 ## Implementation Authority
 
 Implementation authority is:

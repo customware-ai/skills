@@ -4,11 +4,14 @@ Use this reference for Phase 1.
 
 The goal is to turn the provided source HTML app into an accepted source corpus that a later implementation phase can reproduce without guessing.
 
+Read `references/playwright-interactive.md` first. In this phase, `Playwright` means standalone interactive Node.js Playwright scripts for the source app, not the repo's normal Playwright E2E testing flow.
+
 ## Discovery Rule
 
-Use Playwright as the discovery engine.
+Use interactive Playwright scripts as the discovery engine.
 
-- Open the source app in Playwright.
+- Write and run dedicated source discovery scripts.
+- Open the source app in those scripts.
 - Interact with it to reveal routes, states, menus, dialogs, drawers, filters, selected states, and mobile navigation.
 - Capture screenshots only after the launch method is rendering correctly.
 
@@ -125,7 +128,7 @@ Pass gate:
 - every failed non-critical item is either fixed or recorded as a real source limitation
 - every route/state row has section rows detailed enough to implement from
 
-If the score fails, do not implement. Return to Playwright discovery.
+If the score fails, do not implement. Return to interactive Playwright discovery.
 
 ## Promotion Rule
 

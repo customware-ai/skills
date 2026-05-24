@@ -4,9 +4,9 @@ description: >
   Use this skill when a task provides a self-contained source HTML app file plus
   a design-system JSON and asks the Agent to rebuild that app in the current
   repository. The skill treats the HTML as discovery-only input, forces
-  Playwright-driven route/state capture, then moves through scored gates for
-  source acceptance, implementation planning, authored UI reproduction, visual
-  verification, and adversarial proof before signoff.
+  interactive Playwright route/state capture, then moves through scored gates
+  for source acceptance, implementation planning, authored UI reproduction,
+  visual verification, and adversarial proof before signoff.
 ---
 
 # Source HTML To App UI
@@ -15,17 +15,19 @@ description: >
 
 Re-read this `SKILL.md` after every compaction before continuing work. Re-load the phase references too. Do not rely on conversational memory.
 
-This skill is a gated execution protocol, not a loose set of suggestions. The source HTML file exists only to produce a complete visual and behavioral reference corpus through Playwright. The finished app must then be authored in the target repo from that accepted corpus plus the supplied design-system JSON.
+This skill is a gated execution protocol, not a loose set of suggestions. The source HTML file exists only to produce a complete visual and behavioral reference corpus through interactive Playwright browser scripts. The finished app must then be authored in the target repo from that accepted corpus plus the supplied design-system JSON.
 
 Assume this skill may run fully autonomously. No human is expected to watch the run line by line. The artifact files are therefore the enforcement system. A phase is not complete because the Agent feels confident. A phase is complete only when its required artifact shows a real passing score and all critical items pass.
 
 Never promote work from one phase to the next on optimism, partial evidence, or broad visual similarity.
 
+When this skill says `Playwright`, it means standalone interactive Node.js Playwright scripts that directly open the source HTML app or the built target app, drive the browser, and save screenshot artifacts. It does not mean the repo's normal Playwright end-to-end test suite.
+
 ## Mandatory Process Shape
 
 This workflow shape is not optional:
 
-1. Launch the provided HTML app in Playwright.
+1. Launch the provided HTML app with standalone interactive Playwright scripts.
 2. Discover every route, state, desktop view, mobile view, and important page section through real interaction.
 3. Capture that discovery as a screenshot-backed source corpus plus written inventory and source-quality score.
 4. Build the target UI as authored repo code from the accepted corpus and the design-system JSON.
@@ -64,8 +66,9 @@ These are hard constraints:
 
 ## Required References
 
-Load only the phase-relevant references, but use all three during a full delivery run:
+Load only the phase-relevant references, but use all four during a full delivery run:
 
+- `references/playwright-interactive.md`
 - `references/source-discovery.md`
 - `references/target-implementation.md`
 - `references/visual-verification.md`
@@ -117,9 +120,11 @@ The templates in `assets/templates/` are enforcement artifacts. Copy their struc
    - path to the design-system JSON
 4. Copy or normalize the design-system JSON into `design/spec.json`.
 5. Create the required artifacts from templates.
-6. Read `references/source-discovery.md`.
+6. Read:
+   - `references/playwright-interactive.md`
+   - `references/source-discovery.md`
 7. Inspect the target repo's real route, layout, theme, and test structure.
-8. Decide how the source HTML app will be launched in Playwright.
+8. Decide how the source HTML app will be launched with interactive Playwright.
 9. Do not edit target app UI files yet.
 10. Do not treat HTML reading as a substitute for the discovery run.
 
@@ -138,17 +143,19 @@ If the phase scores below `10/10`, remain in Phase 0.
 
 ### Phase 1: Source Discovery And Acceptance Loop
 
-1. Open the source HTML app with Playwright.
-2. Capture the default desktop and mobile views.
-3. Discover every route and meaningful state through real UI interaction.
-4. Capture desktop and mobile screenshots for every discovered route/state.
-5. Capture focused section crops for shell, navigation, header, dense workflow surfaces, dialogs, drawers, and any section that later needs section-level grading.
-6. Fill `design/source-inventory.md`.
-7. Fill `design/source-quality-review.md`.
-8. If coverage is incomplete, return to Playwright and capture more evidence.
-9. Keep looping until the written source-quality gate passes.
+1. Read `references/playwright-interactive.md` again before writing the discovery scripts.
+2. Write dedicated interactive Playwright discovery scripts for the source app.
+3. Open the source HTML app with those scripts.
+4. Capture the default desktop and mobile views.
+5. Discover every route and meaningful state through real UI interaction.
+6. Capture desktop and mobile screenshots for every discovered route/state.
+7. Capture focused section crops for shell, navigation, header, dense workflow surfaces, dialogs, drawers, and any section that later needs section-level grading.
+8. Fill `design/source-inventory.md`.
+9. Fill `design/source-quality-review.md`.
+10. If coverage is incomplete, rerun the interactive scripts from clean Node.js processes and capture more evidence.
+11. Keep looping until the written source-quality gate passes.
 
-HTML reading, DOM inspection, and script inspection may clarify behavior, but they do not replace Playwright discovery and cannot satisfy this phase on their own.
+HTML reading, DOM inspection, and script inspection may clarify behavior, but they do not replace interactive Playwright discovery and cannot satisfy this phase on their own.
 
 ### Phase 1 Gate: Source Promotion Gate
 
@@ -176,7 +183,7 @@ If this gate fails, implementation is blocked. Stay in Phase 1.
 3. Map the accepted source corpus into target files, routes, sections, and interaction families.
 4. Cite the exact source screenshots the implementation will build from.
 5. List the visual and behavioral risks most likely to drift.
-6. If the corpus is ambiguous, return to Phase 1, capture more evidence, and re-pass the source gate.
+6. If the corpus is ambiguous, return to Phase 1, rerun the source interactive Playwright scripts, capture more evidence, and re-pass the source gate.
 
 ### Phase 2 Gate: Planning Gate
 
@@ -241,16 +248,19 @@ If this gate fails, stay in Phase 4.
 
 ### Phase 5: Visual Verification Loop
 
-1. Read `references/visual-verification.md`.
+1. Read:
+   - `references/playwright-interactive.md`
+   - `references/visual-verification.md`
 2. Start the target app using the repo's normal command.
-3. Capture target screenshots that mirror the accepted source inventory.
-4. Capture focused section evidence where full-page screenshots are not enough.
-5. Compare source and target route by route, state by state, and section by section.
-6. Update `design/implementation-review.md`.
-7. Update `design/implementation-open-gaps.md`.
-8. Fix mismatches.
-9. Rerun Playwright from a clean process.
-10. Keep looping until the written verification gate passes.
+3. Write dedicated interactive Playwright verification scripts for the target app.
+4. Capture target screenshots that mirror the accepted source inventory.
+5. Capture focused section evidence where full-page screenshots are not enough.
+6. Compare source and target route by route, state by state, and section by section.
+7. Update `design/implementation-review.md`.
+8. Update `design/implementation-open-gaps.md`.
+9. Fix mismatches.
+10. Rerun the interactive Playwright verification scripts from clean Node.js processes.
+11. Keep looping until the written verification gate passes.
 
 ### Phase 5 Gate: Visual Fidelity Gate
 
@@ -335,7 +345,8 @@ These shortcuts automatically fail the run:
 - moving past theme/shell before the theme gate passes
 - moving past route/state build before the route/state gate passes
 - signing off before the visual and adversarial gates pass
-- reading the HTML file and inferring the app without Playwright discovery
+- reading the HTML file and inferring the app without interactive Playwright discovery
+- using repo Playwright E2E tests as a substitute for the interactive Playwright discovery or verification scripts
 - embedding, fetching, or rendering the provided source HTML file at runtime
 - using `iframe`, `srcDoc`, `object`, `embed`, `webview`, or injected raw HTML as the product UI
 - building a screenshot viewer, design board, gallery shell, poster shell, or device frame around the app
@@ -352,6 +363,7 @@ These shortcuts automatically fail the run:
 - `references/source-discovery.md`: Phase 1 discovery and source acceptance.
 - `references/target-implementation.md`: Phase 2 planning plus Phase 3 and Phase 4 reproduction.
 - `references/visual-verification.md`: Phase 5 visual QA plus Phase 6 adversarial and functional proof.
+- `references/playwright-interactive.md`: how this skill uses interactive Playwright scripts for discovery and verification.
 - `assets/templates/source-inventory.md`
 - `assets/templates/source-quality-review.md`
 - `assets/templates/implementation-reading.md`

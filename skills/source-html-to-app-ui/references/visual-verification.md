@@ -4,17 +4,20 @@ Use this reference for Phase 5, Phase 6, and final signoff.
 
 The purpose is to prove parity against the accepted source corpus, not merely to prove that the target app loads.
 
+Read `references/playwright-interactive.md` first. In this phase, `Playwright` means standalone interactive Node.js Playwright scripts for the target app, not the repo's normal Playwright E2E testing flow.
+
 ## Main Verification Loop
 
 1. Start the target app using the repo's normal command.
-2. Capture target screenshots matching every accepted source route/state row.
-3. Capture focused target evidence for every accepted source section that cannot be judged well from the full viewport.
-4. Compare source and target route by route, state by state, and section by section.
-5. Update `design/implementation-review.md`.
-6. Update `design/implementation-open-gaps.md`.
-7. Fix mismatches.
-8. Rerun Playwright from a clean process.
-9. Rescore.
+2. Write and run dedicated target verification scripts.
+3. Capture target screenshots matching every accepted source route/state row.
+4. Capture focused target evidence for every accepted source section that cannot be judged well from the full viewport.
+5. Compare source and target route by route, state by state, and section by section.
+6. Update `design/implementation-review.md`.
+7. Update `design/implementation-open-gaps.md`.
+8. Fix mismatches.
+9. Rerun the interactive Playwright scripts from a clean process.
+10. Rescore.
 
 Five to ten passes are normal. More are acceptable. Do not stop while ordinary visible drift remains.
 
