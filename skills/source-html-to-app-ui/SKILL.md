@@ -45,6 +45,9 @@ Treat these rules as always active:
 - Every gate must have both a numeric threshold and critical-item pass requirement.
 - If a gate fails, remain in that phase and keep iterating.
 - If later work reveals missing evidence from an earlier phase, return to that earlier phase, repair it, and re-pass the gate.
+- If a dependency, launch detail, or local setup issue blocks progress, resolve it with the most direct logical solution that preserves the workflow and continue; for example, if the interactive Playwright method is required and its dependency is missing, install it and keep going.
+- Do not lower the skill's strictness, skip gates, or change direction because of an environment issue that can be solved inside the sandbox.
+- Do not stop to ask the user to choose an alternate environment or manual setup path when the sandbox can solve the blocker directly.
 - Do not assume the user will catch a shortcut. The Agent must prevent the shortcut itself.
 
 ## Critical Output Invariant

@@ -24,6 +24,7 @@ Use the same operational model for both:
 - `PLAYWRIGHT_BROWSERS_PATH` may already point there.
 - Do not assume `~/.cache/ms-playwright`.
 - In this sandbox, prefer headless mode.
+- If the browser payload or `playwright` package is missing, install the missing dependency with `npm` and continue. Do not ask the user to choose a different environment or stop for manual setup.
 
 If needed, verify the browser payload with:
 
@@ -32,10 +33,13 @@ echo "$PLAYWRIGHT_BROWSERS_PATH"
 ls -al /ms-playwright
 ```
 
+If `playwright` is unavailable in the current Node environment, install it locally in the workspace and continue the same interactive script flow. Use the smallest sensible install path that restores the required browser behavior.
+
 ## Script Pattern
 
 Write dedicated scripts for the exact session you need.
 
+- If the script cannot start because a required Playwright dependency is missing, install it and rerun the script rather than asking the user for a different setup.
 - Keep source discovery scripts separate from target verification scripts.
 - Keep desktop and mobile as separate scripts or separate invocations when that is clearer.
 - Rerun from a clean Node.js process after any meaningful change.
@@ -86,6 +90,7 @@ Use this in Phase 1.
   - desktop route/state screenshots
   - mobile route/state screenshots
   - focused section crops when needed
+- If a source-browser dependency is missing, install it and resume discovery.
 
 The first required action of implementation work is this source discovery session. Do not edit target UI files before source screenshots exist.
 
@@ -102,6 +107,7 @@ Use this in Phase 5 and Phase 6.
   - focused section evidence
   - final desktop and mobile screenshots
   - functional proof screenshots for interaction families
+- If a target-browser dependency is missing, install it and resume verification.
 
 ## Artifact Discipline
 
@@ -128,3 +134,4 @@ These do not satisfy the Playwright requirement of this skill:
 - taking one screenshot without navigating routes or states
 - preserving stale browser state instead of rerunning from a clean process
 - relying on `page.evaluate(...)` instead of normal input for visible interaction proof
+- stopping to ask the user which environment or browser setup to use when the sandbox can install the missing dependency itself
