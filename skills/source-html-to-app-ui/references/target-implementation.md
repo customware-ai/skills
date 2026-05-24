@@ -2,6 +2,8 @@
 
 Use this reference for Phase 2, Phase 3, and Phase 4.
 
+These phases are internal build gates, not user confirmation points. When a gate passes, continue automatically. When a gate fails, fix the work and rerun the gate automatically.
+
 ## Target Repo First
 
 Read the target repo `AGENTS.md` before editing. Follow its stack, routing, testing, and style rules.
@@ -169,6 +171,7 @@ Pass gate:
 ## Promotion Rule
 
 Phase 5 is blocked until both Phase 3 and Phase 4 have passed in writing.
+Do not stop after Phase 2, Phase 3, or Phase 4 to ask whether to continue. The purpose of these written gates is to decide the next step without needing user approval mid-run.
 
 Do not treat these as acceptable reasons to advance early:
 

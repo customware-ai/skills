@@ -6,6 +6,8 @@ The purpose is to prove parity against the accepted source corpus, not merely to
 
 Read `references/playwright-interactive.md` first. In this phase, `Playwright` means standalone interactive Node.js Playwright scripts for the target app, not the repo's normal Playwright E2E testing flow.
 
+Phase 5, Phase 6, and signoff are internal verification gates, not user confirmation points. If the scores pass, continue automatically. If the scores fail, fix the code, rerun the scripts, rescore, and keep looping automatically.
+
 ## Main Verification Loop
 
 1. Start the target app using the repo's normal command.
@@ -70,12 +72,17 @@ Pass gate:
 
 - every critical item passes
 - score is at least `49/50`
+- desktop fidelity score is at least `48/50`
+- mobile fidelity score is at least `48/50`
 - final desktop and mobile screenshots exist
 - every source route/state row has target evidence
 - every source-listed page section has target evidence and a passing section-review row
 - `design/implementation-open-gaps.md` has no unresolved ordinary drift
 
 If the score is below `49/50`, stay in the verification loop.
+If desktop fidelity is below `48/50`, fix the desktop implementation, rerun the scripts, and rescore.
+If mobile fidelity is below `48/50`, fix the mobile implementation, rerun the scripts, and rescore.
+If one viewport passes and the other fails, the phase still fails.
 
 ## Comparison Checklist
 
@@ -177,6 +184,8 @@ Pass gate:
 Verification is complete only when all of the following pass together:
 
 - Phase 5 score gate
+- desktop fidelity gate
+- mobile fidelity gate
 - page-section review gate
 - open-gaps gate
 - Phase 6 adversarial gate

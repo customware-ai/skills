@@ -18,6 +18,8 @@ Use the same operational model for both:
 - real user input through Playwright APIs
 - clean reruns from fresh Node.js processes
 
+These interactive Playwright scripts are internal gate tools. They are used so the Agent can discover, verify, rescore, and continue autonomously without pausing for user confirmation between phases.
+
 ## Environment Assumptions
 
 - Playwright browsers are preinstalled under `/ms-playwright`.
@@ -93,6 +95,7 @@ Use this in Phase 1.
 - If a source-browser dependency is missing, install it and resume discovery.
 
 The first required action of implementation work is this source discovery session. Do not edit target UI files before source screenshots exist.
+Do not stop after source discovery to ask whether to continue. If the source gate passes, continue into planning immediately. If it fails, keep rerunning discovery until it passes.
 
 ## Target Interactive Playwright
 
@@ -108,6 +111,7 @@ Use this in Phase 5 and Phase 6.
   - final desktop and mobile screenshots
   - functional proof screenshots for interaction families
 - If a target-browser dependency is missing, install it and resume verification.
+- Do not stop after target verification to ask whether to continue. If a verification or adversarial gate fails, fix the code, rerun the scripts, and keep going until the gates pass.
 
 ## Artifact Discipline
 

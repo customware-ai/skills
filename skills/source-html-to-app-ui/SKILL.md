@@ -46,9 +46,14 @@ Treat these rules as always active:
 - Every gate must have both a numeric threshold and critical-item pass requirement.
 - If a gate fails, remain in that phase and keep iterating.
 - If later work reveals missing evidence from an earlier phase, return to that earlier phase, repair it, and re-pass the gate.
+- Every phase gate is an internal control point, not a user confirmation checkpoint.
+- If a phase gate passes, continue directly into the next phase without asking whether to continue.
+- If a phase gate fails, rework the phase, rerun the gate, and keep looping without asking the user for permission to continue.
+- The purpose of the gate, redo, verification, and rework loop is to remove the need for user confirmation during execution and let the Agent complete the run autonomously.
 - If a dependency, launch detail, or local setup issue blocks progress, resolve it with the most direct logical solution that preserves the workflow and continue; for example, if the interactive Playwright method is required and its dependency is missing, install it and keep going.
 - Do not lower the skill's strictness, skip gates, or change direction because of an environment issue that can be solved inside the sandbox.
 - Do not stop to ask the user to choose an alternate environment or manual setup path when the sandbox can solve the blocker directly.
+- Do not stop after any phase to summarize progress and ask whether to continue.
 - Do not assume the user will catch a shortcut. The Agent must prevent the shortcut itself.
 
 ## Critical Output Invariant
@@ -273,13 +278,15 @@ This gate is owned by `design/implementation-review.md`.
 Pass rule:
 
 - score is at least `49/50`
+- desktop fidelity score is at least `48/50`
+- mobile fidelity score is at least `48/50`
 - every critical verification item passes
 - every source route/state row has target evidence
 - every source-listed page section has target evidence and a passing section-review row
 - `design/implementation-open-gaps.md` contains no unresolved ordinary drift
 - final desktop and mobile screenshots exist
 
-If this gate fails, stay in Phase 5.
+If this gate fails, stay in Phase 5. If either desktop or mobile fidelity is below `48/50`, fix the weaker viewport, rerun the interactive verification scripts, rescore, and keep looping until both pass.
 
 ### Phase 6: Adversarial And Functional Proof Loop
 
@@ -349,6 +356,8 @@ These shortcuts automatically fail the run:
 - moving past theme/shell before the theme gate passes
 - moving past route/state build before the route/state gate passes
 - signing off before the visual and adversarial gates pass
+- stopping after any phase to ask the user whether to continue
+- treating any passed phase gate as a user handoff point instead of an automatic promotion into the next phase
 - reading the HTML file and inferring the app without interactive Playwright discovery
 - using repo Playwright E2E tests as a substitute for the interactive Playwright discovery or verification scripts
 - embedding, fetching, or rendering the provided source HTML file at runtime

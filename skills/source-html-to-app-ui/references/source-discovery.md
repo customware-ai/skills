@@ -6,6 +6,8 @@ The goal is to turn the provided source HTML app into an accepted source corpus 
 
 Read `references/playwright-interactive.md` first. In this phase, `Playwright` means standalone interactive Node.js Playwright scripts for the source app, not the repo's normal Playwright E2E testing flow.
 
+Phase 1 is an internal discovery gate, not a user handoff point. A passing discovery score means continue into planning automatically. A failing discovery score means rerun discovery automatically.
+
 ## Discovery Rule
 
 Use interactive Playwright scripts as the discovery engine.
@@ -133,6 +135,7 @@ If the score fails, do not implement. Return to interactive Playwright discovery
 ## Promotion Rule
 
 Phase 2 is blocked until the source-acceptance score passes in writing.
+Do not stop after Phase 1 to summarize the source corpus and ask whether to continue. The gate exists so the Agent can continue autonomously once the source corpus is strong enough.
 
 The following do not count as acceptable substitutes for a passing source corpus:
 

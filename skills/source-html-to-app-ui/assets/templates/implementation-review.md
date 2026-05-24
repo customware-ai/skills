@@ -49,6 +49,18 @@
 - Required score: `49/50`
 - Pass/Fail: `Fail`
 
+## Desktop Fidelity Gate
+
+| Metric | Score | Required | Pass/Fail | Notes |
+| --- | ---: | ---: | --- | --- |
+| Desktop fidelity | `0/50` | `48/50` | Fail |  |
+
+## Mobile Fidelity Gate
+
+| Metric | Score | Required | Pass/Fail | Notes |
+| --- | ---: | ---: | --- | --- |
+| Mobile fidelity | `0/50` | `48/50` | Fail |  |
+
 ## Phase 6 Gate Scorecard
 
 | Category | Passed | Total | Failed Items | Notes |
@@ -111,6 +123,8 @@ Use one row per visible section listed in `design/source-inventory.md`.
 | Phase 3 | `0/20` | `19/20` | Pending | Fail |
 | Phase 4 | `0/30` | `28/30` | Pending | Fail |
 | Phase 5 | `0/50` | `49/50` | Pending | Fail |
+| Desktop Fidelity | `0/50` | `48/50` | Pending | Fail |
+| Mobile Fidelity | `0/50` | `48/50` | Pending | Fail |
 | Phase 6 | `0/20` | `19/20` | Pending | Fail |
 
 ## Phase 7 Signoff Gate
@@ -118,6 +132,8 @@ Use one row per visible section listed in `design/source-inventory.md`.
 | Signoff Item | Pass/Fail | Evidence | Notes |
 | --- | --- | --- | --- |
 | All earlier gates passed and are current | Pending |  |  |
+| Desktop fidelity gate passed at `48/50` or better | Pending |  |  |
+| Mobile fidelity gate passed at `48/50` or better | Pending |  |  |
 | All required artifacts exist | Pending |  |  |
 | Final desktop and mobile screenshots exist | Pending |  |  |
 | Open gaps contain no unresolved ordinary drift | Pending |  |  |
