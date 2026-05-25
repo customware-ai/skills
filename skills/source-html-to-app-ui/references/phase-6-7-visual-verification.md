@@ -62,6 +62,8 @@ Critical failures:
 - missing primary route
 - missing mobile implementation
 - missing source interaction family
+- shell nav item routes to an invented destination instead of being disabled when no accepted source page exists
+- vertical overflow is owned by the full page when the accepted shell shows a fixed sidebar plus scrolling content region
 - target app depends on the provided source HTML file at runtime
 - static imitation of a visible interactive control
 - target is wrapped in a presentation or gallery shell
@@ -93,6 +95,7 @@ For each route/state row compare:
 - same route or state exists
 - same navigation and reach path
 - same shell ownership
+- same scroll ownership between shell and content regions
 - same major regions and proportions
 - same section order
 - same headings and labels
@@ -107,6 +110,7 @@ For each route/state row compare:
 - same dialog, drawer, and menu geometry
 - same table or list rhythm
 - same mobile stacking and priority
+- same sidebar stability versus content scrolling when a sidebar shell exists
 - same real interaction behavior
 
 If structure is close but styling reads like a different design system, the row fails.
@@ -121,6 +125,7 @@ For each section compare:
 - section exists
 - section sits in the same route/state and relative order
 - section proportions match
+- section owns or yields scroll the same way as the source when relevant
 - internal spacing and density match
 - headings, labels, and action placement match
 - component styling matches

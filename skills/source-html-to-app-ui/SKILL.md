@@ -66,14 +66,17 @@ These are hard constraints:
 - The target app must be authored in the target repo as real routes, layouts, components, state, styling, and interactions.
 - The target app must be a near one-to-one reproduction of the accepted source corpus.
 - The target repo's design-system foundation must be updated before route or page implementation begins: shared CSS variables in `app/app.css` first, theme mapping in `tailwind.config.ts` second, shared UI primitives next.
+- If the accepted source corpus shows a sidebar shell, the target must update and use the repo's shared sidebar component or equivalent shared shell layer instead of inventing a separate page-local sidebar system.
 - Layout fidelity and style fidelity are separate hard gates.
 - Route coverage and state coverage are separate hard gates.
 - Visible controls in the source must become real target controls with matching states.
 - The target app must own the viewport as the real product UI.
+- When the accepted source corpus shows a fixed sidebar shell with scrolling content beside it, vertical overflow must belong to the content pane, not the full page, unless the source evidence explicitly proves otherwise.
 - The provided source HTML file is discovery input only. The finished app must not depend on it at runtime.
 - Reusable component styling belongs in the corresponding shared primitive or component-local styling path, not in fake global component classes such as `.btn` or `.input` inside `app/app.css`.
 - Tailwind is preferred but not mandatory. Custom CSS is allowed when needed for fidelity, but reusable design-system concerns must flow through the shared CSS variables defined in `app/app.css`.
 - Primary pages or views must be implemented as real router routes or repo-native route modules, not as an in-memory page-state switch inside one large component.
+- If a visible nav item exists in the shell but no accepted source route/state exists for it, the target should disable that item instead of inventing a fake destination.
 - Ordinary UI structure must be exact across the screen: navigation, headers, controls, filters, tables, panels, spacing, and section order.
 - Ordinary UI styling must also be exact: typography weight, surface tone, border strength, radii, shadows, density, and control treatment.
 - The Agent must review the app part by part, route by route, state by state, and section by section.
@@ -84,9 +87,9 @@ These are hard constraints:
 Load only the phase-relevant references, but use all four during a full delivery run:
 
 - `references/playwright-interactive.md`
-- `references/source-discovery.md`
-- `references/target-implementation.md`
-- `references/visual-verification.md`
+- `references/phase-1-source-discovery.md`
+- `references/phase-2-5-target-implementation.md`
+- `references/phase-6-7-visual-verification.md`
 
 ## Operating Modes
 
@@ -137,7 +140,7 @@ The templates in `assets/templates/` are enforcement artifacts. Copy their struc
 5. Create the required artifacts from templates.
 6. Read:
    - `references/playwright-interactive.md`
-   - `references/source-discovery.md`
+   - `references/phase-1-source-discovery.md`
 7. Inspect the target repo's real route, layout, theme, and test structure.
 8. Decide how the source HTML app will be launched with interactive Playwright.
 9. Do not edit target app UI files yet.
@@ -193,7 +196,7 @@ If this gate fails, implementation is blocked. Stay in Phase 1.
    - `design/spec.json`
    - `design/source-inventory.md`
    - `design/source-quality-review.md`
-   - `references/target-implementation.md`
+   - `references/phase-2-5-target-implementation.md`
 2. Write `design/implementation-reading.md` before coding.
 3. Map the accepted source corpus into target files, routes, sections, and interaction families.
 4. Map the design-system foundation work into the repo's real theme entry points, starting with `app/app.css`, then `tailwind.config.ts`, then the shared `app/components/ui/*` primitives.
@@ -252,11 +255,13 @@ If this gate fails, route and page implementation is blocked. Stay in Phase 3.
 2. Build route and page UI from the adapted shared primitives as the default path.
 3. Implement every listed page section, not just the outer page layout.
 4. Use real local state and real interactions for tabs, filters, dialogs, drawers, menus, row selection, and mobile navigation.
-5. Custom CSS is allowed where needed for fidelity, but reusable design-system concerns must flow through the shared CSS variables and primitive layer instead of one-off global component classes.
-6. After each meaningful pass, capture matching target screenshots.
-7. Update `design/implementation-review.md`.
-8. Update `design/implementation-open-gaps.md`.
-9. If a source route, state, or section is still missing, generic, or fake, keep iterating.
+5. If the source shell exposes nav items that do not have accepted source pages or states behind them, render them as disabled or unavailable rather than inventing fake destinations.
+6. If the source shell has a sidebar plus scrolling content pane, keep the sidebar shell stable and scope vertical overflow to the content region instead of the whole page unless source evidence proves full-page scroll.
+7. Custom CSS is allowed where needed for fidelity, but reusable design-system concerns must flow through the shared CSS variables and primitive layer instead of one-off global component classes.
+8. After each meaningful pass, capture matching target screenshots.
+9. Update `design/implementation-review.md`.
+10. Update `design/implementation-open-gaps.md`.
+11. If a source route, state, or section is still missing, generic, or fake, keep iterating.
 
 ### Phase 4 Gate: Route And State Gate
 
@@ -270,6 +275,8 @@ Pass rule:
 - no primary route is implemented as a page-state machine inside one large component
 - every source interaction family exists as real target interaction
 - every source-listed page section has a target counterpart and review row
+- shell nav items without accepted source destinations are disabled instead of routing to invented pages
+- when the source shell shows sidebar-plus-content scrolling, vertical overflow is scoped to the content region instead of the whole page unless source evidence says otherwise
 - reusable controls are implemented through shared primitives or component-local styling, not fake global component classes
 - mobile route/state coverage exists for the accepted mobile corpus
 
@@ -277,7 +284,7 @@ If this gate fails, stay in Phase 4.
 
 ### Phase 5: Implementation Integrity Gate Loop
 
-1. Read `references/target-implementation.md` again before running the gate.
+1. Read `references/phase-2-5-target-implementation.md` again before running the gate.
 2. Review the authored target code and confirm the design-system foundation is actually in place:
    - `app/app.css` is the shared CSS-variable source of truth
    - `tailwind.config.ts` maps theme values to those variables
@@ -285,11 +292,12 @@ If this gate fails, stay in Phase 4.
 3. Review route architecture and confirm primary pages or views are implemented as real route modules or repo-native route boundaries.
 4. Review interaction truth and confirm visible controls are implemented as real behavior rather than static markup or decorative state.
 5. Review state distinction and confirm distinct source states are still distinct in the target implementation.
-6. Run the required non-visual repo checks for the implementation, including code checks, build checks, and targeted tests needed for the changed behavior.
-7. Update `design/implementation-review.md`.
-8. Update `design/implementation-open-gaps.md`.
-9. Fix implementation-architecture, primitive-ownership, route, state, interaction, or test-integrity failures.
-10. Rerun the implementation gate until it passes in writing.
+6. Review shell ownership and confirm sidebar usage, scroll ownership, and disabled-nav behavior match the accepted source shell.
+7. Run the required non-visual repo checks for the implementation, including code checks, build checks, and targeted tests needed for the changed behavior.
+8. Update `design/implementation-review.md`.
+9. Update `design/implementation-open-gaps.md`.
+10. Fix implementation-architecture, primitive-ownership, route, state, interaction, shell, or test-integrity failures.
+11. Rerun the implementation gate until it passes in writing.
 
 ### Phase 5 Gate: Implementation Integrity Gate
 
@@ -306,6 +314,9 @@ Pass rule:
 - no major page architecture is implemented as a single in-memory page-state machine
 - source interaction families are implemented as real target interactions
 - distinct source states are not collapsed into one generic target state
+- if the source shell has a sidebar, the repo's shared sidebar component or equivalent shared shell layer is actually used
+- shell nav items without accepted source destinations are disabled instead of linking to invented pages
+- vertical overflow belongs to the source-matching content pane rather than the full page when the accepted shell shows a fixed sidebar plus scrolling content
 - required implementation artifacts are filled with real content, not template placeholders
 - required repo checks for the changed implementation have passed
 
@@ -315,7 +326,7 @@ If this gate fails, visual verification is blocked. Stay in Phase 5.
 
 1. Read:
    - `references/playwright-interactive.md`
-   - `references/visual-verification.md`
+   - `references/phase-6-7-visual-verification.md`
 2. Start the target app using the repo's normal command.
 3. Write dedicated interactive Playwright verification scripts for the target app.
 4. Capture target screenshots that mirror the accepted source inventory.
@@ -430,15 +441,15 @@ These shortcuts automatically fail the run:
 
 ## Reference Map
 
-- `references/source-discovery.md`: Phase 1 discovery and source acceptance.
-- `references/target-implementation.md`: Phase 2 planning plus Phase 3, Phase 4, and Phase 5 implementation integrity.
-- `references/visual-verification.md`: Phase 6 visual QA plus Phase 7 adversarial and functional proof.
+- `references/phase-1-source-discovery.md`: Phase 1 discovery and source acceptance.
+- `references/phase-2-5-target-implementation.md`: Phase 2 planning plus Phase 3, Phase 4, and Phase 5 implementation integrity.
+- `references/phase-6-7-visual-verification.md`: Phase 6 visual QA plus Phase 7 adversarial and functional proof.
 - `references/playwright-interactive.md`: how this skill uses interactive Playwright scripts for discovery and verification.
-- `assets/templates/source-inventory.md`
-- `assets/templates/source-quality-review.md`
-- `assets/templates/implementation-reading.md`
-- `assets/templates/implementation-review.md`
-- `assets/templates/implementation-open-gaps.md`
+- `assets/templates/phase-1-source-inventory.md`
+- `assets/templates/phase-0-1-source-quality-review.md`
+- `assets/templates/phase-2-implementation-reading.md`
+- `assets/templates/phase-3-8-implementation-review.md`
+- `assets/templates/phase-3-8-implementation-open-gaps.md`
 
 ## Non-Negotiables
 

@@ -99,11 +99,14 @@
 | Target app boots | Pending |  |  |
 | `app/app.css` token layer is updated first and Tailwind consumes those shared CSS variables | Pending |  |  |
 | Shared reusable component styling lives in `app/components/ui/*` or the repo's equivalent primitive layer | Pending |  |  |
+| Sidebar shell uses the shared sidebar component or equivalent shell layer when the source has a sidebar | Pending |  |  |
 | Primary routes exist | Pending |  |  |
 | Primary routing uses real route modules, not an in-memory page-state machine | Pending |  |  |
+| Nav items without accepted source destinations are disabled instead of routing to invented pages | Pending |  |  |
 | Mobile implementation exists | Pending |  |  |
 | Source interaction families exist as real interactions | Pending |  |  |
 | Target owns the viewport as the product UI | Pending |  |  |
+| Vertical overflow belongs to the correct shell region rather than the full page when the source shows a fixed sidebar plus scrolling content | Pending |  |  |
 | Target does not depend on the provided source HTML file at runtime | Pending |  |  |
 | Every source-listed page section has a target review row | Pending |  |  |
 | Ordinary styling drift is closed | Pending |  |  |

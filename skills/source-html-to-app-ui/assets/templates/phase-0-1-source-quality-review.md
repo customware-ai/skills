@@ -10,7 +10,7 @@
 | Design-system JSON path is confirmed | Pending |  |  |
 | `design/spec.json` exists | Pending |  |  |
 | Required artifact files exist | Pending |  |  |
-| `references/source-discovery.md` is read | Pending |  |  |
+| `references/phase-1-source-discovery.md` is read | Pending |  |  |
 | Target repo route/layout/theme/test structure is inspected | Pending |  |  |
 | Source launch approach is decided | Pending |  |  |
 | No target UI files were edited before discovery | Pending |  |  |

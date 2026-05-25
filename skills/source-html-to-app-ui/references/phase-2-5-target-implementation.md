@@ -92,6 +92,7 @@ Rules:
 
 Patch shared UI wrappers or primitives when the source app has specific treatment for:
 
+- sidebar and navigation shell
 - buttons
 - inputs
 - selects
@@ -110,6 +111,7 @@ Inspect the repo's existing component demo or reference surface first so the ava
 
 Reusable component styling belongs in the matching primitive. Example:
 
+- sidebar shell and nav treatment belong in the shared sidebar layer when the repo provides one
 - button styling and variants belong in `app/components/ui/Button.tsx`
 - input styling belongs in the input primitive
 - reusable chips, badges, tabs, or menu treatments belong in their primitive layer
@@ -130,6 +132,10 @@ Blocking failures:
 
 If the source app has a shell, implement that shell as the actual product boundary.
 
+If the source app has a sidebar shell and the repo provides a shared sidebar component or shell layer, update and use that shared sidebar rather than inventing a separate page-local sidebar system.
+
+If the accepted source screenshots are long because Playwright captured a scrolling page, determine whether the overflow belongs only to the page content beside a fixed sidebar. Do not make the whole page scroll unless the accepted source evidence explicitly proves that full-page scrolling is correct.
+
 ## Route Architecture
 
 Primary source pages or views should be real router routes or repo-native route modules.
@@ -139,6 +145,7 @@ Blocking failures:
 - a single large component switches between major pages in memory
 - primary navigation only changes local component state
 - back/forward or reload behavior cannot preserve the page model the source implies
+- shell navigation links to invented destinations that do not exist in the accepted source corpus
 
 If the source is visibly state-driven rather than URL-driven, preserve that visible state model inside the correct route boundary. Do not use that as an excuse to collapse obvious pages into one state machine.
 
@@ -164,6 +171,8 @@ Visible interactions must be real:
 
 Static imitation of interactive controls is a failure.
 
+If a shell nav item is visible but no accepted source page/state exists for it, disable that item or mark it unavailable. Do not invent a fake page just to keep the nav looking full.
+
 ## Phase 3 Score
 
 Phase 3 uses `20` points:
@@ -178,6 +187,7 @@ Critical failures:
 - `app/app.css` token layer is not the first design-system foundation step
 - `tailwind.config.ts` does not consume the shared CSS variables for theme tokens
 - reusable component styles are being introduced as fake global component classes
+- source sidebar shell exists but the shared sidebar component or shell layer is not updated and used when available
 - route or page implementation started before the design-system foundation and primitive adaptation passed
 - target still reads like a stock starter app
 - shell does not own the viewport
@@ -208,6 +218,8 @@ Critical failures:
 - visible section missing
 - mobile route/state coverage missing
 - target route is placeholder, generic, or fake
+- shell nav item routes to an invented destination instead of being disabled when no accepted source page exists
+- full-page vertical overflow is used where the accepted source shell shows a fixed sidebar plus scrolling content region
 - reusable controls bypass the shared primitive layer and rely on fake global component classes
 - route/state review rows are missing
 
@@ -232,6 +244,9 @@ Review the authored implementation for:
 - reusable control styling belongs in the primitive layer, not fake global classes
 - primary pages or views are real route modules or repo-native route boundaries
 - major navigation is not a single in-memory page-state switch
+- if the source shell has a sidebar, the shared sidebar component or equivalent shell layer is updated and used when available
+- if the source shell has nav items without accepted destinations, those items are disabled rather than routed to invented pages
+- vertical overflow belongs to the correct shell region; do not let a long source screenshot trick the implementation into making the entire page scroll when only the content pane should scroll
 - visible interactions are real and affect rendered state
 - distinct source states remain distinct in the target
 - targeted tests and repo checks reflect the real implementation instead of weakened shortcut coverage
@@ -254,6 +269,9 @@ Critical failures:
 - reusable component styling is implemented through fake global classes such as `.btn`, `.input`, `.badge`, or equivalent
 - shared primitives are bypassed for reusable controls that should live in the primitive layer
 - a primary page or view is implemented as an in-memory page-state machine instead of a real route boundary
+- source sidebar shell exists but the shared sidebar layer is bypassed without a real repo-specific reason
+- shell nav item routes to an invented destination instead of being disabled when no accepted source page exists
+- vertical overflow is owned by the full page when the accepted shell shows a fixed sidebar plus scrolling content pane
 - a visible interaction family is static or decorative
 - distinct source states collapse into one generic target state
 - required implementation artifacts remain placeholder or template-default
