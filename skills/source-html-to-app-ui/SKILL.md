@@ -184,11 +184,12 @@ If the phase scores below `10/10`, remain in Phase 0.
 4. Capture the default desktop and mobile views.
 5. Discover every route and meaningful state through real UI interaction.
 6. Capture desktop and mobile screenshots for every discovered route/state.
-7. Capture focused section crops for shell, navigation, header, dense workflow surfaces, dialogs, drawers, and any section that later needs section-level grading.
-8. Fill `design/source-inventory.md`.
-9. Fill `design/source-quality-review.md`.
-10. If coverage is incomplete, rerun the interactive scripts from clean Node.js processes and capture more evidence.
-11. Keep looping until the written source-quality gate passes.
+7. Capture mobile screenshots not only for the default mobile shell, but for every accepted primary route/state and major interaction state that exists in the mobile UI.
+8. Capture focused section crops for shell, navigation, header, dense workflow surfaces, dialogs, drawers, and any section that later needs section-level grading.
+9. Fill `design/source-inventory.md`.
+10. Fill `design/source-quality-review.md`.
+11. If coverage is incomplete, rerun the interactive scripts from clean Node.js processes and capture more evidence.
+12. Keep looping until the written source-quality gate passes.
 
 HTML reading, DOM inspection, and script inspection may clarify behavior, but they do not replace interactive Playwright discovery and cannot satisfy this phase on their own.
 
@@ -202,6 +203,7 @@ Pass rule:
 - every critical discovery item passes
 - every discovered route/state has desktop evidence
 - every discovered route/state has mobile evidence unless a real source limitation is recorded
+- every accepted primary route/state and major interaction state has dedicated mobile evidence, not just one default mobile-shell capture
 - every visible page section has screenshot evidence and a written contract
 - every route/state row in `design/source-inventory.md` cites actual screenshot paths
 

@@ -123,6 +123,7 @@ Critical failures:
 
 - no desktop source evidence for a discovered route/state
 - no mobile source evidence for a discovered route/state without a real source limitation
+- mobile evidence covers only one default shell view instead of every accepted primary route/state and major mobile interaction state
 - missing primary route
 - missing obvious interaction family
 - unclear reach steps
@@ -136,6 +137,7 @@ Pass gate:
 - score is at least `48/50`
 - every failed non-critical item is either fixed or recorded as a real source limitation
 - every route/state row has section rows detailed enough to implement from
+- every accepted primary route/state and major mobile interaction state has dedicated mobile evidence, not just a single mobile-shell screenshot
 
 If the score fails, do not implement. Return to interactive Playwright discovery.
 

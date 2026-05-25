@@ -37,6 +37,7 @@
 | --- | --- | --- | --- |
 | Every discovered route/state has desktop evidence | Pending |  |  |
 | Every discovered route/state has mobile evidence or a real source limitation | Pending |  |  |
+| Every accepted primary route/state and major mobile interaction state has dedicated mobile evidence, not just one default mobile-shell screenshot | Pending |  |  |
 | Primary routes are discovered | Pending |  |  |
 | Obvious interaction families are discovered | Pending |  |  |
 | Reach steps are clear | Pending |  |  |
