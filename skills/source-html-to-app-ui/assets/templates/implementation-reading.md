@@ -10,7 +10,7 @@
 | --- | ---: | ---: | --- | --- |
 | Source corpus citations | 0 | 5 | Pending |  |
 | Repo mapping completeness | 0 | 5 | Pending |  |
-| Build sequence clarity | 0 | 5 | Pending |  |
+| Design-system foundation and build sequence clarity | 0 | 5 | Pending |  |
 | Visual-risk planning | 0 | 5 | Pending |  |
 
 ## Source Summary
@@ -37,10 +37,21 @@
 - Accent/status roles:
 - Component states:
 
+## Theme Entry Points And Primitive Plan
+
+- `app/app.css` token and variable work:
+- `tailwind.config.ts` token mapping work:
+- Shared primitives to update first:
+- Demo or reference surface inspected:
+- Reusable component styling ownership notes:
+
 ## Build Sequence
 
 | Build Phase | Target Files | Source Evidence | Primary Risk |
 | --- | --- | --- | --- |
+| `app/app.css` token foundation |  |  |  |
+| `tailwind.config.ts` token mapping |  |  |  |
+| Shared primitives |  |  |  |
 | Theme and shell |  |  |  |
 | Primary routes |  |  |  |
 | States and sections |  |  |  |

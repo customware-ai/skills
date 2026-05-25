@@ -4,7 +4,7 @@
 
 | Category | Passed | Total | Failed Items | Notes |
 | --- | ---: | ---: | --- | --- |
-| Theme-token fidelity | 0 | 5 | Pending |  |
+| Design-system foundation | 0 | 5 | Pending |  |
 | Shell ownership and geometry | 0 | 5 | Pending |  |
 | Shared-component treatment | 0 | 5 | Pending |  |
 | Screenshot and review discipline | 0 | 5 | Pending |  |
@@ -19,7 +19,7 @@
 
 | Category | Passed | Total | Failed Items | Notes |
 | --- | ---: | ---: | --- | --- |
-| Route coverage | 0 | 8 | Pending |  |
+| Route architecture and coverage | 0 | 8 | Pending |  |
 | Page-section coverage | 0 | 8 | Pending |  |
 | Interaction reality | 0 | 6 | Pending |  |
 | Mobile route/state coverage | 0 | 4 | Pending |  |
@@ -35,6 +35,23 @@
 
 | Category | Passed | Total | Failed Items | Notes |
 | --- | ---: | ---: | --- | --- |
+| Design-system and primitive discipline | 0 | 6 | Pending |  |
+| Route architecture | 0 | 6 | Pending |  |
+| Interaction truth | 0 | 6 | Pending |  |
+| State distinction | 0 | 4 | Pending |  |
+| Build, runtime, and test integrity | 0 | 4 | Pending |  |
+| Artifact discipline | 0 | 4 | Pending |  |
+
+### Phase 5 Decision
+
+- Score: `0/30`
+- Required score: `28/30`
+- Pass/Fail: `Fail`
+
+## Phase 6 Gate Scorecard
+
+| Category | Passed | Total | Failed Items | Notes |
+| --- | ---: | ---: | --- | --- |
 | Route coverage | 0 | 8 | Pending |  |
 | Interaction fidelity | 0 | 8 | Pending |  |
 | Layout and scale | 0 | 8 | Pending |  |
@@ -43,7 +60,7 @@
 | Component states | 0 | 6 | Pending |  |
 | Artifact and verification discipline | 0 | 6 | Pending |  |
 
-### Phase 5 Decision
+### Phase 6 Decision
 
 - Score: `0/50`
 - Required score: `49/50`
@@ -61,7 +78,7 @@
 | --- | ---: | ---: | --- | --- |
 | Mobile fidelity | `0/50` | `48/50` | Fail |  |
 
-## Phase 6 Gate Scorecard
+## Phase 7 Gate Scorecard
 
 | Category | Passed | Total | Failed Items | Notes |
 | --- | ---: | ---: | --- | --- |
@@ -69,7 +86,7 @@
 | Functional proof coverage | 0 | 8 | Pending |  |
 | Artifact discipline | 0 | 4 | Pending |  |
 
-### Phase 6 Decision
+### Phase 7 Decision
 
 - Score: `0/20`
 - Required score: `19/20`
@@ -80,7 +97,10 @@
 | Critical Item | Pass/Fail | Evidence | Fix If Failed |
 | --- | --- | --- | --- |
 | Target app boots | Pending |  |  |
+| `app/app.css` token layer is updated first and Tailwind consumes those shared CSS variables | Pending |  |  |
+| Shared reusable component styling lives in `app/components/ui/*` or the repo's equivalent primitive layer | Pending |  |  |
 | Primary routes exist | Pending |  |  |
+| Primary routing uses real route modules, not an in-memory page-state machine | Pending |  |  |
 | Mobile implementation exists | Pending |  |  |
 | Source interaction families exist as real interactions | Pending |  |  |
 | Target owns the viewport as the product UI | Pending |  |  |
@@ -89,6 +109,8 @@
 | Ordinary styling drift is closed | Pending |  |  |
 | Open gaps contain no unresolved ordinary drift | Pending |  |  |
 | Review tables are intact | Pending |  |  |
+| Implementation artifacts are filled with real content, not template placeholders | Pending |  |  |
+| Required repo checks for the changed implementation passed before visual verification started | Pending |  |  |
 
 ## Route And State Review
 
@@ -122,12 +144,13 @@ Use one row per visible section listed in `design/source-inventory.md`.
 | --- | --- | --- | --- | --- |
 | Phase 3 | `0/20` | `19/20` | Pending | Fail |
 | Phase 4 | `0/30` | `28/30` | Pending | Fail |
-| Phase 5 | `0/50` | `49/50` | Pending | Fail |
+| Phase 5 | `0/30` | `28/30` | Pending | Fail |
+| Phase 6 | `0/50` | `49/50` | Pending | Fail |
 | Desktop Fidelity | `0/50` | `48/50` | Pending | Fail |
 | Mobile Fidelity | `0/50` | `48/50` | Pending | Fail |
-| Phase 6 | `0/20` | `19/20` | Pending | Fail |
+| Phase 7 | `0/20` | `19/20` | Pending | Fail |
 
-## Phase 7 Signoff Gate
+## Phase 8 Signoff Gate
 
 | Signoff Item | Pass/Fail | Evidence | Notes |
 | --- | --- | --- | --- |
@@ -146,7 +169,7 @@ Use one row per visible section listed in `design/source-inventory.md`.
 | No ordinary section remains unreviewed | Pending |  |  |
 | No critical item remains failing | Pending |  |  |
 
-### Phase 7 Decision
+### Phase 8 Decision
 
 - Score: `0/12`
 - Required score: `12/12`

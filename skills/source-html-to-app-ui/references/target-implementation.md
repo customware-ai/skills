@@ -1,6 +1,6 @@
 # Target Implementation
 
-Use this reference for Phase 2, Phase 3, and Phase 4.
+Use this reference for Phase 2, Phase 3, Phase 4, and Phase 5.
 
 These phases are internal build gates, not user confirmation points. When a gate passes, continue automatically. When a gate fails, fix the work and rerun the gate automatically.
 
@@ -31,6 +31,7 @@ Before coding:
 - map each source route/state row to target files or target extension points
 - map each visible section to the target component or route region that will own it
 - map each interaction family to a real target interaction model
+- map the design-system foundation in order: `app/app.css` first, `tailwind.config.ts` second, shared `app/components/ui/*` primitives third
 - list the highest-risk visual drift areas
 - cite the exact source screenshots the build will follow
 
@@ -40,18 +41,20 @@ If any route, state, or section still lacks evidence strong enough to reproduce 
 
 Build in this order:
 
-1. theme tokens
-2. shared component treatment
-3. shell and viewport ownership
-4. primary routes
-5. route-specific sections
-6. interaction states
-7. mobile behavior
-8. polish and visual parity
+1. `app/app.css` CSS-variable and global-token foundation
+2. `tailwind.config.ts` theme mapping from those CSS variables
+3. component demo or reference-surface inspection
+4. shared component treatment in `app/components/ui/*`
+5. shell and viewport ownership
+6. primary routes
+7. route-specific sections
+8. interaction states
+9. mobile behavior
+10. polish and visual parity
 
 ## Theme Translation
 
-Use `design/spec.json` as the styling-system contract.
+Use `design/spec.json` as the styling-system contract. Treat it as the primary structured source for the design system. Use accepted source screenshots and source HTML inspection only to fill real gaps or clarify application.
 
 Patch the target repo's real theme entry points, such as:
 
@@ -64,7 +67,26 @@ Patch the target repo's real theme entry points, such as:
 - status tokens
 - chart tokens when visible
 
+The expected order is:
+
+1. define or update the shared CSS variables in `app/app.css`
+2. map Tailwind theme entries in `tailwind.config.ts` to those variables with `var(--...)`
+3. consume those tokens through shared primitives and page code
+
 If tokens alone do not reproduce the source style, patch shared components too.
+
+## Tailwind And Custom CSS
+
+Tailwind is preferred, but not mandatory.
+
+If Tailwind utilities alone cannot reproduce the source UI cleanly, custom CSS is allowed and expected.
+
+Rules:
+
+- reusable design-system concerns must flow through the shared CSS variables in `app/app.css`
+- do not hardcode repeated color, radius, border, or shadow values across many files when those belong in the token layer
+- `app/app.css` may contain global tokens, app shell styling, structural layout classes, and page-level custom CSS needed for fidelity
+- do not use `app/app.css` to define fake reusable component classes such as `.btn`, `.btn-primary`, `.input`, `.badge`, or equivalent design-system stand-ins
 
 ## Shared Component Translation
 
@@ -84,7 +106,16 @@ Patch shared UI wrappers or primitives when the source app has specific treatmen
 - tooltips
 - navigation items
 
+Inspect the repo's existing component demo or reference surface first so the available primitives and their intended usage are clear before patching or composing them.
+
+Reusable component styling belongs in the matching primitive. Example:
+
+- button styling and variants belong in `app/components/ui/Button.tsx`
+- input styling belongs in the input primitive
+- reusable chips, badges, tabs, or menu treatments belong in their primitive layer
+
 Do not accept stock library styling if the source app uses a different design language.
+Do not re-create a component design system in global CSS when the repo already provides a primitive layer for it.
 
 ## Viewport Ownership
 
@@ -98,6 +129,18 @@ Blocking failures:
 - route content trapped inside a demo or catalog wrapper
 
 If the source app has a shell, implement that shell as the actual product boundary.
+
+## Route Architecture
+
+Primary source pages or views should be real router routes or repo-native route modules.
+
+Blocking failures:
+
+- a single large component switches between major pages in memory
+- primary navigation only changes local component state
+- back/forward or reload behavior cannot preserve the page model the source implies
+
+If the source is visibly state-driven rather than URL-driven, preserve that visible state model inside the correct route boundary. Do not use that as an excuse to collapse obvious pages into one state machine.
 
 ## Route, State, And Section Reproduction
 
@@ -125,13 +168,17 @@ Static imitation of interactive controls is a failure.
 
 Phase 3 uses `20` points:
 
-- `5` theme-token fidelity points
-- `5` shell ownership and geometry points
+- `5` design-system foundation points
 - `5` shared-component treatment points
+- `5` shell ownership and geometry points
 - `5` screenshot and review-discipline points
 
 Critical failures:
 
+- `app/app.css` token layer is not the first design-system foundation step
+- `tailwind.config.ts` does not consume the shared CSS variables for theme tokens
+- reusable component styles are being introduced as fake global component classes
+- route or page implementation started before the design-system foundation and primitive adaptation passed
 - target still reads like a stock starter app
 - shell does not own the viewport
 - source shell or navigation is missing
@@ -147,7 +194,7 @@ Pass gate:
 
 Phase 4 uses `30` points:
 
-- `8` route coverage points
+- `8` route architecture and coverage points
 - `8` page-section coverage points
 - `6` interaction-reality points
 - `4` mobile route/state coverage points
@@ -156,10 +203,12 @@ Phase 4 uses `30` points:
 Critical failures:
 
 - primary route missing
+- primary route implemented as an in-memory page-state switch instead of a real route boundary
 - source interaction family missing
 - visible section missing
 - mobile route/state coverage missing
 - target route is placeholder, generic, or fake
+- reusable controls bypass the shared primitive layer and rely on fake global component classes
 - route/state review rows are missing
 
 Pass gate:
@@ -168,10 +217,59 @@ Pass gate:
 - every critical item passes
 - every source-listed page section has a target review row
 
+## Phase 5: Implementation Integrity Gate
+
+This phase exists after the authored UI pass and before any screenshot-based target verification begins.
+
+Its purpose is to stop structurally weak implementations from reaching visual verification.
+
+Review the authored implementation for:
+
+- design-system foundation order is correct:
+  - `app/app.css` shared CSS variables first
+  - `tailwind.config.ts` theme mapping second
+  - shared `app/components/ui/*` primitive treatment before route/page styling
+- reusable control styling belongs in the primitive layer, not fake global classes
+- primary pages or views are real route modules or repo-native route boundaries
+- major navigation is not a single in-memory page-state switch
+- visible interactions are real and affect rendered state
+- distinct source states remain distinct in the target
+- targeted tests and repo checks reflect the real implementation instead of weakened shortcut coverage
+- implementation artifacts are filled honestly and no longer template-default
+
+## Phase 5 Score
+
+Phase 5 uses `30` points:
+
+- `6` design-system and primitive-discipline points
+- `6` route architecture points
+- `6` interaction-truth points
+- `4` state-distinction points
+- `4` build, runtime, and test-integrity points
+- `4` artifact-discipline points
+
+Critical failures:
+
+- reusable design-system foundation is not rooted in `app/app.css` and consumed by `tailwind.config.ts`
+- reusable component styling is implemented through fake global classes such as `.btn`, `.input`, `.badge`, or equivalent
+- shared primitives are bypassed for reusable controls that should live in the primitive layer
+- a primary page or view is implemented as an in-memory page-state machine instead of a real route boundary
+- a visible interaction family is static or decorative
+- distinct source states collapse into one generic target state
+- required implementation artifacts remain placeholder or template-default
+- required code checks, build checks, or targeted tests fail
+
+Pass gate:
+
+- score is at least `28/30`
+- every critical item passes
+- the implementation is ready for screenshot-based verification
+
 ## Promotion Rule
 
 Phase 5 is blocked until both Phase 3 and Phase 4 have passed in writing.
-Do not stop after Phase 2, Phase 3, or Phase 4 to ask whether to continue. The purpose of these written gates is to decide the next step without needing user approval mid-run.
+Phase 6 visual verification is blocked until Phase 5 has passed in writing.
+Do not stop after Phase 2, Phase 3, Phase 4, or Phase 5 to ask whether to continue. The purpose of these written gates is to decide the next step without needing user approval mid-run.
 
 Do not treat these as acceptable reasons to advance early:
 

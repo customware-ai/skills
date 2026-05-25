@@ -1,12 +1,14 @@
 # Visual Verification
 
-Use this reference for Phase 5, Phase 6, and final signoff.
+Use this reference for Phase 6, Phase 7, and final signoff.
 
 The purpose is to prove parity against the accepted source corpus, not merely to prove that the target app loads.
 
+Do not enter this reference's workflow until the separate implementation-integrity gate has already passed in writing.
+
 Read `references/playwright-interactive.md` first. In this phase, `Playwright` means standalone interactive Node.js Playwright scripts for the target app, not the repo's normal Playwright E2E testing flow.
 
-Phase 5, Phase 6, and signoff are internal verification gates, not user confirmation points. If the scores pass, continue automatically. If the scores fail, fix the code, rerun the scripts, rescore, and keep looping automatically.
+Phase 6, Phase 7, and signoff are internal verification gates, not user confirmation points. If the scores pass, continue automatically. If the scores fail, fix the code, rerun the scripts, rescore, and keep looping automatically.
 
 ## Main Verification Loop
 
@@ -42,9 +44,9 @@ Also capture focused evidence for:
 - mobile above-the-fold
 - every source-listed page section that needs a focused crop
 
-## Phase 5 Score
+## Phase 6 Score
 
-Phase 5 uses `50` items:
+Phase 6 uses `50` items:
 
 - `8` route coverage items
 - `8` interaction fidelity items
@@ -148,7 +150,7 @@ Do not replace the table with prose.
 
 The first real comparison pass is not allowed to declare the ledger empty. If it appears empty, run the adversarial pass first and explain why no blocking differences were found.
 
-## Phase 6: Adversarial And Functional Proof
+## Phase 7: Adversarial And Functional Proof
 
 After the UI seems done:
 
@@ -161,7 +163,7 @@ After the UI seems done:
 7. Capture at least one proof screenshot per interaction family.
 8. Include mobile in the pass.
 
-Phase 6 uses `20` points:
+Phase 7 uses `20` points:
 
 - `8` adversarial-search points
 - `8` functional-proof points
@@ -183,11 +185,11 @@ Pass gate:
 
 Verification is complete only when all of the following pass together:
 
-- Phase 5 score gate
+- Phase 6 score gate
 - desktop fidelity gate
 - mobile fidelity gate
 - page-section review gate
 - open-gaps gate
-- Phase 6 adversarial gate
+- Phase 7 adversarial gate
 
 A generally good-looking page is never enough to pass.

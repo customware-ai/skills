@@ -99,7 +99,7 @@ Do not stop after source discovery to ask whether to continue. If the source gat
 
 ## Target Interactive Playwright
 
-Use this in Phase 5 and Phase 6.
+Use this in Phase 6 and Phase 7.
 
 - Start the built target app normally.
 - Prefer `127.0.0.1` over `localhost`.
