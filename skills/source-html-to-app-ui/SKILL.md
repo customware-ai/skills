@@ -3,7 +3,8 @@ name: source-html-to-app-ui
 description: >
   Use this skill when a task provides a self-contained source HTML app file plus
   a design-system JSON and asks the Agent to rebuild that app in the current
-  repository. The skill treats the HTML as discovery-only input, forces
+  repository. This skill is strict implementation instruction, not advisory
+  reference text. The skill treats the HTML as discovery-only input, forces
   interactive Playwright route/state capture, then moves through scored gates
   for source acceptance, implementation planning, authored UI reproduction,
   implementation integrity, visual verification, and adversarial proof before
@@ -12,12 +13,30 @@ description: >
 
 # Source HTML To App UI
 
+## Strict Instruction Contract
+
+This file is strict implementation instruction, not loose guidance and not optional reference material.
+
+If the Agent reads this skill, it must execute it exactly as written, in order, to the letter.
+
+Do not reinterpret the steps.
+Do not reorder the steps.
+Do not skip the steps.
+Do not replace the steps with a simpler approach.
+Do not make assumptions that override this file.
+Do not treat broad similarity, intuition, or prior habits as permission to deviate.
+
+If the Agent is uncertain, it must resolve that uncertainty inside the workflow defined here and not invent its own workflow.
+If the skill says to perform a step, gate, checklist, review, or loop, that step is mandatory.
+If the skill says a later phase is blocked, the Agent must treat it as blocked.
+If the Agent cannot prove a phase passed in the required artifact, it must treat that phase as failed.
+
 ## Core Idea
 
 Re-read this `SKILL.md` after every compaction before continuing work. Re-load the phase references too. Do not rely on conversational memory.
 
 This skill is a gated execution protocol, not a loose set of suggestions. The source HTML file exists only to produce a complete visual and behavioral reference corpus through interactive Playwright browser scripts. The finished app must then be authored in the target repo from that accepted corpus plus the supplied design-system JSON.
-If the Agent has read this skill, it must follow it strictly to a T and must not deviate from its required workflow, gates, or artifacts.
+If the Agent has read this skill, it must follow it strictly to a T and must not deviate from its required workflow, gates, artifacts, order, or blocking rules.
 
 Assume this skill may run fully autonomously. No human is expected to watch the run line by line. The artifact files are therefore the enforcement system. A phase is not complete because the Agent feels confident. A phase is complete only when its required artifact shows a real passing score and all critical items pass.
 
@@ -202,7 +221,8 @@ If this gate fails, implementation is blocked. Stay in Phase 1.
 4. Map the design-system foundation work into the repo's real theme entry points, starting with `app/app.css`, then `tailwind.config.ts`, then the shared `app/components/ui/*` primitives.
 5. Cite the exact source screenshots the implementation will build from.
 6. List the visual and behavioral risks most likely to drift.
-7. If the corpus is ambiguous, return to Phase 1, rerun the source interactive Playwright scripts, capture more evidence, and re-pass the source gate.
+7. Fill the ordered implementation checklist in `design/implementation-reading.md` and keep the steps in strict execution order.
+8. If the corpus is ambiguous, return to Phase 1, rerun the source interactive Playwright scripts, capture more evidence, and re-pass the source gate.
 
 ### Phase 2 Gate: Planning Gate
 
@@ -214,6 +234,7 @@ Pass rule:
 - every planned route/state cites source evidence
 - every planned build region maps to concrete target files or extension points
 - the design-system foundation plan maps token work to `app/app.css`, theme mapping to `tailwind.config.ts`, and shared reusable control work to concrete `app/components/ui/*` files or equivalent repo-native extension points
+- the ordered implementation checklist is filled and shows the intended build order through shell, routes, sections, states, and mobile
 - no source-critical ambiguity remains unresolved
 
 If this gate fails, implementation is blocked. Stay in Phase 2 or return to Phase 1 if evidence is missing.
@@ -227,11 +248,12 @@ If this gate fails, implementation is blocked. Stay in Phase 2 or return to Phas
 5. Update shared component wrappers or primitives where the source app requires custom treatment.
 6. Do not create fake global reusable component classes such as `.btn`, `.btn-primary`, `.input`, or `.badge` in `app/app.css`; put reusable component styling in the corresponding shared primitive instead.
 7. Rebuild the shell so the target owns the viewport as the actual product UI.
-8. Capture `mocks/verification/01-theme-shell-desktop.png`.
-9. Update `design/implementation-review.md`.
-10. Update `design/implementation-open-gaps.md`.
-11. Fix shell, theme, and shared-component drift before moving on.
-12. Do not implement route or page UI until this phase passes in writing.
+8. Mark the Phase 3 ordered-checklist rows as `Done`, `Failed`, or `Blocked` in `design/implementation-review.md` and cite exact file evidence.
+9. Capture `mocks/verification/01-theme-shell-desktop.png`.
+10. Update `design/implementation-review.md`.
+11. Update `design/implementation-open-gaps.md`.
+12. Fix shell, theme, shared-component, or checklist-order drift before moving on.
+13. Do not implement route or page UI until this phase passes in writing.
 
 ### Phase 3 Gate: Theme And Shell Gate
 
@@ -243,6 +265,7 @@ Pass rule:
 - the design-system foundation is visibly established in `app/app.css` and `tailwind.config.ts`
 - shared reusable controls are adapted in `app/components/ui/*` or the repo's equivalent primitive layer before route/page implementation begins
 - reusable component styling is not being introduced through fake global component classes in `app/app.css`
+- every Phase 3 ordered checklist row is marked `Done` with evidence and none are marked `Failed`
 - no critical shell-ownership issue remains
 - `mocks/verification/01-theme-shell-desktop.png` exists
 - open gaps for shell/theme are explicitly recorded or resolved
@@ -258,10 +281,12 @@ If this gate fails, route and page implementation is blocked. Stay in Phase 3.
 5. If the source shell exposes nav items that do not have accepted source pages or states behind them, render them as disabled or unavailable rather than inventing fake destinations.
 6. If the source shell has a sidebar plus scrolling content pane, keep the sidebar shell stable and scope vertical overflow to the content region instead of the whole page unless source evidence proves full-page scroll.
 7. Custom CSS is allowed where needed for fidelity, but reusable design-system concerns must flow through the shared CSS variables and primitive layer instead of one-off global component classes.
-8. After each meaningful pass, capture matching target screenshots.
-9. Update `design/implementation-review.md`.
-10. Update `design/implementation-open-gaps.md`.
-11. If a source route, state, or section is still missing, generic, or fake, keep iterating.
+8. Update `app/routes.ts` or the repo's equivalent route registration entrypoint and create the required route files before adding page-state logic inside route modules.
+9. Mark the Phase 4 ordered-checklist rows as `Done`, `Failed`, or `Blocked` in `design/implementation-review.md` and cite exact route-file evidence.
+10. After each meaningful pass, capture matching target screenshots.
+11. Update `design/implementation-review.md`.
+12. Update `design/implementation-open-gaps.md`.
+13. If a source route, state, or section is still missing, generic, fake, or out of order in the checklist, keep iterating.
 
 ### Phase 4 Gate: Route And State Gate
 
@@ -279,6 +304,7 @@ Pass rule:
 - when the source shell shows sidebar-plus-content scrolling, vertical overflow is scoped to the content region instead of the whole page unless source evidence says otherwise
 - reusable controls are implemented through shared primitives or component-local styling, not fake global component classes
 - mobile route/state coverage exists for the accepted mobile corpus
+- every Phase 4 ordered checklist row is marked `Done` with evidence and none are marked `Failed`
 
 If this gate fails, stay in Phase 4.
 
@@ -293,11 +319,12 @@ If this gate fails, stay in Phase 4.
 4. Review interaction truth and confirm visible controls are implemented as real behavior rather than static markup or decorative state.
 5. Review state distinction and confirm distinct source states are still distinct in the target implementation.
 6. Review shell ownership and confirm sidebar usage, scroll ownership, and disabled-nav behavior match the accepted source shell.
-7. Run the required non-visual repo checks for the implementation, including code checks, build checks, and targeted tests needed for the changed behavior.
-8. Update `design/implementation-review.md`.
-9. Update `design/implementation-open-gaps.md`.
-10. Fix implementation-architecture, primitive-ownership, route, state, interaction, shell, or test-integrity failures.
-11. Rerun the implementation gate until it passes in writing.
+7. Run the dedicated Phase 5 implementation-integrity checklist in `design/implementation-review.md` and mark every row `Done`, `Failed`, or `Blocked` with evidence.
+8. Run the required non-visual repo checks for the implementation, including code checks, build checks, and targeted tests needed for the changed behavior.
+9. Update `design/implementation-review.md`.
+10. Update `design/implementation-open-gaps.md`.
+11. Fix implementation-architecture, primitive-ownership, route, state, interaction, shell, or test-integrity failures.
+12. Rerun the implementation gate until it passes in writing.
 
 ### Phase 5 Gate: Implementation Integrity Gate
 
@@ -319,6 +346,7 @@ Pass rule:
 - vertical overflow belongs to the source-matching content pane rather than the full page when the accepted shell shows a fixed sidebar plus scrolling content
 - required implementation artifacts are filled with real content, not template placeholders
 - required repo checks for the changed implementation have passed
+- every Phase 5 integrity checklist row is marked `Done` with evidence and none are marked `Failed`
 
 If this gate fails, visual verification is blocked. Stay in Phase 5.
 
@@ -426,6 +454,8 @@ These shortcuts automatically fail the run:
 - signing off before the implementation-integrity, visual, and adversarial gates pass
 - stopping after any phase to ask the user whether to continue
 - treating any passed phase gate as a user handoff point instead of an automatic promotion into the next phase
+- filling the implementation checklist out of order and then treating the later steps as valid
+- skipping the checklist evidence columns or leaving checklist rows in placeholder state while claiming the phase passed
 - reading the HTML file and inferring the app without interactive Playwright discovery
 - using repo Playwright E2E tests as a substitute for the interactive Playwright discovery or verification scripts
 - embedding, fetching, or rendering the provided source HTML file at runtime

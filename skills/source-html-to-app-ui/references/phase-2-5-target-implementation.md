@@ -32,6 +32,7 @@ Before coding:
 - map each visible section to the target component or route region that will own it
 - map each interaction family to a real target interaction model
 - map the design-system foundation in order: `app/app.css` first, `tailwind.config.ts` second, shared `app/components/ui/*` primitives third
+- fill the ordered implementation checklist with the exact target files or extension points that will satisfy each step
 - list the highest-risk visual drift areas
 - cite the exact source screenshots the build will follow
 
@@ -51,6 +52,34 @@ Build in this order:
 8. interaction states
 9. mobile behavior
 10. polish and visual parity
+
+Record this order in the implementation artifacts as a blocking checklist, not loose notes.
+
+- Each row must be marked `Not Started`, `Done`, `Failed`, or `Blocked`.
+- Each completed row must cite concrete file evidence.
+- If a later row starts while an earlier required row is not `Done`, the implementation phase fails and must be reworked.
+
+## Ordered Checklist Discipline
+
+Treat the implementation checklist as enforcement, not documentation after the fact.
+
+- Phase 2 plans the checklist.
+- Phase 3 clears the design-system and shell rows.
+- Phase 4 clears the route/state rows.
+- Phase 5 audits the full checklist before visual verification begins.
+
+The checklist should make it obvious whether the build happened in the right order:
+
+1. `app/app.css`
+2. `tailwind.config.ts`
+3. demo/reference surface inspection
+4. shared `app/components/ui/*` primitives
+5. shell/sidebar ownership
+6. `app/routes.ts` or equivalent route registration
+7. real route files
+8. route sections and states
+9. mobile states and behavior
+10. final pre-visual integrity pass
 
 ## Theme Translation
 
@@ -118,6 +147,8 @@ Reusable component styling belongs in the matching primitive. Example:
 
 Do not accept stock library styling if the source app uses a different design language.
 Do not re-create a component design system in global CSS when the repo already provides a primitive layer for it.
+
+This primitive layer work must be completed before route modules and page sections are implemented.
 
 ## Viewport Ownership
 
@@ -189,6 +220,7 @@ Critical failures:
 - reusable component styles are being introduced as fake global component classes
 - source sidebar shell exists but the shared sidebar component or shell layer is not updated and used when available
 - route or page implementation started before the design-system foundation and primitive adaptation passed
+- Phase 3 checklist rows are missing, out of order, or lack file evidence
 - target still reads like a stock starter app
 - shell does not own the viewport
 - source shell or navigation is missing
@@ -218,9 +250,12 @@ Critical failures:
 - visible section missing
 - mobile route/state coverage missing
 - target route is placeholder, generic, or fake
+- `app/routes.ts` or the repo's equivalent route-registration file was not updated when real multi-route structure is required
+- route files were not created even though the accepted source corpus contains multiple primary pages
 - shell nav item routes to an invented destination instead of being disabled when no accepted source page exists
 - full-page vertical overflow is used where the accepted source shell shows a fixed sidebar plus scrolling content region
 - reusable controls bypass the shared primitive layer and rely on fake global component classes
+- Phase 4 checklist rows are missing, out of order, or lack route-file evidence
 - route/state review rows are missing
 
 Pass gate:
@@ -251,6 +286,9 @@ Review the authored implementation for:
 - distinct source states remain distinct in the target
 - targeted tests and repo checks reflect the real implementation instead of weakened shortcut coverage
 - implementation artifacts are filled honestly and no longer template-default
+- the ordered implementation checklist is fully complete, in order, and backed by file evidence
+
+Phase 5 must fail if the build sequence is wrong even when the UI looks close.
 
 ## Phase 5 Score
 
@@ -276,6 +314,9 @@ Critical failures:
 - distinct source states collapse into one generic target state
 - required implementation artifacts remain placeholder or template-default
 - required code checks, build checks, or targeted tests fail
+- any ordered checklist row required before visual verification is still `Not Started`, `Failed`, or `Blocked`
+- route work began before shared primitive work was complete
+- page sections were authored before route registration and real route files were in place
 
 Pass gate:
 

@@ -45,6 +45,23 @@
 - Demo or reference surface inspected:
 - Reusable component styling ownership notes:
 
+## Ordered Implementation Checklist
+
+Mark each row before coding. Keep the order strict.
+
+| Order | Required Step | Planned Target Files Or Extension Points | Status | Evidence | Notes |
+| ---: | --- | --- | --- | --- | --- |
+| 1 | `app/app.css` token foundation |  | Not Started |  |  |
+| 2 | `tailwind.config.ts` token mapping |  | Not Started |  |  |
+| 3 | Demo/reference surface inspection |  | Not Started |  |  |
+| 4 | Shared `app/components/ui/*` primitive updates |  | Not Started |  |  |
+| 5 | Shell/sidebar ownership |  | Not Started |  |  |
+| 6 | `app/routes.ts` or equivalent route registration |  | Not Started |  |  |
+| 7 | Real route files |  | Not Started |  |  |
+| 8 | Route sections and states |  | Not Started |  |  |
+| 9 | Mobile states and behavior |  | Not Started |  |  |
+| 10 | Pre-visual integrity review |  | Not Started |  |  |
+
 ## Build Sequence
 
 | Build Phase | Target Files | Source Evidence | Primary Risk |
@@ -69,6 +86,12 @@
 | Ambiguity | Missing Evidence | Return To Discovery? |
 | --- | --- | --- |
 | None | `n/a` | No |
+
+## Blocking Promotion Rules
+
+- Do not start Order 6 until Orders 1 through 5 are `Done`.
+- Do not start Order 7 through 9 until Order 6 is `Done`.
+- Do not start visual verification until Order 10 is `Done`.
 
 ## Decision
 

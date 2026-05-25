@@ -1,5 +1,43 @@
 # Implementation Review
 
+## Ordered Implementation Checklist
+
+Keep this checklist current through Phase 3, Phase 4, and Phase 5. Every row needs a status and concrete file evidence.
+
+| Order | Required Step | Phase Owner | Status | Evidence | Blocking If Not Done? | Notes |
+| ---: | --- | --- | --- | --- | --- | --- |
+| 1 | `app/app.css` token foundation | Phase 3 | Not Started |  | Yes |  |
+| 2 | `tailwind.config.ts` token mapping | Phase 3 | Not Started |  | Yes |  |
+| 3 | Demo/reference surface inspection | Phase 3 | Not Started |  | Yes |  |
+| 4 | Shared `app/components/ui/*` primitive updates | Phase 3 | Not Started |  | Yes |  |
+| 5 | Shell/sidebar ownership | Phase 3 | Not Started |  | Yes |  |
+| 6 | `app/routes.ts` or equivalent route registration | Phase 4 | Not Started |  | Yes |  |
+| 7 | Real route files | Phase 4 | Not Started |  | Yes |  |
+| 8 | Route sections and states | Phase 4 | Not Started |  | Yes |  |
+| 9 | Mobile states and behavior | Phase 4 | Not Started |  | Yes |  |
+| 10 | Pre-visual integrity review | Phase 5 | Not Started |  | Yes |  |
+
+## Phase 5 Integrity Checklist
+
+All rows must be `Done` before visual verification starts.
+
+| Check | Status | Evidence | Blocking? | Notes |
+| --- | --- | --- | --- | --- |
+| Ordered checklist rows 1 through 9 are complete and in order | Not Started |  | Yes |  |
+| `app/app.css` is the shared token source of truth | Not Started |  | Yes |  |
+| `tailwind.config.ts` consumes shared CSS variables | Not Started |  | Yes |  |
+| Shared reusable control styling lives in `app/components/ui/*` or equivalent primitive layer | Not Started |  | Yes |  |
+| No fake global component classes such as `.btn` or `.input` are used for reusable controls | Not Started |  | Yes |  |
+| Sidebar shell uses the shared sidebar component or equivalent shell layer when the source has a sidebar | Not Started |  | Yes |  |
+| `app/routes.ts` or equivalent route registration matches the accepted route map | Not Started |  | Yes |  |
+| Primary pages use real route modules rather than an in-memory page-state switch | Not Started |  | Yes |  |
+| Nav items without accepted source destinations are disabled instead of routing to invented pages | Not Started |  | Yes |  |
+| Vertical overflow belongs to the correct content pane when the source shows a fixed sidebar shell | Not Started |  | Yes |  |
+| Visible interaction families are real and affect rendered state | Not Started |  | Yes |  |
+| Distinct source states remain distinct in the target | Not Started |  | Yes |  |
+| Required repo checks for the authored implementation passed | Not Started |  | Yes |  |
+| Implementation artifacts are filled with real content, not template placeholders | Not Started |  | Yes |  |
+
 ## Phase 3 Gate Scorecard
 
 | Category | Passed | Total | Failed Items | Notes |
@@ -40,7 +78,7 @@
 | Interaction truth | 0 | 6 | Pending |  |
 | State distinction | 0 | 4 | Pending |  |
 | Build, runtime, and test integrity | 0 | 4 | Pending |  |
-| Artifact discipline | 0 | 4 | Pending |  |
+| Ordered checklist and artifact discipline | 0 | 4 | Pending |  |
 
 ### Phase 5 Decision
 
@@ -100,6 +138,7 @@
 | `app/app.css` token layer is updated first and Tailwind consumes those shared CSS variables | Pending |  |  |
 | Shared reusable component styling lives in `app/components/ui/*` or the repo's equivalent primitive layer | Pending |  |  |
 | Sidebar shell uses the shared sidebar component or equivalent shell layer when the source has a sidebar | Pending |  |  |
+| Ordered implementation checklist rows are complete and in order for the current phase | Pending |  |  |
 | Primary routes exist | Pending |  |  |
 | Primary routing uses real route modules, not an in-memory page-state machine | Pending |  |  |
 | Nav items without accepted source destinations are disabled instead of routing to invented pages | Pending |  |  |
