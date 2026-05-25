@@ -1,9 +1,7 @@
 ---
 name: source-html-to-app-ui
 description: >
-  Use this skill when a task provides a self-contained source HTML app file plus
-  a design-system JSON and asks the Agent to rebuild that app in the current
-  repository. This skill is strict implementation instruction, not advisory
+  This skill is strict implementation instruction, not advisory
   reference text. The skill treats the HTML as discovery-only input, forces
   interactive Playwright route/state capture, then moves through scored gates
   for source acceptance, implementation planning, authored UI reproduction,
