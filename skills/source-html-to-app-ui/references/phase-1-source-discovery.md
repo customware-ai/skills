@@ -106,8 +106,8 @@ If a section is visible, it must be listed. Full-page screenshots do not remove 
 Important interpretation rule:
 
 - a long or stitched Playwright screenshot does not automatically mean the whole app shell scrolls
-- when a sidebar shell is present, determine whether the sidebar stays fixed while only the page content scrolls
-- record that scroll ownership explicitly in the section contract so implementation does not incorrectly make the whole page scroll
+- when a sidebar shell is present, treat the sidebar as stable and treat only the content beside it as vertically scrollable
+- record that scroll ownership explicitly in the section contract so implementation never makes the whole page scroll when a sidebar exists
 
 ## Source Acceptance Score
 

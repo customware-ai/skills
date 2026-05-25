@@ -32,7 +32,7 @@ All rows must be `Done` before visual verification starts.
 | `app/routes.ts` or equivalent route registration matches the accepted route map | Not Started |  | Yes |  |
 | Primary pages use real route modules rather than an in-memory page-state switch | Not Started |  | Yes |  |
 | Nav items without accepted source destinations are disabled instead of routing to invented pages | Not Started |  | Yes |  |
-| Vertical overflow belongs to the correct content pane when the source shows a fixed sidebar shell | Not Started |  | Yes |  |
+| If a sidebar shell exists, vertical overflow belongs only to the content pane and never to the full page | Not Started |  | Yes |  |
 | Visible interaction families are real and affect rendered state | Not Started |  | Yes |  |
 | Distinct source states remain distinct in the target | Not Started |  | Yes |  |
 | Required repo checks for the authored implementation passed | Not Started |  | Yes |  |
@@ -145,7 +145,7 @@ All rows must be `Done` before visual verification starts.
 | Mobile implementation exists | Pending |  |  |
 | Source interaction families exist as real interactions | Pending |  |  |
 | Target owns the viewport as the product UI | Pending |  |  |
-| Vertical overflow belongs to the correct shell region rather than the full page when the source shows a fixed sidebar plus scrolling content | Pending |  |  |
+| If a sidebar shell exists, vertical overflow belongs only to the content pane rather than the full page | Pending |  |  |
 | Target does not depend on the provided source HTML file at runtime | Pending |  |  |
 | Every source-listed page section has a target review row | Pending |  |  |
 | Ordinary styling drift is closed | Pending |  |  |

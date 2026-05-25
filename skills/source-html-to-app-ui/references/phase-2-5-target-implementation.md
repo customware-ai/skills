@@ -165,7 +165,7 @@ If the source app has a shell, implement that shell as the actual product bounda
 
 If the source app has a sidebar shell and the repo provides a shared sidebar component or shell layer, update and use that shared sidebar rather than inventing a separate page-local sidebar system.
 
-If the accepted source screenshots are long because Playwright captured a scrolling page, determine whether the overflow belongs only to the page content beside a fixed sidebar. Do not make the whole page scroll unless the accepted source evidence explicitly proves that full-page scrolling is correct.
+If the UI has a sidebar shell, the sidebar stays stable and only the content beside it may scroll vertically. Long Playwright screenshots must not be used as justification for making the whole page scroll.
 
 ## Route Architecture
 
@@ -253,7 +253,7 @@ Critical failures:
 - `app/routes.ts` or the repo's equivalent route-registration file was not updated when real multi-route structure is required
 - route files were not created even though the accepted source corpus contains multiple primary pages
 - shell nav item routes to an invented destination instead of being disabled when no accepted source page exists
-- full-page vertical overflow is used where the accepted source shell shows a fixed sidebar plus scrolling content region
+- full-page vertical overflow is used when a sidebar shell exists
 - reusable controls bypass the shared primitive layer and rely on fake global component classes
 - Phase 4 checklist rows are missing, out of order, or lack route-file evidence
 - route/state review rows are missing
@@ -281,7 +281,7 @@ Review the authored implementation for:
 - major navigation is not a single in-memory page-state switch
 - if the source shell has a sidebar, the shared sidebar component or equivalent shell layer is updated and used when available
 - if the source shell has nav items without accepted destinations, those items are disabled rather than routed to invented pages
-- vertical overflow belongs to the correct shell region; do not let a long source screenshot trick the implementation into making the entire page scroll when only the content pane should scroll
+- vertical overflow belongs only to the content pane when a sidebar shell exists; do not let a long source screenshot trick the implementation into making the entire page scroll
 - visible interactions are real and affect rendered state
 - distinct source states remain distinct in the target
 - targeted tests and repo checks reflect the real implementation instead of weakened shortcut coverage
@@ -309,7 +309,7 @@ Critical failures:
 - a primary page or view is implemented as an in-memory page-state machine instead of a real route boundary
 - source sidebar shell exists but the shared sidebar layer is bypassed without a real repo-specific reason
 - shell nav item routes to an invented destination instead of being disabled when no accepted source page exists
-- vertical overflow is owned by the full page when the accepted shell shows a fixed sidebar plus scrolling content pane
+- vertical overflow is owned by the full page when a sidebar shell exists
 - a visible interaction family is static or decorative
 - distinct source states collapse into one generic target state
 - required implementation artifacts remain placeholder or template-default

@@ -88,7 +88,7 @@ These are hard constraints:
 - Route coverage and state coverage are separate hard gates.
 - Visible controls in the source must become real target controls with matching states.
 - The target app must own the viewport as the real product UI.
-- When the accepted source corpus shows a fixed sidebar shell with scrolling content beside it, vertical overflow must belong to the content pane, not the full page, unless the source evidence explicitly proves otherwise.
+- If the target UI has a sidebar shell of any kind, vertical overflow must belong only to the content pane and not to the full page. The sidebar stays stable while the content beside it scrolls.
 - The provided source HTML file is discovery input only. The finished app must not depend on it at runtime.
 - Reusable component styling belongs in the corresponding shared primitive or component-local styling path, not in fake global component classes such as `.btn` or `.input` inside `app/app.css`.
 - Tailwind is preferred but not mandatory. Custom CSS is allowed when needed for fidelity, but reusable design-system concerns must flow through the shared CSS variables defined in `app/app.css`.
@@ -277,7 +277,7 @@ If this gate fails, route and page implementation is blocked. Stay in Phase 3.
 3. Implement every listed page section, not just the outer page layout.
 4. Use real local state and real interactions for tabs, filters, dialogs, drawers, menus, row selection, and mobile navigation.
 5. If the source shell exposes nav items that do not have accepted source pages or states behind them, render them as disabled or unavailable rather than inventing fake destinations.
-6. If the source shell has a sidebar plus scrolling content pane, keep the sidebar shell stable and scope vertical overflow to the content region instead of the whole page unless source evidence proves full-page scroll.
+6. If the target UI has a sidebar shell, keep the sidebar stable and scope vertical overflow only to the content region beside it. Do not make the whole page scroll.
 7. Custom CSS is allowed where needed for fidelity, but reusable design-system concerns must flow through the shared CSS variables and primitive layer instead of one-off global component classes.
 8. Update `app/routes.ts` or the repo's equivalent route registration entrypoint and create the required route files before adding page-state logic inside route modules.
 9. Mark the Phase 4 ordered-checklist rows as `Done`, `Failed`, or `Blocked` in `design/implementation-review.md` and cite exact route-file evidence.
@@ -299,7 +299,7 @@ Pass rule:
 - every source interaction family exists as real target interaction
 - every source-listed page section has a target counterpart and review row
 - shell nav items without accepted source destinations are disabled instead of routing to invented pages
-- when the source shell shows sidebar-plus-content scrolling, vertical overflow is scoped to the content region instead of the whole page unless source evidence says otherwise
+- when a sidebar shell exists, vertical overflow is scoped only to the content region instead of the whole page
 - reusable controls are implemented through shared primitives or component-local styling, not fake global component classes
 - mobile route/state coverage exists for the accepted mobile corpus
 - every Phase 4 ordered checklist row is marked `Done` with evidence and none are marked `Failed`
@@ -341,7 +341,7 @@ Pass rule:
 - distinct source states are not collapsed into one generic target state
 - if the source shell has a sidebar, the repo's shared sidebar component or equivalent shared shell layer is actually used
 - shell nav items without accepted source destinations are disabled instead of linking to invented pages
-- vertical overflow belongs to the source-matching content pane rather than the full page when the accepted shell shows a fixed sidebar plus scrolling content
+- vertical overflow belongs only to the content pane rather than the full page whenever a sidebar shell exists
 - required implementation artifacts are filled with real content, not template placeholders
 - required repo checks for the changed implementation have passed
 - every Phase 5 integrity checklist row is marked `Done` with evidence and none are marked `Failed`

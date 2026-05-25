@@ -63,7 +63,7 @@ Critical failures:
 - missing mobile implementation
 - missing source interaction family
 - shell nav item routes to an invented destination instead of being disabled when no accepted source page exists
-- vertical overflow is owned by the full page when the accepted shell shows a fixed sidebar plus scrolling content region
+- vertical overflow is owned by the full page when a sidebar shell exists
 - target app depends on the provided source HTML file at runtime
 - static imitation of a visible interactive control
 - target is wrapped in a presentation or gallery shell
@@ -110,7 +110,7 @@ For each route/state row compare:
 - same dialog, drawer, and menu geometry
 - same table or list rhythm
 - same mobile stacking and priority
-- same sidebar stability versus content scrolling when a sidebar shell exists
+- same stable-sidebar versus content-only scrolling behavior whenever a sidebar shell exists
 - same real interaction behavior
 
 If structure is close but styling reads like a different design system, the row fails.
