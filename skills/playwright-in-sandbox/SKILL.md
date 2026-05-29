@@ -347,8 +347,8 @@ For local web debugging, keep the app running in a persistent TTY session. Do no
 Use the repo's documented startup flow first. If there is no explicit contract, the common sandbox pattern is:
 
 ```bash
-npm run build
-PORT=4444 npm run start
+pnpm run build
+PORT=4444 pnpm run start
 ```
 
 Before `page.goto(...)`, verify the target port is listening and the app responds.

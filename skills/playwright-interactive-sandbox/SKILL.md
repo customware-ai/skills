@@ -245,8 +245,8 @@ For local web debugging, keep the app running in a persistent TTY session. Do no
 Build first, then start the built app on port `4444` only:
 
 ```bash
-npm run build
-PORT=4444 npm run start
+pnpm run build
+PORT=4444 pnpm run start
 ```
 
 Before `page.goto(...)`, verify port `4444` is listening and the app responds.
