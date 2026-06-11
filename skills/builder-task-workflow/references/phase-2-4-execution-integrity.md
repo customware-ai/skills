@@ -1,0 +1,280 @@
+# Execution And Integrity
+
+Use this reference for Phase 2, Phase 3, and Phase 4.
+
+These phases turn the accepted research plan into working code, then force a second implementation pass and an integrity gate before browser verification begins. They are internal build gates, not user confirmation points. When a gate passes, continue automatically. When a gate fails, fix the work and rerun the gate automatically. Do not end an OpenCode turn while Phase 2, Phase 3, or Phase 4 is unblocked and the current phase artifact still says `Decision: Fail`.
+
+This is a looped gate workstream: Phase 2, Phase 3, and Phase 4 are not complete until their artifacts pass their gates. A failing score, missing evidence, broken check, stale gap, placeholder row, or weak implementation means stay in the same phase, repair the work, update the artifact, rescore, and repeat. Do not stop or ask the user to continue when a local repair is available.
+
+## Implementation Authority
+
+Implementation authority is:
+
+1. the task body
+2. target repo instructions
+3. Phase 1 research and implementation plan
+4. existing repo contracts, route patterns, service boundaries, components, and test structure
+
+If implementation discovers that the Phase 1 plan is wrong, record the plan change in the current phase artifact and cite the file or runtime evidence that forced the change. Return to Phase 1 only when the original research is no longer adequate.
+
+## Gap Ledger Invariant
+
+`task-workflow/open-gaps.md` is part of every Phase 2, Phase 3, and Phase 4 gate.
+
+- Record required work that is skipped, blocked, deferred, or discovered late.
+- Give every gap a status, owner or next phase, and evidence.
+- When a later phase closes a gap, update `open-gaps.md` in that same phase. Do not leave the gap `Open` and only claim resolution in the phase artifact.
+- Template placeholder rows such as `Pending | Pending | Pending` are not valid ledger evidence after Phase 0. Replace them with real gap rows or explicit `None currently recorded` rows.
+- Before promotion, re-open `open-gaps.md` and verify that no critical gap remains open and no passed phase is listed as the next action for an open gap.
+
+## Code And Coverage Discipline
+
+Follow the target repo's code rules. Do not make the task pass by weakening code quality.
+
+- Prefer existing contracts, schemas, route patterns, services, and test structure.
+- Avoid broad unsafe type assertions such as `as never`, `as any`, or equivalent type erasure unless a narrow repo-specific boundary genuinely requires it and the artifact explains why.
+- Do not silence lint, type, or runtime warnings introduced by this task.
+- Do not delete existing tests just because they fail after the new task. Migrate, replace, or document why the old coverage no longer represents valid behavior.
+
+## Tool And Command Discipline
+
+These phases must not stall on unbounded tools.
+
+- After every gate-relevant file write or patch, read back the target file or inspect the diff before relying on the change.
+- If a write, patch, generated file, or command result is invalid, partial, missing, or uncertain, repair that exact issue before starting the next packet.
+- Use bounded commands for checks and tests. If a command appears hung or idle, stop it, record the evidence, and continue with the next local recovery path.
+- Do not run long-lived dev servers, watchers, or interactive CLIs in the foreground as the active command. If a server is needed before Phase 5, start it in the background with a PID/log, verify readiness from a separate command, and kill it after the check.
+- Phase 2 may run focused static checks, unit tests, and build checks needed for implementation feedback. It must not treat interactive Playwright verification or E2E creation as a substitute for the Phase 2 gate.
+- Phase 5 interactive browser verification and Phase 6 durable E2E coverage belong to their own phases. If Phase 2 discovers browser/E2E work is needed, record the gap and continue the ordered gates.
+
+## Execution Order
+
+Follow the ordered implementation plan from `task-workflow/phase-1-task-research.md`.
+
+If the task touches multiple layers, prefer this order unless the repo architecture demands a different one:
+
+1. contracts and schema changes
+2. persistence or data access changes
+3. service or API route changes
+4. frontend data access and state wiring
+5. route/page/component implementation
+6. focused tests
+7. docs required by changed behavior
+
+Record deviations in the phase artifact. Do not backfill the checklist after coding without evidence.
+
+During Phase 2, artifact updates are incremental, not end-of-phase cleanup. Do not batch the whole implementation and then fill `phase-2-execution.md` later.
+
+## Turn Continuity During Execution
+
+After every edit, search, command, typecheck, lint run, migration command, or test run in Phase 2, Phase 3, or Phase 4:
+
+1. Re-check `task-workflow/CURRENT_PHASE.txt`.
+2. Re-open the current phase artifact.
+3. If the current phase artifact still says `Decision: Fail`, still has `Pending` gate evidence, or still has score `0/...`, immediately perform the next local repair, command, or artifact update.
+4. Do not return control to the user with a narrative checkpoint while the next local workflow action is available.
+
+Examples of invalid turn endings:
+
+- ending after "typecheck passes" while lint, tests, artifact scoring, or promotion remains
+- ending after writing route files while Phase 2 execution log is still blank
+- ending after static checks while Phase 4 gate rows still say `Pending`
+- ending with Phase 2/3/4 artifact score `0/...`
+
+The run may only stop in this workstream if Phase 4 has passed and the marker has advanced to Phase 5, or if a real external blocker is recorded with evidence.
+
+## Phase 2 Work Packet Discipline
+
+Phase 2 must be executed as small auditable work packets.
+
+One work packet is at most:
+
+- one ordered implementation-plan row, or
+- one cohesive file group such as contracts, schema+migration, query+service pair, route registration, one route page, one test file, or one check/fix loop.
+
+After each packet:
+
+1. Update `task-workflow/phase-2-execution.md` immediately.
+2. Mark the relevant execution-log row `Done`, `In progress`, `Blocked`, or `Moved to gap`.
+3. Cite concrete files changed.
+4. Cite the command, typecheck result, readback, or diff evidence proving the packet's state.
+5. Update `task-workflow/open-gaps.md` immediately if the packet leaves work open.
+6. If any write or command failed, repair it and read back the affected file before continuing.
+7. Then continue to the next packet.
+
+Do not start frontend route work while backend/schema/service packets are complete but still recorded as `Pending`.
+Do not start tests while implementation packets are complete but still recorded as `Pending`.
+Do not run broad verification or launch the app while the Phase 2 execution log still has only template-default `Pending` rows.
+Do not create E2E tests or standalone Playwright verification scripts while Phase 2 is still failing.
+
+If source files have been edited and `phase-2-execution.md` still has a blank or all-`Pending` execution log, the next action must be updating the Phase 2 artifact, not more coding.
+
+## Phase 2: Primary Execution
+
+1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-2-execution`.
+2. Re-open `task-workflow/CURRENT_PHASE.txt` and confirm it says `phase-2-execution` before editing implementation files.
+3. Keep the Phase 2 start checkpoint section in `task-workflow/phase-2-execution.md`; fill it before scoring the Phase 2 gate.
+4. Execute the Phase 1 plan in order, one auditable work packet at a time.
+5. Keep changes scoped to the task.
+6. Reuse existing contracts, patterns, components, services, and route shapes.
+7. Update tests or docs when the task logically changes behavior or documentation.
+8. Immediately after each packet, record the completed or in-progress implementation step with file evidence before starting the next packet.
+9. Record any skipped, blocked, or deferred step in `task-workflow/open-gaps.md`.
+10. Replace `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows before scoring the gate.
+11. Do not run final signoff from this phase.
+12. After the Phase 2 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-3-second-execution`.
+
+## Phase 2 Score
+
+Score `task-workflow/phase-2-execution.md` against `40` items:
+
+- `10` implementation-plan completion items
+- `8` repo-pattern reuse items
+- `8` behavior and data wiring items
+- `6` test/doc update items
+- `4` scope-control items
+- `4` artifact evidence items
+
+Critical failures:
+
+- implementation files changed while `CURRENT_PHASE.txt` still says `phase-0-artifact-reset` or `phase-1-task-research`
+- Phase 2 gate passes while the phase start checkpoint is missing or still pending
+- Phase 2 source files are edited while the execution log remains blank or all `Pending`
+- multiple implementation packets are completed while their execution-log rows still say `Pending`
+- failed or uncertain write/edit result is ignored instead of repaired and read back
+- long-lived command, watcher, or dev server is left running in the foreground until the session stalls
+- Phase 2 tries to satisfy Phase 5 or Phase 6 verification instead of completing the Phase 2 gate
+- required planned step missing without an open-gap entry
+- implementation bypasses existing repo contracts or boundaries without evidence
+- visible task behavior left fake or placeholder
+- broken import, undefined symbol, or unfinished marker remains
+- changed files do not match the researched plan and no plan-change evidence exists
+- existing tests deleted without replacement coverage or written defense
+- broad unsafe casts or warning suppression introduced without a narrow evidence-backed reason
+
+Pass gate:
+
+- score is at least `34/40`
+- every critical execution item passes
+- all planned required steps are done or explicitly moved to open gaps with a reason
+- changed files match the researched plan or the artifact explains why the plan changed
+- no obvious placeholder, dead code, broken import, or unfinished task marker remains
+- all gate-relevant writes have readback or diff evidence
+- no unbounded foreground server/watcher command is still running
+
+If this gate fails, stay in Phase 2.
+
+A failing Phase 2 artifact is not a stopping state. Fix the implementation or artifact evidence, rerun the Phase 2 gate, and continue only after the artifact records a real pass.
+
+## Phase 3: Second Execution And Gap Closure
+
+1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-3-second-execution`.
+2. Re-read the task, Phase 1 plan, Phase 2 artifact, and open gaps.
+3. Review the implementation as if continuing someone else's work.
+4. Find missing routes, missing actions, weak wiring, incomplete state, fragile data flow, untested behavior, stale docs, and accidental scope creep.
+5. Close every gap that can be closed from local context.
+6. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
+7. Record a second-pass diff review with file evidence.
+8. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
+
+Phase 3 is mandatory. It is not a polish pass that can be skipped because Phase 2 seemed complete.
+
+## Phase 3 Score
+
+Score `task-workflow/phase-3-second-execution.md` against `30` items:
+
+- `8` task-alignment review items
+- `6` route/action/data wiring review items
+- `6` missing behavior and edge-flow items
+- `5` test/doc gap items
+- `5` gap-ledger quality items
+
+Critical failures:
+
+- critical open gap remains unresolved
+- second-pass artifact only repeats Phase 2 claims without independent review
+- a missing task requirement is found and not fixed or recorded
+- remaining gap has no reason, owner, or next action
+
+Pass gate:
+
+- score is at least `24/30`
+- every critical second-pass item passes
+- no unresolved critical gap remains
+- every remaining non-critical gap has a concrete reason and owner
+- `task-workflow/open-gaps.md` is current after the second pass
+- implementation still matches the task scope
+
+If this gate fails, stay in Phase 3.
+
+A failing Phase 3 artifact is not a stopping state. Continue the second-pass review, close or properly record gaps, rerun the gate, and continue only after the artifact records a real pass.
+
+## Phase 4: Implementation Integrity Review
+
+1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
+2. Run the repo's relevant static checks, type checks, build checks, and focused tests.
+3. Inspect failures and fix root causes.
+4. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
+5. Review docs updates when behavior or workflow changed.
+6. Record commands, outputs, fixes, and final status.
+7. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
+8. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
+
+## Phase 4 Score
+
+Score `task-workflow/phase-4-integrity-review.md` against `30` items:
+
+- `8` command/check execution items
+- `6` import and symbol integrity items
+- `6` route/action/schema/data-shape items
+- `4` test and docs alignment items
+- `3` unrelated-edit review items
+- `3` artifact evidence items
+
+Critical failures:
+
+- required check not run and no valid reason recorded
+- check failure caused by this task remains unfixed
+- runtime-blocking issue remains
+- lint/type warnings introduced by this task remain unresolved or undefended
+- unsafe type assertions are used to bypass a contract that should be modeled directly
+- unrelated edit risk not reviewed
+- artifact claims passing checks without command evidence
+- check command, server, or watcher is left running without bounded cleanup
+- file edits that matter to the gate have no readback or diff evidence
+
+Pass gate:
+
+- score is at least `28/30`
+- every critical integrity item passes
+- required repo checks pass or any remaining failure is unrelated and documented with evidence
+- no known runtime-blocking issue remains
+- no unbounded foreground command remains active
+
+If this gate fails, stay in Phase 4.
+
+A failing Phase 4 artifact is not a stopping state. If checks fail, warnings remain from changed code, gap-ledger rows are stale, or gate rows are still `Pending`, fix the code or artifact evidence, rerun the relevant checks, rescore, and keep looping. Do not produce a final response from Phase 4 unless an external blocker has been fully recorded with evidence and cannot be solved locally.
+
+## Promotion Rule
+
+Phase 5 is blocked until Phase 4 passes in writing.
+
+Before setting `task-workflow/CURRENT_PHASE.txt` to any later phase marker, re-open all prior phase artifacts through the current phase.
+
+Promotion requirements:
+
+- every prior phase artifact has `Decision: Pass`
+- the current phase artifact has `Decision: Pass`
+- every required score meets its threshold
+- all critical items pass
+- no required evidence table is still a template placeholder
+- no required gate row still says `Pending`
+- `task-workflow/open-gaps.md` has no placeholder `Pending` rows
+- `task-workflow/open-gaps.md` has no stale open gap owned by a passed phase
+- no critical gap remains open
+
+If any artifact fails this check, do not advance the marker. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase and continue there.
+
+Static checks are necessary but not sufficient. A green build does not replace interactive Playwright verification.
+
+Do not stop after Phase 2, Phase 3, or Phase 4 to summarize progress or wait for approval. The written gates decide whether to continue, rework, or return to an earlier phase without user intervention.

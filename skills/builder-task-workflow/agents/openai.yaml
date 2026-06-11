@@ -1,0 +1,4 @@
+interface:
+  display_name: "Builder Task Workflow"
+  short_description: "Repeatable gated workflow for Builder task execution"
+  default_prompt: "Use $builder-task-workflow to execute the task through artifact-backed phases, gates, Playwright verification, E2E coverage, and final signoff."
