@@ -13,6 +13,8 @@
 
 ## Instructions And Docs Read
 
+Reference-input rule: all files in this section are read-only unless the task explicitly asks to edit that exact file. This is especially strict for `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, and selected task-provided skill files. Do not rewrite, normalize, consolidate, clean up, trim, or reformat them. Record conflicts or stale content as gaps instead of editing the reference input.
+
 | Source | Why relevant | Notes |
 | --- | --- | --- |
 | `AGENTS.md` | Required root repo instructions | Pending |
@@ -58,6 +60,7 @@ Do not bulk-read every task-provided skill file. List only the skills selected f
 | `.tasks/domain.md` read when present | yes | Pending |
 | Relevant local skill files selected, read, and cited with repo-relative paths | yes | Pending |
 | Irrelevant skill files in `.tasks/files/` were not bulk-read | yes | Pending |
+| Reference inputs remained read-only, especially `.tasks/*` | yes | Pending |
 | Plan cites concrete files | yes | Pending |
 | No unresolved ambiguity | yes | Pending |
 | No implementation or generated files changed before Phase 1 pass | yes | Pending |

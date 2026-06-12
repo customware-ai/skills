@@ -75,6 +75,8 @@ When running in a MITB sandbox, use these repo-relative workspace inputs:
 
 Phase 1 must read `.tasks/domain.md` when it exists. It must discover task-provided skill files from the prompt's Skills section and/or `.tasks/files/`, then read only the skill files relevant to the current task. Do not bulk-read every skill file in `.tasks/files/`.
 
+All Phase 1 input/reference files are read-only. This includes `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, every file under `.tasks/files/`, and every selected task-provided skill file. Treat files under `.tasks/` as canonical task inputs, not editable workspace artifacts. Do not rewrite, normalize, consolidate, clean up, trim, reformat, or "fix" these files unless the task explicitly asks to update that exact reference file. If a reference file appears inconsistent, record the ambiguity in `task-workflow/phase-1-task-research.md` or `task-workflow/open-gaps.md`; never resolve it by editing the reference input.
+
 Record every selected skill path and why it was relevant in `task-workflow/phase-1-task-research.md` and `task-workflow/progress.md`. After compaction or resume, re-read the selected relevant skill files listed in `progress.md` along with `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, and `.tasks/files/`.
 
 In MITB, `.tasks/task.md` or the prompt always provides the task completion command. Phase 7 must run the exact completed command only after every Phase 7 audit check passes. If any Phase 7 audit check fails, do not run task completion. Return to the earliest failing phase, repair the work, update evidence, rescore that phase, loop forward through the gates, and then re-enter Phase 7.
@@ -84,7 +86,7 @@ In MITB, `.tasks/task.md` or the prompt always provides the task completion comm
 This workflow shape is not optional:
 
 1. Clear old workflow artifacts for this repo and copy fresh artifact templates.
-2. Read the task, root `AGENTS.md`, `.tasks/domain.md` when present, only relevant task-provided skill files from `.tasks/files/`, and relevant project docs.
+2. Read the task, root `AGENTS.md`, `.tasks/domain.md` when present, only relevant task-provided skill files from `.tasks/files/`, and relevant project docs. These instruction, task, domain, attachment, and skill-reference files are read-only unless the task explicitly asks to edit them.
 3. Research the codebase and record the implementation plan.
 4. Execute the primary implementation.
 5. Execute a second gap-closure pass.
@@ -308,7 +310,7 @@ Detailed process: `references/phase-0-1-startup-research.md`.
 
 ### Phase 1: Task Intake And Codebase Research
 
-Read the task, root `AGENTS.md`, `.tasks/domain.md` when present, only relevant task-provided skill files from `.tasks/files/`, relevant docs, and codebase. Record task understanding, selected skills, affected files, patterns to reuse, risks, and an ordered implementation plan.
+Read the task, root `AGENTS.md`, `.tasks/domain.md` when present, only relevant task-provided skill files from `.tasks/files/`, relevant docs, and codebase. These are reference inputs: read and cite them, but do not edit them. Record task understanding, selected skills, affected files, patterns to reuse, risks, and an ordered implementation plan.
 
 Detailed process: `references/phase-0-1-startup-research.md`.
 
@@ -362,6 +364,7 @@ These automatically fail the run:
 - failing to copy the artifact templates before implementation work
 - failing to create, read after compaction, or keep `task-workflow/progress.md` current enough to resume the run
 - failing to record and re-read the selected repo-relative instruction/context files in `task-workflow/progress.md`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md` when present, `.tasks/files/`, and relevant task-provided skill files
+- editing `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected task-provided skill files, or `AGENTS.md` without the user/task explicitly requesting an edit to that exact reference file
 - leaving the `task-workflow/progress.md` Current Phase Pointers, Phase Artifact Index, or Artifact Pointers stale, missing, or contradicting phase artifacts
 - using `task-workflow/progress.md` as a duplicate file inventory instead of pointing to the owning phase artifacts for details
 - omitting required semantic evidence from a phase artifact while claiming that phase passed

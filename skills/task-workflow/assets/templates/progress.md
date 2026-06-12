@@ -6,6 +6,7 @@ This file is the compact resume state for the task. Hard rule: re-read it after 
 
 - Re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference before choosing the next action.
 - Re-read the refs below after compaction or resume; keep paths repo-relative and update this section when Phase 1 selects task-relevant skill files.
+- Treat refs as read-only unless the task explicitly asks to edit that exact reference file. This is especially strict for `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, and selected task-provided skill files.
 - If this file disagrees with phase artifacts, trust the earliest failing phase artifact and repair this file.
 
 ## Refs
