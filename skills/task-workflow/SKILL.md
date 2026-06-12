@@ -64,12 +64,27 @@ Never promote work from one phase to the next on optimism, partial evidence, a g
 
 The workflow is intentionally looped. A failed gate means the Agent must rework that phase, update evidence, rerun the needed checks or verification, rescore the gate, and repeat until the gate passes. Quality gates are not reports to the user; they are control points that force more work before promotion.
 
+## MITB Workspace Inputs
+
+When running in a MITB sandbox, use these repo-relative workspace inputs:
+
+- task body: `.tasks/task.md`
+- domain and brand context: `.tasks/domain.md`
+- attached task files: `.tasks/files/`
+- project skills: `.agents/skills/<skill-id>/SKILL.md`
+
+Phase 1 must read `.tasks/domain.md` when it exists. It must discover project skills from the prompt's Skills section and/or `.agents/skills/`, then read only the skills relevant to the current task. Do not bulk-read every skill in `.agents/skills/`.
+
+Record every selected skill path and why it was relevant in `task-workflow/phase-1-task-research.md` and `task-workflow/progress.md`. After compaction or resume, re-read the selected relevant skill files listed in `progress.md` along with `AGENTS.md` and `.tasks/domain.md`.
+
+In MITB, `.tasks/task.md` or the prompt always provides the task completion command. Phase 7 must run the exact completed command only after every Phase 7 audit check passes. If any Phase 7 audit check fails, do not run task completion. Return to the earliest failing phase, repair the work, update evidence, rescore that phase, loop forward through the gates, and then re-enter Phase 7.
+
 ## Mandatory Process Shape
 
 This workflow shape is not optional:
 
 1. Clear old workflow artifacts for this repo and copy fresh artifact templates.
-2. Read the task, root `AGENTS.md`, repo-local domain files, relevant local skill files, and relevant project docs.
+2. Read the task, root `AGENTS.md`, `.tasks/domain.md` when present, only relevant `.agents/skills/.../SKILL.md` files, and relevant project docs.
 3. Research the codebase and record the implementation plan.
 4. Execute the primary implementation.
 5. Execute a second gap-closure pass.
@@ -151,13 +166,15 @@ Before producing any final response, stopping message, or ending an OpenCode tur
 1. `task-workflow/CURRENT_PHASE.txt` must be `phase-7-final-signoff`.
 2. `task-workflow/progress.md` must say the current phase is `phase-7-final-signoff`, the last completed gate is Phase 7, and there is no next local action except final response.
 3. `task-workflow/progress.md` must include a current Artifact Inventory for phase gate MD files, Playwright scripts, screenshots, runtime logs, regression tests, and other workflow artifacts created or updated.
-4. Every required phase artifact must have `Decision: Pass`.
-5. Every required score must meet its threshold.
-6. Every gate row must contain concrete evidence instead of `Pending` or template defaults.
-7. `task-workflow/open-gaps.md` must have no critical open gaps, no stale open gaps owned by passed phases, and no placeholder rows.
-8. Phase 5, Phase 6, and Phase 7 must record fixed-wait review evidence showing the inspected verification files contain no fixed waits.
-9. Phase 7 final quality scorecard must be at least `8/10` in every category.
-10. Phase 7 must record an artifact integrity review that re-opens every phase artifact and verifies the artifact exists, its decision is `Pass`, its score meets threshold, required evidence rows are complete, and it does not contradict `CURRENT_PHASE.txt`, `progress.md`, or `open-gaps.md`.
+4. `task-workflow/progress.md` must list the repo-relative instruction/context files to re-read after compaction, including `AGENTS.md`, `.tasks/domain.md` when present, and only the relevant `.agents/skills/.../SKILL.md` files selected in Phase 1.
+5. Every required phase artifact must have `Decision: Pass`.
+6. Every required score must meet its threshold.
+7. Every gate row must contain concrete evidence instead of `Pending` or template defaults.
+8. `task-workflow/open-gaps.md` must have no critical open gaps, no stale open gaps owned by passed phases, and no placeholder rows.
+9. Phase 5, Phase 6, and Phase 7 must record fixed-wait review evidence showing the inspected verification files contain no fixed waits.
+10. Phase 7 final quality scorecard must be at least `8/10` in every category.
+11. Phase 7 must record an artifact integrity review that re-opens every phase artifact and verifies the artifact exists, its decision is `Pass`, its score meets threshold, required evidence rows are complete, and it does not contradict `CURRENT_PHASE.txt`, `progress.md`, or `open-gaps.md`.
+12. The MITB completed command from `.tasks/task.md` or the prompt must run only after all Phase 7 audit checks pass. If any Phase 7 check fails, the agent must loop back to the earliest failing phase and must not call task completion.
 
 If any item fails and the problem can be solved locally, continue the workflow from the earliest failing phase. Do not answer as if the task is complete.
 If an actual external blocker prevents completion, record the blocker in the current phase artifact and `open-gaps.md`, including commands run, files inspected, why local recovery cannot solve it, and the smallest next action.
@@ -217,9 +234,10 @@ After compaction or resume:
 2. Read `task-workflow/progress.md`.
 3. Read `task-workflow/CURRENT_PHASE.txt`.
 4. Read the current phase artifact and `task-workflow/open-gaps.md`.
-5. If `progress.md`, `CURRENT_PHASE.txt`, and the phase artifacts disagree, continue from the earliest failing phase artifact.
-6. Load only the reference file that owns the current phase.
-7. Load `references/playwright-interactive.md` only when the current phase reference requires interactive Playwright work.
+5. Re-read the instruction/context files listed in `progress.md`, including `AGENTS.md`, `.tasks/domain.md` when present, and only the selected relevant `.agents/skills/.../SKILL.md` files.
+6. If `progress.md`, `CURRENT_PHASE.txt`, and the phase artifacts disagree, continue from the earliest failing phase artifact.
+7. Load only the reference file that owns the current phase.
+8. Load `references/playwright-interactive.md` only when the current phase reference requires interactive Playwright work.
 
 Phase reference map:
 
@@ -289,7 +307,7 @@ Detailed process: `references/phase-0-1-startup-research.md`.
 
 ### Phase 1: Task Intake And Codebase Research
 
-Read the task, root `AGENTS.md`, repo-local domain files, relevant local skill files, relevant docs, and codebase. Record task understanding, affected files, patterns to reuse, risks, and an ordered implementation plan.
+Read the task, root `AGENTS.md`, `.tasks/domain.md` when present, only relevant `.agents/skills/.../SKILL.md` files, relevant docs, and codebase. Record task understanding, selected skills, affected files, patterns to reuse, risks, and an ordered implementation plan.
 
 Detailed process: `references/phase-0-1-startup-research.md`.
 
@@ -325,7 +343,7 @@ Detailed process: `references/phase-5-7-verification-signoff.md`.
 
 ### Phase 7: Final Audit And Signoff
 
-Re-read every artifact, confirm all previous gates still pass after the last edit, review the final diff, and sign off only if the artifact trail proves completion.
+Re-read every artifact, confirm all previous gates still pass after the last edit, review the final diff, run the required MITB completed command only after all Phase 7 audit checks pass, and sign off only if the artifact trail proves completion.
 
 Detailed process: `references/phase-5-7-verification-signoff.md`.
 
@@ -342,6 +360,7 @@ These automatically fail the run:
 - skipping artifact reset
 - failing to copy the artifact templates before implementation work
 - failing to create, read after compaction, or keep `task-workflow/progress.md` current enough to resume the run
+- failing to record and re-read the selected repo-relative instruction/context files in `task-workflow/progress.md`, including `AGENTS.md`, `.tasks/domain.md` when present, and relevant `.agents/skills/.../SKILL.md` files
 - leaving the `task-workflow/progress.md` Artifact Inventory stale or missing artifacts that were created for gates, Playwright verification, runtime evidence, or tests
 - omitting required semantic evidence from a phase artifact while claiming that phase passed
 - advancing `task-workflow/CURRENT_PHASE.txt` while the current or any previous phase artifact still says `Decision: Fail`
@@ -370,6 +389,10 @@ These automatically fail the run:
 - deleting existing tests without equivalent replacement coverage or a written artifact defense
 - using broad unsafe casts or warning suppression to bypass the type system without a narrow evidence-backed reason
 - relying on conversation memory after compaction instead of re-reading this skill, phase references, and artifacts
+- bulk-reading every `.agents/skills/.../SKILL.md` file instead of selecting and reading only task-relevant skills
+- running a MITB task completion command before all Phase 7 audit checks pass
+- failing to loop back to the earliest failing phase when any Phase 7 audit check fails
+- failing to run the required MITB completed command after all Phase 7 audit checks pass
 - asking the user whether to continue between phases when the next phase is unblocked
 
 ## Reference Map

@@ -19,10 +19,24 @@ This file is the compact resume state for the task. Hard rule: re-read it after 
 | --- | --- |
 | Task goal | Pending |
 | Target repo | Pending |
+| Task file / source | Pending |
 | Important repo instructions | Pending |
 | Domain/context files read | Pending |
+| Relevant skill files selected and read | Pending |
 | Key constraints | Pending |
 | Current implementation direction | Pending |
+| MITB task completion command | Pending |
+
+## Resume Context Files
+
+After compaction or resume, re-read these repo-relative files before choosing the next action. Include only files that are actually relevant to this task.
+
+| File | Why reread | Last read / notes |
+| --- | --- | --- |
+| `AGENTS.md` | Required target repo instructions | Pending |
+| `.tasks/domain.md` | MITB domain, brand, and product context when present | Pending |
+| Relevant `.agents/skills/<skill-id>/SKILL.md` files only | Task-specific skill instructions selected in Phase 1; do not list irrelevant skills | Pending |
+| Other task-relevant docs or inputs | Additional architecture, domain, or attached-file context | Pending |
 
 ## Phase Summaries
 
@@ -51,6 +65,7 @@ Brief the actual artifacts that carry resume context. Use repo-relative paths on
 | Browser evidence | `task-workflow/screenshots/` | Screenshots and visual/browser evidence captured during Phase 5 | Pending |
 | Runtime logs / server evidence | Pending | Background server PID/log files or runtime notes used for bounded verification | Pending |
 | Regression test artifacts | Pending | E2E, unit, component, or integration test files added/updated for Phase 6 | Pending |
+| MITB task completion evidence | `.tasks/task.md`; `/workspace/mitb/task_complete.mjs` | Required completed command source and final command result | Pending |
 | Other workflow artifacts | Pending | Any extra reports, fixtures, generated evidence, or task-specific workflow files | Pending |
 
 ## Active Work Queue
@@ -72,6 +87,7 @@ Brief the actual artifacts that carry resume context. Use repo-relative paths on
 ## Resume Rules
 
 - After compaction, re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference.
+- After compaction, also re-read the repo-relative files listed in `Resume Context Files`, including `AGENTS.md`, `.tasks/domain.md` when present, and only the relevant `.agents/skills/.../SKILL.md` files selected in Phase 1.
 - If this file and `CURRENT_PHASE.txt` disagree, inspect the phase artifacts and continue from the earliest failing phase.
 - Use the Artifact Inventory to locate prior gate MD files, Playwright scripts, screenshots, logs, and test artifacts before deciding the next action.
 - This file is a summary and resume map, not proof by itself. Phase artifacts and gate decisions remain the proof.

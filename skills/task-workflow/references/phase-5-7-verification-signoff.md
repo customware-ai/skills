@@ -242,8 +242,12 @@ If this gate fails, stay in Phase 6.
 11. Re-run any command needed because later edits invalidated earlier proof.
 12. Score the final result in all quality categories.
 13. Confirm task completion summary is accurate.
-14. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Artifact Inventory is current, and the only next action is final response.
-15. Sign off only when the artifact proves the whole workflow passed.
+14. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
+15. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
+16. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
+17. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
+18. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Artifact Inventory is current, task-completion evidence is recorded, and the only next action is final response.
+19. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
 
 ## Final Audit Checklist
 
@@ -263,6 +267,7 @@ Confirm:
 - final diff matches the task scope
 - final quality scorecard is at least `8/10` in every category
 - final verification is current after the last source edit
+- MITB completed command from `.tasks/task.md` or the prompt was run after every Phase 7 audit check passed
 - final response can cite changed files, commands/tests run, and final gate status
 
 ## Phase 7 Score
@@ -273,7 +278,7 @@ Score `task-workflow/phase-7-final-signoff.md` against `20` items:
 - `4` artifact integrity items
 - `4` final diff review items
 - `4` final verification-currentness items
-- `2` final summary accuracy items
+- `2` final summary and MITB completion-command items
 
 Critical failures:
 
@@ -286,6 +291,10 @@ Critical failures:
 - any final quality category is below `8/10`
 - final source edit happened after last relevant verification
 - final artifact mostly repeats claims without evidence
+- MITB completed command was not run after every Phase 7 audit check passed
+- MITB completed command was run before previous phase gates and final audit checks passed
+- Phase 7 found a failing check but did not loop back to the earliest failing phase before task completion
+- task completion command was synthesized incorrectly when `.tasks/task.md` or the prompt provided the exact command
 
 Pass gate:
 
@@ -299,6 +308,7 @@ Pass gate:
 - fixed-wait reviews are present and current
 - every final quality category is at least `8/10`
 - final checks and tests are current after the last code change
+- MITB completed command was run successfully after all prior final-audit checks passed
 - final summary cites the main files changed and verification performed
 
 If this gate fails, return to the failing earlier phase.
@@ -323,6 +333,7 @@ Promotion requirements:
 - artifact integrity review is recorded and clean
 - verification evidence is current after the last source edit
 - `task-workflow/progress.md` is current and agrees with Phase 7 signoff
+- MITB completed command has run successfully after the final audit checks passed
 
 If any artifact fails this check, do not advance the marker. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase and continue there.
 
