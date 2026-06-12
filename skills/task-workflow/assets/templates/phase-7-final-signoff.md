@@ -26,6 +26,8 @@
 | Open critical gaps resolved | Pending |
 | Stale/deferred open gaps reconciled | Pending |
 | Task summary accurate | Pending |
+| `progress.md` agrees with Phase 7 and has no remaining local action | Pending |
+| `progress.md` Artifact Inventory briefs all final gate, verification, log, and test artifacts | Pending |
 
 ## Open Gaps Audit
 
@@ -48,6 +50,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | `task-workflow/phase-4-integrity-review.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/phase-5-playwright-verification.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/phase-6-e2e-verification.md` | Pending | Pending | Pending | Pending | Pending |
+| `task-workflow/progress.md` | Pending | Current and consistent | No pending local action | Pending | Pending |
 
 ## Fixed Wait Review Recap
 
@@ -80,6 +83,8 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Artifact integrity review completed and clean | yes | Pending |
 | Quality scorecard all >= 8/10 | yes | Pending |
 | Verification current | yes | Pending |
+| `progress.md` final state agrees with Phase 7 | yes | Pending |
+| `progress.md` Artifact Inventory final state is current | yes | Pending |
 | Promotion lock verified before final signoff | yes | Pending |
 
 Decision: Fail

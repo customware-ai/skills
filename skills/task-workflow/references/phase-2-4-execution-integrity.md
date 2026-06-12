@@ -27,6 +27,16 @@ If implementation discovers that the Phase 1 plan is wrong, record the plan chan
 - Template placeholder rows such as `Pending | Pending | Pending` are not valid ledger evidence after Phase 0. Replace them with real gap rows or explicit `None currently recorded` rows.
 - Before promotion, re-open `open-gaps.md` and verify that no critical gap remains open and no passed phase is listed as the next action for an open gap.
 
+## Progress Ledger Invariant
+
+`task-workflow/progress.md` is part of every Phase 2, Phase 3, and Phase 4 resume path.
+
+- Read it after compaction before choosing the next action.
+- Keep it current after each meaningful Phase 2 work packet, Phase 3 gap-closure pass, Phase 4 check/fix loop, blocker, gate result, and phase promotion.
+- It must summarize enough context from earlier phases to continue without conversation memory: task goal, key repo instructions, implementation direction, active work queue, latest checks, and next local action.
+- Its Artifact Inventory must brief the actual gate MD files and any workflow artifacts created so far, including checks/logs or tests that later phases may need to inspect.
+- If `progress.md` says a later phase than the earliest failing phase artifact, the phase artifact wins. Correct `CURRENT_PHASE.txt` and `progress.md`, then continue from the earliest failing phase.
+
 ## Code And Coverage Discipline
 
 Follow the target repo's code rules. Do not make the task pass by weakening code quality.
@@ -95,12 +105,13 @@ One work packet is at most:
 After each packet:
 
 1. Update `task-workflow/phase-2-execution.md` immediately.
-2. Mark the relevant execution-log row `Done`, `In progress`, `Blocked`, or `Moved to gap`.
-3. Cite concrete files changed.
-4. Cite the command, typecheck result, readback, or diff evidence proving the packet's state.
-5. Update `task-workflow/open-gaps.md` immediately if the packet leaves work open.
-6. If any write or command failed, repair it and read back the affected file before continuing.
-7. Then continue to the next packet.
+2. Update `task-workflow/progress.md` with the packet summary, affected artifacts if any, and next local action.
+3. Mark the relevant execution-log row `Done`, `In progress`, `Blocked`, or `Moved to gap`.
+4. Cite concrete files changed.
+5. Cite the command, typecheck result, readback, or diff evidence proving the packet's state.
+6. Update `task-workflow/open-gaps.md` immediately if the packet leaves work open.
+7. If any write or command failed, repair it and read back the affected file before continuing.
+8. Then continue to the next packet.
 
 Do not start frontend route work while backend/schema/service packets are complete but still recorded as `Pending`.
 Do not start tests while implementation packets are complete but still recorded as `Pending`.
@@ -121,8 +132,10 @@ If source files have been edited and `phase-2-execution.md` still has a blank or
 8. Immediately after each packet, record the completed or in-progress implementation step with file evidence before starting the next packet.
 9. Record any skipped, blocked, or deferred step in `task-workflow/open-gaps.md`.
 10. Replace `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows before scoring the gate.
-11. Do not run final signoff from this phase.
-12. After the Phase 2 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-3-second-execution`.
+11. Update `task-workflow/progress.md` before scoring and before promotion, including any newly created workflow/test/log artifacts.
+12. Do not run final signoff from this phase.
+13. After the Phase 2 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-3-second-execution`.
+14. Update `task-workflow/progress.md` so current phase and next local action match Phase 3.
 
 ## Phase 2 Score
 
@@ -140,6 +153,7 @@ Critical failures:
 - implementation files changed while `CURRENT_PHASE.txt` still says `phase-0-artifact-reset` or `phase-1-task-research`
 - Phase 2 gate passes while the phase start checkpoint is missing or still pending
 - Phase 2 source files are edited while the execution log remains blank or all `Pending`
+- Phase 2 work progresses while `task-workflow/progress.md` still has template-default `Pending` rows for the current phase, active work queue, or next local action
 - multiple implementation packets are completed while their execution-log rows still say `Pending`
 - failed or uncertain write/edit result is ignored instead of repaired and read back
 - long-lived command, watcher, or dev server is left running in the foreground until the session stalls
@@ -174,8 +188,10 @@ A failing Phase 2 artifact is not a stopping state. Fix the implementation or ar
 4. Find missing routes, missing actions, weak wiring, incomplete state, fragile data flow, untested behavior, stale docs, and accidental scope creep.
 5. Close every gap that can be closed from local context.
 6. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
-7. Record a second-pass diff review with file evidence.
-8. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
+7. Update `task-workflow/progress.md` with the second-pass findings, gap state, and next local action.
+8. Record a second-pass diff review with file evidence.
+9. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
+10. Update `task-workflow/progress.md` so current phase and next local action match Phase 4.
 
 Phase 3 is mandatory. It is not a polish pass that can be skipped because Phase 2 seemed complete.
 
@@ -217,8 +233,10 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 4. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
 5. Review docs updates when behavior or workflow changed.
 6. Record commands, outputs, fixes, and final status.
-7. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
-8. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
+7. Update `task-workflow/progress.md` with latest check results, fixed issues, and next local action.
+8. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
+9. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
+10. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
 
 ## Phase 4 Score
 
@@ -272,6 +290,7 @@ Promotion requirements:
 - `task-workflow/open-gaps.md` has no placeholder `Pending` rows
 - `task-workflow/open-gaps.md` has no stale open gap owned by a passed phase
 - no critical gap remains open
+- `task-workflow/progress.md` matches the next phase and contains a current next local action
 
 If any artifact fails this check, do not advance the marker. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase and continue there.
 

@@ -50,6 +50,8 @@
 | No unresolved ambiguity | yes | Pending |
 | No implementation or generated files changed before Phase 1 pass | yes | Pending |
 | Verification plan recorded | yes | Pending |
+| `progress.md` summarizes Phase 1 and next Phase 2 action | yes | Pending |
+| `progress.md` Artifact Inventory briefs created gate files and resume files | yes | Pending |
 | Marker promoted after Phase 1 pass | `phase-2-execution` | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 

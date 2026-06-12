@@ -25,6 +25,8 @@
 | No unresolved critical gap | yes | Pending |
 | Remaining non-critical gaps defended | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
+| `progress.md` current and points to Phase 4 next action | yes | Pending |
+| `progress.md` Artifact Inventory current | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 
 Decision: Fail

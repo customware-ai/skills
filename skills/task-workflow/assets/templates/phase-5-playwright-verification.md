@@ -26,6 +26,32 @@
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
+## User-Perspective Stress Coverage
+
+Exercise non-ideal behavior a real user could do while using the feature: invalid inputs, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigation away/back, empty states, and nearby controls.
+
+| Scenario | Script | Evidence | Result | Fix/rerun |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
+
+## Surrounding Feature Smoke
+
+Check nearby UI/features sharing the changed surface so the task did not break unrelated but adjacent behavior.
+
+| Surrounding feature | Why at risk | Script/evidence | Result |
+| --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending |
+
+## Responsive UI And Visual Quality
+
+Verify the main changed flow and nearby UI on desktop, tablet, and mobile. Check layout, overflow, clipping, readable text, navigation access, tap/click targets, dialogs/menus, and screenshots.
+
+| Viewport | Flow/area | Screenshot/evidence | UI quality result | Fix/rerun |
+| --- | --- | --- | --- | --- |
+| Desktop | Pending | Pending | Pending | Pending |
+| Tablet | Pending | Pending | Pending | Pending |
+| Mobile | Pending | Pending | Pending | Pending |
+
 ## Issues Found And Fixed
 
 | Issue | Fix | Evidence |
@@ -63,13 +89,19 @@ If matches were found and removed, record the replacement proof here.
 | Score | >= 44/50 | 0/50 |
 | Critical Playwright items | all pass | Pending |
 | Main touched/implied flows covered | yes | Pending |
+| Bad cases and non-ideal user behavior covered | yes | Pending |
+| Surrounding feature smoke completed | yes | Pending |
+| Desktop/tablet/mobile responsive UI verified | yes | Pending |
 | Screenshot paths exist | yes | Pending |
 | No unresolved critical UI/runtime issue | yes | Pending |
+| Phase 5 failures routed through Phase 4 fix/integrity review and rechecked | yes | Pending |
 | Open gaps for interactive verification updated | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | No fixed waits in audited Playwright/E2E files | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
+| `progress.md` current and points to Phase 6 next action | yes | Pending |
+| `progress.md` Artifact Inventory lists Playwright scripts, screenshots, and runtime logs | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 
 Decision: Fail

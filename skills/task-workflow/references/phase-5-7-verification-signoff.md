@@ -30,6 +30,16 @@ Interactive Playwright verification is not a substitute for regression tests.
 - Critical gaps must be `Resolved`, `Closed`, or explicitly reclassified with evidence before signoff. They cannot remain `Open`.
 - Template placeholder rows such as `Pending | Pending | Pending` are not clean ledger evidence. Replace them with real gap rows or explicit `None currently recorded` rows before any verification gate passes.
 
+## Progress Ledger Reconciliation
+
+`task-workflow/progress.md` must stay current through verification and signoff.
+
+- Read it after compaction before choosing the next verification action.
+- Update it after each Phase 5 browser issue/fix/rerun, Phase 6 test coverage decision or test run, Phase 7 audit result, blocker, gate pass/fail, and promotion.
+- It must summarize latest browser evidence, test evidence, fixed-wait review state, open gaps, current phase, earliest failing phase, and next local action.
+- Its Artifact Inventory must brief the actual Playwright scripts, screenshots, runtime logs, E2E/test files, and any other verification artifacts produced.
+- Phase 7 cannot pass if `progress.md` says any phase remains pending, in progress, failing, or locally repairable.
+
 ## Verification Quality Discipline
 
 Interactive scripts and E2E tests must wait on user-visible state or app signals.
@@ -64,14 +74,20 @@ Verification phases must not stall on foreground servers or watchers.
 4. Write standalone Playwright scripts under `task-workflow/playwright/`.
 5. Drive the app through real user interactions.
 6. Verify primary routes, forms, buttons, menus, dialogs, tables, navigation, save flows, and error states touched or implied by the task.
-7. Capture screenshots under `task-workflow/screenshots/`.
-8. Fix discovered issues and rerun the scripts from clean Node.js processes.
-9. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
-10. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
-11. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-12. Record route/state coverage, interaction coverage, screenshots, issues, fixes, open-gap status, and fixed-wait review evidence.
-13. Kill any background server started for Phase 5, or record why it must remain running for the next bounded command.
-14. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
+7. Exercise bad cases and non-ideal user behavior: invalid submissions, empty states, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigating away/back, and nearby controls a real user could click while using the feature.
+8. Smoke-test surrounding UI/features that share the changed surface, such as adjacent navigation, list/detail transitions, filters/search, dialogs, menus, sidebars, and nearby actions that could be accidentally broken by the implementation.
+9. Verify responsive behavior and visual quality on desktop, tablet, and mobile viewports. Check layout, overflow, clipping, tap/click targets, readable text, navigation access, dialogs/menus, and the task's main flows at each required viewport.
+10. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
+11. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to Phase 4 for fix and integrity review, then re-enter Phase 5 and rerun the failed path plus nearby/surrounding checks.
+12. Fix discovered issues and rerun the scripts from clean Node.js processes.
+13. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
+14. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
+15. Update `task-workflow/progress.md` with browser evidence, Playwright script paths, screenshot paths, runtime log paths, fixed-wait review state, open gaps, and next local action.
+16. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+17. Record route/state coverage, interaction coverage, bad-case/adversarial coverage, surrounding-feature smoke, responsive viewport coverage, screenshots, issues, fixes, open-gap status, and fixed-wait review evidence.
+18. Kill any background server started for Phase 5, or record why it must remain running for the next bounded command.
+19. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
+20. Update `task-workflow/progress.md` so current phase and next local action match Phase 6.
 
 ## Required Interactive Evidence
 
@@ -81,6 +97,8 @@ The artifact must cite real evidence for every main touched or implied user flow
 - Playwright script path
 - route or state exercised
 - interaction performed
+- bad case, non-ideal user action, or surrounding feature checked
+- viewport checked: desktop, tablet, or mobile
 - screenshot path when visual proof matters
 - issue found
 - fix made
@@ -88,15 +106,19 @@ The artifact must cite real evidence for every main touched or implied user flow
 
 Screenshots alone do not prove controls work. A control that matters to the task must be clicked, filled, selected, submitted, or otherwise exercised with real browser input.
 
+Phase 5 is not a happy-path-only check. Think like a real user who may click nearby controls, enter invalid data, abandon a flow, resize the viewport, use the feature on mobile, or do steps in an unexpected order. If that breaks the task flow or nearby UI, fix it before Phase 5 passes.
+
 ## Phase 5 Score
 
 Score `task-workflow/phase-5-playwright-verification.md` against `50` items:
 
-- `10` app launch and script discipline items
-- `12` route/state coverage items
-- `12` interaction coverage items
-- `8` screenshot/evidence items
-- `8` fix-and-rerun items
+- `8` app launch and script discipline items
+- `8` current task route/state coverage items
+- `8` interaction and bad-case coverage items
+- `8` surrounding feature smoke items
+- `8` responsive desktop/tablet/mobile UI-quality items
+- `5` screenshot/evidence items
+- `5` fix-and-rerun items
 
 Critical failures:
 
@@ -105,8 +127,13 @@ Critical failures:
 - app server launched as an unbounded foreground command
 - server PID/log/readiness proof not recorded
 - main touched route or flow not exercised
+- bad cases and non-ideal user actions not exercised for the changed flow
+- surrounding UI/features sharing the changed surface not smoke-tested
+- desktop, tablet, and mobile responsive behavior not checked for the main changed flow
+- critical responsive UI issue remains unresolved, such as clipped content, inaccessible controls, broken navigation, unreadable text, or unusable dialogs/menus
 - screenshot path cited but file does not exist
 - discovered critical UI/runtime issue remains unresolved
+- Phase 5-discovered issue was not routed back through Phase 4 fix/integrity review before rechecking
 - script uses DOM shortcuts as a substitute for normal user interaction
 - script contains any fixed wait in the audited files
 - fixed-wait review not recorded
@@ -119,6 +146,8 @@ Pass gate:
 - score is at least `44/50`
 - every critical Playwright item passes
 - every main touched or implied user flow has interactive evidence
+- bad cases, non-ideal user actions, and surrounding features have interactive evidence
+- desktop, tablet, and mobile responsive behavior is verified for the main changed flow
 - screenshots cited in the artifact exist
 - no unresolved critical UI/runtime issue remains
 - browser-verification gaps in `task-workflow/open-gaps.md` are resolved, updated, or defended
@@ -138,9 +167,11 @@ If this gate fails, stay in Phase 5.
 6. Fix failures and rerun until passing.
 7. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
 8. Update `task-workflow/open-gaps.md` for every test/coverage gap closed, defended, or still open.
-9. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-10. Record test files, commands, outcomes, fixed-wait review evidence, and remaining coverage gaps.
-11. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
+9. Update `task-workflow/progress.md` with test files, command results, fixed-wait review state, coverage gaps, artifact inventory updates, and next local action.
+10. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+11. Record test files, commands, outcomes, fixed-wait review evidence, and remaining coverage gaps.
+12. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
+13. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
 
 ## Coverage Decision
 
@@ -151,6 +182,10 @@ Prefer the smallest durable test that protects the behavior:
 - service/unit tests for non-UI logic
 - integration tests for data contracts or persistence flows
 
+E2E coverage must protect actual task functionality. Prefer assertions that prove a user-visible outcome, persisted state, navigation result, saved record, validation behavior, permission behavior, or end-to-end data flow. Avoid tests whose main value is checking superficial styling, color, class names, incidental copy, or whether a button exists without proving the feature works.
+
+Do not add flaky one-off assertions just to claim coverage. A useful E2E test should fail when the task's real user workflow breaks and should remain stable when harmless styling or layout details change.
+
 If new coverage is not practical, record the reason, risk, and remaining manual proof. Do not use this exception for convenience.
 
 ## Phase 6 Score
@@ -158,14 +193,17 @@ If new coverage is not practical, record the reason, risk, and remaining manual 
 Score `task-workflow/phase-6-e2e-verification.md` against `30` items:
 
 - `8` coverage-decision items
-- `8` test implementation items
-- `8` test execution items
-- `3` failure-fix/rerun items
-- `3` coverage-gap documentation items
+- `8` meaningful functional assertion items
+- `6` test execution items
+- `4` failure-fix/rerun items
+- `4` coverage-gap documentation items
 
 Critical failures:
 
 - changed user-visible behavior has no coverage and no defensible reason
+- new/updated tests do not prove actual task functionality, persisted state, navigation result, validation behavior, or end-to-end data flow
+- tests are primarily superficial checks such as color, CSS class, incidental copy, or button existence without proving feature behavior
+- tests depend on brittle implementation details instead of user-visible or persisted outcomes
 - test added but not run
 - relevant test failure caused by this task remains unresolved
 - artifact records a pass without command evidence
@@ -181,6 +219,7 @@ Pass gate:
 - score is at least `24/30`
 - every critical E2E/test item passes
 - new or affected behavior has test coverage or a documented reason why not
+- tests assert meaningful functional outcomes rather than superficial style or existence checks
 - required tests pass or remaining failures are unrelated and evidenced
 - test/coverage gaps in `task-workflow/open-gaps.md` are resolved, updated, or defended
 - fixed-wait review is recorded and clean
@@ -196,13 +235,15 @@ If this gate fails, stay in Phase 6.
 4. Confirm `task-workflow/open-gaps.md` has no unresolved critical gap.
 5. Confirm no open gap is stale or contradicted by Phase 5, Phase 6, or test evidence.
 6. Confirm `task-workflow/open-gaps.md` has no placeholder `Pending` rows.
-7. Re-read the fixed-wait review evidence from Phase 5 and Phase 6, re-open the inspected verification files if they changed, and confirm the review is still current.
-8. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, and consistency with `CURRENT_PHASE.txt` and `open-gaps.md`.
-9. Review the final diff.
-10. Re-run any command needed because later edits invalidated earlier proof.
-11. Score the final result in all quality categories.
-12. Confirm task completion summary is accurate.
-13. Sign off only when the artifact proves the whole workflow passed.
+7. Re-read `task-workflow/progress.md` and confirm it matches `CURRENT_PHASE.txt`, every phase decision, the gap ledger, Artifact Inventory, and the next local action.
+8. Re-read the fixed-wait review evidence from Phase 5 and Phase 6, re-open the inspected verification files if they changed, and confirm the review is still current.
+9. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
+10. Review the final diff.
+11. Re-run any command needed because later edits invalidated earlier proof.
+12. Score the final result in all quality categories.
+13. Confirm task completion summary is accurate.
+14. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Artifact Inventory is current, and the only next action is final response.
+15. Sign off only when the artifact proves the whole workflow passed.
 
 ## Final Audit Checklist
 
@@ -214,6 +255,7 @@ Confirm:
 - required evidence tables remain intact
 - artifact integrity review passes for every phase artifact
 - no artifact is mostly template placeholders
+- `task-workflow/progress.md` matches Phase 7, has no pending current action, and does not contradict any phase artifact
 - no critical open gap remains
 - no stale open gap remains
 - no `open-gaps.md` placeholder row remains
@@ -280,6 +322,7 @@ Promotion requirements:
 - fixed-wait review requirements are satisfied for Phase 5 and Phase 6 before final signoff
 - artifact integrity review is recorded and clean
 - verification evidence is current after the last source edit
+- `task-workflow/progress.md` is current and agrees with Phase 7 signoff
 
 If any artifact fails this check, do not advance the marker. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase and continue there.
 

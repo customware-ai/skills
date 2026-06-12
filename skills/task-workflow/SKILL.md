@@ -1,21 +1,21 @@
 ---
-name: builder-task-workflow
+name: task-workflow
 description: >
-  Strict execution instructions for Builder-style product tasks, app
-  implementation tasks, bugfixes, verification tasks, and full-stack coding
-  tasks. Use when Codex must work through ordered phases that start with
+  Strict execution instructions for product tasks, app implementation tasks,
+  bugfixes, verification tasks, and full-stack coding tasks. Use when Codex
+  must work through ordered phases that start with
   mandatory task-workflow artifact reset before any source inspection or edit,
   then codebase research, implementation passes, scored gates, interactive
   Playwright verification, E2E coverage, and final signoff.
 ---
 
-# Builder Task Workflow
+# Task Workflow
 
 ## Strict Instruction Contract
 
 This file is strict implementation instruction, not loose guidance and not optional reference material.
 
-This is the canonical workflow for Builder task execution. It is not one possible way to do the task; it is the required way.
+This is the canonical workflow for task execution. It is not one possible way to do the task; it is the required way.
 
 If the Agent reads this skill, it must execute it exactly as written, in order, to the letter.
 
@@ -54,9 +54,11 @@ If implementation files, generated app files, build outputs, or database files a
 
 Re-read this `SKILL.md` after every compaction before continuing work. Re-load the phase references and current task artifacts too. Do not rely on conversational memory.
 
-This skill is a gated execution protocol, not a loose set of suggestions. It turns a Builder task into a repeatable, artifact-driven workflow. The target app must be implemented from the task, target repo, and local codebase evidence, then proven through static checks, interactive Playwright verification, regression tests, and final audit.
+This skill is a gated execution protocol, not a loose set of suggestions. It turns a task into a repeatable, artifact-driven workflow. The target app must be implemented from the task, target repo, and local codebase evidence, then proven through static checks, interactive Playwright verification, regression tests, and final audit.
 
-Assume this skill may run fully autonomously. No human is expected to watch the run line by line. The artifact files are therefore the enforcement system. A phase is not complete because the Agent feels confident. A phase is complete only when its required artifact shows a real passing score and all critical items pass.
+Assume this skill may run fully autonomously and may be compacted mid-run. No human is expected to watch the run line by line. The artifact files are therefore the enforcement system. A phase is not complete because the Agent feels confident. A phase is complete only when its required artifact shows a real passing score and all critical items pass.
+
+`task-workflow/progress.md` is the compact resume ledger. It must summarize the task, current phase, completed phase context, active work queue, verification state, and next local action. Hard rule: after compaction or resume, read it before doing any new work. Keep it current as work proceeds; it is the first file that should restore enough context to continue without conversation memory.
 
 Never promote work from one phase to the next on optimism, partial evidence, a green build alone, or broad product similarity.
 
@@ -109,6 +111,10 @@ Treat these rules as always active:
 - A failed gate means "repair and loop", not "stop and report".
 - Successful gates must immediately promote to the next phase when the next phase is locally available.
 - `task-workflow/CURRENT_PHASE.txt` is only a resume pointer. It is not proof that earlier phases passed.
+- `task-workflow/progress.md` is the compact resume ledger. It is not proof that gates passed, but it must stay current enough to resume the run after compaction.
+- After every phase start, meaningful Phase 2 work packet, phase gate result, blocker discovery, and phase promotion, update `task-workflow/progress.md` with the current phase, earliest failing phase if any, last completed gate, next local action, and a compact summary of relevant context.
+- Keep the `Artifact Inventory` in `task-workflow/progress.md` current. It must briefly identify the actual phase gate MD files, resume/gap files, Playwright scripts, screenshots, runtime logs, regression tests, and other workflow artifacts created or updated so a resumed agent can locate them without conversation memory.
+- After compaction or resume, read `task-workflow/progress.md` before choosing the next action. If it disagrees with `CURRENT_PHASE.txt`, inspect the phase artifacts and continue from the earliest failing phase.
 - A phase may advance the current phase marker only after its phase-owned artifact has `Decision: Pass`, a passing score, all critical items passing, and no placeholder `Pending` rows in the gate or required evidence sections.
 - The current phase marker must be written before work belonging to that phase begins. The marker is not merely cleanup after phase work.
 - Before writing the next phase marker, re-open the current phase artifact and verify the promotion lock in writing inside that artifact.
@@ -143,13 +149,15 @@ Treat these rules as always active:
 Before producing any final response, stopping message, or ending an OpenCode turn with control returned to the user, run this guard against the artifact files:
 
 1. `task-workflow/CURRENT_PHASE.txt` must be `phase-7-final-signoff`.
-2. Every required phase artifact must have `Decision: Pass`.
-3. Every required score must meet its threshold.
-4. Every gate row must contain concrete evidence instead of `Pending` or template defaults.
-5. `task-workflow/open-gaps.md` must have no critical open gaps, no stale open gaps owned by passed phases, and no placeholder rows.
-6. Phase 5, Phase 6, and Phase 7 must record fixed-wait review evidence showing the inspected verification files contain no fixed waits.
-7. Phase 7 final quality scorecard must be at least `8/10` in every category.
-8. Phase 7 must record an artifact integrity review that re-opens every phase artifact and verifies the artifact exists, its decision is `Pass`, its score meets threshold, required evidence rows are complete, and it does not contradict `CURRENT_PHASE.txt` or `open-gaps.md`.
+2. `task-workflow/progress.md` must say the current phase is `phase-7-final-signoff`, the last completed gate is Phase 7, and there is no next local action except final response.
+3. `task-workflow/progress.md` must include a current Artifact Inventory for phase gate MD files, Playwright scripts, screenshots, runtime logs, regression tests, and other workflow artifacts created or updated.
+4. Every required phase artifact must have `Decision: Pass`.
+5. Every required score must meet its threshold.
+6. Every gate row must contain concrete evidence instead of `Pending` or template defaults.
+7. `task-workflow/open-gaps.md` must have no critical open gaps, no stale open gaps owned by passed phases, and no placeholder rows.
+8. Phase 5, Phase 6, and Phase 7 must record fixed-wait review evidence showing the inspected verification files contain no fixed waits.
+9. Phase 7 final quality scorecard must be at least `8/10` in every category.
+10. Phase 7 must record an artifact integrity review that re-opens every phase artifact and verifies the artifact exists, its decision is `Pass`, its score meets threshold, required evidence rows are complete, and it does not contradict `CURRENT_PHASE.txt`, `progress.md`, or `open-gaps.md`.
 
 If any item fails and the problem can be solved locally, continue the workflow from the earliest failing phase. Do not answer as if the task is complete.
 If an actual external blocker prevents completion, record the blocker in the current phase artifact and `open-gaps.md`, including commands run, files inspected, why local recovery cannot solve it, and the smallest next action.
@@ -206,10 +214,12 @@ On a fresh run:
 After compaction or resume:
 
 1. Re-read this `SKILL.md`.
-2. Read `task-workflow/CURRENT_PHASE.txt`.
-3. Read the current phase artifact and `task-workflow/open-gaps.md`.
-4. Load only the reference file that owns the current phase.
-5. Load `references/playwright-interactive.md` only when the current phase reference requires interactive Playwright work.
+2. Read `task-workflow/progress.md`.
+3. Read `task-workflow/CURRENT_PHASE.txt`.
+4. Read the current phase artifact and `task-workflow/open-gaps.md`.
+5. If `progress.md`, `CURRENT_PHASE.txt`, and the phase artifacts disagree, continue from the earliest failing phase artifact.
+6. Load only the reference file that owns the current phase.
+7. Load `references/playwright-interactive.md` only when the current phase reference requires interactive Playwright work.
 
 Phase reference map:
 
@@ -259,6 +269,7 @@ These are mandatory:
 - `task-workflow/phase-5-playwright-verification.md`
 - `task-workflow/phase-6-e2e-verification.md`
 - `task-workflow/phase-7-final-signoff.md`
+- `task-workflow/progress.md`
 - `task-workflow/open-gaps.md`
 - `task-workflow/CURRENT_PHASE.txt`
 - `task-workflow/playwright/`
@@ -272,7 +283,7 @@ Follow the phases in order:
 
 ### Phase 0: Artifact Reset And Scaffolding
 
-Clear old `task-workflow/` artifacts, recreate the required artifact files from templates, and prove no implementation files were edited.
+Delete the previous task's `task-workflow/` artifacts, recreate the required artifact files from templates, and prove no implementation files were edited.
 
 Detailed process: `references/phase-0-1-startup-research.md`.
 
@@ -302,13 +313,13 @@ Detailed process: `references/phase-2-4-execution-integrity.md`.
 
 ### Phase 5: Interactive Playwright Verification
 
-Use standalone interactive Playwright scripts to exercise real user flows and capture screenshot evidence.
+Use standalone interactive Playwright scripts to exercise real user flows, bad cases, surrounding UI, and desktop/tablet/mobile responsive behavior from a user perspective.
 
 Detailed process: `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md`.
 
 ### Phase 6: E2E Test Creation And Verification
 
-Add or update durable regression coverage for the changed behavior and prove the relevant tests pass.
+Add or update durable regression coverage that proves the task's real end-to-end functionality, not superficial styling or existence checks, and prove the relevant tests pass.
 
 Detailed process: `references/phase-5-7-verification-signoff.md`.
 
@@ -330,6 +341,8 @@ These automatically fail the run:
 - passing Phase 2 while `task-workflow/phase-2-execution.md` does not record that the marker was set to `phase-2-execution` before source edits
 - skipping artifact reset
 - failing to copy the artifact templates before implementation work
+- failing to create, read after compaction, or keep `task-workflow/progress.md` current enough to resume the run
+- leaving the `task-workflow/progress.md` Artifact Inventory stale or missing artifacts that were created for gates, Playwright verification, runtime evidence, or tests
 - omitting required semantic evidence from a phase artifact while claiming that phase passed
 - advancing `task-workflow/CURRENT_PHASE.txt` while the current or any previous phase artifact still says `Decision: Fail`
 - advancing `task-workflow/CURRENT_PHASE.txt` while the current or any previous phase artifact still has placeholder `Pending` gate evidence
@@ -373,6 +386,7 @@ These automatically fail the run:
 - `assets/templates/phase-5-playwright-verification.md`
 - `assets/templates/phase-6-e2e-verification.md`
 - `assets/templates/phase-7-final-signoff.md`
+- `assets/templates/progress.md`
 - `assets/templates/open-gaps.md`
 
 ## Non-Negotiables

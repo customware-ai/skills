@@ -23,6 +23,8 @@ Update this table immediately after each small work packet. Do not leave this ta
 | Required rule | Status | Evidence |
 | --- | --- | --- |
 | Execution log updated after each completed or in-progress packet before starting the next packet | Pending | Pending |
+| `progress.md` updated after each meaningful work packet and before promotion | Pending | Pending |
+| `progress.md` Artifact Inventory updated for any workflow/test/log artifacts created so far | Pending | Pending |
 | No broad verification or app launch started while execution log remained all `Pending` | Pending | Pending |
 | Any skipped or deferred packet was recorded in `open-gaps.md` immediately | Pending | Pending |
 | Gate-relevant writes were read back or verified in diff before relying on them | Pending | Pending |
@@ -57,6 +59,8 @@ Update this table immediately after each small work packet. Do not leave this ta
 | Phase 5/6 work not used as Phase 2 substitute | yes | Pending |
 | No obvious unfinished markers | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
+| `progress.md` current and points to Phase 3 next action | yes | Pending |
+| `progress.md` Artifact Inventory current | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 
 Decision: Fail

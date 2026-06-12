@@ -6,6 +6,14 @@
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
+## Functional Assertion Quality
+
+E2E tests should prove actual task functionality, not superficial styling or existence. Prefer assertions for user-visible outcomes, persisted state, navigation results, validation behavior, permissions, or end-to-end data flow. Avoid primary assertions about color, CSS class, incidental copy, or a button merely existing unless the task itself is specifically about that behavior.
+
+| Test file | Functional outcome proved | User-visible/persisted assertion | Superficial checks avoided? |
+| --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending |
+
 ## Test Runs
 
 | Command | Result | Output summary | Follow-up |
@@ -57,6 +65,9 @@ If matches were found and removed, record the replacement proof here.
 | --- | --- | --- |
 | Existing tests preserved, migrated, or defended | Pending |  |
 | New/updated tests assert user-visible or persisted state | Pending |  |
+| New/updated E2E tests prove real task functionality | Pending |  |
+| Superficial color/class/existence-only checks avoided | Pending |  |
+| Tests avoid brittle implementation details | Pending |  |
 | Fixed wait review completed and clean | Pending |  |
 | Coverage gaps reflected in `open-gaps.md` | Pending |  |
 | Server/command discipline passed | Pending |  |
@@ -68,12 +79,16 @@ If matches were found and removed, record the replacement proof here.
 | Score | >= 24/30 | 0/30 |
 | Critical E2E/test items | all pass | Pending |
 | New/affected behavior covered or defended | yes | Pending |
+| Tests assert meaningful functional outcomes | yes | Pending |
+| Superficial/flaky one-off checks avoided | yes | Pending |
 | Required tests pass or unrelated failure evidenced | yes | Pending |
 | Open gaps for E2E/test coverage updated | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Test quality review passed | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
+| `progress.md` current and points to Phase 7 next action | yes | Pending |
+| `progress.md` Artifact Inventory lists regression test artifacts and verification evidence | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 
 Decision: Fail

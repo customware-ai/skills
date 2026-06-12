@@ -12,6 +12,8 @@ The artifact trail is the source of truth for the run.
 
 Phase 0 exists so a new task never inherits stale proof from an older task. The agent owns artifact creation directly by copying templates from `assets/templates/`; no scaffold script is required.
 
+`task-workflow/progress.md` is the compact resume ledger. It must be reset with the rest of `task-workflow/`, copied from template, and updated in Phase 0 before promotion. Hard rule: after compaction or resume, always read `progress.md` immediately after `SKILL.md` and before choosing the next action.
+
 Do not inspect implementation files in app, server, tests, packages, src, or equivalent source directories before Phase 0 artifacts exist.
 Do not edit implementation files before Phase 1 passes.
 Do not generate build outputs, route typegen, databases, migrations, or source artifacts before Phase 1 passes.
@@ -23,13 +25,14 @@ When filling phase artifacts, keep evidence auditable. If a template row is cond
 Phase 0 is the first action after reading `SKILL.md`.
 
 1. Identify the target repo root.
-2. Delete only the existing `task-workflow/` directory in the target repo.
+2. Delete only the existing `task-workflow/` directory in the target repo. Treat it as stale previous-task state; do not reuse old artifacts for the new task.
 3. Recreate:
    - `task-workflow/`
    - `task-workflow/playwright/`
    - `task-workflow/screenshots/`
    - `task-workflow/CURRENT_PHASE.txt`
 4. Copy the templates from `assets/templates/` into `task-workflow/`:
+   - `progress.md`
    - `phase-0-artifact-reset.md`
    - `phase-1-task-research.md`
    - `phase-2-execution.md`
@@ -48,17 +51,18 @@ Phase 0 is the first action after reading `SKILL.md`.
    - copied template evidence
    - marker before promotion: `phase-0-artifact-reset`
    - confirmation that no implementation files were edited
-7. After every other Phase 0 gate row passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
-8. Re-open `task-workflow/phase-0-artifact-reset.md`, record marker after promotion as `phase-1-task-research`, then mark the Phase 0 decision.
+7. Fill `task-workflow/progress.md` with the task source, current phase, Phase 0 reset summary, Artifact Inventory for the fresh gate MD files/resume files/empty verification directories, and next local action.
+8. After every other Phase 0 gate row passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
+9. Update `task-workflow/progress.md` so current phase and next local action match Phase 1.
+10. Re-open `task-workflow/phase-0-artifact-reset.md`, record marker after promotion as `phase-1-task-research`, then mark the Phase 0 decision.
 
 ## Phase 0 Score
 
 Score `task-workflow/phase-0-artifact-reset.md` against `10` items:
 
-- `2` old artifact reset items
-- `3` required artifact file creation items
+- `2` previous-task artifact reset items
+- `4` required artifact and resume-ledger items, including the phase marker, progress ledger, and hard resume rule
 - `2` required directory creation items
-- `1` current phase marker item
 - `1` task and repo identity item
 - `1` no-source-edit discipline item
 
@@ -66,8 +70,10 @@ Critical failures:
 
 - any implementation file edited before Phase 0 passes
 - any build output, route typegen, database, migration, test output, or source artifact generated before Phase 1 passes
-- old `task-workflow/` reused instead of reset
+- old previous-task `task-workflow/` reused instead of reset
 - missing required artifact file
+- missing or stale `task-workflow/progress.md`
+- Phase 0 artifact does not record the progress-ledger hard resume rule
 - copied templates replaced by loose prose
 - `CURRENT_PHASE.txt` missing or wrong after the gate
 
@@ -75,7 +81,7 @@ Pass gate:
 
 - score is `10/10`
 - all required artifacts exist
-- old workflow artifacts were cleared
+- old previous-task workflow artifacts were cleared
 - no app/source files were edited
 - marker before promotion was `phase-0-artifact-reset`
 - marker after promotion is `phase-1-task-research`
@@ -98,8 +104,10 @@ If this gate fails, stay in Phase 0.
 12. Write an ordered implementation plan.
 13. Write the verification and test plan.
 14. Do not edit implementation files before this phase gate passes.
-15. After every Phase 1 gate requirement passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-2-execution`.
-16. Record that Phase 2 was promoted only after Phase 1 passed.
+15. Update `task-workflow/progress.md` with the compact task summary, repo instructions read, domain/context files read, implementation direction, verification plan, risks, and next local action.
+16. After every Phase 1 gate requirement passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-2-execution`.
+17. Update `task-workflow/progress.md` so current phase and next local action match Phase 2.
+18. Record that Phase 2 was promoted only after Phase 1 passed.
 
 ## Research Surface
 
@@ -136,6 +144,7 @@ Critical failures:
 
 - task body not read completely
 - root `AGENTS.md` ignored
+- `task-workflow/progress.md` not updated with enough context and artifact inventory to resume Phase 2 after compaction
 - relevant repo-local domain files or local skill files ignored
 - target repo instruction/domain/skill files recorded only as sandbox absolute paths instead of repo-relative paths
 - codebase not inspected before implementation planning
@@ -165,8 +174,9 @@ Before setting `task-workflow/CURRENT_PHASE.txt` to `phase-2-execution`, re-open
 
 - `task-workflow/phase-0-artifact-reset.md`
 - `task-workflow/phase-1-task-research.md`
+- `task-workflow/progress.md`
 
-Both artifacts must show `Decision: Pass`, passing scores, all critical items passing, and no placeholder `Pending` rows in required evidence or gate sections.
+Both phase artifacts must show `Decision: Pass`, passing scores, all critical items passing, and no placeholder `Pending` rows in required evidence or gate sections. `progress.md` must identify Phase 2 as the current phase, summarize Phase 0 and Phase 1, brief the created artifact files, and state the next local action.
 
 After this promotion, Phase 2 implementation is allowed only because the marker now says `phase-2-execution`. If any source file changes while the current marker still says `phase-1-task-research`, the run has failed.
 
