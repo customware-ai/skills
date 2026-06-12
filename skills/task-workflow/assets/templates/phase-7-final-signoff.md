@@ -27,7 +27,7 @@
 | Stale/deferred open gaps reconciled | Pending |
 | Task summary accurate | Pending |
 | `progress.md` agrees with Phase 7 and has no remaining local action | Pending |
-| `progress.md` Artifact Inventory briefs all final gate, verification, log, and test artifacts | Pending |
+| `progress.md` Phase Artifact Index and Artifact Pointers identify where final gate, verification, log, and test details live | Pending |
 
 ## MITB Task Completion Command
 
@@ -96,7 +96,8 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Verification current | yes | Pending |
 | MITB completed command run after clean final audit | yes | Pending |
 | `progress.md` final state agrees with Phase 7 | yes | Pending |
-| `progress.md` Artifact Inventory final state is current | yes | Pending |
+| `progress.md` Current Phase Pointers final state is current | yes | Pending |
+| `progress.md` Phase Artifact Index and Artifact Pointers final state is current | yes | Pending |
 | Promotion lock verified before final signoff | yes | Pending |
 
 Decision: Fail

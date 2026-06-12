@@ -101,7 +101,8 @@ If matches were found and removed, record the replacement proof here.
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
 | `progress.md` current and points to Phase 6 next action | yes | Pending |
-| `progress.md` Artifact Inventory lists Playwright scripts, screenshots, and runtime logs | yes | Pending |
+| `progress.md` points to this Phase 5 artifact for Playwright scripts, screenshots, logs, and repair details | yes | Pending |
+| `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 
 Decision: Fail

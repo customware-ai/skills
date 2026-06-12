@@ -2,7 +2,15 @@
 
 ## Coverage Decision
 
-| Behavior/path | Coverage type | Test file | Reason |
+| Behavior/path | Existing E2E inspected | Update existing or add new? | Test file | Reason |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
+
+## Existing E2E Review
+
+Inspect existing E2E tests first. Prefer updating an existing flow when the task changes or extends that flow. Add a new E2E test only for a genuinely new workflow or when existing coverage cannot cleanly express the path.
+
+| Existing test file/flow | Relevant to task? | Action taken | Evidence |
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
@@ -64,6 +72,9 @@ If matches were found and removed, record the replacement proof here.
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Existing tests preserved, migrated, or defended | Pending |  |
+| Existing E2E tests inspected before adding new coverage | Pending |  |
+| Existing E2E flow updated when changed behavior belongs there | Pending |  |
+| New E2E test added only when necessary | Pending |  |
 | New/updated tests assert user-visible or persisted state | Pending |  |
 | New/updated E2E tests prove real task functionality | Pending |  |
 | Superficial color/class/existence-only checks avoided | Pending |  |
@@ -78,6 +89,9 @@ If matches were found and removed, record the replacement proof here.
 | --- | --- | --- |
 | Score | >= 24/30 | 0/30 |
 | Critical E2E/test items | all pass | Pending |
+| Existing E2E tests inspected before coverage decision | yes | Pending |
+| Existing E2E coverage updated when task affects existing flow | yes | Pending |
+| New E2E tests added only when existing tests cannot cleanly cover the workflow | yes | Pending |
 | New/affected behavior covered or defended | yes | Pending |
 | Tests assert meaningful functional outcomes | yes | Pending |
 | Superficial/flaky one-off checks avoided | yes | Pending |
@@ -88,7 +102,8 @@ If matches were found and removed, record the replacement proof here.
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
 | `progress.md` current and points to Phase 7 next action | yes | Pending |
-| `progress.md` Artifact Inventory lists regression test artifacts and verification evidence | yes | Pending |
+| `progress.md` points to this Phase 6 artifact for regression test files and repair details | yes | Pending |
+| `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 
 Decision: Fail

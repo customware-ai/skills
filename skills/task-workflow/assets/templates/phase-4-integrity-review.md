@@ -40,7 +40,8 @@
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Command/write safety passed | yes | Pending |
 | `progress.md` current and points to Phase 5 next action | yes | Pending |
-| `progress.md` Artifact Inventory current for checks/logs/test artifacts so far | yes | Pending |
+| `progress.md` points to this Phase 4 artifact for check/fix details | yes | Pending |
+| `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 
 Decision: Fail

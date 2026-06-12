@@ -37,7 +37,8 @@ Interactive Playwright verification is not a substitute for regression tests.
 - Read it after compaction before choosing the next verification action.
 - Update it after each Phase 5 browser issue/fix/rerun, Phase 6 test coverage decision or test run, Phase 7 audit result, blocker, gate pass/fail, and promotion.
 - It must summarize latest browser evidence, test evidence, fixed-wait review state, open gaps, current phase, earliest failing phase, and next local action.
-- Its Artifact Inventory must brief the actual Playwright scripts, screenshots, runtime logs, E2E/test files, and any other verification artifacts produced.
+- Its Current Phase Pointers must identify the current phase artifact, current reference, next local action, and only high-signal active files needed to resume immediately.
+- Its Artifact Pointers must point to the phase-owned artifacts where Playwright scripts, screenshots, runtime logs, E2E/test files, and verification repair details live.
 - Phase 7 cannot pass if `progress.md` says any phase remains pending, in progress, failing, or locally repairable.
 
 ## Verification Quality Discipline
@@ -82,7 +83,7 @@ Verification phases must not stall on foreground servers or watchers.
 12. Fix discovered issues and rerun the scripts from clean Node.js processes.
 13. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
 14. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
-15. Update `task-workflow/progress.md` with browser evidence, Playwright script paths, screenshot paths, runtime log paths, fixed-wait review state, open gaps, and next local action.
+15. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
 16. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
 17. Record route/state coverage, interaction coverage, bad-case/adversarial coverage, surrounding-feature smoke, responsive viewport coverage, screenshots, issues, fixes, open-gap status, and fixed-wait review evidence.
 18. Kill any background server started for Phase 5, or record why it must remain running for the next bounded command.
@@ -161,28 +162,34 @@ If this gate fails, stay in Phase 5.
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
 2. Identify the regression paths that should remain protected after this task.
-3. Add or update E2E tests when the task changes user-visible behavior.
-4. Add or update lower-level tests when they are the better fit for non-UI logic.
-5. Run the new or affected tests.
-6. Fix failures and rerun until passing.
-7. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
-8. Update `task-workflow/open-gaps.md` for every test/coverage gap closed, defended, or still open.
-9. Update `task-workflow/progress.md` with test files, command results, fixed-wait review state, coverage gaps, artifact inventory updates, and next local action.
-10. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-11. Record test files, commands, outcomes, fixed-wait review evidence, and remaining coverage gaps.
-12. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
-13. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
+3. Inspect existing E2E tests before creating new ones. Identify whether the changed feature belongs in an existing flow, regression suite, or user journey.
+4. Update existing E2E tests first when the new or changed behavior extends an existing workflow or could affect existing functionality.
+5. Add a new E2E test only when the task introduces a genuinely new workflow that cannot be cleanly covered by an existing E2E test.
+6. Add or update lower-level tests when they are the better fit for non-UI logic.
+7. Run the existing, updated, new, and affected tests needed to prove existing functionality still works and the new additions work with it.
+8. Fix failures and rerun until passing.
+9. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
+10. Update `task-workflow/open-gaps.md` for every test/coverage gap closed, defended, or still open.
+11. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for test-file and test-repair details, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
+12. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+13. Record existing tests inspected, tests updated, tests added, commands, outcomes, fixed-wait review evidence, and remaining coverage gaps.
+14. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
+15. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
 
 ## Coverage Decision
 
 Prefer the smallest durable test that protects the behavior:
 
+- update an existing E2E test when the task modifies or extends an existing user workflow
+- add a new E2E test only for a genuinely new workflow or when existing E2E coverage cannot cleanly express the path
 - E2E tests for user-visible multi-step flows
 - component tests for isolated UI behavior
 - service/unit tests for non-UI logic
 - integration tests for data contracts or persistence flows
 
 E2E coverage must protect actual task functionality. Prefer assertions that prove a user-visible outcome, persisted state, navigation result, saved record, validation behavior, permission behavior, or end-to-end data flow. Avoid tests whose main value is checking superficial styling, color, class names, incidental copy, or whether a button exists without proving the feature works.
+
+When updating an existing E2E test, keep its original regression value. The updated test must prove existing functionality still works and that the new or changed behavior integrates with that flow.
 
 Do not add flaky one-off assertions just to claim coverage. A useful E2E test should fail when the task's real user workflow breaks and should remain stable when harmless styling or layout details change.
 
@@ -201,6 +208,9 @@ Score `task-workflow/phase-6-e2e-verification.md` against `30` items:
 Critical failures:
 
 - changed user-visible behavior has no coverage and no defensible reason
+- existing E2E tests were not inspected before adding new tests
+- new E2E test added when an existing E2E flow should have been updated instead
+- existing functionality affected by the task is not protected by the updated or affected E2E run
 - new/updated tests do not prove actual task functionality, persisted state, navigation result, validation behavior, or end-to-end data flow
 - tests are primarily superficial checks such as color, CSS class, incidental copy, or button existence without proving feature behavior
 - tests depend on brittle implementation details instead of user-visible or persisted outcomes
@@ -218,6 +228,9 @@ Pass gate:
 
 - score is at least `24/30`
 - every critical E2E/test item passes
+- existing E2E tests were inspected before deciding whether to update or add coverage
+- existing E2E tests are updated when the task changes an existing workflow
+- new E2E tests are added only when existing coverage cannot cleanly cover the new workflow
 - new or affected behavior has test coverage or a documented reason why not
 - tests assert meaningful functional outcomes rather than superficial style or existence checks
 - required tests pass or remaining failures are unrelated and evidenced
@@ -235,7 +248,7 @@ If this gate fails, stay in Phase 6.
 4. Confirm `task-workflow/open-gaps.md` has no unresolved critical gap.
 5. Confirm no open gap is stale or contradicted by Phase 5, Phase 6, or test evidence.
 6. Confirm `task-workflow/open-gaps.md` has no placeholder `Pending` rows.
-7. Re-read `task-workflow/progress.md` and confirm it matches `CURRENT_PHASE.txt`, every phase decision, the gap ledger, Artifact Inventory, and the next local action.
+7. Re-read `task-workflow/progress.md` and confirm it matches `CURRENT_PHASE.txt`, every phase decision, the gap ledger, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and the next local action.
 8. Re-read the fixed-wait review evidence from Phase 5 and Phase 6, re-open the inspected verification files if they changed, and confirm the review is still current.
 9. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
 10. Review the final diff.
@@ -246,7 +259,7 @@ If this gate fails, stay in Phase 6.
 15. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
 16. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
 17. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
-18. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Artifact Inventory is current, task-completion evidence is recorded, and the only next action is final response.
+18. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
 19. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
 
 ## Final Audit Checklist
