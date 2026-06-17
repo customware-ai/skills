@@ -254,13 +254,14 @@ If this gate fails, stay in Phase 6.
 10. Review the final diff.
 11. Re-run any command needed because later edits invalidated earlier proof.
 12. Score the final result in all quality categories.
-13. Confirm task completion summary is accurate.
-14. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
-15. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
-16. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
-17. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
-18. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
-19. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
+13. Confirm the final implementation follows the task-relevant development rules extracted from `AGENTS.md`.
+14. Confirm task completion summary is accurate.
+15. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
+16. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
+17. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
+18. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
+19. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
+20. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
 
 ## Final Audit Checklist
 
@@ -278,6 +279,7 @@ Confirm:
 - no `open-gaps.md` placeholder row remains
 - Phase 5 and Phase 6 fixed-wait reviews are present and current
 - final diff matches the task scope
+- final implementation follows the task-relevant development rules extracted from `AGENTS.md`
 - final quality scorecard is at least `8/10` in every category
 - final verification is current after the last source edit
 - MITB completed command from `.tasks/task.md` or the prompt was run after every Phase 7 audit check passed
@@ -301,6 +303,7 @@ Critical failures:
 - `task-workflow/open-gaps.md` still contains template placeholder rows
 - fixed-wait reviews are missing, stale, non-clean, or contradicted by files under `task-workflow/playwright` or `tests/e2e`
 - artifact integrity review is missing, incomplete, or records a failing decision, failing score, missing artifact, placeholder gate evidence, or contradiction between artifacts
+- final implementation violates or fails to verify an extracted `AGENTS.md` development rule
 - any final quality category is below `8/10`
 - final source edit happened after last relevant verification
 - final artifact mostly repeats claims without evidence
@@ -315,6 +318,7 @@ Pass gate:
 - all previous phase gates passed
 - all required artifacts exist and remain auditable
 - artifact integrity review is recorded and passes for every phase artifact
+- final implementation follows the extracted `AGENTS.md` development rules
 - no unresolved critical gap remains
 - no stale open gap remains
 - no open-gap placeholder row remains

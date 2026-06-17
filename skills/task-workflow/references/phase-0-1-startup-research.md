@@ -22,6 +22,8 @@ When running in MITB, use repo-relative inputs from the target repo:
 - available skill files: `.agents/skills/`
 - workflow skill: `.agents/skills/task-workflow/SKILL.md`
 
+`AGENTS.md` is the target repo's binding development-instructions file. It controls project-specific architecture, type safety, test expectations, UX standards, commands, code style, docs, prohibited patterns, and completion rules. Extract the task-relevant rules from it before planning, and read any docs it explicitly requires for the task.
+
 Phase 1 must enumerate `.tasks/files/` even when it is empty and read or inspect every task attachment/supporting file before planning. Available skill files are stored under `.agents/skills/`: select and read only relevant skill `SKILL.md` files from `.agents/skills/`. Do not bulk-read every skill file under `.agents/skills/`.
 
 The Phase 1 inputs are read-only. `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files under `.agents/skills/`, and other reference files must be read, cited, and summarized only. Do not write to them. Do not rewrite, normalize, consolidate, trim, clean up, reformat, or "fix" these files. This is especially strict for files under `.tasks/`: they are canonical MITB task inputs, not workflow artifacts. If they conflict or look stale, record the issue in the Phase 1 artifact or `open-gaps.md` and keep going from the safest interpretation.
@@ -104,7 +106,7 @@ If this gate fails, stay in Phase 0.
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
 2. Read the complete task body. In MITB, `.tasks/task.md` is the canonical task workspace and may include completion commands; read it even if the prompt also includes the task text.
-3. Immediately read the target repo root `AGENTS.md`.
+3. Immediately read the target repo root `AGENTS.md` as binding development instructions. Extract task-relevant rules for architecture, type safety, tests, UX, commands, code style, docs, prohibited patterns, and completion.
 4. Read `.tasks/domain.md`. This is the MITB domain and brand context. Also discover and read other repo-local domain files only when they are relevant to the task.
 5. Enumerate `.tasks/files/`, even if it is empty.
 6. Read or inspect every task attachment/supporting file in `.tasks/files/` before planning. For binary or media files, use the appropriate local inspection method and record what was learned; do not treat a directory listing as reading the file.
@@ -113,7 +115,7 @@ If this gate fails, stay in Phase 0.
 9. Do not bulk-read every skill body under `.agents/skills/`. Irrelevant skills waste context and can pollute the task plan.
 10. Keep every instruction, task, domain, task-file, attachment, and selected skill reference read-only. If an apparent correction is needed, record it as a gap; do not edit the reference file.
 11. Record every task attachment/supporting file read or inspected, every selected relevant skill file, and the reason each was relevant in `task-workflow/phase-1-task-research.md`.
-12. Read any other docs or local instructions required by the task domain.
+12. Read any other docs or local instructions required by `AGENTS.md` or the task domain.
 13. Cite target repo instruction, domain, task file, task files folder, task attachments, and selected local skill files with repo-relative paths only. Do not depend on the task file to list them, and do not record sandbox-specific absolute paths for these files.
 14. Inspect the existing codebase before planning edits.
 15. Identify the affected routes, components, services, schemas, stores, tests, scripts, config, and docs.
@@ -138,6 +140,7 @@ Record:
 - technical goal
 - in-scope and out-of-scope work
 - repo instructions and docs read
+- task-relevant development rules extracted from `AGENTS.md`
 - repo-local domain files read, including `.tasks/domain.md`
 - every task attachment/supporting file from `.tasks/files/` read or inspected, with what it contributed to the plan
 - selected relevant local skill files from `.agents/skills/` read, with reasons for selection
@@ -165,6 +168,7 @@ Critical failures:
 
 - task body not read completely
 - root `AGENTS.md` not read and cited
+- task-relevant `AGENTS.md` development rules not extracted before planning
 - `task-workflow/progress.md` not updated with enough context, current phase pointers, phase artifact index, and artifact pointers to resume Phase 2 after compaction
 - `.tasks/domain.md` not read and cited
 - relevant repo-local domain files or relevant local skill files from `.agents/skills/` not read and cited
@@ -178,6 +182,7 @@ Critical failures:
 - codebase not inspected before implementation planning
 - plan does not cite concrete files or directories
 - planned work ignores tests, verification, or docs when they are required by the task
+- planned work violates or omits applicable `AGENTS.md` development rules
 - implementation files edited before Phase 1 passes
 - implementation files edited while `CURRENT_PHASE.txt` still says `phase-1-task-research`
 - Phase 1 artifact omits the task understanding, instructions/docs read, codebase research, implementation plan, or verification plan while claiming pass
@@ -188,6 +193,7 @@ Pass gate:
 - every critical research item passes
 - the plan cites concrete files or directories
 - `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, every task attachment/supporting file in `.tasks/files/`, relevant repo-local domain files, and selected relevant local skill files from `.agents/skills/` are read or inspected and cited with repo-relative paths
+- task-relevant development rules from `AGENTS.md` are recorded and reflected in the plan
 - reference inputs, especially `.tasks/*`, remain unchanged unless the task explicitly required editing that exact reference file
 - `task-workflow/progress.md` lists `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and selected relevant skill files from `.agents/skills/` for reread after compaction
 - `task-workflow/progress.md` points to the Phase 1 artifact for researched files/directories and planned edit targets

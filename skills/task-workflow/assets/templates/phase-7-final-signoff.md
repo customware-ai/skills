@@ -25,6 +25,7 @@
 | Final checks current after last code change | Pending |
 | Open critical gaps resolved | Pending |
 | Stale/deferred open gaps reconciled | Pending |
+| Extracted `AGENTS.md` development rules followed | Pending |
 | Task summary accurate | Pending |
 | `progress.md` agrees with Phase 7 and has no remaining local action | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers identify where final gate, verification, log, and test details live | Pending |
@@ -78,6 +79,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Skill compliance/artifact integrity | >= 8/10 | 0/10 | Pending |
 | Code quality/maintainability | >= 8/10 | 0/10 | Pending |
 | Test quality | >= 8/10 | 0/10 | Pending |
+| Development-instruction compliance | >= 8/10 | 0/10 | Pending |
 | Overall result | >= 8/10 | 0/10 | Pending |
 
 ## Gate
@@ -93,6 +95,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Fixed wait reviews current and clean | yes | Pending |
 | Artifact integrity review completed and clean | yes | Pending |
 | Quality scorecard all >= 8/10 | yes | Pending |
+| Extracted `AGENTS.md` development rules verified | yes | Pending |
 | Verification current | yes | Pending |
 | MITB completed command run after clean final audit | yes | Pending |
 | `progress.md` final state agrees with Phase 7 | yes | Pending |

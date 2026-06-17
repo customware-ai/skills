@@ -74,6 +74,8 @@ When running in a MITB sandbox, use these repo-relative workspace inputs:
 - attached task files: `.tasks/files/`
 - available skill files: `.agents/skills/`
 
+`AGENTS.md` is the target repo's binding development-instructions file. It defines project-specific rules for architecture, type safety, tests, UX, commands, code style, docs, prohibited patterns, and completion. Phase 1 must extract the task-relevant rules from `AGENTS.md` before planning edits, including any required docs it points to. Later gates must verify the implementation follows those extracted rules.
+
 Phase 1 must read `.tasks/domain.md`. It must enumerate `.tasks/files/` even when the folder is empty, then read or inspect every task attachment/supporting file in that folder before planning.
 
 Available skills are kept under `.agents/skills/`. Discover available skills from the prompt's Skills section and `.agents/skills/`, then read only the selected skill `SKILL.md` files relevant to the current task. Do not bulk-read every skill file in `.agents/skills/`.
@@ -89,7 +91,7 @@ In MITB, `.tasks/task.md` or the prompt always provides the task completion comm
 This workflow shape is not optional:
 
 1. Clear old workflow artifacts for this repo and copy fresh artifact templates.
-2. Read the task, root `AGENTS.md`, `.tasks/domain.md`, every task attachment/supporting file in `.tasks/files/`, only relevant available skill files from `.agents/skills/`, and relevant project docs. These instruction, task, domain, attachment, and skill-reference files are read-only unless the task explicitly asks to edit them.
+2. Read the task, root `AGENTS.md`, `.tasks/domain.md`, every task attachment/supporting file in `.tasks/files/`, only relevant available skill files from `.agents/skills/`, and relevant project docs. Extract the task-relevant development rules from `AGENTS.md` before planning. These instruction, task, domain, attachment, and skill-reference files are read-only unless the task explicitly asks to edit them.
 3. Research the codebase and record the implementation plan.
 4. Execute the primary implementation.
 5. Execute a second gap-closure pass.
@@ -313,7 +315,7 @@ Detailed process: `references/phase-0-1-startup-research.md`.
 
 ### Phase 1: Task Intake And Codebase Research
 
-Read the task, root `AGENTS.md`, `.tasks/domain.md`, every task attachment/supporting file in `.tasks/files/`, only relevant available skill files from `.agents/skills/`, relevant docs, and codebase. These are reference inputs: read and cite them, but do not edit them. Record task understanding, task files read or inspected, selected skills, affected files, patterns to reuse, risks, and an ordered implementation plan.
+Read the task, root `AGENTS.md`, `.tasks/domain.md`, every task attachment/supporting file in `.tasks/files/`, only relevant available skill files from `.agents/skills/`, relevant docs, and codebase. Treat `AGENTS.md` as binding development instructions; extract its task-relevant rules before planning. These are reference inputs: read and cite them, but do not edit them. Record task understanding, development rules, task files read or inspected, selected skills, affected files, patterns to reuse, risks, and an ordered implementation plan.
 
 Detailed process: `references/phase-0-1-startup-research.md`.
 
@@ -367,6 +369,7 @@ These automatically fail the run:
 - failing to copy the artifact templates before implementation work
 - failing to create, read after compaction, or keep `task-workflow/progress.md` current enough to resume the run
 - failing to record and re-read the selected repo-relative instruction/context files in `task-workflow/progress.md`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and relevant available skill files from `.agents/skills/`
+- reading `AGENTS.md` only as context instead of extracting and following the task-relevant development rules it defines
 - editing `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files under `.agents/skills/`, or `AGENTS.md` without the user/task explicitly requesting an edit to that exact reference file
 - leaving the `task-workflow/progress.md` Current Phase Pointers, Phase Artifact Index, or Artifact Pointers stale, missing, or contradicting phase artifacts
 - using `task-workflow/progress.md` as a duplicate file inventory instead of pointing to the owning phase artifacts for details
@@ -400,6 +403,7 @@ These automatically fail the run:
 - failing to enumerate `.tasks/files/` even when it is empty
 - failing to read or inspect every task attachment/supporting file in `.tasks/files/` before Phase 1 planning
 - bulk-reading every skill file in `.agents/skills/` instead of selecting and reading only task-relevant skills
+- planning, implementing, verifying, or signing off work that violates the extracted `AGENTS.md` development rules
 - running a MITB task completion command before all Phase 7 audit checks pass
 - failing to loop back to the earliest failing phase when any Phase 7 audit check fails
 - failing to run the required MITB completed command after all Phase 7 audit checks pass

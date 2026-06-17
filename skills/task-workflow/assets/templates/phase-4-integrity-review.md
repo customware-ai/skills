@@ -23,6 +23,7 @@
 | Schema/data shapes | Pending |  |
 | State transitions | Pending |  |
 | Docs alignment | Pending |  |
+| Extracted `AGENTS.md` development rules followed | Pending |  |
 | Unrelated edits avoided | Pending |  |
 | Type safety and narrow assertions | Pending |  |
 | Existing tests preserved, migrated, or defended | Pending |  |
@@ -36,6 +37,7 @@
 | Critical integrity items | all pass | Pending |
 | Required checks pass or unrelated failure evidenced | yes | Pending |
 | No runtime-blocking issue remains | yes | Pending |
+| No extracted `AGENTS.md` development rule violation remains | yes | Pending |
 | No stale critical gap in `open-gaps.md` | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Command/write safety passed | yes | Pending |

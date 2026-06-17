@@ -15,7 +15,7 @@ These are starting refs. Edit notes as the task clarifies which files are releva
 
 | Ref | Path | Use | Notes |
 | --- | --- | --- | --- |
-| Repo instructions | `AGENTS.md` | Required target repo instructions | Read in Phase 1 and after compaction/resume |
+| Repo instructions | `AGENTS.md` | Binding development instructions for this repo | Read in Phase 1 and after compaction/resume; extract task-relevant rules before planning |
 | Task file | `.tasks/task.md` | Canonical task body and completion command source | Read in Phase 1 and after compaction/resume |
 | Domain file | `.tasks/domain.md` | Domain, brand, and product context | Read in Phase 1 and after compaction/resume |
 | Task files folder | `.tasks/files/` | Task attachments and supporting inputs | Enumerate in Phase 1; read or inspect every task attachment/supporting file before planning |

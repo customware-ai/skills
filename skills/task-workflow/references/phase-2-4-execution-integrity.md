@@ -11,7 +11,7 @@ This is a looped gate workstream: Phase 2, Phase 3, and Phase 4 are not complete
 Implementation authority is:
 
 1. the task body
-2. target repo instructions
+2. target repo instructions, especially the task-relevant development rules extracted from `AGENTS.md`
 3. Phase 1 research and implementation plan
 4. existing repo contracts, route patterns, service boundaries, components, and test structure
 
@@ -40,7 +40,7 @@ If implementation discovers that the Phase 1 plan is wrong, record the plan chan
 
 ## Code And Coverage Discipline
 
-Follow the target repo's code rules. Do not make the task pass by weakening code quality.
+Follow the target repo's code rules and the task-relevant development rules extracted from `AGENTS.md`. Do not make the task pass by weakening code quality.
 
 - Prefer existing contracts, schemas, route patterns, services, and test structure.
 - Avoid broad unsafe type assertions such as `as never`, `as any`, or equivalent type erasure unless a narrow repo-specific boundary genuinely requires it and the artifact explains why.
@@ -237,12 +237,13 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 2. Run the repo's relevant static checks, type checks, build checks, and focused tests.
 3. Inspect failures and fix root causes.
 4. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
-5. Review docs updates when behavior or workflow changed.
-6. Record commands, outputs, fixes, and final status.
-7. Update `task-workflow/progress.md` with latest check results, fixed issues, a pointer to `task-workflow/phase-4-integrity-review.md` for check/fix details, and next local action.
-8. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
-9. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
-10. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
+5. Review the implementation against the extracted `AGENTS.md` development rules from Phase 1.
+6. Review docs updates when behavior or workflow changed.
+7. Record commands, outputs, fixes, and final status.
+8. Update `task-workflow/progress.md` with latest check results, fixed issues, a pointer to `task-workflow/phase-4-integrity-review.md` for check/fix details, and next local action.
+9. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
+10. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
+11. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
 
 ## Phase 4 Score
 
@@ -262,6 +263,7 @@ Critical failures:
 - runtime-blocking issue remains
 - lint/type warnings introduced by this task remain unresolved or undefended
 - unsafe type assertions are used to bypass a contract that should be modeled directly
+- implementation violates an extracted `AGENTS.md` development rule
 - unrelated edit risk not reviewed
 - artifact claims passing checks without command evidence
 - check command, server, or watcher is left running without bounded cleanup
@@ -273,6 +275,7 @@ Pass gate:
 - every critical integrity item passes
 - required repo checks pass or any remaining failure is unrelated and documented with evidence
 - no known runtime-blocking issue remains
+- no known violation of extracted `AGENTS.md` development rules remains
 - no unbounded foreground command remains active
 
 If this gate fails, stay in Phase 4.
