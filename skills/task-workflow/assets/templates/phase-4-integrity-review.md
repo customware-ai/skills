@@ -29,6 +29,14 @@
 | Existing tests preserved, migrated, or defended | Pending |  |
 | Tooling warnings from changed code resolved or defended | Pending |  |
 
+## Console And Logging Review
+
+Changed app/server source must not keep `console.*`. Temporary `console.*` may be used only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output. Remove those logs after the issue is understood and before Phase 5 reruns, Phase 4 re-passes, or Phase 7 signs off. If lasting logging is needed, use the repo-approved logging or telemetry path recorded from `AGENTS.md` and relevant docs.
+
+| Area inspected | Console usage found? | Temporary Phase 5 debug only? | Removed or replaced evidence |
+| --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending |
+
 ## Gate
 
 | Metric | Required | Actual |
@@ -38,6 +46,7 @@
 | Required checks pass or unrelated failure evidenced | yes | Pending |
 | No runtime-blocking issue remains | yes | Pending |
 | No extracted `AGENTS.md` development rule violation remains | yes | Pending |
+| No `console.*` remains outside the active Phase 5 debug loop | yes | Pending |
 | No stale critical gap in `open-gaps.md` | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Command/write safety passed | yes | Pending |

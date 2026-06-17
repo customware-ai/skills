@@ -1,11 +1,11 @@
 # Progress Ledger
 
-This file is the compact resume state for the task. Hard rule: re-read it after every compaction or resume before continuing work.
+This file is the compact resume state for the task. Hard rule: re-read it after every compaction, resume, retry, reconnect, or new coding session before continuing work.
 
 ## Resume Instructions
 
-- Re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference before choosing the next action.
-- Re-read the refs below after compaction or resume; keep paths repo-relative and update this section when Phase 1 selects task-relevant skill files.
+- Re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference before choosing the next action after compaction, resume, retry, reconnect, or new coding session.
+- Re-read the refs below after compaction, resume, retry, reconnect, or new coding session; keep paths repo-relative and update this section when Phase 1 selects task-relevant skill files.
 - Treat refs as read-only unless the task explicitly asks to edit that exact reference file. This is especially strict for `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, and selected skill files under `.agents/skills/`.
 - If this file disagrees with phase artifacts, trust the earliest failing phase artifact and repair this file.
 
@@ -85,8 +85,8 @@ Keep pointers only. Do not duplicate detailed lists already recorded in phase ar
 
 ## Resume Rules
 
-- After compaction, re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference.
-- After compaction, also re-read the repo-relative files listed in `Refs`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and only the relevant skill files selected from `.agents/skills/` in Phase 1.
+- After compaction, resume, retry, reconnect, or new coding session, re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference.
+- After compaction, resume, retry, reconnect, or new coding session, also re-read the repo-relative files listed in `Refs`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and only the relevant skill files selected from `.agents/skills/` in Phase 1.
 - If this file and `CURRENT_PHASE.txt` disagree, inspect the phase artifacts and continue from the earliest failing phase.
 - Use Current Phase Pointers and Phase Artifact Index to find the detailed phase artifact and reference before choosing the next action.
 - Use Artifact Pointers only to locate artifact groups; read the owning phase artifact for details.

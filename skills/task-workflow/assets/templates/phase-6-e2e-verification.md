@@ -24,7 +24,9 @@ E2E tests should prove actual task functionality, not superficial styling or exi
 
 ## Test Runs
 
-| Command | Result | Output summary | Follow-up |
+Record the exact bounded test command and its exact output. If output is long, write it to a repo-local log file and cite that file here, plus the final pass/fail lines copied exactly into the artifact.
+
+| Command | Result | Exact output or repo-local log path with final lines | Follow-up |
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
@@ -75,6 +77,7 @@ If matches were found and removed, record the replacement proof here.
 | Existing E2E tests inspected before adding new coverage | Pending |  |
 | Existing E2E flow updated when changed behavior belongs there | Pending |  |
 | New E2E test added only when necessary | Pending |  |
+| Exact command output recorded for required E2E/test runs | Pending |  |
 | New/updated tests assert user-visible or persisted state | Pending |  |
 | New/updated E2E tests prove real task functionality | Pending |  |
 | Superficial color/class/existence-only checks avoided | Pending |  |
@@ -96,6 +99,7 @@ If matches were found and removed, record the replacement proof here.
 | Tests assert meaningful functional outcomes | yes | Pending |
 | Superficial/flaky one-off checks avoided | yes | Pending |
 | Required tests pass or unrelated failure evidenced | yes | Pending |
+| Exact command output recorded in artifact or cited repo-local log | yes | Pending |
 | Open gaps for E2E/test coverage updated | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Test quality review passed | yes | Pending |

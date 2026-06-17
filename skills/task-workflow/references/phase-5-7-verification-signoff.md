@@ -79,16 +79,17 @@ Verification phases must not stall on foreground servers or watchers.
 8. Smoke-test surrounding UI/features that share the changed surface, such as adjacent navigation, list/detail transitions, filters/search, dialogs, menus, sidebars, and nearby actions that could be accidentally broken by the implementation.
 9. Verify responsive behavior and visual quality on desktop, tablet, and mobile viewports. Check layout, overflow, clipping, tap/click targets, readable text, navigation access, dialogs/menus, and the task's main flows at each required viewport.
 10. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
-11. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to Phase 4 for fix and integrity review, then re-enter Phase 5 and rerun the failed path plus nearby/surrounding checks.
-12. Fix discovered issues and rerun the scripts from clean Node.js processes.
-13. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
-14. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
-15. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
-16. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-17. Record route/state coverage, interaction coverage, bad-case/adversarial coverage, surrounding-feature smoke, responsive viewport coverage, screenshots, issues, fixes, open-gap status, and fixed-wait review evidence.
-18. Kill any background server started for Phase 5, or record why it must remain running for the next bounded command.
-19. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
-20. Update `task-workflow/progress.md` so current phase and next local action match Phase 6.
+11. Verify every screenshot path cited in the Phase 5 artifact exists before scoring the gate. Record the file-existence command/readback proof in `task-workflow/phase-5-playwright-verification.md`.
+12. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to Phase 4 for fix and integrity review, then re-enter Phase 5 and rerun the failed path plus nearby/surrounding checks.
+13. Fix discovered issues and rerun the scripts from clean Node.js processes.
+14. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
+15. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
+16. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
+17. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+18. Record route/state coverage, interaction coverage, bad-case/adversarial coverage, surrounding-feature smoke, responsive viewport coverage, screenshots, screenshot existence proof, issues, fixes, open-gap status, and fixed-wait review evidence.
+19. Kill any background server started for Phase 5, or record why it must remain running for the next bounded command.
+20. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
+21. Update `task-workflow/progress.md` so current phase and next local action match Phase 6.
 
 ## Required Interactive Evidence
 
@@ -101,6 +102,7 @@ The artifact must cite real evidence for every main touched or implied user flow
 - bad case, non-ideal user action, or surrounding feature checked
 - viewport checked: desktop, tablet, or mobile
 - screenshot path when visual proof matters
+- screenshot existence proof for every screenshot path cited
 - issue found
 - fix made
 - rerun result
@@ -133,6 +135,7 @@ Critical failures:
 - desktop, tablet, and mobile responsive behavior not checked for the main changed flow
 - critical responsive UI issue remains unresolved, such as clipped content, inaccessible controls, broken navigation, unreadable text, or unusable dialogs/menus
 - screenshot path cited but file does not exist
+- screenshot paths are cited without file-existence proof in the artifact
 - discovered critical UI/runtime issue remains unresolved
 - Phase 5-discovered issue was not routed back through Phase 4 fix/integrity review before rechecking
 - script uses DOM shortcuts as a substitute for normal user interaction
@@ -150,6 +153,7 @@ Pass gate:
 - bad cases, non-ideal user actions, and surrounding features have interactive evidence
 - desktop, tablet, and mobile responsive behavior is verified for the main changed flow
 - screenshots cited in the artifact exist
+- screenshot existence proof is recorded for every screenshot path cited
 - no unresolved critical UI/runtime issue remains
 - browser-verification gaps in `task-workflow/open-gaps.md` are resolved, updated, or defended
 - fixed-wait review is recorded and clean
@@ -168,13 +172,14 @@ If this gate fails, stay in Phase 5.
 6. Add or update lower-level tests when they are the better fit for non-UI logic.
 7. Run the existing, updated, new, and affected tests needed to prove existing functionality still works and the new additions work with it.
 8. Fix failures and rerun until passing.
-9. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
-10. Update `task-workflow/open-gaps.md` for every test/coverage gap closed, defended, or still open.
-11. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for test-file and test-repair details, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
-12. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-13. Record existing tests inspected, tests updated, tests added, commands, outcomes, fixed-wait review evidence, and remaining coverage gaps.
-14. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
-15. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
+9. Record the exact command output for every required E2E/test run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`.
+10. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
+11. Update `task-workflow/open-gaps.md` for every test/coverage gap closed, defended, or still open.
+12. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for test-file and test-repair details, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
+13. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+14. Record existing tests inspected, tests updated, tests added, commands, exact command output evidence, outcomes, fixed-wait review evidence, and remaining coverage gaps.
+15. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
+16. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
 
 ## Coverage Decision
 
@@ -217,6 +222,7 @@ Critical failures:
 - test added but not run
 - relevant test failure caused by this task remains unresolved
 - artifact records a pass without command evidence
+- artifact records a pass with only a described or documented test result and no exact command output or cited repo-local log containing exact output
 - existing tests deleted without replacement coverage or written defense
 - audited Playwright or E2E files contain any fixed wait
 - fixed-wait review not recorded
@@ -234,6 +240,7 @@ Pass gate:
 - new or affected behavior has test coverage or a documented reason why not
 - tests assert meaningful functional outcomes rather than superficial style or existence checks
 - required tests pass or remaining failures are unrelated and evidenced
+- exact E2E/test command output is recorded in the artifact or in a cited repo-local log file
 - test/coverage gaps in `task-workflow/open-gaps.md` are resolved, updated, or defended
 - fixed-wait review is recorded and clean
 - `task-workflow/open-gaps.md` has no placeholder `Pending` rows
@@ -250,18 +257,21 @@ If this gate fails, stay in Phase 6.
 6. Confirm `task-workflow/open-gaps.md` has no placeholder `Pending` rows.
 7. Re-read `task-workflow/progress.md` and confirm it matches `CURRENT_PHASE.txt`, every phase decision, the gap ledger, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and the next local action.
 8. Re-read the fixed-wait review evidence from Phase 5 and Phase 6, re-open the inspected verification files if they changed, and confirm the review is still current.
-9. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
-10. Review the final diff.
-11. Re-run any command needed because later edits invalidated earlier proof.
-12. Score the final result in all quality categories.
-13. Confirm the final implementation follows the task-relevant development rules extracted from `AGENTS.md`.
-14. Confirm task completion summary is accurate.
-15. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
-16. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
-17. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
-18. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
-19. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
-20. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
+9. Re-read the screenshot existence audit from Phase 5 and verify every screenshot path cited in Phase 5 still exists.
+10. Re-read the exact E2E/test command output evidence from Phase 6 and confirm it is present, current, and not replaced by a prose-only claim.
+11. Inspect changed app/server source for `console.*` again. Temporary `console.*` used to debug Phase 5 browser/runtime behavior must be removed before Phase 7 signs off; lasting logging must use the repo-approved logging or telemetry path.
+12. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
+13. Review the final diff.
+14. Re-run any command needed because later edits invalidated earlier proof.
+15. Score the final result in all quality categories.
+16. Confirm the final implementation follows the task-relevant development rules extracted from `AGENTS.md`.
+17. Confirm task completion summary is accurate.
+18. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
+19. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
+20. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
+21. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
+22. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
+23. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
 
 ## Final Audit Checklist
 
@@ -278,6 +288,9 @@ Confirm:
 - no stale open gap remains
 - no `open-gaps.md` placeholder row remains
 - Phase 5 and Phase 6 fixed-wait reviews are present and current
+- every screenshot path cited in Phase 5 exists and has recorded existence proof
+- Phase 6 records exact E2E/test command output in the artifact or a cited repo-local log file
+- changed app/server source contains no `console.*` after Phase 5
 - final diff matches the task scope
 - final implementation follows the task-relevant development rules extracted from `AGENTS.md`
 - final quality scorecard is at least `8/10` in every category
@@ -302,6 +315,9 @@ Critical failures:
 - stale open gap remains after the phase that claimed to resolve it
 - `task-workflow/open-gaps.md` still contains template placeholder rows
 - fixed-wait reviews are missing, stale, non-clean, or contradicted by files under `task-workflow/playwright` or `tests/e2e`
+- Phase 5 cites screenshot paths that do not exist or lack recorded existence proof
+- Phase 6 lacks exact E2E/test command output evidence
+- changed app/server source still contains `console.*` after Phase 5
 - artifact integrity review is missing, incomplete, or records a failing decision, failing score, missing artifact, placeholder gate evidence, or contradiction between artifacts
 - final implementation violates or fails to verify an extracted `AGENTS.md` development rule
 - any final quality category is below `8/10`
@@ -323,6 +339,9 @@ Pass gate:
 - no stale open gap remains
 - no open-gap placeholder row remains
 - fixed-wait reviews are present and current
+- every screenshot cited in Phase 5 exists
+- exact E2E/test command output evidence is present for Phase 6
+- changed app/server source contains no `console.*` after Phase 5
 - every final quality category is at least `8/10`
 - final checks and tests are current after the last code change
 - MITB completed command was run successfully after all prior final-audit checks passed
@@ -347,6 +366,9 @@ Promotion requirements:
 - `task-workflow/open-gaps.md` has no placeholder `Pending` rows
 - `task-workflow/open-gaps.md` has no critical or stale open gap
 - fixed-wait review requirements are satisfied for Phase 5 and Phase 6 before final signoff
+- screenshot existence proof is satisfied for Phase 5 before final signoff
+- exact E2E/test command output evidence is satisfied for Phase 6 before final signoff
+- changed app/server source contains no `console.*` after Phase 5
 - artifact integrity review is recorded and clean
 - verification evidence is current after the last source edit
 - `task-workflow/progress.md` is current and agrees with Phase 7 signoff

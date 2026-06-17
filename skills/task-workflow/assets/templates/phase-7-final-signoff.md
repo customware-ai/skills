@@ -26,6 +26,7 @@
 | Open critical gaps resolved | Pending |
 | Stale/deferred open gaps reconciled | Pending |
 | Extracted `AGENTS.md` development rules followed | Pending |
+| No `console.*` remains in changed app/server source after Phase 5 | Pending |
 | Task summary accurate | Pending |
 | `progress.md` agrees with Phase 7 and has no remaining local action | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers identify where final gate, verification, log, and test details live | Pending |
@@ -71,6 +72,14 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 5 interactive scripts | Pending | Pending | Pending | Pending |
 | Phase 6 E2E/tests | Pending | Pending | Pending | Pending |
 
+## Verification Evidence Recap
+
+| Evidence type | Required proof | Present and current? | Evidence |
+| --- | --- | --- | --- |
+| Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
+| Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log | Pending | Pending |
+| Changed app/server logging | No `console.*` remains in changed app/server source after Phase 5 | Pending | Pending |
+
 ## Quality Scorecard
 
 | Category | Required | Actual | Evidence |
@@ -93,9 +102,12 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | No stale open gap | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Fixed wait reviews current and clean | yes | Pending |
+| Phase 5 cited screenshots exist | yes | Pending |
+| Phase 6 exact E2E/test command output recorded | yes | Pending |
 | Artifact integrity review completed and clean | yes | Pending |
 | Quality scorecard all >= 8/10 | yes | Pending |
 | Extracted `AGENTS.md` development rules verified | yes | Pending |
+| No `console.*` remains in changed app/server source after Phase 5 | yes | Pending |
 | Verification current | yes | Pending |
 | MITB completed command run after clean final audit | yes | Pending |
 | `progress.md` final state agrees with Phase 7 | yes | Pending |

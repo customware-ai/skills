@@ -238,12 +238,13 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 3. Inspect failures and fix root causes.
 4. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
 5. Review the implementation against the extracted `AGENTS.md` development rules from Phase 1.
-6. Review docs updates when behavior or workflow changed.
-7. Record commands, outputs, fixes, and final status.
-8. Update `task-workflow/progress.md` with latest check results, fixed issues, a pointer to `task-workflow/phase-4-integrity-review.md` for check/fix details, and next local action.
-9. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
-10. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
-11. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
+6. Inspect changed app/server source for `console.*`. Temporary `console.*` is allowed only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output. Before Phase 4 passes, remove those temporary logs or replace lasting logging with the repo-approved logging/telemetry path.
+7. Review docs updates when behavior or workflow changed.
+8. Record commands, outputs, fixes, console/logging review, and final status.
+9. Update `task-workflow/progress.md` with latest check results, fixed issues, a pointer to `task-workflow/phase-4-integrity-review.md` for check/fix details, and next local action.
+10. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
+11. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
+12. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
 
 ## Phase 4 Score
 
@@ -264,6 +265,7 @@ Critical failures:
 - lint/type warnings introduced by this task remain unresolved or undefended
 - unsafe type assertions are used to bypass a contract that should be modeled directly
 - implementation violates an extracted `AGENTS.md` development rule
+- changed app/server source still contains `console.*` outside the active Phase 5 debug loop
 - unrelated edit risk not reviewed
 - artifact claims passing checks without command evidence
 - check command, server, or watcher is left running without bounded cleanup
@@ -276,6 +278,7 @@ Pass gate:
 - required repo checks pass or any remaining failure is unrelated and documented with evidence
 - no known runtime-blocking issue remains
 - no known violation of extracted `AGENTS.md` development rules remains
+- no changed app/server source contains `console.*` outside the active Phase 5 debug loop
 - no unbounded foreground command remains active
 
 If this gate fails, stay in Phase 4.

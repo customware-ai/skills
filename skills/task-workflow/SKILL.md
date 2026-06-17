@@ -58,7 +58,7 @@ This skill is a gated execution protocol, not a loose set of suggestions. It tur
 
 Assume this skill may run fully autonomously and may be compacted mid-run. No human is expected to watch the run line by line. The artifact files are therefore the enforcement system. A phase is not complete because the Agent feels confident. A phase is complete only when its required artifact shows a real passing score and all critical items pass.
 
-`task-workflow/progress.md` is the compact resume ledger. It must summarize the task, current phase, completed phase context, active work queue, verification state, and next local action. Hard rule: after compaction or resume, read it before doing any new work. Keep it current as work proceeds; it is the first file that should restore enough context to continue without conversation memory.
+`task-workflow/progress.md` is the compact resume ledger. It must summarize the task, current phase, completed phase context, active work queue, verification state, and next local action. Hard rule: after compaction, resume, retry, reconnect, or new coding session, read it and `task-workflow/CURRENT_PHASE.txt` before doing any new work. Keep it current as work proceeds; it is the first file that should restore enough context to continue without conversation memory.
 
 Never promote work from one phase to the next on optimism, partial evidence, a green build alone, or broad product similarity.
 
@@ -136,7 +136,7 @@ Treat these rules as always active:
 - `task-workflow/progress.md` is the compact resume ledger. It is not proof that gates passed, but it must stay current enough to resume the run after compaction.
 - After every phase start, meaningful Phase 2 work packet, phase gate result, blocker discovery, and phase promotion, update `task-workflow/progress.md` with the current phase, earliest failing phase if any, last completed gate, next local action, and a compact summary of relevant context.
 - Keep the `Current Phase Pointers`, `Phase Artifact Index`, and `Artifact Pointers` in `task-workflow/progress.md` current. They must point to the current phase artifact, current phase reference, and high-signal active files only. Do not duplicate full researched-file, edited-file, Playwright, screenshot, log, or test inventories from phase artifacts into `progress.md`.
-- After compaction or resume, read `task-workflow/progress.md` before choosing the next action. If it disagrees with `CURRENT_PHASE.txt`, inspect the phase artifacts and continue from the earliest failing phase.
+- After compaction, resume, retry, reconnect, or new coding session, read `task-workflow/progress.md` and `task-workflow/CURRENT_PHASE.txt` before choosing the next action. If they disagree, inspect the phase artifacts and continue from the earliest failing phase.
 - A phase may advance the current phase marker only after its phase-owned artifact has `Decision: Pass`, a passing score, all critical items passing, and no placeholder `Pending` rows in the gate or required evidence sections.
 - The current phase marker must be written before work belonging to that phase begins. The marker is not merely cleanup after phase work.
 - Before writing the next phase marker, re-open the current phase artifact and verify the promotion lock in writing inside that artifact.
@@ -180,9 +180,12 @@ Before producing any final response, stopping message, or ending an OpenCode tur
 8. Every gate row must contain concrete evidence instead of `Pending` or template defaults.
 9. `task-workflow/open-gaps.md` must have no critical open gaps, no stale open gaps owned by passed phases, and no placeholder rows.
 10. Phase 5, Phase 6, and Phase 7 must record fixed-wait review evidence showing the inspected verification files contain no fixed waits.
-11. Phase 7 final quality scorecard must be at least `8/10` in every category.
-12. Phase 7 must record an artifact integrity review that re-opens every phase artifact and verifies the artifact exists, its decision is `Pass`, its score meets threshold, required evidence rows are complete, and it does not contradict `CURRENT_PHASE.txt`, `progress.md`, or `open-gaps.md`.
-13. The MITB completed command from `.tasks/task.md` or the prompt must run only after all Phase 7 audit checks pass. If any Phase 7 check fails, the agent must loop back to the earliest failing phase and must not call task completion.
+11. Phase 5 and Phase 7 must record screenshot existence proof for every screenshot path cited in Phase 5.
+12. Phase 6 and Phase 7 must record the exact E2E/test command output or a repo-local log file containing the exact output plus the final pass/fail lines.
+13. Phase 4 and Phase 7 must verify changed app/server source contains no lasting `console.*`. Temporary `console.*` is allowed only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output, and it must be removed before the Phase 5 rerun, Phase 4 re-pass, or Phase 7 signoff.
+14. Phase 7 final quality scorecard must be at least `8/10` in every category.
+15. Phase 7 must record an artifact integrity review that re-opens every phase artifact and verifies the artifact exists, its decision is `Pass`, its score meets threshold, required evidence rows are complete, and it does not contradict `CURRENT_PHASE.txt`, `progress.md`, or `open-gaps.md`.
+16. The MITB completed command from `.tasks/task.md` or the prompt must run only after all Phase 7 audit checks pass. If any Phase 7 check fails, the agent must loop back to the earliest failing phase and must not call task completion.
 
 If any item fails and the problem can be solved locally, continue the workflow from the earliest failing phase. Do not answer as if the task is complete.
 If an actual external blocker prevents completion, record the blocker in the current phase artifact and `open-gaps.md`, including commands run, files inspected, why local recovery cannot solve it, and the smallest next action.
@@ -236,7 +239,7 @@ On a fresh run:
 2. Start Phase 0.
 3. Load only `references/phase-0-1-startup-research.md`.
 
-After compaction or resume:
+After compaction, resume, retry, reconnect, or new coding session:
 
 1. Re-read this `SKILL.md`.
 2. Read `task-workflow/progress.md`.
@@ -368,6 +371,7 @@ These automatically fail the run:
 - skipping artifact reset
 - failing to copy the artifact templates before implementation work
 - failing to create, read after compaction, or keep `task-workflow/progress.md` current enough to resume the run
+- after retry, reconnect, or a new coding session, continuing work before reading `task-workflow/progress.md` and `task-workflow/CURRENT_PHASE.txt`
 - failing to record and re-read the selected repo-relative instruction/context files in `task-workflow/progress.md`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and relevant available skill files from `.agents/skills/`
 - reading `AGENTS.md` only as context instead of extracting and following the task-relevant development rules it defines
 - editing `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files under `.agents/skills/`, or `AGENTS.md` without the user/task explicitly requesting an edit to that exact reference file
@@ -377,6 +381,9 @@ These automatically fail the run:
 - advancing `task-workflow/CURRENT_PHASE.txt` while the current or any previous phase artifact still says `Decision: Fail`
 - advancing `task-workflow/CURRENT_PHASE.txt` while the current or any previous phase artifact still has placeholder `Pending` gate evidence
 - leaving artifact templates mostly blank while claiming success
+- passing Phase 5 while any screenshot path cited in the artifact is missing or not verified with existence proof
+- passing Phase 6 while E2E/test runs are only described and the exact command output is not recorded in the artifact or in a cited repo-local log file
+- passing Phase 4 or Phase 7 while changed app/server source still contains `console.*` outside the active Phase 5 debug loop
 - producing a final response or stopping summary while `CURRENT_PHASE.txt` is before `phase-7-final-signoff`
 - producing a final response or stopping summary while any required artifact still says `Decision: Fail`, has a failing score, or contains pending gate evidence
 - ending an OpenCode turn mid-phase while the next workflow action is locally available

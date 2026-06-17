@@ -52,6 +52,14 @@ Verify the main changed flow and nearby UI on desktop, tablet, and mobile. Check
 | Tablet | Pending | Pending | Pending | Pending |
 | Mobile | Pending | Pending | Pending | Pending |
 
+## Screenshot Existence Audit
+
+Every screenshot path cited anywhere in this artifact must exist when the Phase 5 gate is scored. Verify cited paths with a bounded file-read/listing command and record the proof here.
+
+| Screenshot path cited | Existence proof command/output | Result |
+| --- | --- | --- |
+| Pending | Pending | Pending |
+
 ## Issues Found And Fixed
 
 | Issue | Fix | Evidence |
@@ -93,6 +101,7 @@ If matches were found and removed, record the replacement proof here.
 | Surrounding feature smoke completed | yes | Pending |
 | Desktop/tablet/mobile responsive UI verified | yes | Pending |
 | Screenshot paths exist | yes | Pending |
+| Screenshot existence audit completed for every cited path | yes | Pending |
 | No unresolved critical UI/runtime issue | yes | Pending |
 | Phase 5 failures routed through Phase 4 fix/integrity review and rechecked | yes | Pending |
 | Open gaps for interactive verification updated | yes | Pending |
