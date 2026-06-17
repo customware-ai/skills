@@ -71,13 +71,16 @@ When running in a MITB sandbox, use these repo-relative workspace inputs:
 - workflow skill: `.agents/skills/task-workflow/SKILL.md`
 - task body: `.tasks/task.md`
 - domain and brand context: `.tasks/domain.md`
-- attached task files and task-provided skill files: `.tasks/files/`
+- attached task files: `.tasks/files/`
+- available skill files: `.agents/skills/`
 
-Phase 1 must read `.tasks/domain.md` when it exists. It must discover task-provided skill files from the prompt's Skills section and/or `.tasks/files/`, then read only the skill files relevant to the current task. Do not bulk-read every skill file in `.tasks/files/`.
+Phase 1 must read `.tasks/domain.md`. It must enumerate `.tasks/files/` even when the folder is empty, then read or inspect every task attachment/supporting file in that folder before planning.
 
-All Phase 1 input/reference files are read-only. This includes `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, every file under `.tasks/files/`, and every selected task-provided skill file. Treat files under `.tasks/` as canonical task inputs, not editable workspace artifacts. Do not rewrite, normalize, consolidate, clean up, trim, reformat, or "fix" these files unless the task explicitly asks to update that exact reference file. If a reference file appears inconsistent, record the ambiguity in `task-workflow/phase-1-task-research.md` or `task-workflow/open-gaps.md`; never resolve it by editing the reference input.
+Available skills are kept under `.agents/skills/`. Discover available skills from the prompt's Skills section and `.agents/skills/`, then read only the selected skill `SKILL.md` files relevant to the current task. Do not bulk-read every skill file in `.agents/skills/`.
 
-Record every selected skill path and why it was relevant in `task-workflow/phase-1-task-research.md` and `task-workflow/progress.md`. After compaction or resume, re-read the selected relevant skill files listed in `progress.md` along with `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, and `.tasks/files/`.
+All Phase 1 input/reference files are read-only. This includes `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, every file under `.tasks/files/`, and every selected skill file under `.agents/skills/`. Treat files under `.tasks/` as canonical task inputs, not editable workspace artifacts. Do not rewrite, normalize, consolidate, clean up, trim, reformat, or "fix" these files unless the task explicitly asks to update that exact reference file. If a reference file appears inconsistent, record the ambiguity in `task-workflow/phase-1-task-research.md` or `task-workflow/open-gaps.md`; never resolve it by editing the reference input.
+
+Record every `.tasks/files/` attachment/supporting file read or inspected, plus every selected skill path and why it was relevant, in `task-workflow/phase-1-task-research.md` and `task-workflow/progress.md`. After compaction or resume, re-read the selected relevant skill files listed in `progress.md` along with `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, and the relevant `.tasks/files/` attachments/supporting files recorded in Phase 1.
 
 In MITB, `.tasks/task.md` or the prompt always provides the task completion command. Phase 7 must run the exact completed command only after every Phase 7 audit check passes. If any Phase 7 audit check fails, do not run task completion. Return to the earliest failing phase, repair the work, update evidence, rescore that phase, loop forward through the gates, and then re-enter Phase 7.
 
@@ -86,7 +89,7 @@ In MITB, `.tasks/task.md` or the prompt always provides the task completion comm
 This workflow shape is not optional:
 
 1. Clear old workflow artifacts for this repo and copy fresh artifact templates.
-2. Read the task, root `AGENTS.md`, `.tasks/domain.md` when present, only relevant task-provided skill files from `.tasks/files/`, and relevant project docs. These instruction, task, domain, attachment, and skill-reference files are read-only unless the task explicitly asks to edit them.
+2. Read the task, root `AGENTS.md`, `.tasks/domain.md`, every task attachment/supporting file in `.tasks/files/`, only relevant available skill files from `.agents/skills/`, and relevant project docs. These instruction, task, domain, attachment, and skill-reference files are read-only unless the task explicitly asks to edit them.
 3. Research the codebase and record the implementation plan.
 4. Execute the primary implementation.
 5. Execute a second gap-closure pass.
@@ -169,7 +172,7 @@ Before producing any final response, stopping message, or ending an OpenCode tur
 2. `task-workflow/progress.md` must say the current phase is `phase-7-final-signoff`, the last completed gate is Phase 7, and there is no next local action except final response.
 3. `task-workflow/progress.md` must include current phase pointers, a phase artifact index, and artifact pointers that identify where detailed evidence lives.
 4. `task-workflow/progress.md` must not duplicate full file inventories from phase artifacts; it may list only high-signal active files needed for immediate resume.
-5. `task-workflow/progress.md` must list the repo-relative instruction/context files to re-read after compaction, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md` when present, `.tasks/files/`, and only the relevant task-provided skill files selected in Phase 1.
+5. `task-workflow/progress.md` must list the repo-relative instruction/context files to re-read after compaction, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and only the relevant available skill files from `.agents/skills/` selected in Phase 1.
 6. Every required phase artifact must have `Decision: Pass`.
 7. Every required score must meet its threshold.
 8. Every gate row must contain concrete evidence instead of `Pending` or template defaults.
@@ -237,7 +240,7 @@ After compaction or resume:
 2. Read `task-workflow/progress.md`.
 3. Read `task-workflow/CURRENT_PHASE.txt`.
 4. Read the current phase artifact and `task-workflow/open-gaps.md`.
-5. Re-read the instruction/context files listed in `progress.md`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md` when present, `.tasks/files/`, and only the selected relevant skill files from `.tasks/files/`.
+5. Re-read the instruction/context files listed in `progress.md`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, the relevant attachments/supporting files recorded from `.tasks/files/`, and only the selected relevant skill files from `.agents/skills/`.
 6. If `progress.md`, `CURRENT_PHASE.txt`, and the phase artifacts disagree, continue from the earliest failing phase artifact.
 7. Load only the reference file that owns the current phase.
 8. Load `references/playwright-interactive.md` only when the current phase reference requires interactive Playwright work.
@@ -310,7 +313,7 @@ Detailed process: `references/phase-0-1-startup-research.md`.
 
 ### Phase 1: Task Intake And Codebase Research
 
-Read the task, root `AGENTS.md`, `.tasks/domain.md` when present, only relevant task-provided skill files from `.tasks/files/`, relevant docs, and codebase. These are reference inputs: read and cite them, but do not edit them. Record task understanding, selected skills, affected files, patterns to reuse, risks, and an ordered implementation plan.
+Read the task, root `AGENTS.md`, `.tasks/domain.md`, every task attachment/supporting file in `.tasks/files/`, only relevant available skill files from `.agents/skills/`, relevant docs, and codebase. These are reference inputs: read and cite them, but do not edit them. Record task understanding, task files read or inspected, selected skills, affected files, patterns to reuse, risks, and an ordered implementation plan.
 
 Detailed process: `references/phase-0-1-startup-research.md`.
 
@@ -363,8 +366,8 @@ These automatically fail the run:
 - skipping artifact reset
 - failing to copy the artifact templates before implementation work
 - failing to create, read after compaction, or keep `task-workflow/progress.md` current enough to resume the run
-- failing to record and re-read the selected repo-relative instruction/context files in `task-workflow/progress.md`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md` when present, `.tasks/files/`, and relevant task-provided skill files
-- editing `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected task-provided skill files, or `AGENTS.md` without the user/task explicitly requesting an edit to that exact reference file
+- failing to record and re-read the selected repo-relative instruction/context files in `task-workflow/progress.md`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and relevant available skill files from `.agents/skills/`
+- editing `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files under `.agents/skills/`, or `AGENTS.md` without the user/task explicitly requesting an edit to that exact reference file
 - leaving the `task-workflow/progress.md` Current Phase Pointers, Phase Artifact Index, or Artifact Pointers stale, missing, or contradicting phase artifacts
 - using `task-workflow/progress.md` as a duplicate file inventory instead of pointing to the owning phase artifacts for details
 - omitting required semantic evidence from a phase artifact while claiming that phase passed
@@ -394,7 +397,9 @@ These automatically fail the run:
 - deleting existing tests without equivalent replacement coverage or a written artifact defense
 - using broad unsafe casts or warning suppression to bypass the type system without a narrow evidence-backed reason
 - relying on conversation memory after compaction instead of re-reading this skill, phase references, and artifacts
-- bulk-reading every skill file in `.tasks/files/` instead of selecting and reading only task-relevant skills
+- failing to enumerate `.tasks/files/` even when it is empty
+- failing to read or inspect every task attachment/supporting file in `.tasks/files/` before Phase 1 planning
+- bulk-reading every skill file in `.agents/skills/` instead of selecting and reading only task-relevant skills
 - running a MITB task completion command before all Phase 7 audit checks pass
 - failing to loop back to the earliest failing phase when any Phase 7 audit check fails
 - failing to run the required MITB completed command after all Phase 7 audit checks pass

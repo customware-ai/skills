@@ -18,12 +18,13 @@ When running in MITB, use repo-relative inputs from the target repo:
 
 - task body: `.tasks/task.md`
 - domain and brand context: `.tasks/domain.md`
-- attached task files and task-provided skill files: `.tasks/files/`
+- attached task files: `.tasks/files/`
+- available skill files: `.agents/skills/`
 - workflow skill: `.agents/skills/task-workflow/SKILL.md`
 
-Phase 1 must select and read only relevant task-provided skill files from `.tasks/files/`. Do not bulk-read every skill file under `.tasks/files/`.
+Phase 1 must enumerate `.tasks/files/` even when it is empty and read or inspect every task attachment/supporting file before planning. Available skill files are stored under `.agents/skills/`: select and read only relevant skill `SKILL.md` files from `.agents/skills/`. Do not bulk-read every skill file under `.agents/skills/`.
 
-The Phase 1 inputs are read-only. `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files, and other reference files must be read, cited, and summarized only. Do not write to them. Do not rewrite, normalize, consolidate, trim, clean up, reformat, or "fix" these files. This is especially strict for files under `.tasks/`: they are canonical MITB task inputs, not workflow artifacts. If they conflict or look stale, record the issue in the Phase 1 artifact or `open-gaps.md` and keep going from the safest interpretation.
+The Phase 1 inputs are read-only. `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files under `.agents/skills/`, and other reference files must be read, cited, and summarized only. Do not write to them. Do not rewrite, normalize, consolidate, trim, clean up, reformat, or "fix" these files. This is especially strict for files under `.tasks/`: they are canonical MITB task inputs, not workflow artifacts. If they conflict or look stale, record the issue in the Phase 1 artifact or `open-gaps.md` and keep going from the safest interpretation.
 
 Do not inspect implementation files in app, server, tests, packages, src, or equivalent source directories before Phase 0 artifacts exist.
 Do not edit implementation files before Phase 1 passes.
@@ -62,7 +63,7 @@ Phase 0 is the first action after reading `SKILL.md`.
    - copied template evidence
    - marker before promotion: `phase-0-artifact-reset`
    - confirmation that no implementation files were edited
-7. Fill `task-workflow/progress.md` with the task source, current phase, Phase 0 reset summary, seeded Resume Instructions, seeded Refs for `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, the task-provided skill files location, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and next local action.
+7. Fill `task-workflow/progress.md` with the task source, current phase, Phase 0 reset summary, seeded Resume Instructions, seeded Refs for `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, the task attachment location, the `.agents/skills/` location, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and next local action.
 8. After every other Phase 0 gate row passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
 9. Update `task-workflow/progress.md` so current phase and next local action match Phase 1.
 10. Re-open `task-workflow/phase-0-artifact-reset.md`, record marker after promotion as `phase-1-task-research`, then mark the Phase 0 decision.
@@ -102,28 +103,30 @@ If this gate fails, stay in Phase 0.
 ## Phase 1: Task Intake And Codebase Research
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
-2. Read the complete task body. In MITB, `.tasks/task.md` is the canonical task workspace and may include completion commands; read it when present even if the prompt also includes the task text.
+2. Read the complete task body. In MITB, `.tasks/task.md` is the canonical task workspace and may include completion commands; read it even if the prompt also includes the task text.
 3. Immediately read the target repo root `AGENTS.md`.
-4. Read `.tasks/domain.md` when present. This is the MITB domain and brand context. Also discover and read other repo-local domain files only when they are relevant to the task.
-5. Discover task-provided skill files from the prompt's Skills section and/or `.tasks/files/`.
-6. Select only task-relevant skills. Use the task description, domain file, prompt-provided skill descriptions, and filenames or directory names inside `.tasks/files/` to choose candidates. If metadata is needed, inspect lightweight metadata for candidates, then read only selected relevant skill files from `.tasks/files/`.
-7. Do not bulk-read every skill body under `.tasks/files/`. Irrelevant skills waste context and can pollute the task plan.
-8. Keep every instruction, task, domain, task-file, and selected skill reference read-only. If an apparent correction is needed, record it as a gap; do not edit the reference file.
-9. Record every selected relevant skill file and the reason it was relevant in `task-workflow/phase-1-task-research.md`.
-10. Read any other docs or local instructions required by the task domain.
-11. Cite target repo instruction, domain, task file, task files folder, and selected local skill files with repo-relative paths only. Do not depend on the task file to list them, and do not record sandbox-specific absolute paths for these files.
-12. Inspect the existing codebase before planning edits.
-13. Identify the affected routes, components, services, schemas, stores, tests, scripts, config, and docs.
-14. Record the exact files and patterns that should be reused.
-15. Record assumptions, constraints, non-goals, and risks.
-16. Write an ordered implementation plan.
-17. Write the verification and test plan.
-18. Do not edit implementation files before this phase gate passes.
-19. Update `task-workflow/progress.md` with the compact task summary, repo instructions read, domain/context files read, selected relevant skill files, implementation direction, verification plan, risks, current phase artifact/reference pointers, only high-signal active files if needed, and next local action.
-20. Update the Refs section in `task-workflow/progress.md` so future compaction/resume reads `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md` when present, `.tasks/files/`, and only the relevant task-provided skill files selected in Phase 1.
-21. After every Phase 1 gate requirement passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-2-execution`.
-22. Update `task-workflow/progress.md` so current phase and next local action match Phase 2.
-23. Record that Phase 2 was promoted only after Phase 1 passed.
+4. Read `.tasks/domain.md`. This is the MITB domain and brand context. Also discover and read other repo-local domain files only when they are relevant to the task.
+5. Enumerate `.tasks/files/`, even if it is empty.
+6. Read or inspect every task attachment/supporting file in `.tasks/files/` before planning. For binary or media files, use the appropriate local inspection method and record what was learned; do not treat a directory listing as reading the file.
+7. Discover available skill files from the prompt's Skills section and `.agents/skills/`.
+8. Select only task-relevant skills. Use the task description, domain file, prompt-provided skill descriptions, and filenames or directory names inside `.agents/skills/` to choose candidates. If metadata is needed, inspect lightweight metadata for candidates, then read only selected relevant skill `SKILL.md` files from `.agents/skills/`.
+9. Do not bulk-read every skill body under `.agents/skills/`. Irrelevant skills waste context and can pollute the task plan.
+10. Keep every instruction, task, domain, task-file, attachment, and selected skill reference read-only. If an apparent correction is needed, record it as a gap; do not edit the reference file.
+11. Record every task attachment/supporting file read or inspected, every selected relevant skill file, and the reason each was relevant in `task-workflow/phase-1-task-research.md`.
+12. Read any other docs or local instructions required by the task domain.
+13. Cite target repo instruction, domain, task file, task files folder, task attachments, and selected local skill files with repo-relative paths only. Do not depend on the task file to list them, and do not record sandbox-specific absolute paths for these files.
+14. Inspect the existing codebase before planning edits.
+15. Identify the affected routes, components, services, schemas, stores, tests, scripts, config, and docs.
+16. Record the exact files and patterns that should be reused.
+17. Record assumptions, constraints, non-goals, and risks.
+18. Write an ordered implementation plan.
+19. Write the verification and test plan.
+20. Do not edit implementation files before this phase gate passes.
+21. Update `task-workflow/progress.md` with the compact task summary, repo instructions read, domain/context files read, task attachments/supporting files read, selected relevant skill files, implementation direction, verification plan, risks, current phase artifact/reference pointers, only high-signal active files if needed, and next local action.
+22. Update the Refs section in `task-workflow/progress.md` so future compaction/resume reads `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and only the relevant skill files selected from `.agents/skills/` in Phase 1.
+23. After every Phase 1 gate requirement passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-2-execution`.
+24. Update `task-workflow/progress.md` so current phase and next local action match Phase 2.
+25. Record that Phase 2 was promoted only after Phase 1 passed.
 
 ## Research Surface
 
@@ -135,9 +138,10 @@ Record:
 - technical goal
 - in-scope and out-of-scope work
 - repo instructions and docs read
-- repo-local domain files read, including `.tasks/domain.md` when present
-- selected relevant local skill files read, with reasons for selection
-- repo-relative paths for target repo instruction, task, domain, task files, and selected skill files
+- repo-local domain files read, including `.tasks/domain.md`
+- every task attachment/supporting file from `.tasks/files/` read or inspected, with what it contributed to the plan
+- selected relevant local skill files from `.agents/skills/` read, with reasons for selection
+- repo-relative paths for target repo instruction, task, domain, task attachments/supporting files, and selected skill files
 - affected architecture
 - existing repo patterns to reuse
 - files or directories inspected
@@ -162,11 +166,13 @@ Critical failures:
 - task body not read completely
 - root `AGENTS.md` not read and cited
 - `task-workflow/progress.md` not updated with enough context, current phase pointers, phase artifact index, and artifact pointers to resume Phase 2 after compaction
-- `.tasks/domain.md` not read and cited when present
-- relevant repo-local domain files or relevant local skill files not read and cited
-- irrelevant skill files in `.tasks/files/` bulk-read instead of selecting only task-relevant skills
-- selected relevant skill files are not recorded in `task-workflow/progress.md` for compaction/resume reread
-- `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files, or other reference inputs edited without an explicit task requirement to edit that exact file
+- `.tasks/domain.md` not read and cited
+- relevant repo-local domain files or relevant local skill files from `.agents/skills/` not read and cited
+- `.tasks/files/` not enumerated, even if empty
+- any task attachment/supporting file in `.tasks/files/` not read or inspected before planning
+- irrelevant skill files in `.agents/skills/` bulk-read instead of selecting only task-relevant skills
+- selected relevant skill files from `.agents/skills/` are not recorded in `task-workflow/progress.md` for compaction/resume reread
+- `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files under `.agents/skills/`, or other reference inputs edited without an explicit task requirement to edit that exact file
 - `task-workflow/progress.md` does not point to the Phase 1 artifact for researched files and planned edit targets
 - target repo instruction/task/domain/task-file/skill files recorded only as sandbox absolute paths instead of repo-relative paths
 - codebase not inspected before implementation planning
@@ -181,9 +187,9 @@ Pass gate:
 - score is at least `28/30`
 - every critical research item passes
 - the plan cites concrete files or directories
-- `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md` when present, `.tasks/files/`, relevant repo-local domain files, and selected relevant local skill files are read and cited with repo-relative paths
+- `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, every task attachment/supporting file in `.tasks/files/`, relevant repo-local domain files, and selected relevant local skill files from `.agents/skills/` are read or inspected and cited with repo-relative paths
 - reference inputs, especially `.tasks/*`, remain unchanged unless the task explicitly required editing that exact reference file
-- `task-workflow/progress.md` lists `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md` when present, `.tasks/files/`, and selected relevant skill files from `.tasks/files/` for reread after compaction
+- `task-workflow/progress.md` lists `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and selected relevant skill files from `.agents/skills/` for reread after compaction
 - `task-workflow/progress.md` points to the Phase 1 artifact for researched files/directories and planned edit targets
 - the plan distinguishes implementation, tests, docs, and verification work
 - no known ambiguity remains unhandled

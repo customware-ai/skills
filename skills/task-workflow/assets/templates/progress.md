@@ -6,7 +6,7 @@ This file is the compact resume state for the task. Hard rule: re-read it after 
 
 - Re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference before choosing the next action.
 - Re-read the refs below after compaction or resume; keep paths repo-relative and update this section when Phase 1 selects task-relevant skill files.
-- Treat refs as read-only unless the task explicitly asks to edit that exact reference file. This is especially strict for `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, and selected task-provided skill files.
+- Treat refs as read-only unless the task explicitly asks to edit that exact reference file. This is especially strict for `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, and selected skill files under `.agents/skills/`.
 - If this file disagrees with phase artifacts, trust the earliest failing phase artifact and repair this file.
 
 ## Refs
@@ -17,9 +17,10 @@ These are starting refs. Edit notes as the task clarifies which files are releva
 | --- | --- | --- | --- |
 | Repo instructions | `AGENTS.md` | Required target repo instructions | Read in Phase 1 and after compaction/resume |
 | Task file | `.tasks/task.md` | Canonical task body and completion command source | Read in Phase 1 and after compaction/resume |
-| Domain file | `.tasks/domain.md` | Domain, brand, and product context | Read when present in Phase 1 and after compaction/resume |
-| Task files folder | `.tasks/files/` | Task attachments and supporting inputs | Read relevant files only |
-| Skill files folder | `.tasks/files/` | Task-provided skill files; select only relevant skill files | Do not bulk-read irrelevant skill files |
+| Domain file | `.tasks/domain.md` | Domain, brand, and product context | Read in Phase 1 and after compaction/resume |
+| Task files folder | `.tasks/files/` | Task attachments and supporting inputs | Enumerate in Phase 1; read or inspect every task attachment/supporting file before planning |
+| Task attachments/supporting files | Pending | Task-provided files that must influence the plan | Replace with repo-relative file paths after Phase 1 reads or inspects them |
+| Skill files folder | `.agents/skills/` | Available skill files; select only relevant skill files | Do not bulk-read irrelevant skill files |
 
 ## Resume Pointer
 
@@ -85,7 +86,7 @@ Keep pointers only. Do not duplicate detailed lists already recorded in phase ar
 ## Resume Rules
 
 - After compaction, re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference.
-- After compaction, also re-read the repo-relative files listed in `Refs`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md` when present, `.tasks/files/`, and only the relevant skill files selected from `.tasks/files/` in Phase 1.
+- After compaction, also re-read the repo-relative files listed in `Refs`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and only the relevant skill files selected from `.agents/skills/` in Phase 1.
 - If this file and `CURRENT_PHASE.txt` disagree, inspect the phase artifacts and continue from the earliest failing phase.
 - Use Current Phase Pointers and Phase Artifact Index to find the detailed phase artifact and reference before choosing the next action.
 - Use Artifact Pointers only to locate artifact groups; read the owning phase artifact for details.
