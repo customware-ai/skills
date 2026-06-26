@@ -54,7 +54,8 @@ These phases must not stall on unbounded tools.
 - After every gate-relevant file write or patch, read back the target file or inspect the diff before relying on the change.
 - If a write, patch, generated file, or command result is invalid, partial, missing, or uncertain, repair that exact issue before starting the next packet.
 - Use bounded commands for checks and tests. If a command appears hung or idle, stop it, record the evidence, and continue with the next local recovery path.
-- Do not run long-lived dev servers, watchers, or interactive CLIs in the foreground as the active command. If a server is needed before Phase 5, start it in the background with a PID/log, verify readiness from a separate command, and kill it after the check.
+- Do not run long-lived dev servers, watchers, or interactive CLIs in the foreground as the active command. If a server is needed before Phase 5, start it in the background with a PID/log, verify readiness from a separate bounded command with a clear timeout, and kill it after the check.
+- If server readiness is not proven before the timeout, treat startup as failed, capture the log evidence, run `pkill -f node || true`, and retry only from a clean startup command. Never leave a Node server running after a failed or uncertain startup.
 - Phase 2 may run focused static checks, unit tests, and build checks needed for implementation feedback. It must not treat interactive Playwright verification or E2E creation as a substitute for the Phase 2 gate.
 - Phase 5 interactive browser verification and Phase 6 durable E2E coverage belong to their own phases. If Phase 2 discovers browser/E2E work is needed, record the gap and continue the ordered gates.
 

@@ -36,6 +36,7 @@ Record the exact bounded test command and its exact output. If output is long, w
 | --- | --- | --- |
 | Test server, if needed, started in background with PID/log | Pending | Pending |
 | Server readiness, if needed, checked from separate bounded command | Pending | Pending |
+| Startup timeout/retry used `pkill -f node || true` on failed or uncertain readiness | Pending | Pending |
 | Tests run as bounded commands, not watchers | Pending | Pending |
 | Background server cleaned up after tests | Pending | Pending |
 
@@ -85,6 +86,7 @@ If matches were found and removed, record the replacement proof here.
 | Fixed wait review completed and clean | Pending |  |
 | Coverage gaps reflected in `open-gaps.md` | Pending |  |
 | Server/command discipline passed | Pending |  |
+| Failed or uncertain server startup cleaned with `pkill -f node || true` before retry | Pending |  |
 
 ## Gate
 
@@ -105,6 +107,7 @@ If matches were found and removed, record the replacement proof here.
 | Test quality review passed | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
+| Failed or uncertain server startup cleaned with `pkill -f node || true` before retry | yes | Pending |
 | `progress.md` current and points to Phase 7 next action | yes | Pending |
 | `progress.md` points to this Phase 6 artifact for regression test files and repair details | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |

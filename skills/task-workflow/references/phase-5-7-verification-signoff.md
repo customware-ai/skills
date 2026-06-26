@@ -61,11 +61,16 @@ Interactive scripts and E2E tests must wait on user-visible state or app signals
 Verification phases must not stall on foreground servers or watchers.
 
 - Start the app server in the background with a recorded PID and log path.
-- Verify readiness with a separate bounded command, such as checking the local URL or running the Playwright script with a finite timeout.
+- Verify readiness with a separate bounded command that has a clear timeout, such as polling a health endpoint or target URL.
+- Do not assume a backgrounded process started successfully just because the command returned. A server is ready only after a successful readiness signal is recorded.
+- If readiness is not proven before the timeout, capture the server log, run `pkill -f node || true`, and retry only from a clean startup command.
 - Run interactive scripts and E2E tests as separate bounded commands.
-- Kill the background server when verification is complete or when a blocking launch issue is recorded.
+- Do not kill the server while Phase 5 screenshots, interactive checks, or Phase 6 E2E tests are still using it.
+- Kill the background server when verification is complete or when a blocking launch issue is recorded. Use the recorded PID when possible and `pkill -f node || true` for sandbox-owned Node cleanup/recovery.
 - Do not leave `pnpm dev`, `npm run dev`, `vite`, `next dev`, test watchers, or similar long-lived commands as the active foreground tool call.
 - If the server or test command hangs, stop it, capture the log/error evidence, update the current phase artifact or `open-gaps.md`, and continue with the smallest local recovery path.
+- If Playwright has a repo-configured `webServer`, prefer Playwright-managed startup and teardown. Do not add a separate manual server unless the workflow or repo setup requires it.
+- Bash readiness polling with `sleep 1` is acceptable. The fixed-wait ban applies to Playwright scripts and E2E tests under `task-workflow/playwright` or `tests/e2e`, not bounded shell readiness polling.
 
 ## Phase 5: Interactive Playwright Verification
 

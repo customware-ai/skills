@@ -17,6 +17,7 @@
 | --- | --- | --- |
 | App server started in background, not as unbounded foreground command | Pending | Pending |
 | Server readiness checked from separate bounded command | Pending | Pending |
+| Startup timeout/retry used `pkill -f node || true` on failed or uncertain readiness | Pending | Pending |
 | Playwright scripts run as bounded commands | Pending | Pending |
 | Background server cleaned up or explicitly handed to next bounded command | Pending | Pending |
 
@@ -109,6 +110,7 @@ If matches were found and removed, record the replacement proof here.
 | No fixed waits in audited Playwright/E2E files | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
+| Failed or uncertain server startup cleaned with `pkill -f node || true` before retry | yes | Pending |
 | `progress.md` current and points to Phase 6 next action | yes | Pending |
 | `progress.md` points to this Phase 5 artifact for Playwright scripts, screenshots, logs, and repair details | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |
