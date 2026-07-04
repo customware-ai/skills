@@ -6,6 +6,14 @@
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
+## Test Selection And Retry Ledger
+
+Record every meaningful check/test command. Use `N/A` only when no test command is relevant.
+
+| Command | Scope: targeted/broad/full | Why this scope | Previous related failure | Changed since previous run | Outcome | Next action |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+
 ## Command And Write Safety
 
 | Check | Status | Evidence |
@@ -44,6 +52,9 @@ Changed app/server source must not keep `console.*`. Temporary `console.*` may b
 | Score | >= 28/30 | 0/30 |
 | Critical integrity items | all pass | Pending |
 | Required checks pass or unrelated failure evidenced | yes | Pending |
+| Test/check command selection and retry evidence recorded | yes | Pending |
+| Broad/full commands have explicit reason or were not used | yes | Pending |
+| No blind identical failing-command rerun | yes | Pending |
 | No runtime-blocking issue remains | yes | Pending |
 | No extracted `AGENTS.md` development rule violation remains | yes | Pending |
 | No `console.*` remains outside the active Phase 5 debug loop | yes | Pending |

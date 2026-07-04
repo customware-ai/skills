@@ -156,8 +156,11 @@ Treat these rules as always active:
 - Commands must be bounded. Do not leave long-lived servers, watchers, or interactive commands running in the foreground as the active tool call.
 - Start dev servers in the background with a PID and log file, verify readiness from a separate command, run verification from a separate command, and clean up the PID after use.
 - In Phase 5 and Phase 6, use `task-workflow/scripts/playwright-lifecycle.mjs` for app startup, readiness, Playwright browser preflight, bounded Playwright/E2E commands, output capture, and cleanup unless the repo's Playwright `webServer` contract already owns the whole lifecycle.
-- Do not compose manual `pkill && sleep && playwright` or `rm -f e2e.db && playwright` command chains in Phase 5 or Phase 6. Put setup into the managed lifecycle command or a bounded repo command with logged output.
+- Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put setup into the managed lifecycle command or a bounded repo command with logged output.
 - Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The managed lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when available and fails early if the project Playwright version does not match the sandbox browser cache.
+- Select test commands by the smallest useful scope. Start with targeted tests for changed logic, components, routes, or user flows; use broad/full suites only when shared contracts, global setup, app-wide behavior, or target repo instructions make that scope necessary.
+- Before rerunning an identical failing test command, record what changed since the previous run or why the previous output was incomplete. Do not blindly rerun the same failing command when no implementation, test, config, environment, or diagnostic condition changed.
+- The same failing test command may run at most twice without a material change. After that, inspect the failure output and change the implementation, test, command scope, or diagnostic strategy before running it again.
 - If a command appears hung or idle and the next workflow action is locally available, stop the command, record the evidence in the current phase artifact or gap ledger, and continue with the bounded recovery path.
 - Every phase gate is an internal control point, not a user confirmation checkpoint.
 - If a phase gate passes, continue directly into the next phase without asking whether to continue.
@@ -390,7 +393,9 @@ These automatically fail the run:
 - leaving artifact templates mostly blank while claiming success
 - passing Phase 5 while any screenshot path cited in the artifact is missing or not verified with existence proof
 - passing Phase 6 while E2E/test runs are only described and the exact command output is not recorded in the artifact or in a cited repo-local log file
-- running Phase 5 or Phase 6 Playwright/E2E commands through ad hoc `pkill`, `sleep`, DB-delete, or server-start command chains instead of `task-workflow/scripts/playwright-lifecycle.mjs`, unless a repo-owned Playwright `webServer` lifecycle is explicitly used and evidenced
+- running Phase 5 or Phase 6 Playwright/E2E commands without lifecycle-helper or repo-owned Playwright `webServer` evidence when app startup/readiness/cleanup is required
+- running broad/full test suites without artifact evidence explaining why targeted tests are insufficient or why the target repo requires the broader scope
+- blindly rerunning the same failing test command without recording a material implementation, test, config, environment, or diagnostic change since the previous run
 - running `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification instead of using the sandbox browser cache or recording the helper's browser-preflight mismatch
 - passing Phase 4 or Phase 7 while changed app/server source still contains `console.*` outside the active Phase 5 debug loop
 - producing a final response or stopping summary while `CURRENT_PHASE.txt` is before `phase-7-final-signoff`

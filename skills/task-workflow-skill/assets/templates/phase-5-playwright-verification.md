@@ -25,7 +25,7 @@
 | Playwright scripts run as bounded helper commands | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
-| No manual `pkill`/`sleep`/DB-delete/server-start Playwright command chain used | Pending | Pending |
+| Cleanup method recorded and bounded | Pending | Pending |
 
 ## Interactive Coverage
 
@@ -118,7 +118,7 @@ If matches were found and removed, record the replacement proof here.
 | Server/command discipline passed | yes | Pending |
 | Lifecycle helper or repo `webServer` managed startup/readiness/cleanup | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
-| No manual `pkill`/`sleep`/DB-delete/server-start Playwright command chain used | yes | Pending |
+| Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 6 next action | yes | Pending |
 | `progress.md` points to this Phase 5 artifact for Playwright scripts, screenshots, logs, and repair details | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |

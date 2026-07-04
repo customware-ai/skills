@@ -8,7 +8,7 @@ Use this reference in Phase 5.
 
 - Run Phase 5 scripts through `task-workflow/scripts/playwright-lifecycle.mjs` unless the repo's Playwright `webServer` fully owns startup, readiness, and cleanup.
 - Pass the repo's normal local command to the lifecycle helper with `--server`.
-- Do not manually combine server start, sleeps, `pkill`, DB cleanup, and script execution in one shell command.
+- Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
 - Do not run `playwright install` or any browser download command. The lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when the cache exists and fails early on a revision mismatch.
 - Prefer `127.0.0.1` over `localhost`.
 - Write scripts under `task-workflow/playwright/`.

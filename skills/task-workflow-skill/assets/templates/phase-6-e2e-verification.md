@@ -30,6 +30,14 @@ Record the exact bounded test command and its exact output. If output is long, w
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
+## Test Selection And Retry Ledger
+
+Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first, and broaden only with a concrete reason.
+
+| Command | Scope: targeted/multi-spec/broad/full | Why this scope | Previous related failure | Changed since previous run | Outcome | Next action |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+
 ## Server And Command Discipline
 
 | Check | Status | Evidence |
@@ -41,7 +49,7 @@ Record the exact bounded test command and its exact output. If output is long, w
 | Tests run as bounded commands, not watchers | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Background server cleaned up after tests | Pending | Pending |
-| No manual `pkill`/`sleep`/DB-delete/server-start Playwright command chain used | Pending | Pending |
+| Cleanup method recorded and bounded | Pending | Pending |
 
 ## Fixed Wait Review
 
@@ -91,7 +99,10 @@ If matches were found and removed, record the replacement proof here.
 | Server/command discipline passed | Pending | Pending |
 | Lifecycle helper or repo `webServer` managed startup/readiness/cleanup | Pending | Pending |
 | No `playwright install` or browser download attempted | Pending | Pending |
-| No manual `pkill`/`sleep`/DB-delete/server-start Playwright command chain used | Pending | Pending |
+| Test selection and retry ledger complete | Pending | Pending |
+| Broad/full commands have explicit reason or were not used | Pending | Pending |
+| No blind identical failing-command rerun | Pending | Pending |
+| Cleanup method recorded and bounded | Pending | Pending |
 
 ## Gate
 
@@ -110,11 +121,14 @@ If matches were found and removed, record the replacement proof here.
 | Open gaps for E2E/test coverage updated | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Test quality review passed | yes | Pending |
+| Test selection and retry ledger complete | yes | Pending |
+| Broad/full commands have explicit reason or were not used | yes | Pending |
+| No blind identical failing-command rerun | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
 | Lifecycle helper or repo `webServer` managed startup/readiness/cleanup | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
-| No manual `pkill`/`sleep`/DB-delete/server-start Playwright command chain used | yes | Pending |
+| Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 7 next action | yes | Pending |
 | `progress.md` points to this Phase 6 artifact for regression test files and repair details | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |

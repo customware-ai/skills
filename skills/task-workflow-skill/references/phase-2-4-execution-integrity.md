@@ -59,6 +59,20 @@ These phases must not stall on unbounded tools.
 - Phase 2 may run focused static checks, unit tests, and build checks needed for implementation feedback. It must not treat interactive Playwright verification or E2E creation as a substitute for the Phase 2 gate.
 - Phase 5 interactive browser verification and Phase 6 durable E2E coverage belong to their own phases. If Phase 2 discovers browser/E2E work is needed, record the gap and continue the ordered gates.
 
+## Test Selection And Retry Discipline
+
+Phase 4 checks must prove the implementation without turning validation into a blind retry loop.
+
+- Prefer the smallest useful command that can prove or disprove the current risk.
+- For changed service, query, schema, or pure logic, run targeted unit/service tests first.
+- For changed route, component, store, or UI state logic, run targeted route/component tests first.
+- For changed shared contracts, test setup, global fixtures, routing configuration, or app-wide behavior, broader affected suites are allowed.
+- Full or broad Vitest runs are allowed only when a shared/global change justifies them, targeted failures do not identify the affected scope, final repo instructions require them, or the artifact records another concrete reason.
+- Record every meaningful check/test command in the Phase 4 artifact with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
+- Do not rerun the exact same failing command unless implementation, test, config, environment, or diagnostic conditions changed, or the previous output was incomplete and a narrower diagnostic command is not available.
+- The same failing command may run at most twice without a material change. On the third attempt, first inspect the failure output and change the implementation, test, command scope, or diagnostic strategy.
+- If a command timed out or returned partial output, preserve or cite the useful output before choosing the next command.
+
 ## Execution Order
 
 Follow the ordered implementation plan from `task-workflow/phase-1-task-research.md`.
@@ -235,17 +249,18 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 ## Phase 4: Implementation Integrity Review
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
-2. Run the repo's relevant static checks, type checks, build checks, and focused tests.
-3. Inspect failures and fix root causes.
-4. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
-5. Review the implementation against the extracted `AGENTS.md` development rules from Phase 1.
-6. Inspect changed app/server source for `console.*`. Temporary `console.*` is allowed only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output. Before Phase 4 passes, remove those temporary logs or replace lasting logging with the repo-approved logging/telemetry path.
-7. Review docs updates when behavior or workflow changed.
-8. Record commands, outputs, fixes, console/logging review, and final status.
-9. Update `task-workflow/progress.md` with latest check results, fixed issues, a pointer to `task-workflow/phase-4-integrity-review.md` for check/fix details, and next local action.
-10. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
-11. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
-12. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
+2. Select the repo's relevant static checks, type checks, build checks, and tests using the Test Selection And Retry Discipline above.
+3. Run the selected checks/tests and record the command scope, reason, previous related failure, changed-since-failure evidence, outcome, and next action in the Phase 4 artifact.
+4. Inspect failures and fix root causes.
+5. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
+6. Review the implementation against the extracted `AGENTS.md` development rules from Phase 1.
+7. Inspect changed app/server source for `console.*`. Temporary `console.*` is allowed only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output. Before Phase 4 passes, remove those temporary logs or replace lasting logging with the repo-approved logging/telemetry path.
+8. Review docs updates when behavior or workflow changed.
+9. Record commands, outputs, fixes, console/logging review, and final status.
+10. Update `task-workflow/progress.md` with latest check results, fixed issues, a pointer to `task-workflow/phase-4-integrity-review.md` for check/fix details, and next local action.
+11. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
+12. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
+13. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
 
 ## Phase 4 Score
 
@@ -263,6 +278,9 @@ Critical failures:
 - required check not run and no valid reason recorded
 - check failure caused by this task remains unfixed
 - runtime-blocking issue remains
+- test/check command selection is not recorded with scope and reason
+- broad/full test command is run without a concrete artifact reason
+- same failing test command is rerun blindly without material change or incomplete-output justification
 - lint/type warnings introduced by this task remain unresolved or undefended
 - unsafe type assertions are used to bypass a contract that should be modeled directly
 - implementation violates an extracted `AGENTS.md` development rule
@@ -277,6 +295,7 @@ Pass gate:
 - score is at least `28/30`
 - every critical integrity item passes
 - required repo checks pass or any remaining failure is unrelated and documented with evidence
+- test/check command selection and retry evidence is recorded
 - no known runtime-blocking issue remains
 - no known violation of extracted `AGENTS.md` development rules remains
 - no changed app/server source contains `console.*` outside the active Phase 5 debug loop
