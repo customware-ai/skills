@@ -10,7 +10,7 @@ This is a looped gate workstream: Phase 0 and Phase 1 are not complete until the
 
 The artifact trail is the source of truth for the run.
 
-Phase 0 exists so a new task never inherits stale proof from an older task. The agent owns artifact creation directly by copying templates from `assets/templates/` and the managed Playwright lifecycle helper from `assets/scripts/`; no scaffold script is required.
+Phase 0 exists so a new task never inherits stale proof from an older task. The agent owns artifact creation directly by copying templates from `assets/templates/` and the managed lifecycle helpers from `assets/scripts/`; no scaffold script is required.
 
 `task-workflow/progress.md` is the compact resume ledger. It must be reset with the rest of `task-workflow/`, copied from template, and updated in Phase 0 before promotion. Hard rule: after compaction or resume, always read `progress.md` immediately after `SKILL.md` and before choosing the next action.
 
@@ -58,7 +58,9 @@ Phase 0 is the first action after reading `SKILL.md`.
    - `phase-6-e2e-verification.md`
    - `phase-7-final-signoff.md`
    - `open-gaps.md`
-5. Copy `assets/scripts/playwright-lifecycle.mjs` into `task-workflow/scripts/playwright-lifecycle.mjs`.
+5. Copy managed helper assets into `task-workflow/scripts/`:
+   - `assets/scripts/playwright-lifecycle.mjs` to `task-workflow/scripts/playwright-lifecycle.mjs`
+   - `assets/scripts/server-probe.mjs` to `task-workflow/scripts/server-probe.mjs`
 6. Set `task-workflow/CURRENT_PHASE.txt` to `phase-0-artifact-reset`.
 7. Fill `task-workflow/phase-0-artifact-reset.md` with:
    - repo root
@@ -91,6 +93,7 @@ Critical failures:
 - old previous-task `task-workflow/` reused instead of reset
 - missing required artifact file
 - missing `task-workflow/scripts/playwright-lifecycle.mjs`
+- missing `task-workflow/scripts/server-probe.mjs`
 - missing or stale `task-workflow/progress.md`
 - Phase 0 artifact does not record the progress-ledger hard resume rule
 - copied templates replaced by loose prose

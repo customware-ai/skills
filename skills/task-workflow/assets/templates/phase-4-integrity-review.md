@@ -20,6 +20,7 @@ Record every meaningful check/test command. Use `N/A` only when no test command 
 | --- | --- | --- |
 | Gate-relevant file edits have readback or diff evidence | Pending | Pending |
 | Failed/invalid/uncertain write or command results were repaired before continuing | Pending | Pending |
+| Pre-Phase-5 API/runtime server probes used `task-workflow/scripts/server-probe.mjs`, or none were needed | Pending | Pending |
 | No long-lived server, watcher, or interactive command remains running in the foreground | Pending | Pending |
 
 ## Integrity Review

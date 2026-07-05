@@ -30,6 +30,7 @@ Update this table immediately after each small work packet. Do not leave this ta
 | Any skipped or deferred packet was recorded in `open-gaps.md` immediately | Pending | Pending |
 | Gate-relevant writes were read back or verified in diff before relying on them | Pending | Pending |
 | Failed/invalid/uncertain write results were repaired before continuing | Pending | Pending |
+| Pre-Phase-5 API/runtime server probes used `task-workflow/scripts/server-probe.mjs`, or none were needed | Pending | Pending |
 | No Phase 5 interactive Playwright or Phase 6 E2E creation was used as a Phase 2 substitute | Pending | Pending |
 | No long-lived server, watcher, or interactive command remains running in the foreground | Pending | Pending |
 

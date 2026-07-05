@@ -24,6 +24,7 @@
 | `task-workflow/scripts/` created | Pending | Pending |
 | `task-workflow/runtime/` created | Pending | Pending |
 | `task-workflow/scripts/playwright-lifecycle.mjs` copied from skill asset | Pending | Pending |
+| `task-workflow/scripts/server-probe.mjs` copied from skill asset | Pending | Pending |
 | No app/source files edited in Phase 0 | Pending | Pending |
 | No generated app files, build outputs, databases, or migrations created before Phase 0 gate | Pending | Pending |
 
@@ -36,6 +37,7 @@
 | Marker before promotion | `phase-0-artifact-reset` | Pending |
 | Marker after promotion | `phase-1-task-research` | Pending |
 | Managed Playwright lifecycle helper copied and readable | yes | Pending |
+| Managed server probe helper copied and readable | yes | Pending |
 | `progress.md` updated for Phase 1 resume | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |

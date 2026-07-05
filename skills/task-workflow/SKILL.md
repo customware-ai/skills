@@ -154,7 +154,7 @@ Treat these rules as always active:
 - After every file write, patch, generated-file creation, or artifact update that matters to a gate, perform a readback check before relying on it. Use `sed`, `rg`, `ls`, `git diff`, or the repo's normal inspection command to prove the file exists and contains the intended change.
 - If a write/edit tool reports an invalid write, missing file, failed patch, partial output, or uncertain result, stop that work packet, repair the write with a supported edit method, read it back, and only then continue. Do not proceed as if a failed write happened.
 - Commands must be bounded. Do not leave long-lived servers, watchers, or interactive commands running in the foreground as the active tool call.
-- Outside Phase 5 and Phase 6, if a temporary dev server is needed, start it in the background with a PID and log file, verify readiness from a separate command, run verification from a separate command, and clean up the PID after use.
+- Outside Phase 5 and Phase 6, if a temporary dev server is needed for an API/runtime probe, use `task-workflow/scripts/server-probe.mjs`. It owns PID capture, readiness, bounded probe commands, runtime logs, and PID-only cleanup. Server readiness is usually 5-10 seconds; use 15-20 seconds as the normal budget and 30 seconds as the maximum startup-readiness limit. Broad process-name cleanup is only for explicit sandbox-owned recovery when PID/port cleanup is impossible and the artifact records why.
 - In Phase 5 and Phase 6, use `task-workflow/scripts/playwright-lifecycle.mjs` for app startup, readiness, Playwright browser preflight, bounded Playwright/E2E commands, output capture, and cleanup unless the repo's Playwright `webServer` contract already owns the whole lifecycle.
 - Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, or seed into `task-workflow/scripts/playwright-lifecycle.mjs --setup "..."` so it is bounded and logged before the server starts.
 - Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The managed lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when available and fails early if the project Playwright version does not match the sandbox browser cache.
@@ -312,6 +312,7 @@ These are mandatory:
 - `task-workflow/screenshots/`
 - `task-workflow/scripts/`
 - `task-workflow/scripts/playwright-lifecycle.mjs`
+- `task-workflow/scripts/server-probe.mjs`
 - `task-workflow/runtime/`
 
 The templates in `assets/templates/` are enforcement artifacts. Copy their structure directly. If a required table is replaced by prose or stripped down until rows are no longer auditable, the run fails.
@@ -450,6 +451,7 @@ These automatically fail the run:
 - `assets/templates/progress.md`
 - `assets/templates/open-gaps.md`
 - `assets/scripts/playwright-lifecycle.mjs`: managed server/readiness/Playwright execution helper copied into `task-workflow/scripts/` during Phase 0.
+- `assets/scripts/server-probe.mjs`: managed API/runtime server probe helper copied into `task-workflow/scripts/` during Phase 0 for pre-Phase-5 server checks.
 
 ## Non-Negotiables
 

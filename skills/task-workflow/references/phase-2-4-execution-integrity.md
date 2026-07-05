@@ -54,8 +54,19 @@ These phases must not stall on unbounded tools.
 - After every gate-relevant file write or patch, read back the target file or inspect the diff before relying on the change.
 - If a write, patch, generated file, or command result is invalid, partial, missing, or uncertain, repair that exact issue before starting the next packet.
 - Use bounded commands for checks and tests. If a command appears hung or idle, stop it, record the evidence, and continue with the next local recovery path.
-- Do not run long-lived dev servers, watchers, or interactive CLIs in the foreground as the active command. If a server is needed before Phase 5, start it in the background with a PID/log, verify readiness from a separate bounded command with a clear timeout, and kill it after the check.
-- If server readiness is not proven before the timeout, treat startup as failed, capture the log evidence, stop the recorded PID/process group from the startup command, and retry only from a clean startup command. If the PID is unknown, use the narrowest bounded cleanup command that targets only the repo's dev server. Never leave a Node server running after a failed or uncertain startup.
+- Do not run long-lived dev servers, watchers, or interactive CLIs in the foreground as the active command. If a server is needed before Phase 5 for an API/runtime probe, use `task-workflow/scripts/server-probe.mjs`. Server readiness is usually 5-10 seconds; use 15-20 seconds as the normal budget and 30 seconds as the maximum startup-readiness limit. Do not use a 120 second readiness budget for server startup.
+- Use this helper shape for manual API/runtime probes. Pass a foreground server command; do not add `&`, `nohup`, `disown`, process-name cleanup, or fixed sleeps around it.
+
+```bash
+node task-workflow/scripts/server-probe.mjs \
+	--server "PORT=8080 node build/server/start.js" \
+	--ready-url "http://127.0.0.1:8080/health" \
+	--ready-timeout-ms 20000 \
+	--run "curl -fsS http://127.0.0.1:8080/health"
+```
+
+- `server-probe.mjs` captures the server PID, writes `task-workflow/runtime/server-probe.pid`, preserves server output in `task-workflow/runtime/server-probe.log`, runs each `--run` command only after readiness, writes run logs as `task-workflow/runtime/server-probe-run-*.log`, and stops only the captured PID/process group.
+- If server readiness is not proven before the timeout, treat startup as failed, cite the helper's log evidence, and retry only with a corrected helper invocation or implementation change. If the helper reports that the ready URL already responds before startup, do not kill unknown processes; pick a task-owned port or stop the exact known PID outside the helper with evidence. Broad process-name cleanup is only for explicit sandbox-owned recovery when PID/port cleanup is impossible and the artifact records why.
 - Phase 2 may run focused static checks, unit tests, and build checks needed for implementation feedback. It must not treat interactive Playwright verification or E2E creation as a substitute for the Phase 2 gate.
 - Phase 5 interactive browser verification and Phase 6 durable E2E coverage belong to their own phases. If Phase 2 discovers browser/E2E work is needed, record the gap and continue the ordered gates.
 
