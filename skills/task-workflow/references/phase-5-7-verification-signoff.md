@@ -199,7 +199,7 @@ If this gate fails, stay in Phase 5.
 4. Update existing E2E tests first when the new or changed behavior extends an existing workflow or could affect existing functionality.
 5. Add a new E2E test only when the task introduces a genuinely new workflow that cannot be cleanly covered by an existing E2E test.
 6. Add or update lower-level tests when they are the better fit for non-UI logic.
-7. Select the smallest useful test command that proves the changed behavior and affected existing behavior. Start with new, changed, or directly affected E2E specs. Do not run the full E2E suite unless the task explicitly asks for it, the target repo instructions require it, or the artifact records a concrete app-wide E2E reason.
+7. Select the smallest useful test command that proves the changed behavior and affected existing behavior. Start with new, changed, or directly affected E2E specs and maintain an affected-spec ledger. Do not run the unfiltered full E2E suite unless the task explicitly asks for it, the target repo instructions require it, or the ledger proves every E2E spec is directly affected; if targeted or multi-spec commands already ran those specs, that is the evidence and the unfiltered suite must not be rerun.
 8. Record every meaningful test command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
 9. Do not rerun the exact same failing command unless implementation, test, config, environment, or diagnostic conditions changed, or the previous output was incomplete and a narrower diagnostic command is not available. The same failing command may run at most twice without a material change.
 10. Run the existing, updated, new, and affected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` for Playwright/E2E tests unless the repo's Playwright `webServer` config owns the full lifecycle. If setup is required before the server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command.
@@ -221,7 +221,7 @@ Prefer the smallest durable test that protects the behavior:
 - targeted E2E for one affected user flow
 - new, changed, or directly affected E2E specs only by default
 - multi-spec E2E only when multiple changed or adjacent flows must be protected together
-- full Playwright E2E only when app-wide routing/auth/runtime behavior, Playwright config/global fixtures, or final repo instructions require it
+- full Playwright E2E only when explicitly task/repo required, global Playwright/auth/routing/runtime behavior changed, or the affected-spec ledger proves every E2E spec is directly affected; do not rerun it after those specs already passed separately
 - broad/full Vitest only when shared contracts, global setup, app-wide behavior, or final repo instructions require it
 - update an existing E2E test when the task modifies or extends an existing user workflow
 - add a new E2E test only for a genuinely new workflow or when existing E2E coverage cannot cleanly express the path
@@ -259,7 +259,7 @@ Critical failures:
 - tests depend on brittle implementation details instead of user-visible or persisted outcomes
 - test added but not run
 - Playwright/E2E command uses manual cleanup, fixed `sleep`, DB-delete, or server-start command chains instead of lifecycle `--setup` plus managed server/run steps when no repo-owned Playwright `webServer` lifecycle applies
-- full Playwright/E2E suite is run without an explicit task request, target repo requirement, or concrete app-wide E2E reason
+- unfiltered full Playwright/E2E suite is run without an explicit task request, target repo requirement, or affected-spec ledger proof that every E2E spec is directly affected
 - broad/full test command is run without a concrete artifact reason
 - same failing test command is rerun blindly without material implementation, test, config, environment, or diagnostic change
 - `playwright install` or equivalent browser download attempted during E2E verification

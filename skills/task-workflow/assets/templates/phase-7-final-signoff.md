@@ -29,7 +29,7 @@
 | Phase 4/6 test selection and retry ledgers current | Pending |
 | Targeted and affected tests ran before any final full unit/Vitest suite | Pending |
 | Full unit/Vitest suite ran no more than once as final confirmation, or exception recorded | Pending |
-| No full E2E suite without explicit task/repo/app-wide reason | Pending |
+| No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | Pending |
 | Broad/full test commands, if any, have explicit artifact reasons | Pending |
 | No blind identical failing-command rerun is recorded | Pending |
 | Phase 5/6 lifecycle helper or repo Playwright `webServer` evidence current | Pending |
@@ -87,7 +87,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | --- | --- | --- | --- |
 | Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
 | Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log | Pending | Pending |
-| Test selection and retry evidence | Phase 4/6 ledgers explain targeted-first order, affected-test coverage, final full-suite reason if used, rerun basis, outcomes, and next actions | Pending | Pending |
+| Test selection and retry evidence | Phase 4/6 ledgers explain targeted-first order, affected-spec coverage, final full-suite reason if used, no duplicate full-suite rerun, rerun basis, outcomes, and next actions | Pending | Pending |
 | Managed lifecycle evidence | Phase 5/6 used `task-workflow/scripts/playwright-lifecycle.mjs` or repo Playwright `webServer`; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | Browser install avoidance | No `playwright install` or browser download command was run during Phase 5/6 | Pending | Pending |
 | Changed app/server logging | No `console.*` remains in changed app/server source after Phase 5 | Pending | Pending |
@@ -119,7 +119,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 4/6 test selection and retry ledgers current | yes | Pending |
 | Targeted and affected tests ran before any final full unit/Vitest suite | yes | Pending |
 | No more than one final full unit/Vitest suite run, or exception recorded | yes | Pending |
-| No full E2E suite without explicit task/repo/app-wide reason | yes | Pending |
+| No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | yes | Pending |
 | Broad/full test commands, if any, have explicit artifact reasons | yes | Pending |
 | No blind identical failing-command rerun is recorded | yes | Pending |
 | Phase 5/6 lifecycle helper or repo Playwright `webServer` evidence recorded | yes | Pending |

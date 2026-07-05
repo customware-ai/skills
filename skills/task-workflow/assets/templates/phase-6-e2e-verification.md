@@ -32,9 +32,9 @@ Record the exact bounded test command and its exact output. If output is long, w
 
 ## Test Selection And Retry Ledger
 
-Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first, and broaden only with a concrete reason.
+Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first, and broaden only with a concrete reason. For E2E, list the affected specs covered; do not rerun the unfiltered full suite after equivalent affected-spec coverage already passed.
 
-| Command | Scope: targeted/multi-spec/broad/full | Why this scope | Previous related failure | Changed since previous run | Outcome | Next action |
+| Command | Scope: targeted/multi-spec/broad/full | Why this scope and affected specs covered | Previous related failure | Changed since previous run | Outcome | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
@@ -101,7 +101,7 @@ If matches were found and removed, record the replacement proof here.
 | Lifecycle helper or repo `webServer` managed startup/readiness/cleanup | Pending | Pending |
 | No `playwright install` or browser download attempted | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
-| Only new, changed, or directly affected E2E specs ran unless full-suite reason recorded | Pending | Pending |
+| Affected-spec ledger covers each E2E command; unfiltered full suite was not run after equivalent affected-spec coverage | Pending | Pending |
 | Broad/full commands have explicit reason or were not used | Pending | Pending |
 | No blind identical failing-command rerun | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
@@ -125,7 +125,7 @@ If matches were found and removed, record the replacement proof here.
 | Test quality review passed | yes | Pending |
 | Test selection and retry ledger complete | yes | Pending |
 | Broad/full commands have explicit reason or were not used | yes | Pending |
-| No full E2E suite without explicit task/repo/app-wide reason | yes | Pending |
+| No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | yes | Pending |
 | No blind identical failing-command rerun | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
