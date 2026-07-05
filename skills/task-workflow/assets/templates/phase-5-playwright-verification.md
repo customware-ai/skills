@@ -18,13 +18,13 @@
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| `task-workflow/scripts/playwright-lifecycle.mjs` exists and was used unless repo `webServer` owns lifecycle | Pending | Pending |
-| App server started by lifecycle helper or repo `webServer`, not as unbounded foreground command | Pending | Pending |
-| Server readiness checked by lifecycle helper or repo `webServer` before browser interaction | Pending | Pending |
+| Correct lifecycle owner recorded: helper for custom scripts/browser probes, repo `webServer` for native Playwright tests when configured | Pending | Pending |
+| App server started by the recorded lifecycle owner, not as an unbounded foreground command | Pending | Pending |
+| Server readiness checked by the recorded lifecycle owner before browser interaction | Pending | Pending |
 | Browser preflight passed, or mismatch failed early without `playwright install` | Pending | Pending |
 | Playwright scripts run as bounded helper commands | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
-| Pre-server setup, if needed, ran through lifecycle `--setup` or repo `webServer` setup | Pending | Pending |
+| Pre-server setup, if needed, ran through lifecycle `--setup` or repo `webServer` setup without manual chain bundling | Pending | Pending |
 | Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
@@ -52,13 +52,15 @@ Check nearby UI/features sharing the changed surface so the task did not break u
 
 ## Responsive UI And Visual Quality
 
-Verify the main changed flow and nearby UI on desktop, tablet, and mobile. Check layout, overflow, clipping, readable text, navigation access, tap/click targets, dialogs/menus, and screenshots.
+Verify the main changed flow and nearby UI on mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` desktop when UI changed. Responsive quality is a first-class Phase 5 pass condition, equal to the task's functional behavior working. Check overlap, overflow, clipping, readable text, navigation access, tap/click targets, dialogs/menus, accidental horizontal scroll, controls outside the viewport, screenshots, and whether normal desktop/1080p has excessive dead space. Some whitespace is fine. `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. Large empty areas are acceptable on 4K/ultrawide only when the layout is intentionally constrained and still coherent.
 
-| Viewport | Flow/area | Screenshot/evidence | UI quality result | Fix/rerun |
+| Viewport | Flow/area | Screenshot/evidence | UI quality and dead-space result | Fix/rerun |
 | --- | --- | --- | --- | --- |
-| Desktop | Pending | Pending | Pending | Pending |
-| Tablet | Pending | Pending | Pending | Pending |
-| Mobile | Pending | Pending | Pending | Pending |
+| Mobile, e.g. 390x844 | Pending | Pending | Pending | Pending |
+| Tablet, e.g. 768x1024 | Pending | Pending | Pending | Pending |
+| Desktop, e.g. 1440x900 | Pending | Pending | Pending | Pending |
+| Standard desktop, 1920x1080 | Pending | Pending | Pending | Pending |
+| Large desktop, 2560x1440 | Pending | Pending | Pending | Pending |
 
 ## Screenshot Existence Audit
 
@@ -107,7 +109,9 @@ If matches were found and removed, record the replacement proof here.
 | Main touched/implied flows covered | yes | Pending |
 | Bad cases and non-ideal user behavior covered | yes | Pending |
 | Surrounding feature smoke completed | yes | Pending |
-| Desktop/tablet/mobile responsive UI verified | yes | Pending |
+| Mobile/tablet/desktop/1080p/2560px responsive UI verified when UI changed | yes | Pending |
+| Responsive UI quality passes as a first-class guarantee alongside task functionality | yes | Pending |
+| No unresolved overlap, clipping, unusable control, accidental horizontal scroll, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | yes | Pending |
 | Screenshot paths exist | yes | Pending |
 | Screenshot existence audit completed for every cited path | yes | Pending |
 | No unresolved critical UI/runtime issue | yes | Pending |
@@ -117,7 +121,7 @@ If matches were found and removed, record the replacement proof here.
 | No fixed waits in audited Playwright/E2E files | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
-| Lifecycle helper or repo `webServer` managed startup/readiness/cleanup | yes | Pending |
+| Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 6 next action | yes | Pending |

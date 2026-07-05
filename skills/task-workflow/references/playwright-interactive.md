@@ -6,10 +6,12 @@ Use this reference in Phase 5.
 
 ## Rules
 
-- Run Phase 5 scripts through `task-workflow/scripts/playwright-lifecycle.mjs` unless the repo's Playwright `webServer` fully owns startup, readiness, and cleanup.
-- Pass the repo's normal local command to the lifecycle helper with `--server`.
+- Run Phase 5 custom browser scripts through `task-workflow/scripts/playwright-lifecycle.mjs`.
+- Run native `pnpm exec playwright test ...` through the repo's Playwright `webServer` lifecycle when that config exists, unless the config is explicitly disabled or made reuse-safe for a helper-owned server.
+- Pass the repo's normal local command to the lifecycle helper with `--server` for helper-owned custom scripts.
 - Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
 - Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts.
+- If the server appears stale, wrong, or on the wrong port, inspect the helper runtime logs/readiness output or repo Playwright `webServer` output first; restart through the lifecycle owner instead of switching to broad process cleanup.
 - Do not run `playwright install` or any browser download command. The lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when the cache exists and fails early on a revision mismatch.
 - Prefer `127.0.0.1` over `localhost`.
 - Write scripts under `task-workflow/playwright/`.
@@ -74,12 +76,15 @@ Cover all routes, states, and interactions touched or implied by the task:
 - menus, dialogs, drawers, tabs, and filters
 - table/list row actions
 - loading, empty, error, and success states when relevant
-- mobile behavior when the task changes UI
+- responsive visual quality for mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` desktop when the task changes UI
+- no broken UI at required viewports: overlapping controls, clipped content, unreadable text, inaccessible navigation, unusable menus/dialogs, accidental horizontal scrolling, or controls outside the viewport
+- no excessive dead space on normal desktop/1080p screens. `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. Large empty regions are acceptable on 4K/ultrawide only when the content width is intentionally constrained and the screen still looks designed.
 
 ## What Does Not Count
 
 - opening the app without interacting
 - taking only one screenshot
+- testing only mobile, only one desktop size, or skipping `1920x1080`/`2560x1440` when the task changes layout/UI
 - relying on stale browser state
 - relying only on unit/E2E test runner output
 - recording paths that do not exist

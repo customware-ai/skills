@@ -31,8 +31,10 @@
 | Full unit/Vitest suite ran no more than once as final confirmation, or exception recorded | Pending |
 | No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | Pending |
 | Broad/full test commands, if any, have explicit artifact reasons | Pending |
-| No blind identical failing-command rerun is recorded | Pending |
-| Phase 5/6 lifecycle helper or repo Playwright `webServer` evidence current | Pending |
+| No confidence-only or blind identical failing-command rerun is recorded | Pending |
+| Phase 5/6 correct lifecycle-owner evidence current | Pending |
+| Phase 5 responsive-quality evidence current and first-class when UI changed | Pending |
+| No unresolved broken UI, overlap, clipping, unusable control, accidental horizontal scroll, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | Pending |
 | No Phase 5/6 `playwright install` or browser download attempt | Pending |
 | Runtime logs cited for managed server/test commands where output is too long | Pending |
 | No `console.*` remains in changed app/server source after Phase 5 | Pending |
@@ -86,9 +88,10 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Evidence type | Required proof | Present and current? | Evidence |
 | --- | --- | --- | --- |
 | Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
+| Phase 5 responsive quality | Required viewports include mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` when UI changed; evidence shows responsive quality passed as a first-class guarantee with no broken UI, excessive 1080p dead space, or unfinished-looking 2560px empty regions | Pending | Pending |
 | Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log | Pending | Pending |
-| Test selection and retry evidence | Phase 4/6 ledgers explain targeted-first order, affected-spec coverage, final full-suite reason if used, no duplicate full-suite rerun, rerun basis, outcomes, and next actions | Pending | Pending |
-| Managed lifecycle evidence | Phase 5/6 used `task-workflow/scripts/playwright-lifecycle.mjs` or repo Playwright `webServer`; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
+| Test selection and retry evidence | Phase 4/6 ledgers explain targeted-first order, affected-spec coverage, final full-suite reason if used, no confidence-only full-suite rerun, rerun basis, outcomes, and next actions | Pending | Pending |
+| Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper for custom scripts/browser probes, repo Playwright `webServer` for native Playwright tests when configured; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | Browser install avoidance | No `playwright install` or browser download command was run during Phase 5/6 | Pending | Pending |
 | Changed app/server logging | No `console.*` remains in changed app/server source after Phase 5 | Pending | Pending |
 
@@ -115,14 +118,16 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Fixed wait reviews current and clean | yes | Pending |
 | Phase 5 cited screenshots exist | yes | Pending |
+| Phase 5 responsive-quality evidence current and first-class when UI changed | yes | Pending |
+| No unresolved broken UI, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | yes | Pending |
 | Phase 6 exact E2E/test command output recorded | yes | Pending |
 | Phase 4/6 test selection and retry ledgers current | yes | Pending |
 | Targeted and affected tests ran before any final full unit/Vitest suite | yes | Pending |
 | No more than one final full unit/Vitest suite run, or exception recorded | yes | Pending |
 | No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | yes | Pending |
 | Broad/full test commands, if any, have explicit artifact reasons | yes | Pending |
-| No blind identical failing-command rerun is recorded | yes | Pending |
-| Phase 5/6 lifecycle helper or repo Playwright `webServer` evidence recorded | yes | Pending |
+| No confidence-only or blind identical failing-command rerun is recorded | yes | Pending |
+| Phase 5/6 correct lifecycle-owner evidence recorded | yes | Pending |
 | No browser download attempted in Phase 5/6 | yes | Pending |
 | Artifact integrity review completed and clean | yes | Pending |
 | Quality scorecard all >= 8/10 | yes | Pending |

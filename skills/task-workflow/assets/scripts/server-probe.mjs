@@ -4,6 +4,25 @@ import { createWriteStream, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
+function printUsage() {
+	console.log(`Usage:
+  node task-workflow/scripts/server-probe.mjs \\
+    --server "PORT=4444 node build/server/start.js" \\
+    --ready-url "http://127.0.0.1:4444/health" \\
+    --run "curl -fsS http://127.0.0.1:4444/health"
+
+Common options:
+  --run "command"                Run bounded probe command after readiness; repeatable.
+  --env NAME=value               Add an environment variable; repeatable.
+  --ready-text "text"            Require response body text during readiness polling.
+  --ready-timeout-ms 20000       Startup readiness timeout. Max 30000 without reason.
+  --slow-start-reason "reason"   Required if readiness timeout exceeds 30000.
+  --command-timeout-ms 60000     Per-run command timeout.
+
+Use this helper for pre-Phase-5 API/runtime probes. It captures the server PID,
+waits for readiness, preserves logs, and cleans up only the captured process.`);
+}
+
 function parsePositiveInt(value, label) {
 	const parsed = Number(value);
 	if (!Number.isInteger(parsed) || parsed <= 0) {
@@ -52,9 +71,15 @@ function parseArgs(argv) {
 			args.commandTimeoutMs = parsePositiveInt(next(), '--command-timeout-ms');
 		} else if (arg === '--slow-start-reason') {
 			args.slowStartReason = next();
+		} else if (arg === '--help' || arg === '-h') {
+			args.help = true;
 		} else {
 			throw new Error(`Unknown argument: ${arg}`);
 		}
+	}
+
+	if (args.help) {
+		return args;
 	}
 
 	if (!args.server) {
@@ -196,6 +221,10 @@ async function startServer(args, env, runtimeDir) {
 }
 
 const args = parseArgs(process.argv.slice(2));
+if (args.help) {
+	printUsage();
+	process.exit(0);
+}
 const cwd = resolve(args.cwd);
 const runtimeDir = resolve(cwd, args.runtimeDir);
 mkdirSync(runtimeDir, { recursive: true });

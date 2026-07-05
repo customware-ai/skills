@@ -34,7 +34,7 @@ Record the exact bounded test command and its exact output. If output is long, w
 
 Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first, and broaden only with a concrete reason. For E2E, list the affected specs covered; do not rerun the unfiltered full suite after equivalent affected-spec coverage already passed.
 
-| Command | Scope: targeted/multi-spec/broad/full | Why this scope and affected specs covered | Previous related failure | Changed since previous run | Outcome | Next action |
+| Command | Scope: targeted/multi-spec/broad/full | Why this scope and affected specs covered | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
@@ -42,9 +42,9 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| `task-workflow/scripts/playwright-lifecycle.mjs` exists and was used for Playwright/E2E unless repo `webServer` owns lifecycle | Pending | Pending |
-| Test server, if needed, started by lifecycle helper or repo `webServer` with PID/log evidence | Pending | Pending |
-| Server readiness, if needed, checked by lifecycle helper or repo `webServer` before E2E execution | Pending | Pending |
+| Correct lifecycle owner recorded: helper for custom scripts/browser probes, repo `webServer` for native Playwright tests when configured | Pending | Pending |
+| Test server, if needed, started by the recorded lifecycle owner with PID/log or repo `webServer` evidence | Pending | Pending |
+| Server readiness, if needed, checked by the recorded lifecycle owner before E2E execution | Pending | Pending |
 | Browser preflight passed, or mismatch failed early without `playwright install` | Pending | Pending |
 | Tests run as bounded commands, not watchers | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
@@ -98,12 +98,12 @@ If matches were found and removed, record the replacement proof here.
 | Fixed wait review completed and clean | Pending | Pending |
 | Coverage gaps reflected in `open-gaps.md` | Pending | Pending |
 | Server/command discipline passed | Pending | Pending |
-| Lifecycle helper or repo `webServer` managed startup/readiness/cleanup | Pending | Pending |
+| Correct lifecycle owner managed startup/readiness/cleanup | Pending | Pending |
 | No `playwright install` or browser download attempted | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
 | Affected-spec ledger covers each E2E command; unfiltered full suite was not run after equivalent affected-spec coverage | Pending | Pending |
 | Broad/full commands have explicit reason or were not used | Pending | Pending |
-| No blind identical failing-command rerun | Pending | Pending |
+| No confidence-only or blind identical failing-command rerun | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
 ## Gate
@@ -126,10 +126,10 @@ If matches were found and removed, record the replacement proof here.
 | Test selection and retry ledger complete | yes | Pending |
 | Broad/full commands have explicit reason or were not used | yes | Pending |
 | No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | yes | Pending |
-| No blind identical failing-command rerun | yes | Pending |
+| No confidence-only or blind identical failing-command rerun | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
-| Lifecycle helper or repo `webServer` managed startup/readiness/cleanup | yes | Pending |
+| Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 7 next action | yes | Pending |

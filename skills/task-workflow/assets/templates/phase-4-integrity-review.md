@@ -10,7 +10,7 @@
 
 Record every meaningful check/test command. Use `N/A` only when no test command is relevant.
 
-| Command | Scope: targeted/affected/final-full | Why this scope | Previous related failure | Changed since previous run | Outcome | Next action |
+| Command | Scope: targeted/affected/final-full | Why this scope | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
@@ -57,7 +57,7 @@ Changed app/server source must not keep `console.*`. Temporary `console.*` may b
 | Targeted tests ran before broad/full unit or Vitest suite | yes | Pending |
 | Full unit/Vitest suite ran no more than once as final confirmation, or exception recorded | yes | Pending |
 | Broad/full commands have explicit reason or were not used | yes | Pending |
-| No blind identical failing-command rerun | yes | Pending |
+| No confidence-only or blind identical failing-command rerun | yes | Pending |
 | No runtime-blocking issue remains | yes | Pending |
 | No extracted `AGENTS.md` development rule violation remains | yes | Pending |
 | No `console.*` remains outside the active Phase 5 debug loop | yes | Pending |

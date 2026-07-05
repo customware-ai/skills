@@ -5,6 +5,28 @@ import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync }
 import { dirname, join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
+function printUsage() {
+	console.log(`Usage:
+  node task-workflow/scripts/playwright-lifecycle.mjs \\
+    --server "PORT=4444 node build/server/start.js" \\
+    --ready-url "http://127.0.0.1:4444/health" \\
+    --run "node task-workflow/playwright/verify-flow.mjs"
+
+Common options:
+  --setup "command"              Run bounded setup before server startup; repeatable.
+  --run "command"                Run bounded verification command after readiness; repeatable.
+  --env NAME=value               Add an environment variable; repeatable.
+  --ready-text "text"            Require response body text during readiness polling.
+  --ready-timeout-ms 30000       Startup readiness timeout.
+  --command-timeout-ms 300000    Per-run command timeout.
+  --force-restart                Ignore an already healthy ready URL and start this run's server.
+  --keep-server                  Leave this run's captured server process running.
+
+Use this helper for custom Playwright scripts/browser probes. If running native
+pnpm exec playwright test and the repo config has webServer, let Playwright own
+startup/readiness/cleanup unless that config is disabled or reuse-safe.`);
+}
+
 function parseArgs(argv) {
 	const args = {
 		runs: [],
@@ -55,6 +77,8 @@ function parseArgs(argv) {
 			args.keepServer = true;
 		} else if (arg === '--force-restart') {
 			args.forceRestart = true;
+		} else if (arg === '--help' || arg === '-h') {
+			args.help = true;
 		} else {
 			throw new Error(`Unknown argument: ${arg}`);
 		}
@@ -270,6 +294,10 @@ async function startServer(args, env, runtimeDir) {
 }
 
 const args = parseArgs(process.argv.slice(2));
+if (args.help) {
+	printUsage();
+	process.exit(0);
+}
 const cwd = resolve(args.cwd);
 const runtimeDir = resolve(cwd, args.runtimeDir);
 mkdirSync(runtimeDir, { recursive: true });
