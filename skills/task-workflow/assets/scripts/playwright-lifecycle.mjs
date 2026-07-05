@@ -8,9 +8,11 @@ import { setTimeout as delay } from 'node:timers/promises';
 function parseArgs(argv) {
 	const args = {
 		runs: [],
+		setups: [],
 		env: [],
 		cwd: process.cwd(),
 		runtimeDir: 'task-workflow/runtime',
+		setupTimeoutMs: 120000,
 		readyTimeoutMs: 120000,
 		commandTimeoutMs: 300000,
 		keepServer: false,
@@ -37,10 +39,14 @@ function parseArgs(argv) {
 			args.readyText = next();
 		} else if (arg === '--run') {
 			args.runs.push(next());
+		} else if (arg === '--setup') {
+			args.setups.push(next());
 		} else if (arg === '--env') {
 			args.env.push(next());
 		} else if (arg === '--runtime-dir') {
 			args.runtimeDir = next();
+		} else if (arg === '--setup-timeout-ms') {
+			args.setupTimeoutMs = Number(next());
 		} else if (arg === '--ready-timeout-ms') {
 			args.readyTimeoutMs = Number(next());
 		} else if (arg === '--command-timeout-ms') {
@@ -273,6 +279,13 @@ preflightPlaywrightBrowsers(cwd, env, args.runs);
 
 let startedPid = null;
 try {
+	let setupIndex = 0;
+	for (const command of args.setups) {
+		setupIndex += 1;
+		const logPath = resolve(runtimeDir, `setup-${String(setupIndex).padStart(2, '0')}.log`);
+		console.log(`[lifecycle] Running setup ${setupIndex}: ${command}`);
+		await runCommand(command, { cwd, env, logPath, timeoutMs: args.setupTimeoutMs });
+	}
 	startedPid = await startServer({ ...args, cwd }, env, runtimeDir);
 	let index = 0;
 	for (const command of args.runs) {

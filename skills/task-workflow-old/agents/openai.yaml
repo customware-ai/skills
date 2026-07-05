@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Workflow Old"
+  short_description: "Archived previous task workflow skill"
+  default_prompt: "Use $task-workflow-old to execute the task through the archived previous artifact-backed workflow."

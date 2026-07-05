@@ -5,27 +5,21 @@
 | Field | Value |
 | --- | --- |
 | Launch command | Pending |
-| Lifecycle helper command | Pending |
 | URL | Pending |
 | Playwright scripts | Pending |
 | Server PID | Pending |
 | Server log | Pending |
 | Readiness proof | Pending |
-| Runtime command logs | Pending |
-| Browser preflight result | Pending |
 
 ## Server And Command Discipline
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| `task-workflow/scripts/playwright-lifecycle.mjs` exists and was used unless repo `webServer` owns lifecycle | Pending | Pending |
-| App server started by lifecycle helper or repo `webServer`, not as unbounded foreground command | Pending | Pending |
-| Server readiness checked by lifecycle helper or repo `webServer` before browser interaction | Pending | Pending |
-| Browser preflight passed, or mismatch failed early without `playwright install` | Pending | Pending |
-| Playwright scripts run as bounded helper commands | Pending | Pending |
-| Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
-| Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
-| Cleanup method recorded and bounded | Pending | Pending |
+| App server started in background, not as unbounded foreground command | Pending | Pending |
+| Server readiness checked from separate bounded command | Pending | Pending |
+| Startup timeout/retry used `pkill -f node || true` on failed or uncertain readiness | Pending | Pending |
+| Playwright scripts run as bounded commands | Pending | Pending |
+| Background server cleaned up or explicitly handed to next bounded command | Pending | Pending |
 
 ## Interactive Coverage
 
@@ -116,9 +110,7 @@ If matches were found and removed, record the replacement proof here.
 | No fixed waits in audited Playwright/E2E files | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
-| Lifecycle helper or repo `webServer` managed startup/readiness/cleanup | yes | Pending |
-| No `playwright install` or browser download attempted | yes | Pending |
-| Cleanup method recorded and bounded | yes | Pending |
+| Failed or uncertain server startup cleaned with `pkill -f node || true` before retry | yes | Pending |
 | `progress.md` current and points to Phase 6 next action | yes | Pending |
 | `progress.md` points to this Phase 5 artifact for Playwright scripts, screenshots, logs, and repair details | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |

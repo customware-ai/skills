@@ -6,10 +6,7 @@ Use this reference in Phase 5.
 
 ## Rules
 
-- Run Phase 5 scripts through `task-workflow/scripts/playwright-lifecycle.mjs` unless the repo's Playwright `webServer` fully owns startup, readiness, and cleanup.
-- Pass the repo's normal local command to the lifecycle helper with `--server`.
-- Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
-- Do not run `playwright install` or any browser download command. The lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when the cache exists and fails early on a revision mismatch.
+- Start the app using the repo's normal local command.
 - Prefer `127.0.0.1` over `localhost`.
 - Write scripts under `task-workflow/playwright/`.
 - Save screenshots under `task-workflow/screenshots/`.
@@ -17,18 +14,6 @@ Use this reference in Phase 5.
 - Use normal input APIs such as `click`, `fill`, `press`, `selectOption`, and route navigation.
 - Do not use screenshots alone as proof when a visible control needs interaction proof.
 - Do not use `page.evaluate(...)` as a substitute for normal user interaction unless inspecting state that cannot be observed otherwise.
-
-## Lifecycle Helper Pattern
-
-```bash
-node task-workflow/scripts/playwright-lifecycle.mjs \
-	--server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
-	--ready-url "http://127.0.0.1:4444" \
-	--run "node task-workflow/playwright/verify-main-flow.mjs" \
-	--command-timeout-ms 300000
-```
-
-The helper writes server and command logs under `task-workflow/runtime/`. Cite those paths in the Phase 5 artifact when output is too long to paste directly.
 
 ## Minimal Script Pattern
 

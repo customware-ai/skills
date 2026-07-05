@@ -60,39 +60,58 @@ Interactive scripts and E2E tests must wait on user-visible state or app signals
 
 Verification phases must not stall on foreground servers or watchers.
 
-- Start the app server in the background with a recorded PID and log path.
-- Verify readiness with a separate bounded command that has a clear timeout, such as polling a health endpoint or target URL.
-- Do not assume a backgrounded process started successfully just because the command returned. A server is ready only after a successful readiness signal is recorded.
-- If readiness is not proven before the timeout, capture the server log, run `pkill -f node || true`, and retry only from a clean startup command.
-- Run interactive scripts and E2E tests as separate bounded commands.
-- Do not kill the server while Phase 5 screenshots, interactive checks, or Phase 6 E2E tests are still using it.
-- Kill the background server when verification is complete or when a blocking launch issue is recorded. Use the recorded PID when possible and `pkill -f node || true` for sandbox-owned Node cleanup/recovery.
+- Use `task-workflow/scripts/playwright-lifecycle.mjs` for app startup, readiness, Playwright browser preflight, bounded interactive/E2E commands, output capture, and cleanup unless the repo's Playwright `webServer` config owns the full test lifecycle.
+- The helper runs each `--setup` command before server startup with bounded timeout and `task-workflow/runtime/setup-*.log`, starts the app server in the background, records `task-workflow/runtime/server.pid`, writes `task-workflow/runtime/server.log`, polls the supplied readiness URL, runs each `--run` command with bounded timeout and `task-workflow/runtime/run-*.log`, and stops the server process group after the run unless `--keep-server` is explicitly used and justified.
+- Do not assume a backgrounded process started successfully just because the command returned. A server is ready only after the helper records a successful readiness result.
+- Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, or seed into `task-workflow/scripts/playwright-lifecycle.mjs --setup "..."`, or use a repo-owned Playwright `webServer` lifecycle and record that evidence.
+- Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when present and fails early when the project Playwright version does not match the sandbox browser cache.
 - Do not leave `pnpm dev`, `npm run dev`, `vite`, `next dev`, test watchers, or similar long-lived commands as the active foreground tool call.
 - If the server or test command hangs, stop it, capture the log/error evidence, update the current phase artifact or `open-gaps.md`, and continue with the smallest local recovery path.
 - If Playwright has a repo-configured `webServer`, prefer Playwright-managed startup and teardown. Do not add a separate manual server unless the workflow or repo setup requires it.
-- Bash readiness polling with `sleep 1` is acceptable. The fixed-wait ban applies to Playwright scripts and E2E tests under `task-workflow/playwright` or `tests/e2e`, not bounded shell readiness polling.
+- Bash readiness polling inside the lifecycle helper is acceptable. The fixed-wait ban applies to Playwright scripts and E2E tests under `task-workflow/playwright` or `tests/e2e`, not the helper's bounded readiness loop.
 
+Example helper shape:
+
+```bash
+node task-workflow/scripts/playwright-lifecycle.mjs \
+  --setup "pnpm run db:migrate" \
+  --server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
+  --ready-url "http://127.0.0.1:4444" \
+  --run "node task-workflow/playwright/verify-main-flow.mjs" \
+  --command-timeout-ms 300000
+```
+
+For E2E:
+
+```bash
+node task-workflow/scripts/playwright-lifecycle.mjs \
+  --setup "pnpm run db:migrate" \
+  --server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
+  --ready-url "http://127.0.0.1:4444" \
+  --run "pnpm exec playwright test tests/e2e/changed-flow.spec.ts --reporter=line" \
+  --command-timeout-ms 300000
+```
 ## Phase 5: Interactive Playwright Verification
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
 2. Read `references/playwright-interactive.md`.
-3. Start the app using the repo's normal local command, in the background with a PID and log path.
+3. Confirm `task-workflow/scripts/playwright-lifecycle.mjs` exists and is readable.
 4. Write standalone Playwright scripts under `task-workflow/playwright/`.
-5. Drive the app through real user interactions.
-6. Verify primary routes, forms, buttons, menus, dialogs, tables, navigation, save flows, and error states touched or implied by the task.
-7. Exercise bad cases and non-ideal user behavior: invalid submissions, empty states, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigating away/back, and nearby controls a real user could click while using the feature.
-8. Smoke-test surrounding UI/features that share the changed surface, such as adjacent navigation, list/detail transitions, filters/search, dialogs, menus, sidebars, and nearby actions that could be accidentally broken by the implementation.
-9. Verify responsive behavior and visual quality on desktop, tablet, and mobile viewports. Check layout, overflow, clipping, tap/click targets, readable text, navigation access, dialogs/menus, and the task's main flows at each required viewport.
-10. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
-11. Verify every screenshot path cited in the Phase 5 artifact exists before scoring the gate. Record the file-existence command/readback proof in `task-workflow/phase-5-playwright-verification.md`.
-12. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to Phase 4 for fix and integrity review, then re-enter Phase 5 and rerun the failed path plus nearby/surrounding checks.
-13. Fix discovered issues and rerun the scripts from clean Node.js processes.
-14. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
-15. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
-16. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
-17. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-18. Record route/state coverage, interaction coverage, bad-case/adversarial coverage, surrounding-feature smoke, responsive viewport coverage, screenshots, screenshot existence proof, issues, fixes, open-gap status, and fixed-wait review evidence.
-19. Kill any background server started for Phase 5, or record why it must remain running for the next bounded command.
+5. Run the scripts through `task-workflow/scripts/playwright-lifecycle.mjs` with the repo's normal local app command, a readiness URL, bounded command timeout, and runtime logs.
+6. Drive the app through real user interactions.
+7. Verify primary routes, forms, buttons, menus, dialogs, tables, navigation, save flows, and error states touched or implied by the task.
+8. Exercise bad cases and non-ideal user behavior: invalid submissions, empty states, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigating away/back, and nearby controls a real user could click while using the feature.
+9. Smoke-test surrounding UI/features that share the changed surface, such as adjacent navigation, list/detail transitions, filters/search, dialogs, menus, sidebars, and nearby actions that could be accidentally broken by the implementation.
+10. Verify responsive behavior and visual quality on desktop, tablet, and mobile viewports. Check layout, overflow, clipping, tap/click targets, readable text, navigation access, dialogs/menus, and the task's main flows at each required viewport.
+11. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
+12. Verify every screenshot path cited in the Phase 5 artifact exists before scoring the gate. Record the file-existence command/readback proof in `task-workflow/phase-5-playwright-verification.md`.
+13. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to Phase 4 for fix and integrity review, then re-enter Phase 5 and rerun the failed path plus nearby/surrounding checks.
+14. Fix discovered issues and rerun the scripts from clean Node.js processes through the lifecycle helper.
+15. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
+16. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
+17. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
+18. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+19. Record route/state coverage, interaction coverage, bad-case/adversarial coverage, surrounding-feature smoke, responsive viewport coverage, screenshots, screenshot existence proof, lifecycle helper command, readiness proof, runtime log paths, cleanup result, issues, fixes, open-gap status, and fixed-wait review evidence.
 20. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
 21. Update `task-workflow/progress.md` so current phase and next local action match Phase 6.
 
@@ -101,6 +120,8 @@ Verification phases must not stall on foreground servers or watchers.
 The artifact must cite real evidence for every main touched or implied user flow:
 
 - launch command and local URL
+- lifecycle helper command
+- readiness proof and runtime log path
 - Playwright script path
 - route or state exercised
 - interaction performed
@@ -133,6 +154,9 @@ Critical failures:
 - standalone Playwright script not created
 - app not launched through the repo's local command
 - app server launched as an unbounded foreground command
+- lifecycle helper not used for Phase 5 app startup and script execution when no repo-owned Playwright `webServer` lifecycle applies
+- manual cleanup, fixed `sleep`, DB-delete, or server-start command chain used instead of the lifecycle helper
+- `playwright install` or equivalent browser download attempted during verification
 - server PID/log/readiness proof not recorded
 - main touched route or flow not exercised
 - bad cases and non-ideal user actions not exercised for the changed flow
@@ -175,21 +199,30 @@ If this gate fails, stay in Phase 5.
 4. Update existing E2E tests first when the new or changed behavior extends an existing workflow or could affect existing functionality.
 5. Add a new E2E test only when the task introduces a genuinely new workflow that cannot be cleanly covered by an existing E2E test.
 6. Add or update lower-level tests when they are the better fit for non-UI logic.
-7. Run the existing, updated, new, and affected tests needed to prove existing functionality still works and the new additions work with it.
-8. Fix failures and rerun until passing.
-9. Record the exact command output for every required E2E/test run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`.
-10. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
-11. Update `task-workflow/open-gaps.md` for every test/coverage gap closed, defended, or still open.
-12. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for test-file and test-repair details, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
-13. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-14. Record existing tests inspected, tests updated, tests added, commands, exact command output evidence, outcomes, fixed-wait review evidence, and remaining coverage gaps.
-15. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
-16. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
+7. Select the smallest useful test command that proves the changed behavior and affected existing behavior. Start with new, changed, or directly affected E2E specs. Do not run the full E2E suite unless the task explicitly asks for it, the target repo instructions require it, or the artifact records a concrete app-wide E2E reason.
+8. Record every meaningful test command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
+9. Do not rerun the exact same failing command unless implementation, test, config, environment, or diagnostic conditions changed, or the previous output was incomplete and a narrower diagnostic command is not available. The same failing command may run at most twice without a material change.
+10. Run the existing, updated, new, and affected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` for Playwright/E2E tests unless the repo's Playwright `webServer` config owns the full lifecycle. If setup is required before the server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command.
+11. Fix failures and rerun with the smallest command that can prove the fix.
+12. Record the exact command output for every required E2E/test run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`.
+13. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
+14. Update `task-workflow/open-gaps.md` for every test/coverage gap closed, defended, or still open.
+15. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for test-file and test-repair details, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
+16. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+17. Record existing tests inspected, tests updated, tests added, commands, exact command output evidence, outcomes, test-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps.
+18. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
+19. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
 
 ## Coverage Decision
 
 Prefer the smallest durable test that protects the behavior:
 
+- targeted unit/component tests for non-UI logic or isolated UI behavior
+- targeted E2E for one affected user flow
+- new, changed, or directly affected E2E specs only by default
+- multi-spec E2E only when multiple changed or adjacent flows must be protected together
+- full Playwright E2E only when app-wide routing/auth/runtime behavior, Playwright config/global fixtures, or final repo instructions require it
+- broad/full Vitest only when shared contracts, global setup, app-wide behavior, or final repo instructions require it
 - update an existing E2E test when the task modifies or extends an existing user workflow
 - add a new E2E test only for a genuinely new workflow or when existing E2E coverage cannot cleanly express the path
 - E2E tests for user-visible multi-step flows
@@ -225,6 +258,11 @@ Critical failures:
 - tests are primarily superficial checks such as color, CSS class, incidental copy, or button existence without proving feature behavior
 - tests depend on brittle implementation details instead of user-visible or persisted outcomes
 - test added but not run
+- Playwright/E2E command uses manual cleanup, fixed `sleep`, DB-delete, or server-start command chains instead of lifecycle `--setup` plus managed server/run steps when no repo-owned Playwright `webServer` lifecycle applies
+- full Playwright/E2E suite is run without an explicit task request, target repo requirement, or concrete app-wide E2E reason
+- broad/full test command is run without a concrete artifact reason
+- same failing test command is rerun blindly without material implementation, test, config, environment, or diagnostic change
+- `playwright install` or equivalent browser download attempted during E2E verification
 - relevant test failure caused by this task remains unresolved
 - artifact records a pass without command evidence
 - artifact records a pass with only a described or documented test result and no exact command output or cited repo-local log containing exact output
@@ -245,6 +283,7 @@ Pass gate:
 - new or affected behavior has test coverage or a documented reason why not
 - tests assert meaningful functional outcomes rather than superficial style or existence checks
 - required tests pass or remaining failures are unrelated and evidenced
+- test command selection and retry evidence is recorded
 - exact E2E/test command output is recorded in the artifact or in a cited repo-local log file
 - test/coverage gaps in `task-workflow/open-gaps.md` are resolved, updated, or defended
 - fixed-wait review is recorded and clean

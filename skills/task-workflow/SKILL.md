@@ -6,7 +6,8 @@ description: >
   must work through ordered phases that start with
   mandatory task-workflow artifact reset before any source inspection or edit,
   then codebase research, implementation passes, scored gates, interactive
-  Playwright verification, E2E coverage, and final signoff.
+  Playwright verification through a managed lifecycle helper, E2E coverage,
+  and final signoff.
 ---
 
 # Task Workflow
@@ -153,7 +154,13 @@ Treat these rules as always active:
 - After every file write, patch, generated-file creation, or artifact update that matters to a gate, perform a readback check before relying on it. Use `sed`, `rg`, `ls`, `git diff`, or the repo's normal inspection command to prove the file exists and contains the intended change.
 - If a write/edit tool reports an invalid write, missing file, failed patch, partial output, or uncertain result, stop that work packet, repair the write with a supported edit method, read it back, and only then continue. Do not proceed as if a failed write happened.
 - Commands must be bounded. Do not leave long-lived servers, watchers, or interactive commands running in the foreground as the active tool call.
-- Start dev servers in the background with a PID and log file, verify readiness from a separate command, run verification from a separate command, and clean up the PID after use.
+- Outside Phase 5 and Phase 6, if a temporary dev server is needed, start it in the background with a PID and log file, verify readiness from a separate command, run verification from a separate command, and clean up the PID after use.
+- In Phase 5 and Phase 6, use `task-workflow/scripts/playwright-lifecycle.mjs` for app startup, readiness, Playwright browser preflight, bounded Playwright/E2E commands, output capture, and cleanup unless the repo's Playwright `webServer` contract already owns the whole lifecycle.
+- Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, or seed into `task-workflow/scripts/playwright-lifecycle.mjs --setup "..."` so it is bounded and logged before the server starts.
+- Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The managed lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when available and fails early if the project Playwright version does not match the sandbox browser cache.
+- Select test commands by the smallest useful scope. Start with targeted tests for changed logic, components, routes, or user flows; then run connected or affected tests. Run the full unit/Vitest suite once only as final confirmation after targeted and affected tests pass, unless target repo instructions or a concrete global/shared change require a different order.
+- Before rerunning an identical failing test command, record what changed since the previous run or why the previous output was incomplete. Do not blindly rerun the same failing command when no implementation, test, config, environment, or diagnostic condition changed.
+- The same failing test command may run at most twice without a material change. After that, inspect the failure output and change the implementation, test, command scope, or diagnostic strategy before running it again.
 - If a command appears hung or idle and the next workflow action is locally available, stop the command, record the evidence in the current phase artifact or gap ledger, and continue with the bounded recovery path.
 - Every phase gate is an internal control point, not a user confirmation checkpoint.
 - If a phase gate passes, continue directly into the next phase without asking whether to continue.
@@ -303,6 +310,9 @@ These are mandatory:
 - `task-workflow/CURRENT_PHASE.txt`
 - `task-workflow/playwright/`
 - `task-workflow/screenshots/`
+- `task-workflow/scripts/`
+- `task-workflow/scripts/playwright-lifecycle.mjs`
+- `task-workflow/runtime/`
 
 The templates in `assets/templates/` are enforcement artifacts. Copy their structure directly. If a required table is replaced by prose or stripped down until rows are no longer auditable, the run fails.
 
@@ -383,6 +393,13 @@ These automatically fail the run:
 - leaving artifact templates mostly blank while claiming success
 - passing Phase 5 while any screenshot path cited in the artifact is missing or not verified with existence proof
 - passing Phase 6 while E2E/test runs are only described and the exact command output is not recorded in the artifact or in a cited repo-local log file
+- running Phase 5 or Phase 6 Playwright/E2E commands without lifecycle-helper or repo-owned Playwright `webServer` evidence when app startup/readiness/cleanup is required
+- starting with a broad/full unit or Vitest suite before creating/updating and running the targeted tests for changed behavior
+- running the full unit/Vitest suite more than once without a concrete artifact reason from target repo instructions, changed global/shared infrastructure, or incomplete output
+- running broad/full test suites without artifact evidence explaining why targeted and affected tests are insufficient or why the target repo requires the broader scope
+- running the full Playwright/E2E suite when the task did not explicitly ask for it, the target repo did not require it, and no concrete app-wide E2E reason is recorded
+- blindly rerunning the same failing test command without recording a material implementation, test, config, environment, or diagnostic change since the previous run
+- running `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification instead of using the sandbox browser cache or recording the helper's browser-preflight mismatch
 - passing Phase 4 or Phase 7 while changed app/server source still contains `console.*` outside the active Phase 5 debug loop
 - producing a final response or stopping summary while `CURRENT_PHASE.txt` is before `phase-7-final-signoff`
 - producing a final response or stopping summary while any required artifact still says `Decision: Fail`, has a failing score, or contains pending gate evidence
@@ -432,6 +449,7 @@ These automatically fail the run:
 - `assets/templates/phase-7-final-signoff.md`
 - `assets/templates/progress.md`
 - `assets/templates/open-gaps.md`
+- `assets/scripts/playwright-lifecycle.mjs`: managed server/readiness/Playwright execution helper copied into `task-workflow/scripts/` during Phase 0.
 
 ## Non-Negotiables
 

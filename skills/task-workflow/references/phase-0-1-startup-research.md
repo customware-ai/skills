@@ -10,7 +10,7 @@ This is a looped gate workstream: Phase 0 and Phase 1 are not complete until the
 
 The artifact trail is the source of truth for the run.
 
-Phase 0 exists so a new task never inherits stale proof from an older task. The agent owns artifact creation directly by copying templates from `assets/templates/`; no scaffold script is required.
+Phase 0 exists so a new task never inherits stale proof from an older task. The agent owns artifact creation directly by copying templates from `assets/templates/` and the managed Playwright lifecycle helper from `assets/scripts/`; no scaffold script is required.
 
 `task-workflow/progress.md` is the compact resume ledger. It must be reset with the rest of `task-workflow/`, copied from template, and updated in Phase 0 before promotion. Hard rule: after compaction or resume, always read `progress.md` immediately after `SKILL.md` and before choosing the next action.
 
@@ -44,6 +44,8 @@ Phase 0 is the first action after reading `SKILL.md`.
    - `task-workflow/`
    - `task-workflow/playwright/`
    - `task-workflow/screenshots/`
+   - `task-workflow/scripts/`
+   - `task-workflow/runtime/`
    - `task-workflow/CURRENT_PHASE.txt`
 4. Copy the templates from `assets/templates/` into `task-workflow/`:
    - `progress.md`
@@ -56,19 +58,21 @@ Phase 0 is the first action after reading `SKILL.md`.
    - `phase-6-e2e-verification.md`
    - `phase-7-final-signoff.md`
    - `open-gaps.md`
-5. Set `task-workflow/CURRENT_PHASE.txt` to `phase-0-artifact-reset`.
-6. Fill `task-workflow/phase-0-artifact-reset.md` with:
+5. Copy `assets/scripts/playwright-lifecycle.mjs` into `task-workflow/scripts/playwright-lifecycle.mjs`.
+6. Set `task-workflow/CURRENT_PHASE.txt` to `phase-0-artifact-reset`.
+7. Fill `task-workflow/phase-0-artifact-reset.md` with:
    - repo root
    - task file or task source
    - skill path
    - reset evidence
    - copied template evidence
+   - copied lifecycle helper evidence
    - marker before promotion: `phase-0-artifact-reset`
    - confirmation that no implementation files were edited
-7. Fill `task-workflow/progress.md` with the task source, current phase, Phase 0 reset summary, seeded Resume Instructions, seeded Refs for `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, the task attachment location, the `.agents/skills/` location, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and next local action.
-8. After every other Phase 0 gate row passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
-9. Update `task-workflow/progress.md` so current phase and next local action match Phase 1.
-10. Re-open `task-workflow/phase-0-artifact-reset.md`, record marker after promotion as `phase-1-task-research`, then mark the Phase 0 decision.
+8. Fill `task-workflow/progress.md` with the task source, current phase, Phase 0 reset summary, seeded Resume Instructions, seeded Refs for `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, the task attachment location, the `.agents/skills/` location, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and next local action.
+9. After every other Phase 0 gate row passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
+10. Update `task-workflow/progress.md` so current phase and next local action match Phase 1.
+11. Re-open `task-workflow/phase-0-artifact-reset.md`, record marker after promotion as `phase-1-task-research`, then mark the Phase 0 decision.
 
 ## Phase 0 Score
 
@@ -86,6 +90,7 @@ Critical failures:
 - any build output, route typegen, database, migration, test output, or source artifact generated before Phase 1 passes
 - old previous-task `task-workflow/` reused instead of reset
 - missing required artifact file
+- missing `task-workflow/scripts/playwright-lifecycle.mjs`
 - missing or stale `task-workflow/progress.md`
 - Phase 0 artifact does not record the progress-ledger hard resume rule
 - copied templates replaced by loose prose

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Task Workflow Skill"
-  short_description: "Repeatable gated workflow for task execution with managed Playwright lifecycle"
-  default_prompt: "Use $task-workflow-skill to execute the task through artifact-backed phases, gates, managed Playwright verification, E2E coverage, and final signoff."
