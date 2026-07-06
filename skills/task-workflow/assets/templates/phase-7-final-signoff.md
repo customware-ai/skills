@@ -27,10 +27,10 @@
 | Stale/deferred open gaps reconciled | Pending |
 | Extracted `AGENTS.md` development rules followed | Pending |
 | Phase 4/6 test selection and retry ledgers current | Pending |
-| Targeted and affected tests ran before any final full unit/Vitest suite | Pending |
-| Full unit/Vitest suite ran no more than once as final confirmation, or exception recorded | Pending |
+| Targeted and affected tests prove the changed behavior without default full-suite confidence reruns | Pending |
+| Full unit/Vitest suite was skipped or has an explicit exception reason | Pending |
 | No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | Pending |
-| Broad/full test commands, if any, have explicit artifact reasons | Pending |
+| Broad/full test commands, if any, have explicit exception reasons | Pending |
 | No confidence-only or blind identical failing-command rerun is recorded | Pending |
 | Phase 5/6 correct lifecycle-owner evidence current | Pending |
 | Phase 5 responsive-quality evidence current and first-class when UI changed | Pending |
@@ -122,10 +122,10 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | No unresolved broken UI, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | yes | Pending |
 | Phase 6 exact E2E/test command output recorded | yes | Pending |
 | Phase 4/6 test selection and retry ledgers current | yes | Pending |
-| Targeted and affected tests ran before any final full unit/Vitest suite | yes | Pending |
-| No more than one final full unit/Vitest suite run, or exception recorded | yes | Pending |
+| Targeted and affected tests prove the changed behavior without default full-suite confidence reruns | yes | Pending |
+| Full unit/Vitest suite was skipped or has an explicit exception reason | yes | Pending |
 | No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | yes | Pending |
-| Broad/full test commands, if any, have explicit artifact reasons | yes | Pending |
+| Broad/full test commands, if any, have explicit exception reasons | yes | Pending |
 | No confidence-only or blind identical failing-command rerun is recorded | yes | Pending |
 | Phase 5/6 correct lifecycle-owner evidence recorded | yes | Pending |
 | No browser download attempted in Phase 5/6 | yes | Pending |

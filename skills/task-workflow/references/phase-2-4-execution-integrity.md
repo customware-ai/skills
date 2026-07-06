@@ -79,9 +79,9 @@ Phase 4 checks must prove the implementation without turning validation into a b
 - For changed service, query, schema, or pure logic, run targeted unit/service tests first.
 - For changed route, component, store, or UI state logic, run targeted route/component tests first.
 - Then run connected or affected tests that share the changed contracts, fixtures, routes, stores, or user workflow.
-- Run the full unit/Vitest suite once as the final unit-test confirmation, after targeted and affected tests pass.
+- Do not run a full unit/Vitest suite as a default final confidence check. Run it only when the target repo explicitly requires it, the task explicitly asks for it, global/shared infrastructure changed, or targeted/affected output is incomplete or stale.
 - Do not start with a full unit/Vitest suite unless the target repo explicitly requires it or the artifact records a concrete global/shared reason that makes targeted-first impossible.
-- If the final full unit/Vitest suite fails, inspect the failure and rerun the smallest failing or affected command. Do not immediately rerun the full suite.
+- If a full unit/Vitest suite is justified and fails, inspect the failure and rerun the smallest failing or affected command. Do not immediately rerun the full suite.
 - Record every meaningful check/test command in the Phase 4 artifact with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
 - Do not rerun tests only for confidence. Rerun when related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
 - Before rerunning the exact same failing command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs/state/output first, then change the implementation, test, command scope, or diagnostic strategy before running again.
@@ -293,8 +293,8 @@ Critical failures:
 - check failure caused by this task remains unfixed
 - runtime-blocking issue remains
 - test/check command selection is not recorded with scope and reason
-- broad/full test command is run before targeted and affected tests without a concrete artifact reason
-- full unit/Vitest suite is run more than once without a concrete artifact reason from target repo instructions, changed global/shared infrastructure, or incomplete/stale output
+- broad/full test command is run without a concrete artifact reason from target repo instructions, an explicit task request, changed global/shared infrastructure, or incomplete/stale prior output
+- full unit/Vitest suite is run as a default final confidence check instead of an exception-backed command
 - tests are rerun only for confidence, or the same failing test command is rerun blindly without a material change, output-staleness, or diagnostic justification
 - lint/type warnings introduced by this task remain unresolved or undefended
 - unsafe type assertions are used to bypass a contract that should be modeled directly
