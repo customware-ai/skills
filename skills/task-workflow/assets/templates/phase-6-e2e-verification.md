@@ -101,8 +101,9 @@ If matches were found and removed, record the replacement proof here.
 | Correct lifecycle owner managed startup/readiness/cleanup | Pending | Pending |
 | No `playwright install` or browser download attempted | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
-| Affected-spec ledger covers each E2E command; unfiltered full suite was not run after equivalent affected-spec coverage | Pending | Pending |
+| Affected-spec ledger covers each E2E command; unfiltered full suite was not run after equivalent affected-spec coverage or as a state-discovery command | Pending | Pending |
 | Broad/full commands have explicit reason or were not used | Pending | Pending |
+| Suspected pre-existing/order-dependent failures were diagnosed with narrow evidence before any broader command was considered | Pending | Pending |
 | No confidence-only or blind identical failing-command rerun | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 

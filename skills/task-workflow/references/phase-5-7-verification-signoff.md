@@ -224,7 +224,7 @@ Prefer the smallest durable test that protects the behavior:
 - targeted E2E for one affected user flow
 - new, changed, or directly affected E2E specs only by default
 - multi-spec E2E only when multiple changed or adjacent flows must be protected together
-- full Playwright E2E only when explicitly task/repo required, global Playwright/auth/routing/runtime behavior changed, or the affected-spec ledger proves every E2E spec is directly affected; do not rerun it after those specs already passed separately unless related code/config changed or previous output is stale/incomplete
+- full Playwright E2E only when explicitly task/repo required, global Playwright/auth/routing/runtime behavior changed, or the affected-spec ledger proves every E2E spec is directly affected; do not run it to "understand current state," classify a suspected pre-existing/order-dependent failure, or gain confidence after targeted specs passed. Diagnose those cases with the narrow failing spec/test plus logs, DOM/state, trace, screenshot, or persisted data evidence. Do not rerun full E2E after directly affected specs already passed separately unless related code/config changed or previous output is stale/incomplete.
 - broad/full Vitest only when shared contracts, global setup, app-wide behavior, explicit task/repo instructions, or incomplete/stale prior output requires it; do not use it as a default final confidence check and do not repeat it after a clean pass unless related code/config changed or previous output is stale/incomplete
 - update an existing E2E test when the task modifies or extends an existing user workflow
 - add a new E2E test only for a genuinely new workflow or when existing E2E coverage cannot cleanly express the path

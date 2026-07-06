@@ -72,19 +72,21 @@ node task-workflow/scripts/server-probe.mjs \
 
 ## Test Selection And Retry Discipline
 
-Phase 4 checks must prove the implementation without turning validation into a blind retry loop or starting with expensive broad suites.
+Phase 2, Phase 3, and Phase 4 checks must prove the implementation without turning validation into a blind retry loop or starting with expensive broad suites.
 
 - Prefer the smallest useful command that can prove or disprove the current risk.
 - Create or update the needed tests before broad validation.
 - For changed service, query, schema, or pure logic, run targeted unit/service tests first.
 - For changed route, component, store, or UI state logic, run targeted route/component tests first.
 - Then run connected or affected tests that share the changed contracts, fixtures, routes, stores, or user workflow.
+- Phase 3 is primarily inspection and gap closure. It may run a targeted check only after a Phase 3 repair or when one narrow command is needed to prove a specific suspected issue. It must not run full unit/Vitest or full Playwright/E2E as a Phase 3 review tool, global regression check, or "understand current state" command.
 - Do not run a full unit/Vitest suite as a default final confidence check. Run it only when the target repo explicitly requires it, the task explicitly asks for it, global/shared infrastructure changed, or targeted/affected output is incomplete or stale.
 - Do not start with a full unit/Vitest suite unless the target repo explicitly requires it or the artifact records a concrete global/shared reason that makes targeted-first impossible.
 - If a full unit/Vitest suite is justified and fails, inspect the failure and rerun the smallest failing or affected command. Do not immediately rerun the full suite.
 - Record every meaningful check/test command in the Phase 4 artifact with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
 - Do not rerun tests only for confidence. Rerun when related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
 - Before rerunning the exact same failing command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs/state/output first, then change the implementation, test, command scope, or diagnostic strategy before running again.
+- When a failure appears pre-existing, order-dependent, or unrelated, keep the command scope narrow. Use the failing test/spec, logs, DOM/state, trace, screenshot, or persisted data evidence to prove the classification; do not run a full suite just to discover the global state.
 - If a command timed out or returned partial output, preserve or cite the useful output before choosing the next command.
 
 ## Execution Order
@@ -217,12 +219,13 @@ A failing Phase 2 artifact is not a stopping state. Fix the implementation or ar
 3. Review the implementation as if continuing someone else's work.
 4. Find missing routes, missing actions, weak wiring, incomplete state, fragile data flow, untested behavior, stale docs, and accidental scope creep.
 5. Review associated surfaces for consistency. If a UI element was changed in one place, find similar UI elements and update or explicitly defend consistency. If an API/service/schema change enables one flow, verify other callers, routes, mutations, queries, permissions, tests, and docs that share that contract are covered.
-6. Close every gap that can be closed from local context.
-7. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
-8. Update `task-workflow/progress.md` with the second-pass findings, associated-surface review, gap state, a pointer to `task-workflow/phase-3-second-execution.md` for repair-file details, and next local action.
-9. Record a second-pass diff review with file evidence.
-10. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
-11. Update `task-workflow/progress.md` so current phase and next local action match Phase 4.
+6. Use code inspection, artifact review, targeted search, and narrow file/state checks for the second pass. Do not run full unit/Vitest or full Playwright/E2E in Phase 3. If test execution is needed after a Phase 3 repair, run the smallest targeted command that proves that repair; otherwise record the check to run in Phase 4 or Phase 6.
+7. Close every gap that can be closed from local context.
+8. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
+9. Update `task-workflow/progress.md` with the second-pass findings, associated-surface review, gap state, a pointer to `task-workflow/phase-3-second-execution.md` for repair-file details, and next local action.
+10. Record a second-pass diff review with file evidence.
+11. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
+12. Update `task-workflow/progress.md` so current phase and next local action match Phase 4.
 
 Phase 3 is mandatory. It is not a polish pass that can be skipped because Phase 2 seemed complete.
 
@@ -244,6 +247,7 @@ Critical failures:
 - a missing task requirement is found and not fixed or recorded
 - associated UI/API/data surfaces were not reviewed for consistency after a related change
 - a related surface was found inconsistent and neither fixed nor defended with evidence
+- Phase 3 used a broad/full unit, Vitest, or Playwright/E2E suite as a review, confidence, or state-discovery command
 - remaining gap has no reason, owner, or next action
 
 Pass gate:

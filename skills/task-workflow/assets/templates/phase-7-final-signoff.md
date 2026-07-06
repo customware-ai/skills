@@ -26,6 +26,7 @@
 | Open critical gaps resolved | Pending |
 | Stale/deferred open gaps reconciled | Pending |
 | Extracted `AGENTS.md` development rules followed | Pending |
+| Phase 3 did not use broad/full unit, Vitest, or Playwright/E2E as review/confidence/state-discovery commands | Pending |
 | Phase 4/6 test selection and retry ledgers current | Pending |
 | Targeted and affected tests prove the changed behavior without default full-suite confidence reruns | Pending |
 | Full unit/Vitest suite was skipped or has an explicit exception reason | Pending |
@@ -90,7 +91,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
 | Phase 5 responsive quality | Required viewports include mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` when UI changed; evidence shows responsive quality passed as a first-class guarantee with no broken UI, excessive 1080p dead space, or unfinished-looking 2560px empty regions | Pending | Pending |
 | Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log | Pending | Pending |
-| Test selection and retry evidence | Phase 4/6 ledgers explain targeted-first order, affected-spec coverage, final full-suite reason if used, no confidence-only full-suite rerun, rerun basis, outcomes, and next actions | Pending | Pending |
+| Test selection and retry evidence | Phase 3 boundary plus Phase 4/6 ledgers explain targeted-first order, affected-spec coverage, final full-suite reason if used, no confidence-only/state-discovery full-suite run, rerun basis, outcomes, and next actions | Pending | Pending |
 | Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper for custom scripts/browser probes, repo Playwright `webServer` for native Playwright tests when configured; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | Browser install avoidance | No `playwright install` or browser download command was run during Phase 5/6 | Pending | Pending |
 | Changed app/server logging | No `console.*` remains in changed app/server source after Phase 5 | Pending | Pending |
@@ -121,6 +122,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 5 responsive-quality evidence current and first-class when UI changed | yes | Pending |
 | No unresolved broken UI, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | yes | Pending |
 | Phase 6 exact E2E/test command output recorded | yes | Pending |
+| Phase 3 did not use broad/full test commands as review/confidence/state-discovery commands | yes | Pending |
 | Phase 4/6 test selection and retry ledgers current | yes | Pending |
 | Targeted and affected tests prove the changed behavior without default full-suite confidence reruns | yes | Pending |
 | Full unit/Vitest suite was skipped or has an explicit exception reason | yes | Pending |

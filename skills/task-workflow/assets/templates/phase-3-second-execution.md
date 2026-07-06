@@ -18,6 +18,16 @@
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
+## Phase 3 Test Boundary
+
+Phase 3 is an inspection and gap-closure pass. Record any narrow command used to prove a Phase 3 repair. If no command was needed, state that verification is deferred to Phase 4 or Phase 6 with the exact check to run there. Broad/full unit, Vitest, or Playwright/E2E suites are not valid Phase 3 review tools.
+
+| Item | Evidence |
+| --- | --- |
+| No broad/full unit, Vitest, or Playwright/E2E suite used as Phase 3 review/confidence/state-discovery command | Pending |
+| Any Phase 3 test command was targeted to a specific repair or suspected issue | Pending |
+| Suspected pre-existing/order-dependent failures, if any, were classified from narrow logs/state/trace evidence rather than full-suite discovery | Pending |
+
 ## Gate
 
 | Metric | Required | Actual |
@@ -26,6 +36,7 @@
 | Critical second-pass items | all pass | Pending |
 | Associated UI/API/data surfaces reviewed for consistency | yes | Pending |
 | Related surfaces fixed or explicitly defended | yes | Pending |
+| Phase 3 test boundary respected | yes | Pending |
 | No unresolved critical gap | yes | Pending |
 | Remaining non-critical gaps defended | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
