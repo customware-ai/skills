@@ -61,6 +61,7 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 | Tests run as bounded commands, not watchers | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup | Pending | Pending |
+| DB/setup/server lifecycle reused across related E2E commands unless code, test, config, fixture, migration, build input, or lifecycle diagnostics invalidated it | Pending | Pending |
 | Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
 | Manual fallback, if used, captured PID/log/readiness/cleanup evidence under `task-workflow/runtime/`; otherwise N/A | Pending | Pending |
 | Background server cleaned up after tests | Pending | Pending |
@@ -117,6 +118,7 @@ If matches were found and removed, record the replacement proof here.
 | No `playwright install` or browser download attempted | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
 | Connected-spec ledger covers each E2E command; unfiltered full suite was not run without explicit full-E2E task request or concrete exact-task repo requirement | Pending | Pending |
+| No unfiltered full E2E was run after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | Pending | Pending |
 | Broad/full unit commands, if any, were one final sanity check or explicit exception after targeted/connected tests | Pending | Pending |
 | Suspected pre-existing/order-dependent failures were diagnosed with narrow evidence before any broader command was considered | Pending | Pending |
 | No confidence-only or blind identical failing-command rerun | Pending | Pending |
@@ -150,6 +152,7 @@ If matches were found and removed, record the replacement proof here.
 | First E2E command established lifecycle ownership before testing | yes | Pending |
 | Existing repo E2E ran through lifecycle helper by default, or native Playwright exception was recorded before command | yes | Pending |
 | No unowned `nohup`/`disown`/assumed-server path used before diagnosed helper failure | yes | Pending |
+| No repeated DB reset/migrate/seed or server restart between related E2E commands without invalidating state change or lifecycle diagnostic | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 7 next action | yes | Pending |

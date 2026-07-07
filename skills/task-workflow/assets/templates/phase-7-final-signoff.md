@@ -31,9 +31,11 @@
 | Targeted and connected tests prove the changed behavior before any final sanity/exception-full unit command | Pending |
 | Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | Pending |
 | No unfiltered full E2E unless the task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | Pending |
+| No unfiltered full E2E after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | Pending |
 | Broad/full unit commands, if any, have final sanity/explicit exception reasons | Pending |
 | No confidence-only or blind identical failing-command rerun is recorded | Pending |
 | Phase 5/6 correct lifecycle-owner evidence current | Pending |
+| Phase 5/6 reused DB/setup/server lifecycle across related verification commands unless invalidated by changed state or lifecycle diagnostics | Pending |
 | Phase 5 responsive-quality evidence current and first-class when UI changed | Pending |
 | No unresolved broken UI, overlap, clipping, unusable control, accidental horizontal scroll, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | Pending |
 | No Phase 5/6 `playwright install` or browser download attempt | Pending |
@@ -93,6 +95,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log | Pending | Pending |
 | Test selection and retry evidence | Phase 3 boundary plus Phase 4/6 ledgers explain targeted-first order, connected-spec coverage, final full-unit sanity/exception reason if used, no confidence-only/state-discovery full-suite run, rerun basis, outcomes, and next actions | Pending | Pending |
 | Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper by default, repo Playwright `webServer` or manual fallback only with reason/diagnostics; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
+| DB/setup/server reuse evidence | Phase 5/6 does not repeatedly reset DB, rerun migrate/seed, or restart the server between related E2E commands without an invalidating state change or lifecycle diagnostic | Pending | Pending |
 | Browser install avoidance | No `playwright install` or browser download command was run during Phase 5/6 | Pending | Pending |
 | Changed app/server logging | No `console.*` remains in changed app/server source after Phase 5 | Pending | Pending |
 
@@ -127,9 +130,11 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Targeted and connected tests prove the changed behavior before any final sanity/exception-full unit command | yes | Pending |
 | Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
 | No unfiltered full E2E unless the task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | yes | Pending |
+| No unfiltered full E2E after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | yes | Pending |
 | Broad/full unit commands, if any, have final sanity/explicit exception reasons | yes | Pending |
 | No confidence-only or blind identical failing-command rerun is recorded | yes | Pending |
 | Phase 5/6 correct lifecycle-owner evidence recorded | yes | Pending |
+| Phase 5/6 did not repeatedly reset DB/setup/server between related commands without invalidating state change or lifecycle diagnostic | yes | Pending |
 | No browser download attempted in Phase 5/6 | yes | Pending |
 | Artifact integrity review completed and clean | yes | Pending |
 | Quality scorecard all >= 8/10 | yes | Pending |
