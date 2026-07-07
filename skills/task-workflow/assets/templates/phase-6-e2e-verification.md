@@ -30,6 +30,16 @@ Record the exact bounded test command and its exact output. If output is long, w
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
+## Phase 3 Build Reuse
+
+Reuse the Phase 3 passing build unless code, config, package/dependency files, migrations/build inputs, generated assets, stale output, or incompatible verification tooling invalidated it after Phase 3.
+
+| Item | Evidence |
+| --- | --- |
+| Phase 3 build evidence reviewed | Pending |
+| Reused Phase 3 build or rebuild reason | Pending |
+| If rebuilt, command/log and invalidating change | Pending |
+
 ## Test Selection And Retry Ledger
 
 Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first. For E2E, list the connected specs covered. Never run the unfiltered full E2E suite unless the task or target repo explicitly requires it.
@@ -121,6 +131,7 @@ If matches were found and removed, record the replacement proof here.
 | Superficial/flaky one-off checks avoided | yes | Pending |
 | Required tests pass or unrelated failure evidenced | yes | Pending |
 | Exact command output recorded in artifact or cited repo-local log | yes | Pending |
+| Phase 3 build reused, or rebuild reason and output recorded | yes | Pending |
 | Open gaps for E2E/test coverage updated | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Test quality review passed | yes | Pending |

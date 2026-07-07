@@ -2,9 +2,20 @@
 
 ## Commands
 
+Re-open Phase 3 ordered typecheck/lint/build evidence first. Do not rerun typecheck, lint, or build here when Phase 3 evidence is current. If later code/config/package/build-input changes invalidated it, rerun from the first invalidated command and record why.
+
 | Command | Result | Output summary | Follow-up |
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
+
+## Phase 3 Static/Build Evidence Review
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Phase 3 typecheck/lint/build evidence re-opened | Pending | Pending |
+| Phase 3 build evidence still current, or invalidating change identified | Pending | Pending |
+| Any rerun started from first invalidated command, not repeated for confidence | Pending | Pending |
+| Reusable build evidence carried forward for Phase 5/6 | Pending | Pending |
 
 ## Test Selection And Retry Ledger
 
@@ -53,6 +64,7 @@ Changed app/server source must not keep `console.*`. Temporary `console.*` may b
 | Score | >= 28/30 | 0/30 |
 | Critical integrity items | all pass | Pending |
 | Required checks pass or unrelated failure evidenced | yes | Pending |
+| Phase 3 typecheck/lint/build evidence current, or invalidated sequence rerun from first affected command | yes | Pending |
 | Test/check command selection and retry evidence recorded | yes | Pending |
 | Targeted tests ran before broad/full unit or Vitest suite | yes | Pending |
 | Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |

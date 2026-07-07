@@ -18,6 +18,27 @@
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
+## Ordered Static And Build Checkpoint
+
+Run this checkpoint after the second-pass connected-place review and any Phase 3 repairs. Use the repo's native commands. If the repo has no separate command for an item, record the repo-specific reason. If a command fails, fix all issues available from that output as a batch, then rerun that same command before moving to the next row.
+
+| Step | Command | First result and issue groups | Batch fix evidence | Rerun/final result |
+| --- | --- | --- | --- | --- |
+| Typecheck | Pending | Pending | Pending | Pending |
+| Lint | Pending | Pending | Pending | Pending |
+| Build | Pending | Pending | Pending | Pending |
+
+## Reusable Build Evidence
+
+Record the passing build output so later phases can reuse it instead of rebuilding. Rebuild only if code, config, package/dependency files, migrations/build inputs, generated assets, stale output, or incompatible verification tooling invalidates this evidence.
+
+| Item | Evidence |
+| --- | --- |
+| Passing build command and output/log path | Pending |
+| Last source/config/build-input change before build | Pending |
+| Later phases may reuse this build? | Pending |
+| Conditions that would require rebuild | Pending |
+
 ## Phase 3 Test Boundary
 
 Phase 3 is an inspection and gap-closure pass. Record any narrow command used to prove a Phase 3 repair. If no command was needed, state that verification is deferred to Phase 4 or Phase 6 with the exact check to run there. Broad/full unit, Vitest, or Playwright/E2E suites are not valid Phase 3 review tools.
@@ -36,6 +57,9 @@ Phase 3 is an inspection and gap-closure pass. Record any narrow command used to
 | Critical second-pass items | all pass | Pending |
 | Associated UI/API/data surfaces reviewed for consistency | yes | Pending |
 | Related surfaces fixed or explicitly defended | yes | Pending |
+| Ordered typecheck, lint, and build checkpoint passed or missing commands have repo-specific evidence | yes | Pending |
+| Command failures fixed in batches from full output before rerunning | yes | Pending |
+| Reusable build evidence recorded | yes | Pending |
 | Phase 3 test boundary respected | yes | Pending |
 | No unresolved critical gap | yes | Pending |
 | Remaining non-critical gaps defended | yes | Pending |

@@ -14,6 +14,16 @@
 | Runtime command logs | Pending |
 | Browser preflight result | Pending |
 
+## Phase 3 Build Reuse
+
+Reuse the Phase 3 passing build unless code, config, package/dependency files, migrations/build inputs, generated assets, stale output, or incompatible verification tooling invalidated it after Phase 3.
+
+| Item | Evidence |
+| --- | --- |
+| Phase 3 build evidence reviewed | Pending |
+| Reused Phase 3 build or rebuild reason | Pending |
+| If rebuilt, command/log and invalidating change | Pending |
+
 ## Server And Command Discipline
 
 | Check | Status | Evidence |
@@ -114,6 +124,7 @@ If matches were found and removed, record the replacement proof here.
 | No unresolved overlap, clipping, unusable control, accidental horizontal scroll, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | yes | Pending |
 | Screenshot paths exist | yes | Pending |
 | Screenshot existence audit completed for every cited path | yes | Pending |
+| Phase 3 build reused, or rebuild reason and output recorded | yes | Pending |
 | No unresolved critical UI/runtime issue | yes | Pending |
 | Phase 5 failures routed through Phase 4 fix/integrity review and rechecked | yes | Pending |
 | Open gaps for interactive verification updated | yes | Pending |
