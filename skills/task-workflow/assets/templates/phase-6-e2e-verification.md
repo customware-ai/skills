@@ -32,9 +32,9 @@ Record the exact bounded test command and its exact output. If output is long, w
 
 ## Test Selection And Retry Ledger
 
-Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first, and broaden only with a concrete reason. For E2E, list the affected specs covered; do not rerun the unfiltered full suite after equivalent affected-spec coverage already passed.
+Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first. For E2E, list the connected specs covered. Never run the unfiltered full E2E suite unless the task or target repo explicitly requires it.
 
-| Command | Scope: targeted/multi-spec/broad/full | Why this scope and affected specs covered | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
+| Command | Scope: targeted/connected-multi-spec/explicit-full | Why this scope and connected specs covered | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
@@ -42,13 +42,13 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| Correct lifecycle owner recorded: helper for custom scripts/browser probes, repo `webServer` for native Playwright tests when configured | Pending | Pending |
-| Test server, if needed, started by the recorded lifecycle owner with PID/log or repo `webServer` evidence | Pending | Pending |
+| Correct lifecycle owner recorded: helper by default; repo `webServer` or manual fallback only with reason/diagnostics | Pending | Pending |
+| Test server, if needed, started by the helper with PID/log, or by a justified repo `webServer`/fallback owner | Pending | Pending |
 | Server readiness, if needed, checked by the recorded lifecycle owner before E2E execution | Pending | Pending |
 | Browser preflight passed, or mismatch failed early without `playwright install` | Pending | Pending |
 | Tests run as bounded commands, not watchers | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
-| Pre-server setup, if needed, ran through lifecycle `--setup` or repo `webServer` setup | Pending | Pending |
+| Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup | Pending | Pending |
 | Background server cleaned up after tests | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
@@ -101,8 +101,8 @@ If matches were found and removed, record the replacement proof here.
 | Correct lifecycle owner managed startup/readiness/cleanup | Pending | Pending |
 | No `playwright install` or browser download attempted | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
-| Affected-spec ledger covers each E2E command; unfiltered full suite was not run after equivalent affected-spec coverage or as a state-discovery command | Pending | Pending |
-| Broad/full commands have explicit reason or were not used | Pending | Pending |
+| Connected-spec ledger covers each E2E command; unfiltered full suite was not run without explicit task/repo requirement | Pending | Pending |
+| Broad/full unit commands, if any, were one final sanity check or explicit exception after targeted/connected tests | Pending | Pending |
 | Suspected pre-existing/order-dependent failures were diagnosed with narrow evidence before any broader command was considered | Pending | Pending |
 | No confidence-only or blind identical failing-command rerun | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
@@ -125,8 +125,8 @@ If matches were found and removed, record the replacement proof here.
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Test quality review passed | yes | Pending |
 | Test selection and retry ledger complete | yes | Pending |
-| Broad/full commands have explicit reason or were not used | yes | Pending |
-| No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | yes | Pending |
+| Broad/full unit commands were skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
+| No unfiltered full E2E unless task/repo explicitly required it | yes | Pending |
 | No confidence-only or blind identical failing-command rerun | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |

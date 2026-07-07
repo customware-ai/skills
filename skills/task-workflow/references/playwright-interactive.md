@@ -6,12 +6,13 @@ Use this reference in Phase 5.
 
 ## Rules
 
-- Run Phase 5 custom browser scripts through `task-workflow/scripts/playwright-lifecycle.mjs`.
-- Run native `pnpm exec playwright test ...` through the repo's Playwright `webServer` lifecycle when that config exists, unless the config is explicitly disabled or made reuse-safe for a helper-owned server.
+- Run Phase 5 browser scripts through `task-workflow/scripts/playwright-lifecycle.mjs`.
+- Use the lifecycle helper as the default owner for Playwright/app-server startup. For native `pnpm exec playwright test ...`, use the helper when the repo config can avoid starting a second server or can target the helper-owned server; otherwise record why the repo Playwright `webServer` must own that command.
 - Pass the repo's normal local command to the lifecycle helper with `--server` for helper-owned custom scripts.
 - Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
 - Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts.
-- If the server appears stale, wrong, or on the wrong port, inspect the helper runtime logs/readiness output or repo Playwright `webServer` output first; restart through the lifecycle owner instead of switching to broad process cleanup.
+- If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management.
+- If the server appears stale, wrong, or on the wrong port, inspect helper runtime logs/readiness output first; use repo Playwright `webServer` output only for commands where `webServer` owns lifecycle. Restart through the lifecycle owner instead of switching to broad process cleanup.
 - Do not run `playwright install` or any browser download command. The lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when the cache exists and fails early on a revision mismatch.
 - Prefer `127.0.0.1` over `localhost`.
 - Write scripts under `task-workflow/playwright/`.

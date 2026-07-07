@@ -60,15 +60,15 @@ Interactive scripts and E2E tests must wait on user-visible state or app signals
 
 Verification phases must not stall on foreground servers or watchers.
 
-- Use `task-workflow/scripts/playwright-lifecycle.mjs` for custom Playwright scripts and browser probes that need app startup, readiness, Playwright browser preflight, bounded command execution, output capture, and cleanup.
-- When running native `pnpm exec playwright test ...` and the repo's Playwright config has a `webServer`, let that repo-owned `webServer` own startup, readiness, and cleanup unless the config is explicitly disabled or made reuse-safe for a helper-owned server.
+- Default to `task-workflow/scripts/playwright-lifecycle.mjs` for Playwright scripts, browser probes, app-server startup, readiness, Playwright browser preflight, bounded command execution, output capture, and cleanup.
+- When running native `pnpm exec playwright test ...`, use the helper as the lifecycle owner when the repo config can avoid starting a second server or can target the helper-owned server. Use the repo Playwright `webServer` as owner only when that is the clean repo-supported lifecycle for the specific command, and record why.
 - The helper runs each `--setup` command before server startup with bounded timeout and `task-workflow/runtime/setup-*.log`, starts the app server in the background, records `task-workflow/runtime/server.pid`, writes `task-workflow/runtime/server.log`, polls the supplied readiness URL, runs each `--run` command with bounded timeout and `task-workflow/runtime/run-*.log`, and stops the server process group after the run unless `--keep-server` is explicitly used and justified.
 - Do not assume a backgrounded process started successfully just because the command returned. A server is ready only after the helper records a successful readiness result.
-- Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."` for helper-owned runs, or use a repo-owned Playwright `webServer` lifecycle for native Playwright tests and record that evidence.
+- Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."` for helper-owned runs. If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management.
 - Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when present and fails early when the project Playwright version does not match the sandbox browser cache.
 - Do not leave `pnpm dev`, `npm run dev`, `vite`, `next dev`, test watchers, or similar long-lived commands as the active foreground tool call.
 - If the server or test command hangs, stop it, capture the log/error evidence, update the current phase artifact or `open-gaps.md`, and continue with the smallest local recovery path.
-- If the server appears stale, wrong, or on the wrong port, diagnose through the lifecycle owner: helper runtime logs/readiness for custom scripts, or Playwright `webServer` output/config for native tests. Do not switch to broad process cleanup unless PID/port cleanup is impossible and the artifact records the recovery reason.
+- If the server appears stale, wrong, or on the wrong port, diagnose through the lifecycle owner: helper runtime logs/readiness first, then repo Playwright `webServer` output/config only for commands where `webServer` owns lifecycle. Do not switch to broad process cleanup unless PID/port cleanup is impossible and the artifact records the recovery reason.
 - Bash readiness polling inside the lifecycle helper is acceptable. The fixed-wait ban applies to Playwright scripts and E2E tests under `task-workflow/playwright` or `tests/e2e`, not the helper's bounded readiness loop.
 
 Example helper shape:
@@ -155,8 +155,8 @@ Critical failures:
 - standalone Playwright script not created
 - app not launched through the repo's local command
 - app server launched as an unbounded foreground command
-- lifecycle helper not used for Phase 5 app startup and script execution when no repo-owned Playwright `webServer` lifecycle applies
-- manual cleanup, fixed `sleep`, DB-delete, or server-start command chain used instead of the lifecycle helper
+- lifecycle helper not used for Phase 5 app startup and script execution, except after recorded helper failure and a justified fallback
+- manual cleanup, fixed `sleep`, DB-delete, or server-start command chain used instead of the lifecycle helper before a diagnosed helper failure
 - `playwright install` or equivalent browser download attempted during verification
 - server PID/log/readiness proof not recorded
 - main touched route or flow not exercised
@@ -201,11 +201,11 @@ If this gate fails, stay in Phase 5.
 4. Update existing E2E tests first when the new or changed behavior extends an existing workflow or could affect existing functionality.
 5. Add a new E2E test only when the task introduces a genuinely new workflow that cannot be cleanly covered by an existing E2E test.
 6. Add or update lower-level tests when they are the better fit for non-UI logic.
-7. Select the smallest useful test command that proves the changed behavior and affected existing behavior. Start with new, changed, or directly affected E2E specs and maintain an affected-spec ledger. Do not run the unfiltered full E2E suite unless the task explicitly asks for it, the target repo instructions require it, or the ledger proves every E2E spec is directly affected; if targeted or multi-spec commands already ran those specs and no related code/config changed, that is the evidence and the unfiltered suite must not be rerun only for confidence.
+7. Select the smallest useful test command that proves the changed behavior and connected existing behavior. Start with new, changed, or directly connected E2E specs and maintain a connected-spec ledger. Never run the unfiltered full E2E suite unless the task explicitly asks for it or the target repo instructions require it; if targeted or multi-spec commands already ran the connected specs and no related code/config changed, that is the evidence.
 8. Record every meaningful test command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
 9. Do not rerun tests only for confidence. Rerun when related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
 10. Before rerunning the exact same failing command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, test, command scope, or diagnostic strategy before running again.
-11. Run the existing, updated, new, and affected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` for custom Playwright scripts/browser probes. Use native Playwright with the repo `webServer` when the repo config owns lifecycle. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command.
+11. Run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup. Use native Playwright with the repo `webServer` only when that is the clean repo-supported lifecycle for the specific command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command.
 12. Fix failures and rerun with the smallest command that can prove the fix.
 13. Record the exact command output for every required E2E/test run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`.
 14. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
@@ -222,10 +222,10 @@ Prefer the smallest durable test that protects the behavior:
 
 - targeted unit/component tests for non-UI logic or isolated UI behavior
 - targeted E2E for one affected user flow
-- new, changed, or directly affected E2E specs only by default
+- new, changed, or directly connected E2E specs only by default
 - multi-spec E2E only when multiple changed or adjacent flows must be protected together
-- full Playwright E2E only when explicitly task/repo required, global Playwright/auth/routing/runtime behavior changed, or the affected-spec ledger proves every E2E spec is directly affected; do not run it to "understand current state," classify a suspected pre-existing/order-dependent failure, or gain confidence after targeted specs passed. Diagnose those cases with the narrow failing spec/test plus logs, DOM/state, trace, screenshot, or persisted data evidence. Do not rerun full E2E after directly affected specs already passed separately unless related code/config changed or previous output is stale/incomplete.
-- broad/full Vitest only when shared contracts, global setup, app-wide behavior, explicit task/repo instructions, or incomplete/stale prior output requires it; do not use it as a default final confidence check and do not repeat it after a clean pass unless related code/config changed or previous output is stale/incomplete
+- full Playwright E2E only when explicitly task/repo required; do not run it for confidence, state discovery, suspected pre-existing/order-dependent failures, or because many specs appear relevant. Diagnose those cases with the narrow failing spec/test plus logs, DOM/state, trace, screenshot, or persisted data evidence.
+- broad/full unit or Vitest only as one final sanity check after targeted and connected tests pass, or when shared contracts, global setup, app-wide behavior, explicit task/repo instructions, or incomplete/stale prior output requires it. Do not start with it and do not repeat it after a clean pass unless related code/config changed or previous output is stale/incomplete.
 - update an existing E2E test when the task modifies or extends an existing user workflow
 - add a new E2E test only for a genuinely new workflow or when existing E2E coverage cannot cleanly express the path
 - E2E tests for user-visible multi-step flows
@@ -261,9 +261,9 @@ Critical failures:
 - tests are primarily superficial checks such as color, CSS class, incidental copy, or button existence without proving feature behavior
 - tests depend on brittle implementation details instead of user-visible or persisted outcomes
 - test added but not run
-- Playwright/E2E command uses manual cleanup, fixed `sleep`, DB-delete, or server-start command chains instead of lifecycle `--setup` plus managed server/run steps for helper-owned runs, or repo Playwright `webServer` for native tests
-- unfiltered full Playwright/E2E suite is run without an explicit task request, target repo requirement, or affected-spec ledger proof that every E2E spec is directly affected
-- broad/full test command is run without a concrete artifact reason
+- Playwright/E2E command uses manual cleanup, fixed `sleep`, DB-delete, or server-start command chains instead of lifecycle `--setup` plus managed server/run steps before a diagnosed helper failure
+- unfiltered full Playwright/E2E suite is run without an explicit task request or target repo requirement
+- broad/full unit or Vitest command is run without a concrete artifact reason
 - tests are rerun only for confidence, or the same failing test command is rerun blindly without material implementation, test, config, environment, output-staleness, or diagnostic reason
 - `playwright install` or equivalent browser download attempted during E2E verification
 - relevant test failure caused by this task remains unresolved

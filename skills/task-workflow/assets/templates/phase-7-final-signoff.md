@@ -28,10 +28,10 @@
 | Extracted `AGENTS.md` development rules followed | Pending |
 | Phase 3 did not use broad/full unit, Vitest, or Playwright/E2E as review/confidence/state-discovery commands | Pending |
 | Phase 4/6 test selection and retry ledgers current | Pending |
-| Targeted and affected tests prove the changed behavior without default full-suite confidence reruns | Pending |
-| Full unit/Vitest suite was skipped or has an explicit exception reason | Pending |
-| No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | Pending |
-| Broad/full test commands, if any, have explicit exception reasons | Pending |
+| Targeted and connected tests prove the changed behavior before any final sanity/exception-full unit command | Pending |
+| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | Pending |
+| No unfiltered full E2E unless task/repo explicitly required it | Pending |
+| Broad/full unit commands, if any, have final sanity/explicit exception reasons | Pending |
 | No confidence-only or blind identical failing-command rerun is recorded | Pending |
 | Phase 5/6 correct lifecycle-owner evidence current | Pending |
 | Phase 5 responsive-quality evidence current and first-class when UI changed | Pending |
@@ -91,8 +91,8 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
 | Phase 5 responsive quality | Required viewports include mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` when UI changed; evidence shows responsive quality passed as a first-class guarantee with no broken UI, excessive 1080p dead space, or unfinished-looking 2560px empty regions | Pending | Pending |
 | Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log | Pending | Pending |
-| Test selection and retry evidence | Phase 3 boundary plus Phase 4/6 ledgers explain targeted-first order, affected-spec coverage, final full-suite reason if used, no confidence-only/state-discovery full-suite run, rerun basis, outcomes, and next actions | Pending | Pending |
-| Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper for custom scripts/browser probes, repo Playwright `webServer` for native Playwright tests when configured; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
+| Test selection and retry evidence | Phase 3 boundary plus Phase 4/6 ledgers explain targeted-first order, connected-spec coverage, final full-unit sanity/exception reason if used, no confidence-only/state-discovery full-suite run, rerun basis, outcomes, and next actions | Pending | Pending |
+| Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper by default, repo Playwright `webServer` or manual fallback only with reason/diagnostics; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | Browser install avoidance | No `playwright install` or browser download command was run during Phase 5/6 | Pending | Pending |
 | Changed app/server logging | No `console.*` remains in changed app/server source after Phase 5 | Pending | Pending |
 
@@ -124,10 +124,10 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 6 exact E2E/test command output recorded | yes | Pending |
 | Phase 3 did not use broad/full test commands as review/confidence/state-discovery commands | yes | Pending |
 | Phase 4/6 test selection and retry ledgers current | yes | Pending |
-| Targeted and affected tests prove the changed behavior without default full-suite confidence reruns | yes | Pending |
-| Full unit/Vitest suite was skipped or has an explicit exception reason | yes | Pending |
-| No unfiltered full E2E unless task/repo required or affected ledger proves every spec is directly affected | yes | Pending |
-| Broad/full test commands, if any, have explicit exception reasons | yes | Pending |
+| Targeted and connected tests prove the changed behavior before any final sanity/exception-full unit command | yes | Pending |
+| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
+| No unfiltered full E2E unless task/repo explicitly required it | yes | Pending |
+| Broad/full unit commands, if any, have final sanity/explicit exception reasons | yes | Pending |
 | No confidence-only or blind identical failing-command rerun is recorded | yes | Pending |
 | Phase 5/6 correct lifecycle-owner evidence recorded | yes | Pending |
 | No browser download attempted in Phase 5/6 | yes | Pending |

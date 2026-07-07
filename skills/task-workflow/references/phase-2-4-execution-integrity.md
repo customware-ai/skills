@@ -75,12 +75,12 @@ node task-workflow/scripts/server-probe.mjs \
 Phase 2, Phase 3, and Phase 4 checks must prove the implementation without turning validation into a blind retry loop or starting with expensive broad suites.
 
 - Prefer the smallest useful command that can prove or disprove the current risk.
-- Create or update the needed tests before broad validation.
-- For changed service, query, schema, or pure logic, run targeted unit/service tests first.
-- For changed route, component, store, or UI state logic, run targeted route/component tests first.
-- Then run connected or affected tests that share the changed contracts, fixtures, routes, stores, or user workflow.
+- Create or update tests for the changed behavior before broad validation.
+- For changed service, query, schema, or pure logic, run the new or updated targeted unit/service tests first.
+- For changed route, component, store, or UI state logic, run the new or updated targeted route/component tests first.
+- Then run connected tests that share the changed contracts, fixtures, routes, stores, or user workflow.
 - Phase 3 is primarily inspection and gap closure. It may run a targeted check only after a Phase 3 repair or when one narrow command is needed to prove a specific suspected issue. It must not run full unit/Vitest or full Playwright/E2E as a Phase 3 review tool, global regression check, or "understand current state" command.
-- Do not run a full unit/Vitest suite as a default final confidence check. Run it only when the target repo explicitly requires it, the task explicitly asks for it, global/shared infrastructure changed, or targeted/affected output is incomplete or stale.
+- A broad/full unit or Vitest suite may be used only as one final sanity check after targeted and connected tests pass, or when the target repo explicitly requires it, the task explicitly asks for it, global/shared infrastructure changed, or targeted/connected output is incomplete or stale.
 - Do not start with a full unit/Vitest suite unless the target repo explicitly requires it or the artifact records a concrete global/shared reason that makes targeted-first impossible.
 - If a full unit/Vitest suite is justified and fails, inspect the failure and rerun the smallest failing or affected command. Do not immediately rerun the full suite.
 - Record every meaningful check/test command in the Phase 4 artifact with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
@@ -297,8 +297,8 @@ Critical failures:
 - check failure caused by this task remains unfixed
 - runtime-blocking issue remains
 - test/check command selection is not recorded with scope and reason
-- broad/full test command is run without a concrete artifact reason from target repo instructions, an explicit task request, changed global/shared infrastructure, or incomplete/stale prior output
-- full unit/Vitest suite is run as a default final confidence check instead of an exception-backed command
+- broad/full unit or Vitest command is run before targeted and connected tests, repeated after a clean pass, or run without a concrete artifact reason
+- full unit/Vitest suite is run as anything other than one final sanity check after targeted and connected tests pass, or an explicit task/repo/global exception
 - tests are rerun only for confidence, or the same failing test command is rerun blindly without a material change, output-staleness, or diagnostic justification
 - lint/type warnings introduced by this task remain unresolved or undefended
 - unsafe type assertions are used to bypass a contract that should be modeled directly

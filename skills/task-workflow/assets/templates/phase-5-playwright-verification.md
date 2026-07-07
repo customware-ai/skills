@@ -18,13 +18,13 @@
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| Correct lifecycle owner recorded: helper for custom scripts/browser probes, repo `webServer` for native Playwright tests when configured | Pending | Pending |
+| Correct lifecycle owner recorded: helper by default; repo `webServer` or manual fallback only with reason/diagnostics | Pending | Pending |
 | App server started by the recorded lifecycle owner, not as an unbounded foreground command | Pending | Pending |
 | Server readiness checked by the recorded lifecycle owner before browser interaction | Pending | Pending |
 | Browser preflight passed, or mismatch failed early without `playwright install` | Pending | Pending |
 | Playwright scripts run as bounded helper commands | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
-| Pre-server setup, if needed, ran through lifecycle `--setup` or repo `webServer` setup without manual chain bundling | Pending | Pending |
+| Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup without manual chain bundling | Pending | Pending |
 | Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
