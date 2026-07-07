@@ -2,7 +2,7 @@
 
 ## Commands
 
-Re-open Phase 3 ordered typecheck/lint/build evidence first. Do not rerun typecheck, lint, or build here when Phase 3 evidence is current. If later code/config/package/build-input changes invalidated it, rerun from the first invalidated command and record why.
+Re-open Phase 3 ordered typecheck/lint/build evidence first. Do not rerun typecheck, lint, or build here when Phase 3 evidence is current. If later code/config/package/build-input changes invalidated it, rerun from the first invalidated command and record why. Starting Phase 4/5/6/7, preparing E2E, or doing final signoff is not an invalidation reason.
 
 | Command | Result | Output summary | Follow-up |
 | --- | --- | --- | --- |
@@ -15,6 +15,7 @@ Re-open Phase 3 ordered typecheck/lint/build evidence first. Do not rerun typech
 | Phase 3 typecheck/lint/build evidence re-opened | Pending | Pending |
 | Phase 3 build evidence still current, or invalidating change identified | Pending | Pending |
 | Any rerun started from first invalidated command, not repeated for confidence | Pending | Pending |
+| No build rerun was done only for phase prep, E2E prep, or final confirmation | Pending | Pending |
 | Reusable build evidence carried forward for Phase 5/6 | Pending | Pending |
 
 ## Test Selection And Retry Ledger

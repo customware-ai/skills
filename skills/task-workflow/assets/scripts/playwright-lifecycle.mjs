@@ -22,9 +22,10 @@ Common options:
   --force-restart                Ignore an already healthy ready URL and start this run's server.
   --keep-server                  Leave this run's captured server process running.
 
-Use this helper for custom Playwright scripts/browser probes. If running native
-pnpm exec playwright test and the repo config has webServer, let Playwright own
-startup/readiness/cleanup unless that config is disabled or reuse-safe.`);
+Use this helper for custom Playwright scripts, browser probes, and repo E2E
+commands. Put "pnpm exec playwright test ..." inside --run by default. Use repo
+Playwright webServer ownership only when this helper cannot own the server for
+that exact command and the artifact records the reason before running it.`);
 }
 
 function parseArgs(argv) {

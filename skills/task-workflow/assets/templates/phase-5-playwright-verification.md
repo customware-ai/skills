@@ -16,7 +16,7 @@
 
 ## Phase 3 Build Reuse
 
-Reuse the Phase 3 passing build unless code, config, package/dependency files, migrations/build inputs, generated assets, stale output, or incompatible verification tooling invalidated it after Phase 3.
+Reuse the Phase 3 passing build unless code, config, package/dependency files, migrations/build inputs, generated assets, stale output, or incompatible verification tooling invalidated it after Phase 3. Do not rebuild only because Phase 5 is starting or a server command needs a production bundle.
 
 | Item | Evidence |
 | --- | --- |
@@ -28,7 +28,7 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| Correct lifecycle owner recorded: helper by default; repo `webServer` or manual fallback only with reason/diagnostics | Pending | Pending |
+| Correct lifecycle owner recorded before command: helper by default; repo `webServer` or manual fallback only with reason/diagnostics made before the command | Pending | Pending |
 | App server started by the recorded lifecycle owner, not as an unbounded foreground command | Pending | Pending |
 | Server readiness checked by the recorded lifecycle owner before browser interaction | Pending | Pending |
 | Browser preflight passed, or mismatch failed early without `playwright install` | Pending | Pending |

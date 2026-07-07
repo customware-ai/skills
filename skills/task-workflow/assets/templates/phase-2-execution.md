@@ -30,7 +30,8 @@ Update this table immediately after each small work packet. Do not leave this ta
 | Any skipped or deferred packet was recorded in `open-gaps.md` immediately | Pending | Pending |
 | Gate-relevant writes were read back or verified in diff before relying on them | Pending | Pending |
 | Failed/invalid/uncertain write results were repaired before continuing | Pending | Pending |
-| Routine typecheck, lint, and build were deferred to Phase 3 ordered checkpoint unless a narrow command was needed to unblock a specific packet | Pending | Pending |
+| Routine typecheck, lint, build, and combined check commands such as `pnpm run check` were deferred to Phase 3 unless a concrete compile/type blocker required them | Pending | Pending |
+| Phase 2 tests, if any, were limited to the new or updated targeted test file for the current packet; no broad unit directory commands were run | Pending | Pending |
 | Pre-Phase-5 API/runtime server probes used `task-workflow/scripts/server-probe.mjs`, or none were needed | Pending | Pending |
 | No Phase 5 interactive Playwright or Phase 6 E2E creation was used as a Phase 2 substitute | Pending | Pending |
 | No long-lived server, watcher, or interactive command remains running in the foreground | Pending | Pending |
@@ -43,7 +44,7 @@ Update this table immediately after each small work packet. Do not leave this ta
 
 ## Checks During Execution
 
-Phase 2 evidence must stay strict, but routine typecheck, lint, and build belong to Phase 3 after the connected-place sweep. Record only narrow checks that were needed to unblock or prove a specific implementation packet.
+Phase 2 evidence must stay strict, but routine typecheck, lint, build, and combined check commands such as `pnpm run check` belong to Phase 3 after the connected-place sweep. Record only narrow checks that were needed to unblock or prove a specific implementation packet. For tests, Phase 2 may run only the new or updated targeted test file needed for the current packet; broad unit directory commands belong later only when justified.
 
 | Check | Result | Notes |
 | --- | --- | --- |
@@ -60,7 +61,8 @@ Phase 2 evidence must stay strict, but routine typecheck, lint, and build belong
 | Execution log was updated incrementally during implementation | yes | Pending |
 | Gate-relevant writes have readback or diff evidence | yes | Pending |
 | No failed write/tool result was ignored | yes | Pending |
-| Routine typecheck/lint/build not repeated after small edits; narrow unblock checks only if needed | yes | Pending |
+| Routine typecheck/lint/build/combined-check not run in Phase 2 without a recorded compile/type blocker | yes | Pending |
+| No broad unit directory command run in Phase 2 | yes | Pending |
 | No unbounded foreground command remains active | yes | Pending |
 | Phase 5/6 work not used as Phase 2 substitute | yes | Pending |
 | No obvious unfinished markers | yes | Pending |

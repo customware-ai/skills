@@ -32,7 +32,7 @@ Record the exact bounded test command and its exact output. If output is long, w
 
 ## Phase 3 Build Reuse
 
-Reuse the Phase 3 passing build unless code, config, package/dependency files, migrations/build inputs, generated assets, stale output, or incompatible verification tooling invalidated it after Phase 3.
+Reuse the Phase 3 passing build unless code, config, package/dependency files, migrations/build inputs, generated assets, stale output, or incompatible verification tooling invalidated it after Phase 3. Do not rebuild only because Phase 6 is starting, E2E needs a production bundle, or final confidence would feel safer.
 
 | Item | Evidence |
 | --- | --- |
@@ -42,9 +42,9 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 
 ## Test Selection And Retry Ledger
 
-Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first. For E2E, list the connected specs covered. Never run the unfiltered full E2E suite unless the task or target repo explicitly requires it.
+Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first. For E2E, list the connected specs covered. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task. A repo having one large E2E file, a Playwright `webServer`, or generic "run tests" guidance is not enough.
 
-| Command | Scope: targeted/connected-multi-spec/explicit-full | Why this scope and connected specs covered | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
+| Command | Scope: targeted/connected-multi-spec/explicit-full | Why this scope and connected specs covered; exact full-suite requirement if explicit-full | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
@@ -52,7 +52,8 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| Correct lifecycle owner recorded: helper by default; repo `webServer` or manual fallback only with reason/diagnostics | Pending | Pending |
+| Correct lifecycle owner recorded before command: helper by default; repo `webServer` or manual fallback only with reason/diagnostics made before the command | Pending | Pending |
+| Existing repo E2E command was run through helper `--run`, or repo `webServer` ownership exception was recorded before native Playwright | Pending | Pending |
 | Test server, if needed, started by the helper with PID/log, or by a justified repo `webServer`/fallback owner | Pending | Pending |
 | Server readiness, if needed, checked by the recorded lifecycle owner before E2E execution | Pending | Pending |
 | Browser preflight passed, or mismatch failed early without `playwright install` | Pending | Pending |
@@ -111,7 +112,7 @@ If matches were found and removed, record the replacement proof here.
 | Correct lifecycle owner managed startup/readiness/cleanup | Pending | Pending |
 | No `playwright install` or browser download attempted | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
-| Connected-spec ledger covers each E2E command; unfiltered full suite was not run without explicit task/repo requirement | Pending | Pending |
+| Connected-spec ledger covers each E2E command; unfiltered full suite was not run without explicit full-E2E task request or concrete exact-task repo requirement | Pending | Pending |
 | Broad/full unit commands, if any, were one final sanity check or explicit exception after targeted/connected tests | Pending | Pending |
 | Suspected pre-existing/order-dependent failures were diagnosed with narrow evidence before any broader command was considered | Pending | Pending |
 | No confidence-only or blind identical failing-command rerun | Pending | Pending |
@@ -137,11 +138,12 @@ If matches were found and removed, record the replacement proof here.
 | Test quality review passed | yes | Pending |
 | Test selection and retry ledger complete | yes | Pending |
 | Broad/full unit commands were skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
-| No unfiltered full E2E unless task/repo explicitly required it | yes | Pending |
+| No unfiltered full E2E unless task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | yes | Pending |
 | No confidence-only or blind identical failing-command rerun | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
+| Existing repo E2E ran through lifecycle helper by default, or native Playwright exception was recorded before command | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 7 next action | yes | Pending |

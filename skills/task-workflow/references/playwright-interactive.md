@@ -7,7 +7,7 @@ Use this reference in Phase 5.
 ## Rules
 
 - Run Phase 5 browser scripts through `task-workflow/scripts/playwright-lifecycle.mjs`.
-- Use the lifecycle helper as the default owner for Playwright/app-server startup. For native `pnpm exec playwright test ...`, use the helper when the repo config can avoid starting a second server or can target the helper-owned server; otherwise record why the repo Playwright `webServer` must own that command.
+- Use the lifecycle helper as the default owner for Playwright/app-server startup, including repo E2E commands when Phase 6 runs them. Put `pnpm exec playwright test ...` inside helper `--run` by default. Use repo Playwright `webServer` ownership only when the helper cannot own the server for that exact command, and record the reason before running it.
 - Pass the repo's normal local command to the lifecycle helper with `--server` for helper-owned custom scripts.
 - Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
 - Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts.

@@ -30,7 +30,7 @@
 | Phase 4/6 test selection and retry ledgers current | Pending |
 | Targeted and connected tests prove the changed behavior before any final sanity/exception-full unit command | Pending |
 | Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | Pending |
-| No unfiltered full E2E unless task/repo explicitly required it | Pending |
+| No unfiltered full E2E unless the task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | Pending |
 | Broad/full unit commands, if any, have final sanity/explicit exception reasons | Pending |
 | No confidence-only or blind identical failing-command rerun is recorded | Pending |
 | Phase 5/6 correct lifecycle-owner evidence current | Pending |
@@ -126,7 +126,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 4/6 test selection and retry ledgers current | yes | Pending |
 | Targeted and connected tests prove the changed behavior before any final sanity/exception-full unit command | yes | Pending |
 | Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
-| No unfiltered full E2E unless task/repo explicitly required it | yes | Pending |
+| No unfiltered full E2E unless the task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | yes | Pending |
 | Broad/full unit commands, if any, have final sanity/explicit exception reasons | yes | Pending |
 | No confidence-only or blind identical failing-command rerun is recorded | yes | Pending |
 | Phase 5/6 correct lifecycle-owner evidence recorded | yes | Pending |
