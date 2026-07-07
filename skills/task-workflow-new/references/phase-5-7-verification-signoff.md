@@ -129,9 +129,11 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
   --setup "pnpm run db:migrate" \
   --server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
   --ready-url "http://127.0.0.1:4444" \
-  --run "pnpm exec playwright test tests/e2e/changed-flow.spec.ts --reporter=line" \
+  --run "pnpm exec playwright test tests/e2e/changed-flow.spec.ts --grep \"exact new or changed test title\" --reporter=line" \
   --command-timeout-ms 30000
 ```
+
+If a test title is known, `--grep` is the default. Running the whole spec file is broader than needed and needs a concrete connected-coverage reason recorded before the command.
 ## Phase 5: Interactive Playwright Verification
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
@@ -245,7 +247,7 @@ If this gate fails, stay in Phase 5.
 4. Update existing E2E tests first when the new or changed behavior extends an existing workflow or could affect existing functionality.
 5. Add a new E2E test only when the task introduces a genuinely new workflow that cannot be cleanly covered by an existing E2E test.
 6. Add or update lower-level tests when they are the better fit for non-UI logic.
-7. Select the smallest useful test command that proves the changed behavior and connected existing behavior. Start with new, changed, or directly connected E2E specs and maintain a connected-spec ledger. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; "target repo instructions" must name full E2E or an equivalent all-spec command, not merely say to run tests. If targeted or multi-spec commands already ran the connected specs and no related code, test, config, fixture, migration, or build input changed, that is the evidence; do not add a full E2E run for final confidence, final signoff, state discovery, or reviewer-satisfaction.
+7. Select the smallest useful test command that proves the changed behavior and connected existing behavior. If a new or changed E2E test title exists, run that exact test first with `--grep`; running the whole spec file is already broader than needed and needs a concrete connected-coverage reason recorded before the command. Maintain a connected-spec ledger. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; "target repo instructions" must name full E2E or an equivalent all-spec command, not merely say to run tests. If targeted or multi-spec commands already ran the connected specs and no related code, test, config, fixture, migration, or build input changed, that is the evidence; do not add a full E2E run for final confidence, final signoff, state discovery, or reviewer-satisfaction.
 8. Record every meaningful test command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
 9. Do not rerun tests only for confidence. Rerun when related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
 10. Before rerunning the exact same failing command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, test, command scope, or diagnostic strategy before running again.

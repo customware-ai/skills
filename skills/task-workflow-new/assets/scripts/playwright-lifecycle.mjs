@@ -17,8 +17,8 @@ Common options:
   --run "command"                Run bounded verification command after readiness; repeatable.
   --env NAME=value               Add an environment variable; repeatable.
   --ready-text "text"            Require response body text during readiness polling.
-  --ready-timeout-ms 30000       Startup readiness timeout.
-  --command-timeout-ms 300000    Per-run command timeout.
+  --ready-timeout-ms 20000       Startup readiness timeout. Max 30000 without a recorded reason.
+  --command-timeout-ms 20000     Per-run command timeout. Use 30000 for first targeted E2E.
   --force-restart                Ignore an already healthy ready URL and start this run's server.
   --keep-server                  Leave this run's captured server process running.
 
@@ -35,9 +35,9 @@ function parseArgs(argv) {
 		env: [],
 		cwd: process.cwd(),
 		runtimeDir: 'task-workflow/runtime',
-		setupTimeoutMs: 120000,
-		readyTimeoutMs: 120000,
-		commandTimeoutMs: 300000,
+		setupTimeoutMs: 60000,
+		readyTimeoutMs: 20000,
+		commandTimeoutMs: 20000,
 		keepServer: false,
 		forceRestart: false
 	};

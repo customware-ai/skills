@@ -146,6 +146,7 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | First E2E command established lifecycle ownership before testing | Pending | Pending |
 | No `playwright install` or browser download attempted | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
+| Exact new/changed test title used with `--grep` first when available, or concrete connected-coverage reason for whole-spec command recorded before the command | Pending | Pending |
 | Connected-spec ledger covers each E2E command; unfiltered full suite was not run without explicit full-E2E task request or concrete exact-task repo requirement | Pending | Pending |
 | No unfiltered full E2E was run after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | Pending | Pending |
 | Broad/full unit commands, if any, were one final sanity check or explicit exception after targeted/connected tests | Pending | Pending |
@@ -175,6 +176,7 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Test quality review passed | yes | Pending |
 | Test selection and retry ledger complete | yes | Pending |
+| Exact new/changed test title used with `--grep` first when available, or concrete connected-coverage reason for whole-spec command recorded before the command | yes | Pending |
 | Broad/full unit commands were skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
 | No unfiltered full E2E unless task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | yes | Pending |
 | No confidence-only or blind identical failing-command rerun | yes | Pending |
