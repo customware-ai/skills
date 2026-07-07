@@ -12,6 +12,9 @@ Use this reference in Phase 5.
 - Pass the repo's normal local command to the lifecycle helper with `--server` for helper-owned custom scripts.
 - Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
 - Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts.
+- If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone.
+- If a selector/action/assertion times out, first prove the page is in the expected state: URL, no not-found/error screen, required DB or fixture record exists, server log has no route/runtime error, and browser console has no fatal error. Do not rerun the same script while the page state is wrong; fix setup, seed, route, or app state first.
+- If the helper times out or produces no useful output, inspect helper setup/server/run logs and readiness evidence before rerunning. The next run must change setup, server command, ready URL, test command, fixture, timeout reason, or diagnostic output.
 - If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management.
 - If the server appears stale, wrong, or on the wrong port, inspect helper runtime logs/readiness output first; use repo Playwright `webServer` output only for commands where `webServer` owns lifecycle. Put DB reset, migration, seed, or fixture setup in helper `--setup`, then restart through the lifecycle owner instead of switching to broad process cleanup.
 - If manual fallback is unavoidable, keep PID ownership: capture the server PID/log path under `task-workflow/runtime/`, prove readiness, and clean up only that PID/process group. Do not use `nohup`, `disown`, or untracked background servers as the normal fallback.
@@ -32,10 +35,12 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
 	--server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
 	--ready-url "http://127.0.0.1:4444" \
 	--run "node task-workflow/playwright/verify-main-flow.mjs" \
-	--command-timeout-ms 300000
+	--command-timeout-ms 20000
 ```
 
 The helper writes server and command logs under `task-workflow/runtime/`. Cite those paths in the Phase 5 artifact when output is too long to paste directly.
+
+Timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. If one targeted run needs more than two minutes, split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure before increasing timeout.
 
 ## Minimal Script Pattern
 
