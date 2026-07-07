@@ -17,6 +17,18 @@ Implementation authority is:
 
 If implementation discovers that the Phase 1 plan is wrong, record the plan change in the current phase artifact and cite the file or runtime evidence that forced the change. Return to Phase 1 only when the original research is no longer adequate.
 
+## Phase Contract Shape
+
+Use this contract shape for Phase 2, Phase 3, and Phase 4:
+
+| Phase | Goal | Allowed work | Evidence required | Stop condition | Fallback condition |
+| --- | --- | --- | --- | --- | --- |
+| Phase 2 | Implement the researched plan in scoped packets | Source/test/doc edits, readbacks, diffs, targeted searches, and narrow unblock commands only | Packet log, files changed, readback/diff proof, gaps recorded | Phase 2 gate passes with no local implementation packet left untracked | Narrow command only when a concrete blocker is recorded before the command |
+| Phase 3 | Close connected implementation gaps and produce reusable static/build evidence | Connected-place inspection, repairs, ordered typecheck/lint/build | Issue groups, batch fixes, final typecheck/lint/build result, reusable build evidence | Phase 3 gate passes and build evidence is reusable | Combined repo command only when it is the repo's actual static/build contract |
+| Phase 4 | Prove implementation integrity before browser verification | Code review, targeted/connected checks, final sanity only if justified | Check/test selection ledger, outcomes, remaining gaps | Phase 4 gate passes and verification can move to Phase 5 | Broader command only after targeted/connected evidence or exact-task repo/task requirement |
+
+Do not promote a phase because the code "looks done." Promote only when the phase artifact records the contract result and `progress.md` points to the owning evidence.
+
 ## Gap Ledger Invariant
 
 `task-workflow/open-gaps.md` is part of every Phase 2, Phase 3, and Phase 4 gate.
@@ -36,6 +48,8 @@ If implementation discovers that the Phase 1 plan is wrong, record the plan chan
 - It must summarize enough context from earlier phases to continue without conversation memory: task goal, key repo instructions, implementation direction, active work queue, latest checks, and next local action.
 - Its Current Phase Pointers must identify the current phase artifact, current reference, next local action, and only high-signal active files needed to resume immediately.
 - Its Phase Artifact Index and Artifact Pointers must point to the phase-owned artifacts where detailed researched-file, edited-file, check/log, and test evidence lives.
+- Its Compact State Ledger and Phase Contract Ledger must summarize the current implementation, check/build, test, gap, and reuse state without duplicating large outputs.
+- Its Invalidation Ledger must be updated when code, tests, config, package files, migrations, generated assets, or build inputs change after a recorded proof.
 - If `progress.md` says a later phase than the earliest failing phase artifact, the phase artifact wins. Correct `CURRENT_PHASE.txt` and `progress.md`, then continue from the earliest failing phase.
 
 ## Code And Coverage Discipline
@@ -54,10 +68,56 @@ These phases must not stall on unbounded tools.
 - After every gate-relevant file write or patch, read back the target file or inspect the diff before relying on the change.
 - If a write, patch, generated file, or command result is invalid, partial, missing, or uncertain, repair that exact issue before starting the next packet.
 - Use bounded commands for checks and tests. If a command appears hung or idle, stop it, record the evidence, and continue with the next local recovery path.
-- Do not run long-lived dev servers, watchers, or interactive CLIs in the foreground as the active command. If a server is needed before Phase 5, start it in the background with a PID/log, verify readiness from a separate bounded command with a clear timeout, and kill it after the check.
-- If server readiness is not proven before the timeout, treat startup as failed, capture the log evidence, run `pkill -f node || true`, and retry only from a clean startup command. Never leave a Node server running after a failed or uncertain startup.
-- Phase 2 may run focused static checks, unit tests, and build checks needed for implementation feedback. It must not treat interactive Playwright verification or E2E creation as a substitute for the Phase 2 gate.
+- Do not run long-lived dev servers, watchers, or interactive CLIs in the foreground as the active command. If a server is needed before Phase 5 for an API/runtime probe, use `task-workflow/scripts/server-probe.mjs`. Server readiness is usually 5-10 seconds; use 15-20 seconds as the normal budget and 30 seconds as the maximum startup-readiness limit. Do not use a 120 second readiness budget for server startup.
+- Use this helper shape for manual API/runtime probes. Pass a foreground server command; do not add `&`, `nohup`, `disown`, process-name cleanup, or fixed sleeps around it.
+
+```bash
+node task-workflow/scripts/server-probe.mjs \
+	--server "PORT=8080 node build/server/start.js" \
+	--ready-url "http://127.0.0.1:8080/health" \
+	--ready-timeout-ms 20000 \
+	--run "curl -fsS http://127.0.0.1:8080/health"
+```
+
+- `server-probe.mjs` captures the server PID, writes `task-workflow/runtime/server-probe.pid`, preserves server output in `task-workflow/runtime/server-probe.log`, runs each `--run` command only after readiness, writes run logs as `task-workflow/runtime/server-probe-run-*.log`, and stops only the captured PID/process group.
+- If server readiness is not proven before the timeout, treat startup as failed, cite the helper's log evidence, and retry only with a corrected helper invocation or implementation change. If the helper reports that the ready URL already responds before startup, do not kill unknown processes; pick a task-owned port or stop the exact known PID outside the helper with evidence. Broad process-name cleanup is only for explicit sandbox-owned recovery when PID/port cleanup is impossible and the artifact records why.
+- Phase 2 may run narrow checks only when needed to unblock implementation or prove a specific work packet. It must not run routine typecheck, lint, build, or repo combined check commands such as `pnpm run check` after edits. `pnpm run check` or an equivalent combined static command is allowed in Phase 2 only when a concrete compile/type issue blocks the current packet and the artifact records that blocker before the command. Keep Phase 2 evidence strict through artifact updates, readback, diff review, targeted search, and any narrow unblock command that was actually needed.
+- Phase 3 owns the normal ordered static/build checkpoint after the implementation and connected-place sweep: typecheck, then lint, then build. Each command must run only after the prior command is passing unless the target repo combines them in one documented command.
 - Phase 5 interactive browser verification and Phase 6 durable E2E coverage belong to their own phases. If Phase 2 discovers browser/E2E work is needed, record the gap and continue the ordered gates.
+
+## Test Selection And Retry Discipline
+
+Phase 2, Phase 3, and Phase 4 checks must prove the implementation without turning validation into a blind retry loop or starting with expensive broad suites.
+
+- Prefer the smallest useful command that can prove or disprove the current risk.
+- Create or update tests for the changed behavior before broad validation.
+- For changed service, query, schema, or pure logic, run the new or updated targeted unit/service tests first.
+- For changed route, component, store, or UI state logic, run the new or updated targeted route/component tests first.
+- In Phase 2, stop at the new or updated targeted test file needed for the current packet unless a concrete blocker requires another narrow command. Do not run broad unit directory globs such as `tests/unit/contracts/ tests/unit/services/ tests/unit/components/` in Phase 2.
+- Then run connected tests that share the changed contracts, fixtures, routes, stores, or user workflow in Phase 4 or Phase 6, after Phase 3 closes connected implementation gaps and static/build evidence is current.
+- Phase 3 is primarily inspection and gap closure. It may run a targeted check only after a Phase 3 repair or when one narrow command is needed to prove a specific suspected issue. It must not run full unit/Vitest or full Playwright/E2E as a Phase 3 review tool, global regression check, or "understand current state" command.
+- A broad/full unit or Vitest suite may be used only as one final sanity check after targeted and connected tests pass, or when the target repo explicitly requires it for this exact task, the task explicitly asks for it, global/shared infrastructure changed, or targeted/connected output is incomplete or stale.
+- Do not start with a full unit/Vitest suite unless the target repo explicitly requires it for this exact task or the artifact records a concrete global/shared reason that makes targeted-first impossible.
+- If a full unit/Vitest suite is justified and fails, inspect the failure and rerun the smallest failing or affected command. Do not immediately rerun the full suite.
+- Record every meaningful check/test command in the Phase 4 artifact with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
+- Do not rerun tests only for confidence. Rerun when related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
+- Before rerunning the exact same failing command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs/state/output first, then change the implementation, test, command scope, or diagnostic strategy before running again.
+- When a failure appears pre-existing, order-dependent, or unrelated, keep the command scope narrow. Use the failing test/spec, logs, DOM/state, trace, screenshot, or persisted data evidence to prove the classification; do not run a full suite just to discover the global state.
+- If a command timed out or returned partial output, preserve or cite the useful output before choosing the next command.
+
+## Ordered Static And Build Checkpoint
+
+Phase 3 is the default checkpoint for typecheck, lint, and build.
+
+- Complete Phase 2 implementation packets first, including required tests/docs edits, while preserving packet-level evidence.
+- In Phase 3, inspect connected places first. If the task changed a contract, data shape, route, component, store, permission, migration, fixture, test helper, or shared UI pattern, find the connected callers/surfaces and update or defend them before static/build validation.
+- Run typecheck, then lint, then build. If the repo has a single command that combines these, record the combined command and its order instead of inventing duplicate commands.
+- When a command fails, inspect enough output to identify every visible issue group by file, contract, or root cause. Do not rely on truncated `tail`/`head` output as the only evidence if it can hide issue groups. If output is too large, use focused searches, reporter options, or a temporary full-output log; delete any temporary full-output log after extracting issue groups. Record issue groups, fixes, and rerun reason in the artifact, not large pasted logs.
+- Before rerunning the same typecheck, lint, or build command, fix every locally-fixable issue group visible from the prior output. Do not fix one line or one file and rerun while other visible related groups remain unhandled.
+- After typecheck passes, move to lint. After lint passes, move to build. After build passes, record the reusable build evidence: command, output/log path, and the source/config/package/build inputs it depends on.
+- Later phases reuse the Phase 3 build result unless code, config, package/dependency files, migrations/build inputs, or generated assets changed after that build, or unless the previous output is missing, partial, stale, or incompatible with the verification command. Do not run a later build as phase preparation, final confirmation, or because E2E is starting; use the recorded Phase 3 build output.
+- If a later phase changes code, return to the earliest affected phase, update artifacts, and rerun the relevant ordered command from the first invalidated point. Do not rerun build only for confidence when the Phase 3 build evidence is still current.
+- When a change invalidates prior evidence, update `progress.md` Invalidation Ledger with the invalidating change and owning phase before rerunning anything.
 
 ## Execution Order
 
@@ -110,7 +170,7 @@ After each packet:
 2. Update `task-workflow/progress.md` with the packet summary, current phase pointers, any high-signal active files needed for immediate resume, and next local action.
 3. Mark the relevant execution-log row `Done`, `In progress`, `Blocked`, or `Moved to gap`.
 4. Cite concrete files changed.
-5. Cite the command, typecheck result, readback, or diff evidence proving the packet's state.
+5. Cite readback, diff evidence, targeted search, or a narrow unblock command proving the packet's state. Defer routine typecheck, lint, and build to the Phase 3 ordered checkpoint unless the command was needed to unblock that specific packet.
 6. Update `task-workflow/open-gaps.md` immediately if the packet leaves work open.
 7. If any write or command failed, repair it and read back the affected file before continuing.
 8. Then continue to the next packet.
@@ -160,6 +220,8 @@ Critical failures:
 - failed or uncertain write/edit result is ignored instead of repaired and read back
 - long-lived command, watcher, or dev server is left running in the foreground until the session stalls
 - Phase 2 tries to satisfy Phase 5 or Phase 6 verification instead of completing the Phase 2 gate
+- Phase 2 runs `pnpm run check` or an equivalent combined typecheck/lint/build command without a concrete compile/type blocker recorded before the command
+- Phase 2 runs broad unit directory commands instead of only the new or updated targeted test file needed for the current packet
 - required planned step missing without an open-gap entry
 - implementation bypasses existing repo contracts or boundaries without evidence
 - visible task behavior left fake or placeholder
@@ -189,12 +251,15 @@ A failing Phase 2 artifact is not a stopping state. Fix the implementation or ar
 3. Review the implementation as if continuing someone else's work.
 4. Find missing routes, missing actions, weak wiring, incomplete state, fragile data flow, untested behavior, stale docs, and accidental scope creep.
 5. Review associated surfaces for consistency. If a UI element was changed in one place, find similar UI elements and update or explicitly defend consistency. If an API/service/schema change enables one flow, verify other callers, routes, mutations, queries, permissions, tests, and docs that share that contract are covered.
-6. Close every gap that can be closed from local context.
-7. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
-8. Update `task-workflow/progress.md` with the second-pass findings, associated-surface review, gap state, a pointer to `task-workflow/phase-3-second-execution.md` for repair-file details, and next local action.
-9. Record a second-pass diff review with file evidence.
-10. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
-11. Update `task-workflow/progress.md` so current phase and next local action match Phase 4.
+6. Use code inspection, artifact review, targeted search, and narrow file/state checks for the second pass. Do not run full unit/Vitest or full Playwright/E2E in Phase 3. If test execution is needed after a Phase 3 repair, run the smallest targeted command that proves that repair; otherwise record the check to run in Phase 4 or Phase 6.
+7. Close every gap that can be closed from local context.
+8. Run the ordered static/build checkpoint: typecheck, lint, build. For each failure, identify visible issue groups, fix every locally-fixable group together, and rerun that same command before moving to the next command. If a temporary full-output log was needed to triage a large failure, delete it after extracting issue groups.
+9. Record reusable build evidence after a passing build, including when later phases may reuse it and what would invalidate it.
+10. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
+11. Update `task-workflow/progress.md` with the second-pass findings, associated-surface review, ordered check results, reusable build evidence, gap state, a pointer to `task-workflow/phase-3-second-execution.md` for repair-file details, and next local action.
+12. Record a second-pass diff review with file evidence.
+13. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
+14. Update `task-workflow/progress.md` so current phase and next local action match Phase 4.
 
 Phase 3 is mandatory. It is not a polish pass that can be skipped because Phase 2 seemed complete.
 
@@ -216,6 +281,11 @@ Critical failures:
 - a missing task requirement is found and not fixed or recorded
 - associated UI/API/data surfaces were not reviewed for consistency after a related change
 - a related surface was found inconsistent and neither fixed nor defended with evidence
+- Phase 3 used a broad/full unit, Vitest, or Playwright/E2E suite as a review, confidence, or state-discovery command
+- Phase 3 passed without current typecheck, lint, and build evidence, or without a recorded repo-specific reason one of those commands does not exist
+- Phase 3 reran typecheck, lint, or build before all visible locally-fixable issue groups from the prior output were handled
+- Phase 3 kept a temporary full-output static/build log after extracting issue groups, or relied only on truncated output while issue groups may have been hidden
+- Phase 3 failed to record reusable build evidence after a passing build
 - remaining gap has no reason, owner, or next action
 
 Pass gate:
@@ -224,6 +294,8 @@ Pass gate:
 - every critical second-pass item passes
 - no unresolved critical gap remains
 - associated UI/API/data surfaces have been reviewed, fixed where needed, or explicitly defended
+- typecheck, lint, and build have passed in order, or missing commands have repo-specific evidence
+- reusable build evidence and invalidation conditions are recorded
 - every remaining non-critical gap has a concrete reason and owner
 - `task-workflow/open-gaps.md` is current after the second pass
 - implementation still matches the task scope
@@ -235,17 +307,19 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 ## Phase 4: Implementation Integrity Review
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
-2. Run the repo's relevant static checks, type checks, build checks, and focused tests.
-3. Inspect failures and fix root causes.
-4. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
-5. Review the implementation against the extracted `AGENTS.md` development rules from Phase 1.
-6. Inspect changed app/server source for `console.*`. Temporary `console.*` is allowed only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output. Before Phase 4 passes, remove those temporary logs or replace lasting logging with the repo-approved logging/telemetry path.
-7. Review docs updates when behavior or workflow changed.
-8. Record commands, outputs, fixes, console/logging review, and final status.
-9. Update `task-workflow/progress.md` with latest check results, fixed issues, a pointer to `task-workflow/phase-4-integrity-review.md` for check/fix details, and next local action.
-10. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
-11. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
-12. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
+2. Re-open Phase 3 ordered static/build evidence and confirm it is still current. If code, config, package/dependency files, migrations/build inputs, or generated assets changed after Phase 3, rerun the invalidated command sequence from the first affected point. Do not rerun build only because Phase 4, Phase 5, Phase 6, or Phase 7 is starting.
+3. Select any remaining relevant tests using the Test Selection And Retry Discipline above. Do not rerun typecheck, lint, or build in Phase 4 when Phase 3 evidence is current.
+4. Run the selected checks/tests and record the command scope, reason, previous related failure, changed-since-failure evidence, outcome, and next action in the Phase 4 artifact.
+5. Inspect failures and fix root causes.
+6. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
+7. Review the implementation against the extracted `AGENTS.md` development rules from Phase 1.
+8. Inspect changed app/server source for `console.*`. Temporary `console.*` is allowed only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output. Before Phase 4 passes, remove those temporary logs or replace lasting logging with the repo-approved logging/telemetry path.
+9. Review docs updates when behavior or workflow changed.
+10. Record commands, outputs, fixes, console/logging review, Phase 3 build reuse status, and final status.
+11. Update `task-workflow/progress.md` with latest check results, fixed issues, Phase 3 build reuse status, a pointer to `task-workflow/phase-4-integrity-review.md` for check/fix details, and next local action.
+12. Confirm no app server, watcher, or check command remains running in the foreground from Phase 4.
+13. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
+14. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
 
 ## Phase 4 Score
 
@@ -263,6 +337,11 @@ Critical failures:
 - required check not run and no valid reason recorded
 - check failure caused by this task remains unfixed
 - runtime-blocking issue remains
+- test/check command selection is not recorded with scope and reason
+- broad/full unit or Vitest command is run before targeted and connected tests, repeated after a clean pass, or run without a concrete artifact reason
+- full unit/Vitest suite is run as anything other than one final sanity check after targeted and connected tests pass, or an explicit task/repo/global exception
+- typecheck, lint, or build is rerun in Phase 4 while Phase 3 evidence is current and no invalidating change is recorded
+- tests are rerun only for confidence, or the same failing test command is rerun blindly without a material change, output-staleness, or diagnostic justification
 - lint/type warnings introduced by this task remain unresolved or undefended
 - unsafe type assertions are used to bypass a contract that should be modeled directly
 - implementation violates an extracted `AGENTS.md` development rule
@@ -277,6 +356,8 @@ Pass gate:
 - score is at least `28/30`
 - every critical integrity item passes
 - required repo checks pass or any remaining failure is unrelated and documented with evidence
+- Phase 3 ordered typecheck/lint/build evidence is current, or invalidated commands were rerun from the first affected point
+- test/check command selection and retry evidence is recorded
 - no known runtime-blocking issue remains
 - no known violation of extracted `AGENTS.md` development rules remains
 - no changed app/server source contains `console.*` outside the active Phase 5 debug loop

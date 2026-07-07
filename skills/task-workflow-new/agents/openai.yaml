@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Workflow New"
+  short_description: "Experimental gated workflow with phase contracts, compact evidence tracking, and managed Playwright lifecycle"
+  default_prompt: "Use $task-workflow-new to execute the task through artifact-backed phase contracts, compact evidence tracking, managed Playwright verification, E2E coverage, and final signoff."

@@ -1,15 +1,16 @@
 ---
-name: task-workflow-old
+name: task-workflow-new
 description: >
-  Strict execution instructions for product tasks, app implementation tasks,
-  bugfixes, verification tasks, and full-stack coding tasks. Use when Codex
-  must work through ordered phases that start with
-  mandatory task-workflow artifact reset before any source inspection or edit,
-  then codebase research, implementation passes, scored gates, interactive
-  Playwright verification, E2E coverage, and final signoff.
+  Experimental strict execution instructions for product tasks, app
+  implementation tasks, bugfixes, verification tasks, and full-stack coding
+  tasks. Use when Codex must work through ordered phase contracts that start
+  with mandatory task-workflow artifact reset before source inspection or edit,
+  then codebase research, implementation passes, compact evidence tracking,
+  scored gates, interactive Playwright verification through a managed lifecycle
+  helper, E2E coverage, and final signoff.
 ---
 
-# Task Workflow
+# Task Workflow New
 
 ## Strict Instruction Contract
 
@@ -64,11 +65,79 @@ Never promote work from one phase to the next on optimism, partial evidence, a g
 
 The workflow is intentionally looped. A failed gate means the Agent must rework that phase, update evidence, rerun the needed checks or verification, rescore the gate, and repeat until the gate passes. Quality gates are not reports to the user; they are control points that force more work before promotion.
 
+## Phase Contract Model
+
+Every phase is a contract, not a checklist of suggestions. Each phase artifact must make these fields clear before promotion:
+
+- **Goal:** the specific outcome this phase must produce.
+- **Allowed work:** the kind of edits, commands, inspection, or verification this phase owns.
+- **Evidence required:** compact proof that the goal was met.
+- **Stop condition:** the objective gate state that allows promotion.
+- **Fallback condition:** the exact diagnosed condition that permits leaving the default path.
+
+If a phase instruction and a generic habit conflict, the phase contract wins. If the task or repo requires a different path, record the exact task/repo evidence before using it. Do not use broad phrases such as "per repo instructions" unless the artifact cites the concrete instruction and why it applies to this exact task.
+
+## Compact Evidence Ledger Contract
+
+Workflow evidence is mandatory because OpenCode sessions can restart, compact, or be reviewed by a separate reviewer. Evidence must be compact, decision-oriented, and resumable.
+
+`task-workflow/progress.md` is the state ledger. Keep it current after every phase start, meaningful work packet, gate result, blocker, verification result, fallback decision, and phase promotion.
+
+Each ledger update must answer:
+
+- current phase and next local action
+- last completed phase contract
+- active files or commands needed to resume now
+- checks/tests/build state and whether evidence is still reusable
+- browser/server/E2E lifecycle owner and whether setup/server state is reusable
+- open gaps or blocker state
+- selected repo/task/skill refs that must be re-read after compaction
+
+Do not paste huge command output into artifacts or `progress.md`. For large outputs, extract issue groups, final pass/fail lines, and log paths. Delete temporary full-output logs after extracting the needed issue groups unless a phase artifact explicitly needs that repo-local log path as evidence.
+
+Reviewer-facing evidence must let a reviewer answer: what changed, what was verified, what was intentionally skipped and why, what can be reused, and what should be done next if the session resumes.
+
+Evidence quality rule: every evidence row must answer at least one useful decision question:
+
+- what changed
+- how it was verified
+- what passed or failed
+- what can be reused
+- what was invalidated
+- what local action comes next
+
+Do not use vague evidence such as `done`, `looks good`, `checked`, `works`, or `N/A` when a concrete file, command, log path, result, or reason exists.
+
+## Reviewer Handoff Contract
+
+Reviewer and final-parser agents should inspect `task-workflow/progress.md`, phase artifacts, cited command outputs/log paths, and open gaps before rerunning checks.
+
+Reviewer reruns are appropriate only when:
+
+- required evidence is missing, stale, contradictory, or not tied to the changed behavior
+- task-critical behavior was not proven by Phase 5/6 evidence
+- the code changed after the cited build/test/browser evidence
+- the artifact claims a fallback or skip without the required reason
+
+Reviewer reruns should be targeted to the missing or contradicted evidence. Do not use reviewer reruns as a substitute for reading the workflow evidence first.
+
+## Fallback Recording Contract
+
+Defaults are mandatory until a recorded condition permits fallback. Every fallback must record:
+
+- default path attempted
+- failure or mismatch evidence
+- why fallback is allowed for this exact command or phase
+- fallback command/path used
+- cleanup, reuse, or invalidation result
+
+For server, browser, Playwright, DB/setup, test-selection, or build fallback, update both the owning phase artifact and `progress.md` before relying on the fallback result.
+
 ## MITB Workspace Inputs
 
 When running in a MITB sandbox, use these repo-relative workspace inputs:
 
-- workflow skill: `.agents/skills/task-workflow/SKILL.md`
+- workflow skill: `.agents/skills/task-workflow-new/SKILL.md`
 - task body: `.tasks/task.md`
 - domain and brand context: `.tasks/domain.md`
 - attached task files: `.tasks/files/`
@@ -153,7 +222,22 @@ Treat these rules as always active:
 - After every file write, patch, generated-file creation, or artifact update that matters to a gate, perform a readback check before relying on it. Use `sed`, `rg`, `ls`, `git diff`, or the repo's normal inspection command to prove the file exists and contains the intended change.
 - If a write/edit tool reports an invalid write, missing file, failed patch, partial output, or uncertain result, stop that work packet, repair the write with a supported edit method, read it back, and only then continue. Do not proceed as if a failed write happened.
 - Commands must be bounded. Do not leave long-lived servers, watchers, or interactive commands running in the foreground as the active tool call.
-- Start dev servers in the background with a PID and log file, verify readiness from a separate command, run verification from a separate command, and clean up the PID after use.
+- Outside Phase 5 and Phase 6, if a temporary dev server is needed for an API/runtime probe, use `task-workflow/scripts/server-probe.mjs`. It owns PID capture, readiness, bounded probe commands, runtime logs, and PID-only cleanup. Server readiness is usually 5-10 seconds; use 15-20 seconds as the normal budget and 30 seconds as the maximum startup-readiness limit. Broad process-name cleanup is only for explicit sandbox-owned recovery when PID/port cleanup is impossible and the artifact records why.
+- In Phase 5 and Phase 6, the first browser, Playwright, or E2E command that needs a running app must establish lifecycle ownership through `task-workflow/scripts/playwright-lifecycle.mjs` by default. Do not run against an assumed existing server first and then infer that `fetch failed`, stale data, redirects, or wrong build output means manual server management is needed.
+- Existing repo E2E tests are not a reason to bypass the helper. Run `pnpm exec playwright test ...` through the helper's `--run` by default. Use native Playwright with repo `webServer` ownership only when the helper cannot own the server for that exact command after a diagnosed reason, and record that reason before running it.
+- Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, seed, or test database preparation into lifecycle `--setup "..."` for helper-owned runs. Treat setup plus server startup as reusable for the current verification batch: prefer one helper-owned run with the needed script/spec commands, or rerun setup only after code, migrations, fixtures, DB state, build inputs, or the prior setup output changed. Do not repeatedly delete/recreate the DB or restart the server before each targeted script/spec just because another E2E command is next. If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone. If server state, database state, port ownership, or build freshness looks wrong, diagnose through the current lifecycle owner logs/readiness first and rerun through that owner after any code/setup fix. If the helper times out or produces no useful output, treat that as lifecycle/setup evidence, inspect `task-workflow/runtime/server.log`, `task-workflow/runtime/setup-*.log`, readiness output, and `task-workflow/runtime/run-*.log`, then change the setup, server command, ready URL, test command, fixture, or diagnostic before rerunning. If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management with captured PID/log/readiness/cleanup evidence. Broad process-name cleanup is only a recorded sandbox recovery after PID/port cleanup is impossible.
+- Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The managed lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when available and fails early if the project Playwright version does not match the sandbox browser cache.
+- Select test and check commands by phase responsibility:
+- Phase 2 completes implementation packets with strict artifact, readback, diff, search, and narrow unblock-command evidence. It must not run routine typecheck, lint, build, or repo combined check commands such as `pnpm run check`; those belong to Phase 3 unless a concrete compile/type issue blocks the current packet and is recorded before the command. Phase 2 may run the new or updated targeted test file needed for the current packet, but not broad unit directory globs such as `tests/unit/contracts/ tests/unit/services/ tests/unit/components/`.
+- Phase 3 reviews connected places, closes missed implementation gaps, then owns the ordered static/build checkpoint: typecheck, lint, build. When one of those commands fails, inspect enough output to identify visible issue groups, fix every locally-fixable group before rerunning, and record only the groups/fixes/rerun reason. Do not keep huge command logs unless a temporary log is needed for triage; delete temporary full-output logs after extracting issue groups.
+- Later phases reuse Phase 3 build evidence unless code, config, dependency/build inputs, migrations, generated assets, stale output, or incompatible verification tooling invalidates it. Do not rebuild in Phase 4, Phase 5, Phase 6, or Phase 7 only to prepare, reconfirm, or feel safe.
+- Create or update tests for changed behavior, run targeted tests first, then run connected tests that share changed contracts, fixtures, routes, stores, or user workflows. Broad/full unit or Vitest may be used only as one final sanity check after targeted and connected tests pass, or when target repo/task instructions for this exact task or global/shared infrastructure require it. Do not start with it, and do not repeat it after a clean pass unless related code/config changed or prior output is stale/incomplete.
+- Phase 3 is a code/artifact second-pass review, not a broad regression-test phase. Do not use full unit/Vitest or full Playwright/E2E there to "make sure nothing broke" or "understand current state."
+- For E2E, run only new, changed, or directly connected specs by default. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; a repo having a Playwright suite, `webServer`, or "run tests" script is not enough. After targeted/connected E2E evidence passes and no related code, test, config, fixture, migration, or build input changed, do not add a full E2E run as final confidence, final signoff, state discovery, or reviewer-satisfaction evidence.
+- For a single targeted Playwright script or E2E spec, timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. If a single targeted run needs more than two minutes, stop increasing timeouts; split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure first.
+- Do not rerun tests only for confidence. Rerun when quality evidence can change: related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
+- Before rerunning an identical failing test command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the prior output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, test, command scope, or diagnostic strategy before running again. A suspected pre-existing or order-dependent failure is not a reason to broaden to a full suite; prove it with the narrow failing spec/test plus logs/state/trace evidence, then fix it if it is in scope or record it as an unrelated defended gap.
+- Phase 5 and Phase 6 artifacts must record timeout values and any quiet-run/timeout triage before the gate can pass. A first-run targeted Playwright command longer than the Phase 5/Phase 6 budgets, or any longer rerun without recorded timer-only failure plus clean state triage, is a gate failure.
 - If a command appears hung or idle and the next workflow action is locally available, stop the command, record the evidence in the current phase artifact or gap ledger, and continue with the bounded recovery path.
 - Every phase gate is an internal control point, not a user confirmation checkpoint.
 - If a phase gate passes, continue directly into the next phase without asking whether to continue.
@@ -182,10 +266,11 @@ Before producing any final response, stopping message, or ending an OpenCode tur
 10. Phase 5, Phase 6, and Phase 7 must record fixed-wait review evidence showing the inspected verification files contain no fixed waits.
 11. Phase 5 and Phase 7 must record screenshot existence proof for every screenshot path cited in Phase 5.
 12. Phase 6 and Phase 7 must record the exact E2E/test command output or a repo-local log file containing the exact output plus the final pass/fail lines.
-13. Phase 4 and Phase 7 must verify changed app/server source contains no lasting `console.*`. Temporary `console.*` is allowed only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output, and it must be removed before the Phase 5 rerun, Phase 4 re-pass, or Phase 7 signoff.
-14. Phase 7 final quality scorecard must be at least `8/10` in every category.
-15. Phase 7 must record an artifact integrity review that re-opens every phase artifact and verifies the artifact exists, its decision is `Pass`, its score meets threshold, required evidence rows are complete, and it does not contradict `CURRENT_PHASE.txt`, `progress.md`, or `open-gaps.md`.
-16. The MITB completed command from `.tasks/task.md` or the prompt must run only after all Phase 7 audit checks pass. If any Phase 7 check fails, the agent must loop back to the earliest failing phase and must not call task completion.
+13. Phase 5, Phase 6, and Phase 7 must record timeout values and timeout/quiet-run triage evidence for every timed-out, quiet, or longer-rerun Playwright/E2E command.
+14. Phase 4 and Phase 7 must verify changed app/server source contains no lasting `console.*`. Temporary `console.*` is allowed only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output, and it must be removed before the Phase 5 rerun, Phase 4 re-pass, or Phase 7 signoff.
+15. Phase 7 final quality scorecard must be at least `8/10` in every category.
+16. Phase 7 must record an artifact integrity review that re-opens every phase artifact and verifies the artifact exists, its decision is `Pass`, its score meets threshold, required evidence rows are complete, and it does not contradict `CURRENT_PHASE.txt`, `progress.md`, or `open-gaps.md`.
+17. The MITB completed command from `.tasks/task.md` or the prompt must run only after all Phase 7 audit checks pass. Treat it as the final external task action: plan and run all checks, tests, builds, server probes, and verification commands before task completion. If any Phase 7 check fails before completion, the agent must loop back to the earliest failing phase and must not call task completion.
 
 If any item fails and the problem can be solved locally, continue the workflow from the earliest failing phase. Do not answer as if the task is complete.
 If an actual external blocker prevents completion, record the blocker in the current phase artifact and `open-gaps.md`, including commands run, files inspected, why local recovery cannot solve it, and the smallest next action.
@@ -303,6 +388,10 @@ These are mandatory:
 - `task-workflow/CURRENT_PHASE.txt`
 - `task-workflow/playwright/`
 - `task-workflow/screenshots/`
+- `task-workflow/scripts/`
+- `task-workflow/scripts/playwright-lifecycle.mjs`
+- `task-workflow/scripts/server-probe.mjs`
+- `task-workflow/runtime/`
 
 The templates in `assets/templates/` are enforcement artifacts. Copy their structure directly. If a required table is replaced by prose or stripped down until rows are no longer auditable, the run fails.
 
@@ -342,7 +431,7 @@ Detailed process: `references/phase-2-4-execution-integrity.md`.
 
 ### Phase 5: Interactive Playwright Verification
 
-Use standalone interactive Playwright scripts to exercise real user flows, bad cases, surrounding UI, and desktop/tablet/mobile responsive behavior from a user perspective.
+Use standalone interactive Playwright scripts to exercise real user flows, bad cases, surrounding UI, and responsive visual quality from a user perspective. Treat responsive design as a first-class Phase 5 guarantee, equal to proving the task's functional changes work. Some whitespace is fine, but standard desktop viewports such as `1920x1080` must not look broken, clipped, overlapped, unusable, or excessively sparse. Large desktop viewports such as `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. Very large 4K/ultrawide whitespace is acceptable when the layout is intentionally constrained and still coherent.
 
 Detailed process: `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md`.
 
@@ -383,6 +472,22 @@ These automatically fail the run:
 - leaving artifact templates mostly blank while claiming success
 - passing Phase 5 while any screenshot path cited in the artifact is missing or not verified with existence proof
 - passing Phase 6 while E2E/test runs are only described and the exact command output is not recorded in the artifact or in a cited repo-local log file
+- running Phase 5 or Phase 6 Playwright/E2E commands without the correct lifecycle owner recorded: helper by default, repo Playwright `webServer` or manual fallback only with a recorded reason/diagnostic made before the command
+- starting with a broad/full unit or Vitest suite before creating/updating and running the targeted tests for changed behavior
+- running the full unit/Vitest suite more than once without a concrete artifact reason from target repo instructions, changed global/shared infrastructure, or incomplete/stale output
+- running broad/full unit or Vitest without artifact evidence that targeted and connected tests already passed and this is the one final sanity check, or that the task/repo/global change explicitly requires the broader scope
+- running a broad/full unit, Vitest, or Playwright/E2E suite in Phase 3 as a second-pass review instrument, global confidence check, or "understand current state" command
+- running routine typecheck, lint, or build after every small Phase 2 edit instead of preserving packet evidence and using Phase 3 as the ordered static/build checkpoint
+- running repo combined check commands such as `pnpm run check` in Phase 2 without a concrete compile/type blocker recorded before the command
+- running broad unit directory commands in Phase 2 instead of only the new or updated targeted test file needed for the current packet
+- rerunning typecheck, lint, or build before all visible locally-fixable issue groups from the prior output are fixed; truncated `tail`/`head` output alone is not enough if it hides issue groups, and temporary full-output logs must be deleted after extraction
+- rerunning build in Phase 4, Phase 5, Phase 6, or Phase 7 when Phase 3 build evidence is current and no invalidating change is recorded
+- running native `pnpm exec playwright test ...` in Phase 6 instead of running it through `task-workflow/scripts/playwright-lifecycle.mjs --run ...`, unless repo `webServer` ownership is required and recorded before the command
+- running the unfiltered full Playwright/E2E suite when the task did not explicitly ask for full E2E and no concrete written repo instruction names full E2E/all-spec execution for this exact task
+- starting a first-run targeted Phase 5 Playwright script above `20000` ms or a first-run targeted Phase 6 E2E above `30000` ms without a task-specific artifact reason
+- increasing a Playwright/E2E timeout after any useful failure evidence, or increasing it after a timer-only/no-output failure without recorded helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage proving the app and test are valid to rerun
+- rerunning tests only for confidence, or blindly rerunning the same failing test command without recording a material implementation, test, config, environment, output-staleness, or diagnostic reason
+- running `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification instead of using the sandbox browser cache or recording the helper's browser-preflight mismatch
 - passing Phase 4 or Phase 7 while changed app/server source still contains `console.*` outside the active Phase 5 debug loop
 - producing a final response or stopping summary while `CURRENT_PHASE.txt` is before `phase-7-final-signoff`
 - producing a final response or stopping summary while any required artifact still says `Decision: Fail`, has a failing score, or contains pending gate evidence
@@ -432,6 +537,8 @@ These automatically fail the run:
 - `assets/templates/phase-7-final-signoff.md`
 - `assets/templates/progress.md`
 - `assets/templates/open-gaps.md`
+- `assets/scripts/playwright-lifecycle.mjs`: managed server/readiness/Playwright execution helper copied into `task-workflow/scripts/` during Phase 0.
+- `assets/scripts/server-probe.mjs`: managed API/runtime server probe helper copied into `task-workflow/scripts/` during Phase 0 for pre-Phase-5 server checks.
 
 ## Non-Negotiables
 

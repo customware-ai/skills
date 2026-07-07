@@ -1,5 +1,15 @@
 # Phase 1 - Task Intake And Codebase Research
 
+## Phase Contract
+
+| Contract item | Required | Evidence |
+| --- | --- | --- |
+| Goal | Understand the task, binding repo instructions, selected skills, domain context, and codebase plan before source edits | Pending |
+| Allowed work used | Read-only task/domain/attachment/skill/doc/code research and planning | Pending |
+| Evidence required | Instructions read, task files inspected, relevant skills selected, code patterns found, ordered plan recorded | Pending |
+| Stop condition | Phase 1 gate passes with no unresolved ambiguity and marker promotes to Phase 2 | Pending |
+| Fallback condition | Return to Phase 1 only if later evidence proves the research/plan is inadequate | Pending |
+
 ## Task Understanding
 
 | Item | Notes |

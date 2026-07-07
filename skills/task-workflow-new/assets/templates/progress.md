@@ -31,6 +31,7 @@ These are starting refs. Edit notes as the task clarifies which files are releva
 | Current phase reference | Pending |
 | Earliest failing phase, if any | Pending |
 | Last completed gate | Pending |
+| Last completed phase contract | Pending |
 | Next local action | Pending |
 | External blocker, if any | Pending |
 | Last updated | Pending |
@@ -44,6 +45,49 @@ These are starting refs. Edit notes as the task clarifies which files are releva
 | Key constraints | Pending |
 | Current implementation direction | Pending |
 | MITB task completion command | Pending |
+
+## Compact State Ledger
+
+Keep this ledger short and current. It exists so a restarted session or reviewer can decide what to trust, what can be reused, and what must happen next without relying on conversation memory.
+
+| State item | Current evidence | Reusable? | Next action if resumed |
+| --- | --- | --- | --- |
+| Phase contract status | Pending | Pending | Pending |
+| Implementation state | Pending | Pending | Pending |
+| Static/build state | Pending | Pending | Pending |
+| Targeted/connected test state | Pending | Pending | Pending |
+| Browser/server lifecycle state | Pending | Pending | Pending |
+| E2E/setup/DB state | Pending | Pending | Pending |
+| Open gaps/blockers | Pending | Pending | Pending |
+
+## Invalidation Ledger
+
+Use this to decide whether prior build, test, browser, lifecycle, DB/setup, or E2E evidence can still be reused. If evidence is invalidated, return to the owning phase instead of doing ad hoc reruns from the current phase.
+
+| Evidence area | Last known valid proof | Last invalidating change/event | Current state | Owning phase to repair |
+| --- | --- | --- | --- | --- |
+| Static/build output | Pending | Pending | Pending | Phase 3 |
+| Typecheck/lint output | Pending | Pending | Pending | Phase 3 |
+| Targeted/connected tests | Pending | Pending | Pending | Phase 4 or Phase 6 |
+| Browser lifecycle/server | Pending | Pending | Pending | Phase 5 |
+| DB/setup/fixtures | Pending | Pending | Pending | Phase 5 or Phase 6 |
+| E2E output | Pending | Pending | Pending | Phase 6 |
+| Final audit evidence | Pending | Pending | Pending | Phase 7 |
+
+## Phase Contract Ledger
+
+Record the contract result for each phase. Keep details in the owning phase artifact; this table is only the resume/reviewer index.
+
+| Phase | Goal | Allowed work used | Evidence pointer | Stop condition result | Fallbacks used |
+| --- | --- | --- | --- | --- | --- |
+| 0 | Artifact reset and scaffolding | Pending | `task-workflow/phase-0-artifact-reset.md` | Pending | Pending |
+| 1 | Task intake and research | Pending | `task-workflow/phase-1-task-research.md` | Pending | Pending |
+| 2 | Primary execution | Pending | `task-workflow/phase-2-execution.md` | Pending | Pending |
+| 3 | Gap closure and ordered static/build checkpoint | Pending | `task-workflow/phase-3-second-execution.md` | Pending | Pending |
+| 4 | Integrity review | Pending | `task-workflow/phase-4-integrity-review.md` | Pending | Pending |
+| 5 | Interactive and responsive browser verification | Pending | `task-workflow/phase-5-playwright-verification.md` | Pending | Pending |
+| 6 | Durable targeted/connected E2E coverage | Pending | `task-workflow/phase-6-e2e-verification.md` | Pending | Pending |
+| 7 | Final audit and completion command | Pending | `task-workflow/phase-7-final-signoff.md` | Pending | Pending |
 
 ## Current Phase Pointers
 
@@ -80,7 +124,10 @@ Keep pointers only. Do not duplicate detailed lists already recorded in phase ar
 | Resume and gap files | `task-workflow/CURRENT_PHASE.txt`; `task-workflow/open-gaps.md`; `task-workflow/progress.md` | current marker, gap ledger, this resume index | Pending |
 | Phase artifacts | See Phase Artifact Index | phase-owned gate files | Pending |
 | Playwright evidence | `task-workflow/playwright/`; `task-workflow/screenshots/` | `task-workflow/phase-5-playwright-verification.md` | Pending |
-| Test evidence | Pending | `task-workflow/phase-6-e2e-verification.md` | Pending |
+| Managed Playwright lifecycle helper | `task-workflow/scripts/playwright-lifecycle.mjs`; `task-workflow/runtime/` | `task-workflow/phase-5-playwright-verification.md`; `task-workflow/phase-6-e2e-verification.md`; `task-workflow/phase-7-final-signoff.md` | Pending |
+| Managed server probe helper | `task-workflow/scripts/server-probe.mjs`; `task-workflow/runtime/` | `task-workflow/phase-2-execution.md`; `task-workflow/phase-4-integrity-review.md` | Pending |
+| Static/build checkpoint | repo-native typecheck/lint/build output or `task-workflow/runtime/` logs | `task-workflow/phase-3-second-execution.md`; `task-workflow/phase-4-integrity-review.md` | Pending |
+| Test evidence | `task-workflow/runtime/` or exact pasted command output | `task-workflow/phase-6-e2e-verification.md` | Pending |
 | Task completion evidence | `.tasks/task.md`; `/workspace/mitb/task_complete.mjs` | `task-workflow/phase-7-final-signoff.md` | Pending |
 
 ## Resume Rules
@@ -91,4 +138,6 @@ Keep pointers only. Do not duplicate detailed lists already recorded in phase ar
 - Use Current Phase Pointers and Phase Artifact Index to find the detailed phase artifact and reference before choosing the next action.
 - Use Artifact Pointers only to locate artifact groups; read the owning phase artifact for details.
 - This file is a summary and resume map, not proof by itself. Phase artifacts and gate decisions remain the proof.
+- Keep evidence compact: cite log paths and final pass/fail lines instead of dumping large command output.
+- Keep the Invalidation Ledger current whenever code, tests, config, migrations, fixtures, DB/setup, build inputs, server command, or lifecycle ownership changes.
 - Do not produce a final response while this file says any phase is `Pending`, `Fail`, `In progress`, or locally repairable.
