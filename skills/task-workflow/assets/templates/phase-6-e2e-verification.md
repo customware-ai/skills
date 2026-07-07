@@ -53,6 +53,7 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Correct lifecycle owner recorded before command: helper by default; repo `webServer` or manual fallback only with reason/diagnostics made before the command | Pending | Pending |
+| First E2E command established lifecycle ownership before testing, with no reliance on an assumed existing server | Pending | Pending |
 | Existing repo E2E command was run through helper `--run`, or repo `webServer` ownership exception was recorded before native Playwright | Pending | Pending |
 | Test server, if needed, started by the helper with PID/log, or by a justified repo `webServer`/fallback owner | Pending | Pending |
 | Server readiness, if needed, checked by the recorded lifecycle owner before E2E execution | Pending | Pending |
@@ -60,6 +61,8 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 | Tests run as bounded commands, not watchers | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup | Pending | Pending |
+| Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
+| Manual fallback, if used, captured PID/log/readiness/cleanup evidence under `task-workflow/runtime/`; otherwise N/A | Pending | Pending |
 | Background server cleaned up after tests | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
@@ -110,6 +113,7 @@ If matches were found and removed, record the replacement proof here.
 | Coverage gaps reflected in `open-gaps.md` | Pending | Pending |
 | Server/command discipline passed | Pending | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | Pending | Pending |
+| First E2E command established lifecycle ownership before testing | Pending | Pending |
 | No `playwright install` or browser download attempted | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
 | Connected-spec ledger covers each E2E command; unfiltered full suite was not run without explicit full-E2E task request or concrete exact-task repo requirement | Pending | Pending |
@@ -143,7 +147,9 @@ If matches were found and removed, record the replacement proof here.
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
+| First E2E command established lifecycle ownership before testing | yes | Pending |
 | Existing repo E2E ran through lifecycle helper by default, or native Playwright exception was recorded before command | yes | Pending |
+| No unowned `nohup`/`disown`/assumed-server path used before diagnosed helper failure | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 7 next action | yes | Pending |

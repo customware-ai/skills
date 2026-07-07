@@ -7,12 +7,14 @@ Use this reference in Phase 5.
 ## Rules
 
 - Run Phase 5 browser scripts through `task-workflow/scripts/playwright-lifecycle.mjs`.
+- The first browser script run must establish lifecycle ownership. Do not run a script against an assumed existing local server and then treat `fetch failed`, redirects, stale data, or stale build output as a reason to manually start or kill servers.
 - Use the lifecycle helper as the default owner for Playwright/app-server startup, including repo E2E commands when Phase 6 runs them. Put `pnpm exec playwright test ...` inside helper `--run` by default. Use repo Playwright `webServer` ownership only when the helper cannot own the server for that exact command, and record the reason before running it.
 - Pass the repo's normal local command to the lifecycle helper with `--server` for helper-owned custom scripts.
 - Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
 - Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts.
 - If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management.
-- If the server appears stale, wrong, or on the wrong port, inspect helper runtime logs/readiness output first; use repo Playwright `webServer` output only for commands where `webServer` owns lifecycle. Restart through the lifecycle owner instead of switching to broad process cleanup.
+- If the server appears stale, wrong, or on the wrong port, inspect helper runtime logs/readiness output first; use repo Playwright `webServer` output only for commands where `webServer` owns lifecycle. Put DB reset, migration, seed, or fixture setup in helper `--setup`, then restart through the lifecycle owner instead of switching to broad process cleanup.
+- If manual fallback is unavoidable, keep PID ownership: capture the server PID/log path under `task-workflow/runtime/`, prove readiness, and clean up only that PID/process group. Do not use `nohup`, `disown`, or untracked background servers as the normal fallback.
 - Do not run `playwright install` or any browser download command. The lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when the cache exists and fails early on a revision mismatch.
 - Prefer `127.0.0.1` over `localhost`.
 - Write scripts under `task-workflow/playwright/`.

@@ -6,6 +6,7 @@
 | --- | --- |
 | Launch command | Pending |
 | Lifecycle helper command | Pending |
+| First app/browser command lifecycle owner | Pending |
 | URL | Pending |
 | Playwright scripts | Pending |
 | Server PID | Pending |
@@ -29,12 +30,15 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Correct lifecycle owner recorded before command: helper by default; repo `webServer` or manual fallback only with reason/diagnostics made before the command | Pending | Pending |
+| First browser/app-server run established lifecycle ownership before testing, with no reliance on an assumed existing server | Pending | Pending |
 | App server started by the recorded lifecycle owner, not as an unbounded foreground command | Pending | Pending |
 | Server readiness checked by the recorded lifecycle owner before browser interaction | Pending | Pending |
 | Browser preflight passed, or mismatch failed early without `playwright install` | Pending | Pending |
 | Playwright scripts run as bounded helper commands | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup without manual chain bundling | Pending | Pending |
+| Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
+| Manual fallback, if used, captured PID/log/readiness/cleanup evidence under `task-workflow/runtime/`; otherwise N/A | Pending | Pending |
 | Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
@@ -133,6 +137,8 @@ If matches were found and removed, record the replacement proof here.
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
+| First app/browser command established lifecycle ownership before testing | yes | Pending |
+| No unowned `nohup`/`disown`/assumed-server path used before diagnosed helper failure | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 6 next action | yes | Pending |
