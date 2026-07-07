@@ -318,9 +318,10 @@ If this gate fails, stay in Phase 6.
 18. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
 19. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
 20. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
-21. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
-22. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
-23. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
+21. Treat the completed command as the final external task action. Plan all typecheck, lint, build, unit test, E2E test, app server, server probe, browser probe, and verification work before task completion.
+22. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
+23. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
+24. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
 
 ## Final Audit Checklist
 

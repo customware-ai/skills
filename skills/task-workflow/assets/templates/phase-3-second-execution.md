@@ -20,13 +20,13 @@
 
 ## Ordered Static And Build Checkpoint
 
-Run this checkpoint after the second-pass connected-place review and any Phase 3 repairs. Use the repo's native commands. If the repo has no separate command for an item, record the repo-specific reason. If a command fails, fix all issues available from that output as a batch, then rerun that same command before moving to the next row.
+Run this checkpoint after the second-pass connected-place review and any Phase 3 repairs. Use the repo's native commands. If the repo has no separate command for an item, record the repo-specific reason. If a command fails, inspect enough output to identify visible issue groups, fix every locally-fixable group as a batch, then rerun that same command before moving to the next row. If a temporary full-output log is needed for large output, delete it after extracting issue groups.
 
-| Step | Command | First result and issue groups | Batch fix evidence | Rerun/final result |
-| --- | --- | --- | --- | --- |
-| Typecheck | Pending | Pending | Pending | Pending |
-| Lint | Pending | Pending | Pending | Pending |
-| Build | Pending | Pending | Pending | Pending |
+| Step | Command | First result and visible issue groups | Batch fix evidence | Temp full-output log deleted? | Rerun/final result |
+| --- | --- | --- | --- | --- | --- |
+| Typecheck | Pending | Pending | Pending | Pending | Pending |
+| Lint | Pending | Pending | Pending | Pending | Pending |
+| Build | Pending | Pending | Pending | Pending | Pending |
 
 ## Reusable Build Evidence
 
@@ -58,7 +58,7 @@ Phase 3 is an inspection and gap-closure pass. Record any narrow command used to
 | Associated UI/API/data surfaces reviewed for consistency | yes | Pending |
 | Related surfaces fixed or explicitly defended | yes | Pending |
 | Ordered typecheck, lint, and build checkpoint passed or missing commands have repo-specific evidence | yes | Pending |
-| Command failures fixed in batches from full output before rerunning | yes | Pending |
+| Command failures grouped, locally-fixable groups fixed as a batch, and temporary full-output logs deleted before rerunning | yes | Pending |
 | Reusable build evidence recorded | yes | Pending |
 | Phase 3 test boundary respected | yes | Pending |
 | No unresolved critical gap | yes | Pending |

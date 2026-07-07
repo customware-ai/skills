@@ -98,7 +98,8 @@ Phase 3 is the default checkpoint for typecheck, lint, and build.
 - Complete Phase 2 implementation packets first, including required tests/docs edits, while preserving packet-level evidence.
 - In Phase 3, inspect connected places first. If the task changed a contract, data shape, route, component, store, permission, migration, fixture, test helper, or shared UI pattern, find the connected callers/surfaces and update or defend them before static/build validation.
 - Run typecheck, then lint, then build. If the repo has a single command that combines these, record the combined command and its order instead of inventing duplicate commands.
-- When a command fails, inspect the full output, group all issues that can be fixed from that output, fix them together, and then rerun that same command. Do not fix one file at a time and rerun repeatedly when the output already identifies more related issues.
+- When a command fails, inspect enough output to identify every visible issue group by file, contract, or root cause. Do not rely on truncated `tail`/`head` output as the only evidence if it can hide issue groups. If output is too large, use focused searches, reporter options, or a temporary full-output log; delete any temporary full-output log after extracting issue groups. Record issue groups, fixes, and rerun reason in the artifact, not large pasted logs.
+- Before rerunning the same typecheck, lint, or build command, fix every locally-fixable issue group visible from the prior output. Do not fix one line or one file and rerun while other visible related groups remain unhandled.
 - After typecheck passes, move to lint. After lint passes, move to build. After build passes, record the reusable build evidence: command, output/log path, and the source/config/package/build inputs it depends on.
 - Later phases reuse the Phase 3 build result unless code, config, package/dependency files, migrations/build inputs, or generated assets changed after that build, or unless the previous output is missing, partial, stale, or incompatible with the verification command. Do not run a later build as phase preparation, final confirmation, or because E2E is starting; use the recorded Phase 3 build output.
 - If a later phase changes code, return to the earliest affected phase, update artifacts, and rerun the relevant ordered command from the first invalidated point. Do not rerun build only for confidence when the Phase 3 build evidence is still current.
@@ -237,7 +238,7 @@ A failing Phase 2 artifact is not a stopping state. Fix the implementation or ar
 5. Review associated surfaces for consistency. If a UI element was changed in one place, find similar UI elements and update or explicitly defend consistency. If an API/service/schema change enables one flow, verify other callers, routes, mutations, queries, permissions, tests, and docs that share that contract are covered.
 6. Use code inspection, artifact review, targeted search, and narrow file/state checks for the second pass. Do not run full unit/Vitest or full Playwright/E2E in Phase 3. If test execution is needed after a Phase 3 repair, run the smallest targeted command that proves that repair; otherwise record the check to run in Phase 4 or Phase 6.
 7. Close every gap that can be closed from local context.
-8. Run the ordered static/build checkpoint: typecheck, lint, build. For each failure, group all fixable issues from the command output, fix them together, and rerun that same command before moving to the next command.
+8. Run the ordered static/build checkpoint: typecheck, lint, build. For each failure, identify visible issue groups, fix every locally-fixable group together, and rerun that same command before moving to the next command. If a temporary full-output log was needed to triage a large failure, delete it after extracting issue groups.
 9. Record reusable build evidence after a passing build, including when later phases may reuse it and what would invalidate it.
 10. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
 11. Update `task-workflow/progress.md` with the second-pass findings, associated-surface review, ordered check results, reusable build evidence, gap state, a pointer to `task-workflow/phase-3-second-execution.md` for repair-file details, and next local action.
@@ -267,7 +268,8 @@ Critical failures:
 - a related surface was found inconsistent and neither fixed nor defended with evidence
 - Phase 3 used a broad/full unit, Vitest, or Playwright/E2E suite as a review, confidence, or state-discovery command
 - Phase 3 passed without current typecheck, lint, and build evidence, or without a recorded repo-specific reason one of those commands does not exist
-- Phase 3 reran typecheck, lint, or build after each single-file fix while the prior output already identified more related fixable issues
+- Phase 3 reran typecheck, lint, or build before all visible locally-fixable issue groups from the prior output were handled
+- Phase 3 kept a temporary full-output static/build log after extracting issue groups, or relied only on truncated output while issue groups may have been hidden
 - Phase 3 failed to record reusable build evidence after a passing build
 - remaining gap has no reason, owner, or next action
 
