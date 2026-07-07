@@ -82,6 +82,7 @@ When a Phase 5 script or Phase 6 targeted spec fails, diagnose the failure type 
 - If the helper times out, exits with no useful output, or appears hung, inspect helper setup/server/run logs and readiness evidence before rerunning. The next run must change setup, server command, ready URL, test command, fixture, timeout reason, or diagnostic output.
 - If the page state is correct and the assertion is valid, fix implementation or test code, then rerun the smallest affected script/spec.
 - Timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. If a single targeted run needs more than two minutes, split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure instead of increasing the timeout.
+- Record the timeout value, result, whether useful failure evidence existed, triage checks, and any longer-rerun reason in the current Phase 5 or Phase 6 artifact. A phase cannot pass with only a narrative claim that the run was slow or quiet.
 
 Example helper shape:
 
@@ -110,7 +111,7 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
 2. Read `references/playwright-interactive.md`.
 3. Confirm `task-workflow/scripts/playwright-lifecycle.mjs` exists and is readable.
 4. Write standalone Playwright scripts under `task-workflow/playwright/`.
-5. Run the scripts through `task-workflow/scripts/playwright-lifecycle.mjs` with the repo's normal local app command, a readiness URL, bounded command timeout, and runtime logs.
+5. Run the scripts through `task-workflow/scripts/playwright-lifecycle.mjs` with the repo's normal local app command, a readiness URL, bounded command timeout, and runtime logs. First-run Phase 5 script/probe timeout should be `15000`-`20000` ms.
 6. Drive the app through real user interactions.
 7. Verify primary routes, forms, buttons, menus, dialogs, tables, navigation, save flows, and error states touched or implied by the task.
 8. Exercise bad cases and non-ideal user behavior: invalid submissions, empty states, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigating away/back, and nearby controls a real user could click while using the feature.
@@ -119,12 +120,12 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
 11. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
 12. Verify every screenshot path cited in the Phase 5 artifact exists before scoring the gate. Record the file-existence command/readback proof in `task-workflow/phase-5-playwright-verification.md`.
 13. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to Phase 4 for fix and integrity review, then re-enter Phase 5 and rerun the failed path plus nearby/surrounding checks.
-14. Fix discovered issues and rerun the scripts from clean Node.js processes through the lifecycle helper.
+14. Fix discovered issues and rerun the scripts from clean Node.js processes through the lifecycle helper. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
 15. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
 16. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
 17. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
 18. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-19. Record route/state coverage, interaction coverage, bad-case/adversarial coverage, surrounding-feature smoke, responsive viewport coverage, screenshots, screenshot existence proof, lifecycle helper command, readiness proof, runtime log paths, cleanup result, issues, fixes, open-gap status, and fixed-wait review evidence.
+19. Record route/state coverage, interaction coverage, bad-case/adversarial coverage, surrounding-feature smoke, responsive viewport coverage, screenshots, screenshot existence proof, lifecycle helper command, readiness proof, runtime log paths, timeout/quiet-run triage, cleanup result, issues, fixes, open-gap status, and fixed-wait review evidence.
 20. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
 21. Update `task-workflow/progress.md` so current phase and next local action match Phase 6.
 
@@ -170,6 +171,9 @@ Critical failures:
 - lifecycle helper not used for Phase 5 app startup and script execution, except after recorded helper failure and a justified fallback
 - first app/browser command ran against an assumed existing server instead of establishing helper/repo lifecycle ownership
 - manual cleanup, fixed `sleep`, DB-delete, or server-start command chain used instead of the lifecycle helper before a diagnosed helper failure
+- first-run targeted Phase 5 Playwright script/probe uses a timeout above `20000` ms without a task-specific artifact reason
+- Phase 5 timeout is increased after useful failure evidence, or after timer-only/no-output failure without recorded helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage proving the app and script are valid to rerun
+- timeout/quiet-run triage is missing from the Phase 5 artifact after any timed-out, quiet, or longer-rerun command
 - `playwright install` or equivalent browser download attempted during verification
 - server PID/log/readiness proof not recorded
 - main touched route or flow not exercised
@@ -218,7 +222,7 @@ If this gate fails, stay in Phase 5.
 8. Record every meaningful test command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
 9. Do not rerun tests only for confidence. Rerun when related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
 10. Before rerunning the exact same failing command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, test, command scope, or diagnostic strategy before running again.
-11. Run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup, including existing repo E2E specs. Put the native test command inside helper `--run`. Use native Playwright with repo `webServer` only when the helper cannot own the server for that exact command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command. Keep one setup/server lifecycle for the related verification batch when the DB/build/server inputs remain valid; do not reset DB, rerun migrations/seed, or restart the server between targeted specs unless the previous run changed or invalidated that state. When a failing E2E run suggests stale DB, stale server, wrong build, redirect, missing fixture data, not-found page state, selector timeout, or no useful helper output, inspect helper run/server/setup logs plus page state before rerunning through the same lifecycle owner.
+11. Run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup, including existing repo E2E specs. Put the native test command inside helper `--run`. Use native Playwright with repo `webServer` only when the helper cannot own the server for that exact command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command. First-run targeted Phase 6 E2E timeout should be at most `30000` ms. Keep one setup/server lifecycle for the related verification batch when the DB/build/server inputs remain valid; do not reset DB, rerun migrations/seed, or restart the server between targeted specs unless the previous run changed or invalidated that state. When a failing E2E run suggests stale DB, stale server, wrong build, redirect, missing fixture data, not-found page state, selector timeout, or no useful helper output, inspect helper run/server/setup logs plus page state before rerunning through the same lifecycle owner. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
 12. Fix failures and rerun with the smallest command that can prove the fix.
 13. Record the exact command output for every required E2E/test run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`.
 14. Review the interactive scripts and E2E tests for fixed waits and record the files inspected plus the result.
@@ -277,6 +281,9 @@ Critical failures:
 - Playwright/E2E command bypasses `task-workflow/scripts/playwright-lifecycle.mjs` before a diagnosed helper failure or a recorded pre-command reason that repo `webServer` ownership is required for that exact command
 - first E2E command depends on an assumed existing server instead of establishing helper/repo lifecycle ownership
 - Playwright/E2E command uses manual cleanup, fixed `sleep`, DB-delete, or server-start command chains instead of lifecycle `--setup` plus managed server/run steps before a diagnosed helper failure
+- first-run targeted Phase 6 E2E uses a timeout above `30000` ms without a task-specific artifact reason
+- Phase 6 timeout is increased after useful failure evidence, or after timer-only/no-output failure without recorded helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage proving the app and spec are valid to rerun
+- timeout/quiet-run triage is missing from the Phase 6 artifact after any timed-out, quiet, or longer-rerun command
 - unfiltered full Playwright/E2E suite is run without an explicit task request for full E2E or a concrete written repo instruction naming full E2E/all-spec execution for this exact task
 - unfiltered full Playwright/E2E suite is run after targeted/connected E2E already passed and no related code, test, config, fixture, migration, or build input changed
 - repeated DB reset/migrate/seed or server restart is used between related E2E commands without a recorded invalidating state change or lifecycle diagnostic
@@ -324,7 +331,7 @@ If this gate fails, stay in Phase 6.
 9. Re-read the screenshot existence audit from Phase 5 and verify every screenshot path cited in Phase 5 still exists.
 10. Re-read the exact E2E/test command output evidence from Phase 6 and confirm it is present, current, and not replaced by a prose-only claim.
 11. Inspect changed app/server source for `console.*` again. Temporary `console.*` used to debug Phase 5 browser/runtime behavior must be removed before Phase 7 signs off; lasting logging must use the repo-approved logging or telemetry path.
-12. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
+12. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, timeout/quiet-run triage where applicable, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
 13. Review the final diff.
 14. Re-run only commands whose earlier proof was invalidated by later edits, changed test/config state, incomplete/stale output, or an explicit exact-task requirement from the task or repo instructions. Do not add full unit/Vitest or full Playwright runs only to feel more confident.
 15. Score the final result in all quality categories.
@@ -384,6 +391,7 @@ Critical failures:
 - Phase 6 lacks exact E2E/test command output evidence
 - changed app/server source still contains `console.*` after Phase 5
 - artifact integrity review is missing, incomplete, or records a failing decision, failing score, missing artifact, placeholder gate evidence, or contradiction between artifacts
+- Phase 5 or Phase 6 had a timed-out, quiet, or longer-rerun Playwright/E2E command without recorded timeout value and triage evidence
 - final implementation violates or fails to verify an extracted `AGENTS.md` development rule
 - any final quality category is below `8/10`
 - final source edit happened after last relevant verification

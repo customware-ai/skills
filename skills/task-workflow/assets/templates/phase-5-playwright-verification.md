@@ -14,6 +14,8 @@
 | Readiness proof | Pending |
 | Runtime command logs | Pending |
 | Browser preflight result | Pending |
+| Initial command timeout | Pending |
+| Timeout/quiet-run triage, if any | Pending |
 
 ## Phase 3 Build Reuse
 
@@ -38,6 +40,9 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup without manual chain bundling | Pending | Pending |
 | Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
+| First-run targeted script/probe used `15000`-`20000` ms timeout, or task-specific reason for a different first timeout is recorded | Pending | Pending |
+| Longer timeout, if used, followed timer-only/no-useful-output failure plus helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage | Pending | Pending |
+| Useful failure evidence was diagnosed directly instead of retried with a larger timeout | Pending | Pending |
 | Manual fallback, if used, captured PID/log/readiness/cleanup evidence under `task-workflow/runtime/`; otherwise N/A | Pending | Pending |
 | Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
@@ -90,6 +95,14 @@ Every screenshot path cited anywhere in this artifact must exist when the Phase 
 | --- | --- | --- |
 | Pending | Pending | Pending |
 
+## Timeout And Quiet-Run Triage
+
+Record every timed-out, quiet, or longer-timeout Playwright/helper run. A longer rerun is allowed only after a timer-only/no-useful-output failure and clean triage proving the app and script are valid to rerun.
+
+| Command | Timeout | Result/useful evidence? | Triage checked: helper logs, readiness, URL, not-found/error state, DB/fixture, server log, browser console, network/page state | Rerun/fix decision |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
+
 ## Fixed Wait Review
 
 Inspect the Playwright scripts used in this phase and any E2E tests created so far.
@@ -138,6 +151,9 @@ If matches were found and removed, record the replacement proof here.
 | Server/command discipline passed | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | First app/browser command established lifecycle ownership before testing | yes | Pending |
+| First-run targeted script/probe timeout was `15000`-`20000` ms or justified | yes | Pending |
+| No longer timeout used without timer-only/no-useful-output failure plus clean triage | yes | Pending |
+| Timeout/quiet-run triage recorded for every timed-out, quiet, or longer-rerun command | yes | Pending |
 | No unowned `nohup`/`disown`/assumed-server path used before diagnosed helper failure | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |

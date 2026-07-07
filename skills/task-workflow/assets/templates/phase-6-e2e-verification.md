@@ -26,9 +26,9 @@ E2E tests should prove actual task functionality, not superficial styling or exi
 
 Record the exact bounded test command and its exact output. If output is long, write it to a repo-local log file and cite that file here, plus the final pass/fail lines copied exactly into the artifact.
 
-| Command | Lifecycle helper/repo `webServer`/setup evidence | Result | Exact output or repo-local log path with final lines | Follow-up |
-| --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending |
+| Command | Timeout | Lifecycle helper/repo `webServer`/setup evidence | Result | Exact output or repo-local log path with final lines | Follow-up |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Phase 3 Build Reuse
 
@@ -44,9 +44,9 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 
 Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first. For E2E, list the connected specs covered. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task. A repo having one large E2E file, a Playwright `webServer`, or generic "run tests" guidance is not enough.
 
-| Command | Scope: targeted/connected-multi-spec/explicit-full | Why this scope and connected specs covered; exact full-suite requirement if explicit-full | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
-| --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+| Command | Scope: targeted/connected-multi-spec/explicit-full | Why this scope and connected specs covered; exact full-suite requirement if explicit-full | Previous related failure | Changed or new evidence before rerun | Timeout/quiet-run triage before longer rerun | Outcome | Next action |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Server And Command Discipline
 
@@ -63,6 +63,9 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup | Pending | Pending |
 | DB/setup/server lifecycle reused across related E2E commands unless code, test, config, fixture, migration, build input, or lifecycle diagnostics invalidated it | Pending | Pending |
 | Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
+| First-run targeted E2E used timeout at or below `30000` ms, or task-specific reason for a different first timeout is recorded | Pending | Pending |
+| Longer timeout, if used, followed timer-only/no-useful-output failure plus helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage | Pending | Pending |
+| Useful failure evidence was diagnosed directly instead of retried with a larger timeout | Pending | Pending |
 | Manual fallback, if used, captured PID/log/readiness/cleanup evidence under `task-workflow/runtime/`; otherwise N/A | Pending | Pending |
 | Background server cleaned up after tests | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
@@ -97,6 +100,14 @@ If matches were found and removed, record the replacement proof here.
 | --- | --- | --- |
 | Pending | Pending | Pending |
 
+## Timeout And Quiet-Run Triage
+
+Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun is allowed only after a timer-only/no-useful-output failure and clean triage proving the app and spec are valid to rerun.
+
+| Command | Timeout | Result/useful evidence? | Triage checked: helper logs, readiness, URL, not-found/error state, DB/fixture, server log, browser console, network/page state | Rerun/fix decision |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
+
 ## Test Quality Review
 
 | Check | Status | Evidence |
@@ -122,6 +133,9 @@ If matches were found and removed, record the replacement proof here.
 | Broad/full unit commands, if any, were one final sanity check or explicit exception after targeted/connected tests | Pending | Pending |
 | Suspected pre-existing/order-dependent failures were diagnosed with narrow evidence before any broader command was considered | Pending | Pending |
 | No confidence-only or blind identical failing-command rerun | Pending | Pending |
+| First-run targeted E2E timeout was at or below `30000` ms or justified | Pending | Pending |
+| No longer timeout used without timer-only/no-useful-output failure plus clean triage | Pending | Pending |
+| Timeout/quiet-run triage recorded for every timed-out, quiet, or longer-rerun command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
 ## Gate
@@ -151,6 +165,9 @@ If matches were found and removed, record the replacement proof here.
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | First E2E command established lifecycle ownership before testing | yes | Pending |
 | Existing repo E2E ran through lifecycle helper by default, or native Playwright exception was recorded before command | yes | Pending |
+| First-run targeted E2E timeout was at or below `30000` ms or justified | yes | Pending |
+| No longer timeout used without timer-only/no-useful-output failure plus clean triage | yes | Pending |
+| Timeout/quiet-run triage recorded for every timed-out, quiet, or longer-rerun command | yes | Pending |
 | No unowned `nohup`/`disown`/assumed-server path used before diagnosed helper failure | yes | Pending |
 | No repeated DB reset/migrate/seed or server restart between related E2E commands without invalidating state change or lifecycle diagnostic | yes | Pending |
 | No `playwright install` or browser download attempted | yes | Pending |

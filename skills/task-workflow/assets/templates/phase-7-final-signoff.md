@@ -36,6 +36,7 @@
 | No confidence-only or blind identical failing-command rerun is recorded | Pending |
 | Phase 5/6 correct lifecycle-owner evidence current | Pending |
 | Phase 5/6 reused DB/setup/server lifecycle across related verification commands unless invalidated by changed state or lifecycle diagnostics | Pending |
+| Phase 5/6 timeout values and timeout/quiet-run triage evidence current | Pending |
 | Phase 5 responsive-quality evidence current and first-class when UI changed | Pending |
 | No unresolved broken UI, overlap, clipping, unusable control, accidental horizontal scroll, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | Pending |
 | No Phase 5/6 `playwright install` or browser download attempt | Pending |
@@ -96,6 +97,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Test selection and retry evidence | Phase 3 boundary plus Phase 4/6 ledgers explain targeted-first order, connected-spec coverage, final full-unit sanity/exception reason if used, no confidence-only/state-discovery full-suite run, rerun basis, outcomes, and next actions | Pending | Pending |
 | Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper by default, repo Playwright `webServer` or manual fallback only with reason/diagnostics; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | DB/setup/server reuse evidence | Phase 5/6 does not repeatedly reset DB, rerun migrate/seed, or restart the server between related E2E commands without an invalidating state change or lifecycle diagnostic | Pending | Pending |
+| Timeout/quiet-run triage evidence | Phase 5/6 records timeout values and triage for every timed-out, quiet, or longer-rerun Playwright/E2E command; no longer timeout is used without timer-only/no-useful-output failure plus clean state triage | Pending | Pending |
 | Browser install avoidance | No `playwright install` or browser download command was run during Phase 5/6 | Pending | Pending |
 | Changed app/server logging | No `console.*` remains in changed app/server source after Phase 5 | Pending | Pending |
 
@@ -135,6 +137,8 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | No confidence-only or blind identical failing-command rerun is recorded | yes | Pending |
 | Phase 5/6 correct lifecycle-owner evidence recorded | yes | Pending |
 | Phase 5/6 did not repeatedly reset DB/setup/server between related commands without invalidating state change or lifecycle diagnostic | yes | Pending |
+| Phase 5/6 timeout/quiet-run triage evidence recorded for every timed-out, quiet, or longer-rerun Playwright/E2E command | yes | Pending |
+| No longer Playwright/E2E timeout used without timer-only/no-useful-output failure plus clean state triage | yes | Pending |
 | No browser download attempted in Phase 5/6 | yes | Pending |
 | Artifact integrity review completed and clean | yes | Pending |
 | Quality scorecard all >= 8/10 | yes | Pending |
