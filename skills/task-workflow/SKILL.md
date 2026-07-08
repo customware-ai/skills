@@ -1,18 +1,13 @@
 ---
 name: task-workflow
-description: >
-  Strict execution instructions for product tasks, app implementation tasks,
-  bugfixes, verification tasks, and full-stack coding tasks. Use when Codex
-  must work through ordered phases that start with
-  mandatory task-workflow artifact reset before any source inspection or edit,
-  then codebase research, implementation passes, scored gates, interactive
-  Playwright verification through a managed lifecycle helper, phase-owned
-  unit and E2E coverage decisions, and final signoff.
+description: Canonical workflow for a task. Read and follow strictly end to end while working on the task.
 ---
 
 # Task Workflow
 
 ## Strict Instruction Contract
+
+<strict_instruction_contract>
 
 This file is strict implementation instruction, not loose guidance and not optional reference material.
 
@@ -20,12 +15,14 @@ This is the canonical workflow for task execution. It is not one possible way to
 
 If the Agent reads this skill, it must execute it exactly as written, in order, to the letter.
 
-Do not reinterpret the steps.
-Do not reorder the steps.
-Do not skip the steps.
-Do not replace the steps with a simpler approach.
-Do not make assumptions that override this file.
-Do not treat broad similarity, intuition, or prior habits as permission to deviate.
+Required behavior:
+
+- Do not reinterpret the steps.
+- Do not reorder the steps.
+- Do not skip the steps.
+- Do not replace the steps with a simpler approach.
+- Do not make assumptions that override this file.
+- Do not treat broad similarity, intuition, or prior habits as permission to deviate.
 
 If the Agent is uncertain, it must resolve that uncertainty inside the workflow defined here and not invent its own workflow.
 If the skill says to perform a step, gate, checklist, review, or loop, that step is mandatory.
@@ -51,7 +48,11 @@ If `CURRENT_PHASE.txt` still says `phase-0-artifact-reset` or `phase-1-task-rese
 
 If implementation files, generated app files, build outputs, or database files are changed before Phase 0 artifacts exist and Phase 1 passes, the run has failed and must be restarted from a clean fixture.
 
+</strict_instruction_contract>
+
 ## Core Idea
+
+<core_workflow_model>
 
 Re-read this `SKILL.md` after every compaction before continuing work. Re-load the phase references and current task artifacts too. Do not rely on conversational memory.
 
@@ -65,7 +66,11 @@ Never promote work from one phase to the next on optimism, partial evidence, a g
 
 The workflow is intentionally looped. A failed gate means the Agent must rework that phase, update evidence, rerun the needed checks or verification, rescore the gate, and repeat until the gate passes. Quality gates are not reports to the user; they are control points that force more work before promotion.
 
+</core_workflow_model>
+
 ## MITB Workspace Inputs
+
+<mitb_workspace_inputs>
 
 When running in a MITB sandbox, use these repo-relative workspace inputs:
 
@@ -87,7 +92,11 @@ Record every `.tasks/files/` attachment/supporting file read or inspected, plus 
 
 In MITB, `.tasks/task.md` or the prompt always provides the task completion command. Phase 7 must run the exact completed command only after every Phase 7 audit check passes. If any Phase 7 audit check fails, do not run task completion. Return to the earliest failing phase, repair the work, update evidence, rescore that phase, loop forward through the gates, and then re-enter Phase 7.
 
+</mitb_workspace_inputs>
+
 ## Mandatory Process Shape
+
+<mandatory_process_shape>
 
 This workflow shape is not optional:
 
@@ -104,7 +113,11 @@ This workflow shape is not optional:
 
 If the work skips one of those phase boundaries, the run is off track.
 
+</mandatory_process_shape>
+
 ## Looped Gate Contract
+
+<looped_gate_contract>
 
 Every phase follows the same loop:
 
@@ -124,7 +137,11 @@ Do not move forward with a weak artifact because the implementation "probably wo
 
 The only acceptable end state is Phase 7 passed with every earlier phase still passing. The only acceptable non-Phase-7 stop is a real external blocker that cannot be solved locally and is fully recorded in the current phase artifact and `task-workflow/open-gaps.md`.
 
+</looped_gate_contract>
+
 ## Autonomous Run Contract
+
+<autonomous_run_contract>
 
 Treat these rules as always active:
 
@@ -186,7 +203,11 @@ Treat these rules as always active:
 - Do not stop after implementation, build, lint, tests, Playwright verification, or E2E work if any later phase is still unpassed and locally available.
 - Do not assume the user will catch a shortcut. The Agent must prevent the shortcut itself.
 
+</autonomous_run_contract>
+
 ## Final Response Guard
+
+<final_response_guard>
 
 Before producing any final response, stopping message, or ending an OpenCode turn with control returned to the user, run this guard against the artifact files:
 
@@ -211,7 +232,11 @@ Before producing any final response, stopping message, or ending an OpenCode tur
 If any item fails and the problem can be solved locally, continue the workflow from the earliest failing phase. Do not answer as if the task is complete.
 If an actual external blocker prevents completion, record the blocker in the current phase artifact and `open-gaps.md`, including commands run, files inspected, why local recovery cannot solve it, and the smallest next action.
 
+</final_response_guard>
+
 ## OpenCode Turn Continuity Guard
+
+<opencode_turn_continuity_guard>
 
 When running inside OpenCode or another tool-driven coding session, the Agent must not end its assistant turn just because a command finished, a typecheck passed, lint started, files were edited, or a phase artifact is temporarily failing.
 
@@ -231,7 +256,11 @@ The only valid stopping states are:
 
 If the session is long, keep the phase artifacts current and continue dispatching the next tool/action. Do not rely on the user to type "continue" to finish an unblocked phase.
 
+</opencode_turn_continuity_guard>
+
 ## Critical Output Invariant
+
+<critical_output_invariant>
 
 These are hard constraints:
 
@@ -249,7 +278,11 @@ These are hard constraints:
 - Type assertions, broad casts, and warning suppression are not acceptable substitutes for correct contracts and narrowed types.
 - Final signoff must score at least `8/10` in each quality category: functional result, skill compliance/artifact integrity, code quality/maintainability, test quality, and overall result.
 
+</critical_output_invariant>
+
 ## Reference Loading Rules
+
+<reference_loading_rules>
 
 Do not load every reference file by default.
 
@@ -286,7 +319,11 @@ Phase reference map:
 
 The phase references are grouped by connected workstream, not one file per phase. This matches the reference skill pattern: `SKILL.md` holds the strict global protocol and the reference files hold detailed process for the current workstream.
 
+</reference_loading_rules>
+
 ## Operating Modes
+
+<operating_modes>
 
 ### Validation Mode
 
@@ -305,7 +342,11 @@ Use this when the user wants the real target app or task completed.
 - Treat the task file as the source of truth.
 - Do not sign off until every gate in this file and the phase references has passed in writing.
 
+</operating_modes>
+
 ## Required Artifacts
+
+<required_artifacts>
 
 These are mandatory:
 
@@ -330,7 +371,11 @@ These are mandatory:
 
 The templates in `assets/templates/` are enforcement artifacts. Copy their structure directly. If a required table is replaced by prose or stripped down until rows are no longer auditable, the run fails.
 
+</required_artifacts>
+
 ## Multi-Phase Protocol
+
+<multi_phase_protocol>
 
 Follow the phases in order:
 
@@ -384,7 +429,11 @@ Detailed process: `references/phase-5-7-verification-signoff.md`.
 
 The phase references are not optional expansion material. They are the detailed execution instructions for the current workstream.
 
+</multi_phase_protocol>
+
 ## Disallowed Shortcuts And Automatic Fails
+
+<automatic_fails>
 
 These automatically fail the run:
 
@@ -459,7 +508,11 @@ These automatically fail the run:
 - failing to run the required MITB completed command after all Phase 7 audit checks pass
 - asking the user whether to continue between phases when the next phase is unblocked
 
+</automatic_fails>
+
 ## Reference Map
+
+<reference_map>
 
 - `references/phase-0-1-startup-research.md`: artifact reset, template copying, task intake, and codebase research.
 - `references/phase-2-4-execution-integrity.md`: primary execution, second execution, gap closure, and integrity checks.
@@ -478,7 +531,11 @@ These automatically fail the run:
 - `assets/scripts/playwright-lifecycle.mjs`: managed server/readiness/Playwright execution helper copied into `task-workflow/scripts/` during Phase 0.
 - `assets/scripts/server-probe.mjs`: managed API/runtime server probe helper copied into `task-workflow/scripts/` during Phase 0 for pre-Phase-5 server checks.
 
+</reference_map>
+
 ## Non-Negotiables
+
+<non_negotiables>
 
 - Use the phase gates exactly.
 - Keep the artifacts auditable.
@@ -486,7 +543,13 @@ These automatically fail the run:
 - Do not edit source files before Phase 0 and Phase 1 gates pass.
 - Do not sign off before interactive Playwright verification and regression test gates pass.
 
+</non_negotiables>
+
 ## Completion Standard
+
+<completion_standard>
 
 The task is complete only when Phase 7 passes.
 If the task cannot be completed, the final artifact must identify the exact blocking condition, the phase where it occurred, commands run, files inspected, and the smallest next action needed.
+
+</completion_standard>

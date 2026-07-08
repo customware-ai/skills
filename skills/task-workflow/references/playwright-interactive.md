@@ -2,9 +2,15 @@
 
 Use this reference in Phase 5.
 
+<interactive_playwright_scope>
+
 `Playwright` means standalone Node.js scripts that open the local app, drive the browser with real input, and save screenshots. It does not mean the repo's normal E2E test suite.
 
+</interactive_playwright_scope>
+
 ## Rules
+
+<interactive_playwright_rules>
 
 - Run Phase 5 browser scripts through `task-workflow/scripts/playwright-lifecycle.mjs`.
 - The first browser script run must establish lifecycle ownership. Do not run a script against an assumed existing local server and then treat `fetch failed`, redirects, stale data, or stale build output as a reason to manually start or kill servers.
@@ -28,7 +34,11 @@ Use this reference in Phase 5.
 - Do not use screenshots alone as proof when a visible control needs interaction proof.
 - Do not use `page.evaluate(...)` as a substitute for normal user interaction unless inspecting state that cannot be observed otherwise.
 
+</interactive_playwright_rules>
+
 ## Lifecycle Helper Pattern
+
+<lifecycle_helper_pattern>
 
 ```bash
 node task-workflow/scripts/playwright-lifecycle.mjs \
@@ -43,7 +53,11 @@ The helper writes server and command logs under `task-workflow/runtime/`. Cite t
 
 Timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. Record timeout values, quiet-run evidence, triage checks, and longer-rerun reasons in the current phase artifact. If one targeted run needs more than two minutes, split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure before increasing timeout.
 
+</lifecycle_helper_pattern>
+
 ## Minimal Script Pattern
+
+<minimal_script_pattern>
 
 ```js
 import { chromium } from 'playwright';
@@ -64,7 +78,11 @@ try {
 }
 ```
 
+</minimal_script_pattern>
+
 ## Mobile Pattern
+
+<mobile_pattern>
 
 ```js
 const context = await browser.newContext({
@@ -74,7 +92,11 @@ const context = await browser.newContext({
 });
 ```
 
+</mobile_pattern>
+
 ## Required Coverage
+
+<required_coverage>
 
 Cover all routes, states, and interactions touched or implied by the task:
 
@@ -89,7 +111,11 @@ Cover all routes, states, and interactions touched or implied by the task:
 - no broken UI at required viewports: overlapping controls, clipped content, unreadable text, inaccessible navigation, unusable menus/dialogs, accidental horizontal scrolling, or controls outside the viewport
 - no excessive dead space on normal desktop/1080p screens. `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. Large empty regions are acceptable on 4K/ultrawide only when the content width is intentionally constrained and the screen still looks designed.
 
+</required_coverage>
+
 ## What Does Not Count
+
+<what_does_not_count>
 
 - opening the app without interacting
 - taking only one screenshot
@@ -98,3 +124,5 @@ Cover all routes, states, and interactions touched or implied by the task:
 - relying only on unit/E2E test runner output
 - recording paths that do not exist
 - ignoring console/runtime errors discovered during verification
+
+</what_does_not_count>

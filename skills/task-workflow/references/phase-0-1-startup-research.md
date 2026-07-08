@@ -2,11 +2,17 @@
 
 Use this reference for Phase 0 and Phase 1.
 
+<startup_research_workstream>
+
 These phases establish the task workspace and produce the accepted implementation plan. They are internal gates, not user confirmation points. When a gate passes, continue automatically. When a gate fails, repair the phase and rerun the gate automatically.
 
 This is a looped gate workstream: Phase 0 and Phase 1 are not complete until their artifacts pass their gates. A failing score, missing evidence, stale placeholder, or blocked promotion means stay in the same phase, repair the work, update the artifact, rescore, and repeat. Do not stop or ask the user to continue when a local repair is available.
 
+</startup_research_workstream>
+
 ## Startup Authority
+
+<startup_authority>
 
 The artifact trail is the source of truth for the run.
 
@@ -34,7 +40,11 @@ Do not generate build outputs, route typegen, databases, migrations, or source a
 Do not edit implementation files after Phase 1 passes until `task-workflow/CURRENT_PHASE.txt` says `phase-2-execution`.
 When filling phase artifacts, keep evidence auditable. If a template row is condensed, the same semantic evidence must still be present.
 
+</startup_authority>
+
 ## Phase 0: Artifact Reset And Scaffolding
+
+<phase_0_artifact_reset>
 
 Phase 0 is the first action after reading `SKILL.md`.
 
@@ -76,7 +86,11 @@ Phase 0 is the first action after reading `SKILL.md`.
 10. Update `task-workflow/progress.md` so current phase and next local action match Phase 1.
 11. Re-open `task-workflow/phase-0-artifact-reset.md`, record marker after promotion as `phase-1-task-research`, then mark the Phase 0 decision.
 
+</phase_0_artifact_reset>
+
 ## Phase 0 Score
+
+<phase_0_gate>
 
 Score `task-workflow/phase-0-artifact-reset.md` against `10` items:
 
@@ -110,7 +124,11 @@ Pass gate:
 
 If this gate fails, stay in Phase 0.
 
+</phase_0_gate>
+
 ## Phase 1: Task Intake And Codebase Research
+
+<phase_1_task_research>
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
 2. Read the complete task body. In MITB, `.tasks/task.md` is the canonical task workspace and may include completion commands; read it even if the prompt also includes the task text.
@@ -138,7 +156,11 @@ If this gate fails, stay in Phase 0.
 24. Update `task-workflow/progress.md` so current phase and next local action match Phase 2.
 25. Record that Phase 2 was promoted only after Phase 1 passed.
 
+</phase_1_task_research>
+
 ## Research Surface
+
+<research_surface>
 
 Research must be specific enough that another agent could execute from the artifact alone.
 
@@ -162,7 +184,11 @@ Record:
 
 The Phase 1 artifact is not notes after the fact. It is the plan that controls Phase 2.
 
+</research_surface>
+
 ## Phase 1 Score
+
+<phase_1_gate>
 
 Score `task-workflow/phase-1-task-research.md` against `30` items:
 
@@ -211,7 +237,11 @@ Pass gate:
 
 If this gate fails, stay in Phase 1.
 
+</phase_1_gate>
+
 ## Promotion Rule
+
+<startup_research_promotion_rule>
 
 Phase 2 is blocked until Phase 1 passes in writing.
 
@@ -226,3 +256,5 @@ Both phase artifacts must show `Decision: Pass`, passing scores, all critical it
 After this promotion, Phase 2 implementation is allowed only because the marker now says `phase-2-execution`. If any source file changes while the current marker still says `phase-1-task-research`, the run has failed.
 
 Do not stop after research to ask whether to continue. The gate exists so the agent can continue autonomously once the research artifact is strong enough.
+
+</startup_research_promotion_rule>
