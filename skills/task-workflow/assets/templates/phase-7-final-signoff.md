@@ -26,22 +26,22 @@
 | Open critical gaps resolved | Pending |
 | Stale/deferred open gaps reconciled | Pending |
 | Extracted `AGENTS.md` development rules followed | Pending |
-| Phase 3 did not use broad/full unit, Vitest, or Playwright/E2E as review/confidence/state-discovery commands | Pending |
-| Phase 4/6 minimal test selection and retry ledgers current, including `N/A` when no test is warranted | Pending |
-| Minimal warranted targeted and connected tests prove the core changed behavior before any final sanity/exception-full unit command, or no test was warranted | Pending |
-| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after minimal warranted targeted and connected tests | Pending |
-| No unfiltered full E2E unless the task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | Pending |
-| No unfiltered full E2E after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | Pending |
-| Broad/full unit commands, if any, have final sanity/explicit exception reasons | Pending |
-| No confidence-only or blind identical failing-command rerun is recorded | Pending |
+| Phase 3 implementation integrity and static-check evidence is current | Pending |
+| Phase 4 unit coverage decision is current: add, update, remove, or defended `N/A` | Pending |
+| Phase 4 unit command output, defended `N/A`, or removed-test rationale and diff/readback evidence is present | Pending |
+| Phase 6 E2E coverage decision is current: add, update, remove, or defended `N/A` | Pending |
+| Phase 6 E2E command output, defended `N/A`, or removed-test rationale and diff/readback evidence is present | Pending |
+| Phase 6 E2E command scope matches the coverage decision or an exact full-E2E requirement | Pending |
+| Phase 6 E2E reruns have material change, stale-output, or diagnostic reasons | Pending |
+| Rerun ledger records material reasons for repeated commands | Pending |
 | Phase 5/6 correct lifecycle-owner evidence current | Pending |
 | Phase 5/6 reused DB/setup/server lifecycle across related verification commands unless invalidated by changed state or lifecycle diagnostics | Pending |
 | Phase 5/6 timeout values and timeout/quiet-run triage evidence current | Pending |
 | Phase 5 responsive-quality evidence current and first-class when UI changed | Pending |
-| No unresolved broken UI, overlap, clipping, unusable control, accidental horizontal scroll, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | Pending |
-| No Phase 5/6 `playwright install` or browser download attempt | Pending |
-| Runtime logs cited for managed server/test commands where output is too long | Pending |
-| No `console.*` remains in changed app/server source after Phase 5 | Pending |
+| Phase 5 UI-quality issues are resolved or defended with responsive evidence | Pending |
+| Phase 5/6 browser preflight and lifecycle evidence current | Pending |
+| Runtime logs cited for managed server or verification commands where output is too long | Pending |
+| Changed app/server logging review is current after Phase 5 | Pending |
 | Task summary accurate | Pending |
 | `progress.md` agrees with Phase 7 and has no remaining local action | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers identify where final gate, verification, log, and test details live | Pending |
@@ -78,14 +78,14 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | `task-workflow/phase-4-integrity-review.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/phase-5-playwright-verification.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/phase-6-e2e-verification.md` | Pending | Pending | Pending | Pending | Pending |
-| `task-workflow/progress.md` | Pending | Current and consistent | No pending local action | Pending | Pending |
+| `task-workflow/progress.md` | Pending | Current and consistent | Final action ready | Pending | Pending |
 
 ## Fixed Wait Review Recap
 
-| Source | Review present? | Current after last edit? | No fixed waits found? | Evidence |
+| Source | Review present? | Current after last edit? | Deterministic waits confirmed? | Evidence |
 | --- | --- | --- | --- | --- |
 | Phase 5 interactive scripts | Pending | Pending | Pending | Pending |
-| Phase 6 E2E/tests | Pending | Pending | Pending | Pending |
+| Phase 6 E2E files | Pending | Pending | Pending | Pending |
 
 ## Verification Evidence Recap
 
@@ -93,13 +93,14 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | --- | --- | --- | --- |
 | Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
 | Phase 5 responsive quality | Required viewports include mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` when UI changed; evidence shows responsive quality passed as a first-class guarantee with no broken UI, excessive 1080p dead space, or unfinished-looking 2560px empty regions | Pending | Pending |
-| Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log when a command was required; otherwise defended `N/A` coverage decision recorded | Pending | Pending |
-| Test selection and retry evidence | Phase 3 boundary plus Phase 4/6 ledgers explain the minimal coverage decision, `N/A` where no test is warranted, connected-spec coverage when warranted, final full-unit sanity/exception reason if used, no confidence-only/state-discovery full-suite run, rerun basis, outcomes, and next actions | Pending | Pending |
+| Phase 4 unit evidence | Unit coverage decision records add/update/remove/`N/A`; exact command output is recorded when a command was required; removed tests include rationale and diff/readback evidence | Pending | Pending |
+| Phase 6 E2E evidence | E2E coverage decision records add/update/remove/`N/A`; exact E2E command output is recorded when a command was required; removed E2E tests include rationale and diff/readback evidence | Pending | Pending |
+| Coverage selection and retry evidence | Phase 4 unit ledger and Phase 6 E2E ledger separately explain scope, `N/A` decisions, removals, rerun basis, outcomes, and next actions | Pending | Pending |
 | Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper by default, repo Playwright `webServer` or manual fallback only with reason/diagnostics; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | DB/setup/server reuse evidence | Phase 5/6 does not repeatedly reset DB, rerun migrate/seed, or restart the server between related E2E commands without an invalidating state change or lifecycle diagnostic | Pending | Pending |
 | Timeout/quiet-run triage evidence | Phase 5/6 records timeout values and triage for every timed-out, quiet, or longer-rerun Playwright/E2E command; no longer timeout is used without timer-only/no-useful-output failure plus clean state triage | Pending | Pending |
-| Browser install avoidance | No `playwright install` or browser download command was run during Phase 5/6 | Pending | Pending |
-| Changed app/server logging | No `console.*` remains in changed app/server source after Phase 5 | Pending | Pending |
+| Browser preflight | Phase 5/6 browser preflight and lifecycle evidence is current | Pending | Pending |
+| Changed app/server logging | Changed logging uses the repo-approved logging or telemetry path after Phase 5 | Pending | Pending |
 
 ## Quality Scorecard
 
@@ -119,31 +120,30 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Score | 20/20 | 0/20 |
 | All previous gates passed | yes | Pending |
 | Artifacts auditable | yes | Pending |
-| No unresolved critical gap | yes | Pending |
-| No stale open gap | yes | Pending |
-| No placeholder rows in `open-gaps.md` | yes | Pending |
+| Critical gaps resolved, closed, or reclassified with evidence | yes | Pending |
+| Open gaps reconciled with phase artifacts | yes | Pending |
+| Gap ledger finalized with real rows or explicit none rows | yes | Pending |
 | Fixed wait reviews current and clean | yes | Pending |
 | Phase 5 cited screenshots exist | yes | Pending |
 | Phase 5 responsive-quality evidence current and first-class when UI changed | yes | Pending |
-| No unresolved broken UI, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | yes | Pending |
-| Phase 6 exact E2E/test command output recorded when a command was required, or defended `N/A` coverage decision recorded | yes | Pending |
-| Phase 3 did not use broad/full test commands as review/confidence/state-discovery commands | yes | Pending |
-| Phase 4/6 minimal test selection and retry ledgers current | yes | Pending |
-| Minimal warranted targeted and connected tests prove the core changed behavior before any final sanity/exception-full unit command, or no test was warranted | yes | Pending |
-| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after minimal warranted targeted and connected tests | yes | Pending |
-| No unfiltered full E2E unless the task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | yes | Pending |
-| No unfiltered full E2E after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | yes | Pending |
-| Broad/full unit commands, if any, have final sanity/explicit exception reasons | yes | Pending |
-| No confidence-only or blind identical failing-command rerun is recorded | yes | Pending |
+| Phase 5 UI-quality issues resolved or defended with responsive evidence | yes | Pending |
+| Phase 4 unit-test command output recorded when a command was required, defended `N/A` recorded when none was warranted, or removed-test rationale and diff/readback evidence recorded | yes | Pending |
+| Phase 6 E2E command output recorded when a command was required, defended `N/A` recorded when none was warranted, or removed-test rationale and diff/readback evidence recorded | yes | Pending |
+| Phase 3 implementation integrity and static-check evidence current | yes | Pending |
+| Phase 4 unit coverage ledger current | yes | Pending |
+| Phase 6 E2E coverage ledger current | yes | Pending |
+| Phase 6 E2E command scope matches coverage decision or exact full-E2E requirement | yes | Pending |
+| Phase 6 E2E reruns have material change, stale-output, or diagnostic reasons | yes | Pending |
+| Rerun ledger records material reasons for repeated commands | yes | Pending |
 | Phase 5/6 correct lifecycle-owner evidence recorded | yes | Pending |
-| Phase 5/6 did not repeatedly reset DB/setup/server between related commands without invalidating state change or lifecycle diagnostic | yes | Pending |
+| Phase 5/6 DB/setup/server lifecycle reuse or invalidation reason recorded | yes | Pending |
 | Phase 5/6 timeout/quiet-run triage evidence recorded for every timed-out, quiet, or longer-rerun Playwright/E2E command | yes | Pending |
-| No longer Playwright/E2E timeout used without timer-only/no-useful-output failure plus clean state triage | yes | Pending |
-| No browser download attempted in Phase 5/6 | yes | Pending |
+| Longer Playwright/E2E timeout, if used, has timer-only failure and clean-state triage evidence | yes | Pending |
+| Browser preflight/lifecycle evidence recorded for Phase 5/6 | yes | Pending |
 | Artifact integrity review completed and clean | yes | Pending |
 | Quality scorecard all >= 8/10 | yes | Pending |
 | Extracted `AGENTS.md` development rules verified | yes | Pending |
-| No `console.*` remains in changed app/server source after Phase 5 | yes | Pending |
+| Changed logging uses repo-approved logging or telemetry path after Phase 5 | yes | Pending |
 | Verification current | yes | Pending |
 | MITB completed command run after clean final audit | yes | Pending |
 | `progress.md` final state agrees with Phase 7 | yes | Pending |

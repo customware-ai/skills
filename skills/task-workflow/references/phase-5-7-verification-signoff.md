@@ -2,7 +2,7 @@
 
 Use this reference for Phase 5, Phase 6, and Phase 7.
 
-These phases prove the implementation through real browser interaction, minimal warranted regression coverage, and final artifact audit. They are internal verification gates, not user confirmation points.
+These phases prove the implementation through real browser interaction, the Phase 6 E2E coverage decision, and final artifact audit. They are internal verification gates, not user confirmation points.
 
 This is a looped gate workstream: Phase 5, Phase 6, and Phase 7 are not complete until their artifacts pass their gates. A failing score, missing evidence, browser issue, weak test, stale gap, placeholder row, or incomplete final audit means stay in or return to the failing phase, repair the work, update the artifact, rescore, and repeat. Do not stop or ask the user to continue when a local repair is available.
 
@@ -13,20 +13,20 @@ Verification authority is:
 1. the task body
 2. Phase 1 implementation and verification plan
 3. changed files and behavior from Phase 2 and Phase 3
-4. Phase 4 integrity results
+4. Phase 4 unit-test coverage results
 5. real browser behavior observed through standalone Playwright scripts
-6. repo tests or E2E tests when the minimal coverage decision says durable coverage is warranted
+6. Phase 4 unit-test evidence and Phase 6 E2E evidence when a phase-owned coverage decision says durable coverage is warranted
 
 Static checks, builds, and tests are not substitutes for interactive Playwright verification.
-Interactive Playwright verification is not a reason to create regression tests when the minimal coverage decision says durable tests are not warranted.
+Interactive Playwright verification is not a reason to create regression tests when the Phase 4 or Phase 6 coverage decision says durable tests are not warranted.
 
 ## Open Gaps Reconciliation
 
 `task-workflow/open-gaps.md` is a gate artifact during verification.
 
 - Phase 5 must resolve or update gaps about browser/runtime/manual verification.
-- Phase 6 must resolve or update gaps about E2E, unit, integration, or coverage proof.
-- Phase 7 must compare `open-gaps.md` against Phase 5 and Phase 6 artifacts. If a phase says a gap was fixed but `open-gaps.md` still lists it as `Open`, Phase 7 fails.
+- Phase 6 must resolve or update gaps about E2E coverage proof.
+- Phase 7 must compare `open-gaps.md` against Phase 4, Phase 5, and Phase 6 artifacts. If a phase says a gap was fixed but `open-gaps.md` still lists it as `Open`, Phase 7 fails.
 - Critical gaps must be `Resolved`, `Closed`, or explicitly reclassified with evidence before signoff. They cannot remain `Open`.
 - Template placeholder rows such as `Pending | Pending | Pending` are not clean ledger evidence. Replace them with real gap rows or explicit `None currently recorded` rows before any verification gate passes.
 
@@ -35,10 +35,10 @@ Interactive Playwright verification is not a reason to create regression tests w
 `task-workflow/progress.md` must stay current through verification and signoff.
 
 - Read it after compaction before choosing the next verification action.
-- Update it after each Phase 5 browser issue/fix/rerun, Phase 6 test coverage decision or test run, Phase 7 audit result, blocker, gate pass/fail, and promotion.
-- It must summarize latest browser evidence, test evidence, fixed-wait review state, open gaps, current phase, earliest failing phase, and next local action.
+- Update it after each Phase 5 browser issue/fix/rerun, Phase 6 E2E coverage decision or E2E run, Phase 7 audit result, blocker, gate pass/fail, and promotion.
+- It must summarize latest browser evidence, Phase 4 unit evidence, Phase 6 E2E evidence, fixed-wait review state, open gaps, current phase, earliest failing phase, and next local action.
 - Its Current Phase Pointers must identify the current phase artifact, current reference, next local action, and only high-signal active files needed to resume immediately.
-- Its Artifact Pointers must point to the phase-owned artifacts where Playwright scripts, screenshots, runtime logs, E2E/test files, and verification repair details live.
+- Its Artifact Pointers must point to the phase-owned artifacts where unit evidence, Playwright scripts, screenshots, runtime logs, E2E files, and verification repair details live.
 - Phase 7 cannot pass if `progress.md` says any phase remains pending, in progress, failing, or locally repairable.
 
 ## Verification Quality Discipline
@@ -120,7 +120,7 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
 10. Keep Phase 5 scripts focused on proving the changed behavior and affected UI quality. Do not turn Phase 5 into a broad app audit unrelated to the changed surface.
 11. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
 12. Verify every screenshot path cited in the Phase 5 artifact exists before scoring the gate. Record the file-existence command/readback proof in `task-workflow/phase-5-playwright-verification.md`.
-13. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to Phase 4 for fix and integrity review, then re-enter Phase 5 and rerun the failed path plus nearby/surrounding checks.
+13. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to the earliest affected phase, usually Phase 2 for source fixes, then re-pass Phase 3 static checks and Phase 4 unit coverage before re-entering Phase 5.
 14. Fix discovered issues and rerun the scripts from clean Node.js processes through the lifecycle helper. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
 15. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
 16. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
@@ -186,7 +186,7 @@ Critical failures:
 - screenshot path cited but file does not exist
 - screenshot paths are cited without file-existence proof in the artifact
 - discovered critical UI/runtime issue remains unresolved
-- Phase 5-discovered issue was not routed back through Phase 4 fix/integrity review before rechecking
+- Phase 5-discovered issue was not routed back to the earliest affected phase, then through Phase 3 static checks and Phase 4 unit coverage before rechecking
 - script uses DOM shortcuts as a substitute for normal user interaction
 - script contains any fixed wait in the audited files
 - fixed-wait review not recorded
@@ -212,45 +212,42 @@ Pass gate:
 
 If this gate fails, stay in Phase 5.
 
-## Phase 6: Minimal E2E Coverage Decision And Verification
+## Phase 6: E2E Coverage Decision And Verification
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
 2. Decide whether E2E coverage is warranted. E2E is warranted only for a critical user workflow, complex multi-step flow, persistence/navigation boundary, permission boundary, or high-risk regression. Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no new or updated E2E.
 3. Inspect existing E2E tests before creating new ones when E2E is warranted. Identify whether the changed feature belongs in an existing flow, regression suite, or user journey.
 4. Update an existing E2E test first when the warranted behavior extends an existing workflow or could affect existing functionality already covered there.
 5. Add a new E2E test only when the task introduces or changes a core workflow that cannot be cleanly covered by an existing E2E test.
-6. Prefer lower-level tests when they are the better minimal fit for non-UI logic; do not use E2E to cover isolated logic that a small unit/service test can protect better.
-7. Select the smallest useful test command that proves only the warranted E2E coverage. Start with new, changed, or directly connected E2E specs and maintain a connected-spec ledger. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; "target repo instructions" must name full E2E or an equivalent all-spec command, not merely say to run tests. If warranted targeted or multi-spec commands already ran the connected specs and no related code, test, config, fixture, migration, or build input changed, that is the evidence; do not add a full E2E run for final confidence, final signoff, state discovery, or reviewer-satisfaction.
-8. Record every meaningful test command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
-9. Do not rerun tests only for confidence. Rerun when related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
-10. Before rerunning the exact same failing command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, test, command scope, or diagnostic strategy before running again.
-11. When E2E tests are warranted, run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup, including existing repo E2E specs. Put the native test command inside helper `--run`. Use native Playwright with repo `webServer` only when the helper cannot own the server for that exact command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command. First-run targeted Phase 6 E2E timeout should be at most `30000` ms. Keep one setup/server lifecycle for the related verification batch when the DB/build/server inputs remain valid; do not reset DB, rerun migrations/seed, or restart the server between targeted specs unless the previous run changed or invalidated that state. When a failing E2E run suggests stale DB, stale server, wrong build, redirect, missing fixture data, not-found page state, selector timeout, or no useful helper output, inspect helper run/server/setup logs plus page state before rerunning through the same lifecycle owner. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
-12. Fix failures and rerun with the smallest command that can prove the fix.
-13. Record the exact command output for every required E2E/test run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`. If no test is warranted, record `N/A` with the coverage-decision evidence instead of command output.
-14. Review the interactive scripts and any E2E tests used in this phase for fixed waits and record the files inspected plus the result. If no E2E test was used, record `N/A` for E2E test inspection.
-15. Update `task-workflow/open-gaps.md` for every test/coverage gap closed, defended, or still open.
-16. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for test-file and test-repair details, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
-17. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-18. Record the E2E coverage decision, existing tests inspected when E2E was warranted, tests updated, tests added, commands, exact command output evidence, outcomes, test-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps. If no E2E is warranted, record `N/A` with the reason and do not create a test.
-19. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
-20. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
+6. Remove existing E2E tests when they are unnecessary, obsolete, brittle, convoluted, or protect non-core/non-complex flows. Record why removal improves the E2E suite and preserve useful critical-flow coverage elsewhere only when still needed.
+7. Do not use E2E to cover isolated non-UI logic. Record E2E `N/A` for that path and cite the Phase 4 unit-test decision when relevant.
+8. Select the smallest useful E2E command that proves only the warranted E2E coverage. Start with new, changed, or directly connected E2E specs and maintain a connected-spec ledger. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; "target repo instructions" must name full E2E or an equivalent all-spec command, not merely say to run tests. If warranted targeted or multi-spec commands already ran the connected specs and no related code, test, config, fixture, migration, or build input changed, that is the evidence; do not add a full E2E run for final confidence, final signoff, state discovery, or reviewer-satisfaction.
+9. Record every meaningful E2E command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
+10. Do not rerun E2E tests only for confidence. Rerun when related implementation changed, the E2E test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
+11. Before rerunning the exact same failing E2E command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, E2E test, command scope, or diagnostic strategy before running again.
+12. When E2E tests are warranted, run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup, including existing repo E2E specs. Put the native E2E command inside helper `--run`. Use native Playwright with repo `webServer` only when the helper cannot own the server for that exact command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command. First-run targeted Phase 6 E2E timeout should be at most `30000` ms. Keep one setup/server lifecycle for the related verification batch when the DB/build/server inputs remain valid; do not reset DB, rerun migrations/seed, or restart the server between targeted specs unless the previous run changed or invalidated that state. When a failing E2E run suggests stale DB, stale server, wrong build, redirect, missing fixture data, not-found page state, selector timeout, or no useful helper output, inspect helper run/server/setup logs plus page state before rerunning through the same lifecycle owner. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
+13. Fix failures and rerun with the smallest command that can prove the fix.
+14. Record the exact command output for every required E2E run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`. If no E2E is warranted, record `N/A` with the coverage-decision evidence instead of command output.
+15. Review the interactive scripts and any E2E tests used in this phase for fixed waits and record the files inspected plus the result. If no E2E test was used, record `N/A` for E2E test inspection.
+16. Update `task-workflow/open-gaps.md` for every E2E coverage gap closed, defended, or still open.
+17. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for E2E-file and E2E-repair details, removed-test rationale, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
+18. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+19. Record the E2E coverage decision, existing E2E tests inspected when E2E was warranted, E2E tests updated, E2E tests added, E2E tests removed, commands, exact command output evidence, outcomes, E2E-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps. If no E2E is warranted, record `N/A` with the reason and do not create an E2E test.
+20. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
+21. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
 
-## Coverage Decision
+## E2E Coverage Decision
 
-Prefer no new test unless durable coverage is warranted. When it is warranted, choose the smallest durable test that protects the behavior:
+Prefer no E2E change unless durable E2E coverage is warranted. When it is warranted, choose the smallest E2E proof that protects the behavior:
 
-- targeted unit/component tests for core non-UI logic or central isolated UI behavior
 - targeted E2E for one affected critical or complex user flow
 - new, changed, or directly connected E2E specs only by default
 - multi-spec E2E only when multiple changed or adjacent flows must be protected together
 - full Playwright E2E only when the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; do not run it for confidence, final signoff, reviewer-satisfaction, state discovery, suspected pre-existing/order-dependent failures, because many specs appear relevant, or because the repo has one E2E spec file containing many tests. Diagnose those cases with the narrow failing spec/test plus logs, DOM/state, trace, screenshot, or persisted data evidence.
-- broad/full unit or Vitest only as one final sanity check after minimal warranted targeted and connected tests pass, or when shared contracts, global setup, app-wide behavior, explicit task/repo instructions, or incomplete/stale prior output requires it. Do not start with it and do not repeat it after a clean pass unless related code/config changed or previous output is stale/incomplete.
 - update an existing E2E test when warranted behavior modifies or extends an existing user workflow
+- remove an existing E2E test when it is unnecessary, obsolete, brittle, convoluted, or protects a non-core/non-complex flow
 - add a new E2E test only for a genuinely core workflow or when existing E2E coverage cannot cleanly express the warranted path
 - E2E tests for user-visible multi-step flows
-- component tests for isolated UI behavior
-- service/unit tests for non-UI logic
-- integration tests for data contracts or persistence flows
 
 E2E coverage must protect actual core task functionality. Prefer assertions that prove a user-visible outcome, persisted state, navigation result, saved record, validation behavior, permission behavior, or end-to-end data flow. Avoid tests whose main value is checking superficial styling, color, class names, incidental copy, or whether a button exists without proving a critical workflow works.
 
@@ -266,7 +263,7 @@ Score `task-workflow/phase-6-e2e-verification.md` against `30` items:
 
 - `8` coverage-decision items
 - `8` meaningful functional assertion items
-- `6` test execution or `N/A` coverage-decision items
+- `6` E2E execution or `N/A` coverage-decision items
 - `4` failure-fix/rerun items
 - `4` coverage-gap documentation items
 
@@ -279,8 +276,10 @@ Critical failures:
 - new/updated tests do not prove actual task functionality, persisted state, navigation result, validation behavior, or end-to-end data flow
 - tests are primarily superficial checks such as color, CSS class, incidental copy, or button existence without proving feature behavior
 - E2E test added for a small, visual-only, incidental, or non-core change without a concrete risk reason
+- unnecessary, obsolete, brittle, convoluted, or non-core/non-complex E2E test remains after Phase 6 identifies it as removable
+- E2E removal lacks reason, diff/readback evidence, or effect on remaining critical-flow coverage
 - tests depend on brittle implementation details instead of user-visible or persisted outcomes
-- warranted test added but not run
+- warranted E2E test added but not run
 - Playwright/E2E command bypasses `task-workflow/scripts/playwright-lifecycle.mjs` before a diagnosed helper failure or a recorded pre-command reason that repo `webServer` ownership is required for that exact command
 - first E2E command depends on an assumed existing server instead of establishing helper/repo lifecycle ownership
 - Playwright/E2E command uses manual cleanup, fixed `sleep`, DB-delete, or server-start command chains instead of lifecycle `--setup` plus managed server/run steps before a diagnosed helper failure
@@ -293,33 +292,32 @@ Critical failures:
 - unfiltered full Playwright/E2E suite is run without an explicit task request for full E2E or a concrete written repo instruction naming full E2E/all-spec execution for this exact task
 - unfiltered full Playwright/E2E suite is run after targeted/connected E2E already passed and no related code, test, config, fixture, migration, or build input changed
 - repeated DB reset/migrate/seed or server restart is used between related E2E commands without a recorded invalidating state change or lifecycle diagnostic
-- broad/full unit or Vitest command is run without a concrete artifact reason
-- tests are rerun only for confidence, or the same failing test command is rerun blindly without material implementation, test, config, environment, output-staleness, or diagnostic reason
+- E2E tests are rerun only for confidence, or the same failing E2E command is rerun blindly without material implementation, test, config, environment, output-staleness, or diagnostic reason
 - `playwright install` or equivalent browser download attempted during E2E verification
-- relevant test failure caused by this task remains unresolved
-- artifact records a pass for a required test without command evidence
-- artifact records a pass for a required test with only a described or documented test result and no exact command output or cited repo-local log containing exact output
-- existing tests deleted without replacement coverage or written defense
+- relevant E2E failure caused by this task remains unresolved
+- artifact records a pass for a required E2E run without command evidence
+- artifact records a pass for a required E2E run with only a described or documented result and no exact command output or cited repo-local log containing exact output
+- existing E2E tests deleted without replacement critical-flow coverage or written defense
 - audited Playwright or E2E files contain any fixed wait
 - fixed-wait review not recorded
 - fixed-wait review finds any occurrence in `task-workflow/playwright` or `tests/e2e`
-- test/coverage gaps remain stale in `task-workflow/open-gaps.md`
+- E2E coverage gaps remain stale in `task-workflow/open-gaps.md`
 - `task-workflow/open-gaps.md` still contains template placeholder rows
 
 Pass gate:
 
 - score is at least `24/30`
-- every critical E2E/test item passes, or no E2E/test command was warranted and the `N/A` decision is defended
+- every critical E2E item passes, or no E2E command was warranted and the `N/A` decision is defended
 - E2E coverage decision is recorded, including `N/A` when no E2E is warranted
 - existing E2E tests were inspected before deciding whether to update or add coverage when E2E was warranted
-- existing E2E tests are updated when warranted behavior changes an existing workflow
+- existing E2E tests are updated or removed when warranted by the coverage decision
 - new E2E tests are added only when existing coverage cannot cleanly cover the core/complex workflow
-- new or affected critical behavior has test coverage or a documented reason why not
+- new or affected critical behavior has E2E coverage or a documented reason why not
 - tests assert meaningful functional outcomes rather than superficial style or existence checks
-- required tests pass, no test was warranted, or remaining failures are unrelated and evidenced
-- test command selection and retry evidence is recorded
-- exact E2E/test command output is recorded in the artifact or in a cited repo-local log file when a command was required; otherwise the `N/A` decision is recorded
-- test/coverage gaps in `task-workflow/open-gaps.md` are resolved, updated, or defended
+- required E2E runs pass, no E2E was warranted, or remaining failures are unrelated and evidenced
+- E2E command selection and retry evidence is recorded
+- exact E2E command output is recorded in the artifact or in a cited repo-local log file when a command was required; otherwise the `N/A` decision is recorded
+- E2E coverage gaps in `task-workflow/open-gaps.md` are resolved, updated, or defended
 - fixed-wait review is recorded and clean
 - `task-workflow/open-gaps.md` has no placeholder `Pending` rows
 
@@ -336,11 +334,11 @@ If this gate fails, stay in Phase 6.
 7. Re-read `task-workflow/progress.md` and confirm it matches `CURRENT_PHASE.txt`, every phase decision, the gap ledger, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and the next local action.
 8. Re-read the fixed-wait review evidence from Phase 5 and Phase 6, re-open the inspected verification files if they changed, and confirm the review is still current.
 9. Re-read the screenshot existence audit from Phase 5 and verify every screenshot path cited in Phase 5 still exists.
-10. Re-read the exact E2E/test command output evidence from Phase 6 and confirm it is present, current, and not replaced by a prose-only claim.
+10. Re-read Phase 4 unit-test evidence and Phase 6 E2E evidence. Confirm each phase records its add/update/remove/`N/A` decision, exact command output when a command was required, and removal rationale plus diff/readback evidence when tests were removed.
 11. Inspect changed app/server source for `console.*` again. Temporary `console.*` used to debug Phase 5 browser/runtime behavior must be removed before Phase 7 signs off; lasting logging must use the repo-approved logging or telemetry path.
 12. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, timeout/quiet-run triage where applicable, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
 13. Review the final diff.
-14. Re-run only commands whose earlier proof was invalidated by later edits, changed test/config state, incomplete/stale output, or an explicit exact-task requirement from the task or repo instructions. Do not add full unit/Vitest or full Playwright runs only to feel more confident.
+14. Re-run only commands whose earlier proof was invalidated by later edits, changed test/config state, incomplete/stale output, or an explicit exact-task requirement from the task or repo instructions. If unit evidence is invalidated, return to Phase 4; if E2E evidence is invalidated, return to Phase 6. Do not add full unit/Vitest or full Playwright runs only to feel more confident.
 15. Score the final result in all quality categories.
 16. Confirm the final implementation follows the task-relevant development rules extracted from `AGENTS.md`.
 17. Confirm task completion summary is accurate.
@@ -368,7 +366,8 @@ Confirm:
 - no `open-gaps.md` placeholder row remains
 - Phase 5 and Phase 6 fixed-wait reviews are present and current
 - every screenshot path cited in Phase 5 exists and has recorded existence proof
-- Phase 6 records exact E2E/test command output in the artifact or a cited repo-local log file
+- Phase 4 records exact unit-test command output, defended `N/A`, or removed-test rationale and diff/readback evidence
+- Phase 6 records exact E2E command output, defended `N/A`, or removed-test rationale and diff/readback evidence
 - changed app/server source contains no `console.*` after Phase 5
 - final diff matches the task scope
 - final implementation follows the task-relevant development rules extracted from `AGENTS.md`
@@ -395,8 +394,9 @@ Critical failures:
 - `task-workflow/open-gaps.md` still contains template placeholder rows
 - fixed-wait reviews are missing, stale, non-clean, or contradicted by files under `task-workflow/playwright` or `tests/e2e`
 - Phase 5 cites screenshot paths that do not exist or lack recorded existence proof
-- Phase 6 lacks exact E2E/test command output evidence
-- changed app/server source still contains `console.*` after Phase 5
+- Phase 4 lacks unit-test command output evidence, defended `N/A`, or removed-test rationale and diff/readback evidence
+- Phase 6 lacks E2E command output evidence, defended `N/A`, or removed-test rationale and diff/readback evidence
+- changed app/server logging review is missing or contradicts repo-approved logging/telemetry rules
 - artifact integrity review is missing, incomplete, or records a failing decision, failing score, missing artifact, placeholder gate evidence, or contradiction between artifacts
 - Phase 5 or Phase 6 had a timed-out, quiet, or longer-rerun Playwright/E2E command without recorded timeout value and triage evidence
 - final implementation violates or fails to verify an extracted `AGENTS.md` development rule
@@ -420,8 +420,9 @@ Pass gate:
 - no open-gap placeholder row remains
 - fixed-wait reviews are present and current
 - every screenshot cited in Phase 5 exists
-- exact E2E/test command output evidence is present for Phase 6
-- changed app/server source contains no `console.*` after Phase 5
+- unit-test command output, defended `N/A`, or removed-test rationale and diff/readback evidence is present for Phase 4
+- E2E command output, defended `N/A`, or removed-test rationale and diff/readback evidence is present for Phase 6
+- changed app/server logging review is current after Phase 5
 - every final quality category is at least `8/10`
 - final checks and tests are current after the last code change
 - MITB completed command was run successfully after all prior final-audit checks passed
@@ -447,8 +448,9 @@ Promotion requirements:
 - `task-workflow/open-gaps.md` has no critical or stale open gap
 - fixed-wait review requirements are satisfied for Phase 5 and Phase 6 before final signoff
 - screenshot existence proof is satisfied for Phase 5 before final signoff
-- exact E2E/test command output evidence is satisfied for Phase 6 before final signoff
-- changed app/server source contains no `console.*` after Phase 5
+- unit-test command output, defended `N/A`, or removed-test rationale and diff/readback evidence is satisfied for Phase 4 before final signoff
+- E2E command output, defended `N/A`, or removed-test rationale and diff/readback evidence is satisfied for Phase 6 before final signoff
+- changed app/server logging review is current after Phase 5
 - artifact integrity review is recorded and clean
 - verification evidence is current after the last source edit
 - `task-workflow/progress.md` is current and agrees with Phase 7 signoff

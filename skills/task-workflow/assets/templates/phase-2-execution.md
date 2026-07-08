@@ -26,15 +26,14 @@ Update this table immediately after each small work packet. Do not leave this ta
 | `progress.md` updated after each meaningful work packet and before promotion | Pending | Pending |
 | `progress.md` Current Phase Pointers updated after each meaningful packet | Pending | Pending |
 | `progress.md` points to this Phase 2 artifact for full edited-file details | Pending | Pending |
-| No broad verification or app launch started while execution log remained all `Pending` | Pending | Pending |
+| Execution log has active packet evidence before broad verification or app launch | Pending | Pending |
 | Any skipped or deferred packet was recorded in `open-gaps.md` immediately | Pending | Pending |
 | Gate-relevant writes were read back or verified in diff before relying on them | Pending | Pending |
 | Failed/invalid/uncertain write results were repaired before continuing | Pending | Pending |
-| Routine typecheck, lint, build, and combined check commands such as `pnpm run check` were deferred to Phase 3 unless a concrete compile/type blocker required them | Pending | Pending |
-| Phase 2 tests, if any, were justified by a core behavior, contract, or large enough current-packet risk and limited to the narrow warranted test; no broad unit directory commands were run | Pending | Pending |
+| Narrow implementation unblock commands, if used, cite the concrete blocker and result | Pending | Pending |
+| Any discovered unit/E2E/browser verification need was handed to the owning later phase or gap ledger | Pending | Pending |
 | Pre-Phase-5 API/runtime server probes used `task-workflow/scripts/server-probe.mjs`, or none were needed | Pending | Pending |
-| No Phase 5 interactive Playwright or Phase 6 E2E coverage work was used as a Phase 2 substitute | Pending | Pending |
-| No long-lived server, watcher, or interactive command remains running in the foreground | Pending | Pending |
+| Foreground command cleanup or bounded-command result recorded | Pending | Pending |
 
 ## Plan Changes
 
@@ -44,7 +43,7 @@ Update this table immediately after each small work packet. Do not leave this ta
 
 ## Checks During Execution
 
-Phase 2 evidence must stay strict, but routine typecheck, lint, build, and combined check commands such as `pnpm run check` belong to Phase 3 after the connected-place sweep. Record only narrow checks that were needed to unblock or prove a specific implementation packet. For tests, first decide whether any test is warranted. Small fixes, visual-only changes, simple button wiring, and incidental UI behavior normally need no Phase 2 test. If a core behavior, contract, or large enough current-packet risk needs proof, run only the narrow warranted test; broad unit directory commands belong later only when justified.
+Phase 2 evidence must stay strict, but routine typecheck, lint, build, unit/Vitest, E2E, Playwright, and combined check commands such as `pnpm run check` belong to later owning phases after the connected-place sweep. Record only narrow non-test checks that were needed to unblock or prove a specific implementation packet.
 
 | Check | Result | Notes |
 | --- | --- | --- |
@@ -60,13 +59,12 @@ Phase 2 evidence must stay strict, but routine typecheck, lint, build, and combi
 | Planned required work done or tracked | yes | Pending |
 | Execution log was updated incrementally during implementation | yes | Pending |
 | Gate-relevant writes have readback or diff evidence | yes | Pending |
-| No failed write/tool result was ignored | yes | Pending |
-| Routine typecheck/lint/build/combined-check not run in Phase 2 without a recorded compile/type blocker | yes | Pending |
-| No broad unit directory command run in Phase 2 | yes | Pending |
-| No unbounded foreground command remains active | yes | Pending |
-| Phase 5/6 work not used as Phase 2 substitute | yes | Pending |
-| No obvious unfinished markers | yes | Pending |
-| No placeholder rows in `open-gaps.md` | yes | Pending |
+| Failed write/tool results repaired with readback evidence | yes | Pending |
+| Narrow implementation unblock commands, if any, have blocker/result evidence | yes | Pending |
+| Unit/E2E/browser verification needs discovered during implementation are handed to owning later phases | yes | Pending |
+| Foreground command cleanup or bounded-command result recorded | yes | Pending |
+| Final implementation packet sweep recorded | yes | Pending |
+| `open-gaps.md` finalized with real rows or explicit none rows | yes | Pending |
 | `progress.md` current and points to Phase 3 next action | yes | Pending |
 | `progress.md` Current Phase Pointers current | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |

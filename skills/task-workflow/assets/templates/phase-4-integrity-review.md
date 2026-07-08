@@ -1,84 +1,95 @@
-# Phase 4 - Implementation Integrity Review
+# Phase 4 - Unit Test Coverage Decision And Verification
 
-## Commands
+## Phase 3 Evidence Review
 
-Re-open Phase 3 ordered typecheck/lint/build evidence first. Do not rerun typecheck, lint, or build here when Phase 3 evidence is current. If later code/config/package/build-input changes invalidated it, rerun from the first invalidated command and record why. Starting Phase 4/5/6/7, preparing E2E, or doing final signoff is not an invalidation reason.
-
-| Command | Result | Output summary | Follow-up |
-| --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending |
-
-## Phase 3 Static/Build Evidence Review
+Re-open Phase 3 ordered typecheck/lint/build and integrity evidence first. Do not rerun typecheck, lint, or build here when Phase 3 evidence is current. If later code/config/package/build-input changes invalidated Phase 3, return to Phase 3 and rerun from the first invalidated command. Starting Phase 4/5/6/7, preparing E2E, or doing final signoff is not an invalidation reason.
 
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Phase 3 typecheck/lint/build evidence re-opened | Pending | Pending |
-| Phase 3 build evidence still current, or invalidating change identified | Pending | Pending |
-| Any rerun started from first invalidated command, not repeated for confidence | Pending | Pending |
-| No build rerun was done only for phase prep, E2E prep, or final confirmation | Pending | Pending |
-| Reusable build evidence carried forward for Phase 5/6 | Pending | Pending |
+| Phase 3 implementation integrity evidence re-opened | Pending | Pending |
+| Phase 3 evidence still current, or returned to Phase 3 for invalidated command | Pending | Pending |
+| Phase 3 invalidation decision recorded before unit coverage work | Pending | Pending |
 
-## Test Selection And Retry Ledger
+## Unit Coverage Decision
 
-Record every meaningful check/test command. Use `N/A` when no test command is warranted by the minimal coverage decision.
+Decide whether unit, service, component, or integration-style tests are warranted. Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no unit-level test. Unit tests belong to stable core behavior: shared logic, contracts, permissions, critical state machines, parsers, calculations, data transforms, central stores, or reusable components whose behavior must stay strict.
 
-| Command | Scope: N/A/targeted/connected/final-sanity-full/exception-full | Why this scope or why no test is warranted | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
-| --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+| Behavior/area | Unit-level coverage warranted? | Add/update/remove/N/A | Test file(s) | Reason |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
+
+## Existing Unit Test Review
+
+Inspect existing unit, service, component, and integration-style tests that touch the changed behavior, nearby contracts, central logic, or modified components. Remove tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Preserve useful assertions elsewhere only when the behavior is still core.
+
+| Existing test file/area | Relevant to task? | Preserve/update/remove/unrelated | Reason | Evidence |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
+
+## Unit Test Changes
+
+| Action | Test file | Why this action is warranted | Diff/readback evidence |
+| --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending |
+
+## Unit Test Runs
+
+Record exact bounded unit-level test commands when tests are warranted. If output is long, cite a repo-local log file and copy the final pass/fail lines exactly. If no unit command is warranted, record `N/A` and the coverage-decision evidence.
+
+| Command | Scope: N/A/targeted/connected/final-sanity-full/exception-full | Why this scope or why no unit command is warranted | Previous related failure | Changed or new evidence before rerun | Result | Exact output or repo-local log path with final lines | Next action |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+
+## Removed-Test Audit
+
+Use this section whenever tests are removed. A removal is valid only when the test is unnecessary, obsolete, convoluted, brittle, or protects non-core/non-complex behavior, and useful core coverage is preserved or explicitly no longer needed.
+
+| Removed test | Removal reason | Useful coverage preserved? | Diff/readback evidence |
+| --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending |
+
+## Failure And Rerun Discipline
+
+| Command | Failure or risk | Fix/diagnostic before rerun | Rerun outcome |
+| --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending |
+
+## Coverage Gaps
+
+| Gap | Reason | Risk | Owner/next action |
+| --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending |
 
 ## Command And Write Safety
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| Gate-relevant file edits have readback or diff evidence | Pending | Pending |
+| Gate-relevant test edits/removals have readback or diff evidence | Pending | Pending |
 | Failed/invalid/uncertain write or command results were repaired before continuing | Pending | Pending |
-| Pre-Phase-5 API/runtime server probes used `task-workflow/scripts/server-probe.mjs`, or none were needed | Pending | Pending |
-| No long-lived server, watcher, or interactive command remains running in the foreground | Pending | Pending |
-
-## Integrity Review
-
-| Area | Status | Evidence |
-| --- | --- | --- |
-| Imports and symbols | Pending | Pending |
-| Route/action wiring | Pending | Pending |
-| Schema/data shapes | Pending | Pending |
-| State transitions | Pending | Pending |
-| Docs alignment | Pending | Pending |
-| Extracted `AGENTS.md` development rules followed | Pending | Pending |
-| Unrelated edits avoided | Pending | Pending |
-| Type safety and narrow assertions | Pending | Pending |
-| Existing tests preserved, migrated, or defended | Pending | Pending |
-| Tooling warnings from changed code resolved or defended | Pending | Pending |
-
-## Console And Logging Review
-
-Changed app/server source must not keep `console.*`. Temporary `console.*` may be used only during Phase 5 interactive testing when it directly helps debug browser/runtime behavior by reading console output. Remove those logs after the issue is understood and before Phase 5 reruns, Phase 4 re-passes, or Phase 7 signs off. If lasting logging is needed, use the repo-approved logging or telemetry path recorded from `AGENTS.md` and relevant docs.
-
-| Area inspected | Console usage found? | Temporary Phase 5 debug only? | Removed or replaced evidence |
-| --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending |
+| Test watcher or interactive command cleanup recorded, if applicable | Pending | Pending |
 
 ## Gate
 
 | Metric | Required | Actual |
 | --- | --- | --- |
 | Score | >= 28/30 | 0/30 |
-| Critical integrity items | all pass | Pending |
-| Required checks pass or unrelated failure evidenced | yes | Pending |
-| Phase 3 typecheck/lint/build evidence current, or invalidated sequence rerun from first affected command | yes | Pending |
-| Test/check command selection and retry evidence recorded, including `N/A` when no test is warranted | yes | Pending |
-| Minimal warranted targeted/connected tests ran before broad/full unit or Vitest suite, or no such tests were warranted | yes | Pending |
-| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after minimal warranted targeted and connected tests | yes | Pending |
-| Broad/full unit commands, if any, have final sanity/explicit exception reasons | yes | Pending |
-| No confidence-only or blind identical failing-command rerun | yes | Pending |
-| No runtime-blocking issue remains | yes | Pending |
-| No extracted `AGENTS.md` development rule violation remains | yes | Pending |
-| No `console.*` remains outside the active Phase 5 debug loop | yes | Pending |
-| No stale critical gap in `open-gaps.md` | yes | Pending |
-| No placeholder rows in `open-gaps.md` | yes | Pending |
+| Critical unit-test coverage items | all pass | Pending |
+| Phase 3 static/build and integrity evidence current, or returned to Phase 3 for invalidation | yes | Pending |
+| Unit coverage decision recorded, including `N/A` when no unit-level test is warranted | yes | Pending |
+| Existing relevant unit-level tests inspected before add/update/remove decisions | yes | Pending |
+| Unit tests added, updated, removed, or skipped according to the coverage decision | yes | Pending |
+| Removed tests have rationale and readback/diff evidence | yes | Pending |
+| Warranted unit commands pass, no unit command was warranted, or unrelated failure evidenced | yes | Pending |
+| Exact command output recorded when a unit command was required; otherwise `N/A` decision recorded | yes | Pending |
+| Identified unnecessary, obsolete, convoluted, brittle, or non-core/non-complex unit tests were removed or defended | yes | Pending |
+| Broad/full unit command, if any, has final-sanity/explicit-exception reason | yes | Pending |
+| Repeated unit commands have material change, stale-output, or diagnostic reasons | yes | Pending |
+| Open gaps for unit coverage updated | yes | Pending |
+| `open-gaps.md` finalized with real rows or explicit none rows | yes | Pending |
 | Command/write safety passed | yes | Pending |
 | `progress.md` current and points to Phase 5 next action | yes | Pending |
-| `progress.md` points to this Phase 4 artifact for check/fix details | yes | Pending |
+| `progress.md` points to this Phase 4 artifact for unit coverage details | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 

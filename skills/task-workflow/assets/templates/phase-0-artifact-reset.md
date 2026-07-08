@@ -25,8 +25,8 @@
 | `task-workflow/runtime/` created | Pending | Pending |
 | `task-workflow/scripts/playwright-lifecycle.mjs` copied from skill asset | Pending | Pending |
 | `task-workflow/scripts/server-probe.mjs` copied from skill asset | Pending | Pending |
-| No app/source files edited in Phase 0 | Pending | Pending |
-| No generated app files, build outputs, databases, or migrations created before Phase 0 gate | Pending | Pending |
+| Phase 0 was limited to workflow artifact reset/scaffolding | Pending | Pending |
+| Pre-implementation workspace state recorded before Phase 0 gate | Pending | Pending |
 
 ## Gate
 

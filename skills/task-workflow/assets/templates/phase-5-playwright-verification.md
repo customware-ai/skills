@@ -39,8 +39,8 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 | Playwright scripts run as bounded helper commands | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup without manual chain bundling | Pending | Pending |
-| No helper/setup/server/run command overrode database path env vars; repo E2E/end-to-end config owned test DB paths | Pending | Pending |
-| No Playwright/custom script wrote fixtures, reset, migrated, or directly accessed `.dbs/database.db`; fixture writes used repo test DB path only | Pending | Pending |
+| Repo E2E/end-to-end config owned test DB paths for helper/setup/server/run commands | Pending | Pending |
+| Playwright/custom fixture writes used repo-owned test DB paths | Pending | Pending |
 | Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
 | First-run targeted script/probe used `15000`-`20000` ms timeout, or task-specific reason for a different first timeout is recorded | Pending | Pending |
 | Longer timeout, if used, followed timer-only/no-useful-output failure plus helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage | Pending | Pending |
@@ -142,25 +142,25 @@ If matches were found and removed, record the replacement proof here.
 | Surrounding feature smoke completed | yes | Pending |
 | Stage 2 mobile/tablet/desktop/1080p/2560px responsive UI verified when UI changed | yes | Pending |
 | Stage 2 responsive UI quality passes as a first-class guarantee alongside task functionality | yes | Pending |
-| No unresolved broken, cramped, overlapping, clipped, ill-placed, unusable, non-responsive, accidental horizontal scroll, excessive 1080p dead-space, or unfinished-looking 2560px empty-region issue | yes | Pending |
+| Broken/cramped/overlapping/clipped/ill-placed/unusable/non-responsive UI issues resolved or defended | yes | Pending |
 | Screenshot paths exist | yes | Pending |
 | Screenshot existence audit completed for every cited path | yes | Pending |
 | Phase 3 build reused, or rebuild reason and output recorded | yes | Pending |
-| No unresolved critical UI/runtime issue | yes | Pending |
-| Phase 5 failures routed through Phase 4 fix/integrity review and rechecked | yes | Pending |
+| Critical UI/runtime issues resolved or defended | yes | Pending |
+| Phase 5 failures routed to the earliest affected phase, then Phase 3 static checks and Phase 4 unit coverage were re-passed before rechecking | yes | Pending |
 | Open gaps for interactive verification updated | yes | Pending |
-| No placeholder rows in `open-gaps.md` | yes | Pending |
-| No fixed waits in audited Playwright/E2E files | yes | Pending |
+| `open-gaps.md` finalized with real rows or explicit none rows | yes | Pending |
+| Audited Playwright/E2E files use deterministic waits/assertions | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
-| No database path override or `.dbs/database.db` Playwright/E2E/end-to-end fixture use | yes | Pending |
+| Repo-owned test database configuration evidence recorded | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | First app/browser command established lifecycle ownership before testing | yes | Pending |
 | First-run targeted script/probe timeout was `15000`-`20000` ms or justified | yes | Pending |
-| No longer timeout used without timer-only/no-useful-output failure plus clean triage | yes | Pending |
+| Longer timeout, if used, has timer-only/no-useful-output failure plus clean triage evidence | yes | Pending |
 | Timeout/quiet-run triage recorded for every timed-out, quiet, or longer-rerun command | yes | Pending |
-| No unowned `nohup`/`disown`/assumed-server path used before diagnosed helper failure | yes | Pending |
-| No `playwright install` or browser download attempted | yes | Pending |
+| Lifecycle fallback, if used, has recorded helper diagnostics and ownership evidence | yes | Pending |
+| Browser preflight/lifecycle evidence recorded | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 6 next action | yes | Pending |
 | `progress.md` points to this Phase 5 artifact for Playwright scripts, screenshots, logs, and repair details | yes | Pending |

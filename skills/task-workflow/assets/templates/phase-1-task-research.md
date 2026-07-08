@@ -82,8 +82,8 @@ Do not bulk-read every available skill file. Skills are stored under `.agents/sk
 | Irrelevant skill files in `.agents/skills/` were not bulk-read | yes | Pending |
 | Reference inputs remained read-only, especially `.tasks/*` | yes | Pending |
 | Plan cites concrete files | yes | Pending |
-| No unresolved ambiguity | yes | Pending |
-| No implementation or generated files changed before Phase 1 pass | yes | Pending |
+| Ambiguities resolved, closed, or recorded in `open-gaps.md` | yes | Pending |
+| Phase 1 stayed within research, planning, and artifact updates | yes | Pending |
 | Verification plan recorded | yes | Pending |
 | Plan follows extracted `AGENTS.md` development rules | yes | Pending |
 | `progress.md` summarizes Phase 1, selected skill files, and next Phase 2 action | yes | Pending |

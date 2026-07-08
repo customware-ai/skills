@@ -1,26 +1,34 @@
-# Phase 6 - Minimal E2E Coverage Decision And Verification
+# Phase 6 - E2E Coverage Decision And Verification
 
 ## Coverage Decision
 
-| Behavior/path | E2E warranted? | Existing E2E inspected if warranted | Update existing/add new/N/A | Test file | Reason |
+| Behavior/path | E2E warranted? | Existing E2E inspected if warranted | Update existing/add new/remove/N/A | Test file | Reason |
 | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Minimal Coverage Rationale
 
-Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no new or updated E2E. E2E is warranted only for critical user workflows, complex multi-step flows, persistence/navigation boundaries, permission boundaries, or high-risk regressions.
+Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, isolated logic, and incidental UI behavior normally require no new or updated E2E. E2E is warranted only for critical user workflows, complex multi-step flows, persistence/navigation boundaries, permission boundaries, or high-risk regressions. Unit-level coverage decisions belong to Phase 4, not Phase 6.
 
-| Change type/risk | Why E2E is or is not warranted | Lower-level test better fit? | Evidence |
+| Change type/risk | Why E2E is or is not warranted | Phase 4 unit decision cited if relevant | Evidence |
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
 ## Existing E2E Review
 
-Inspect existing E2E tests first when E2E is warranted. Prefer updating an existing flow when the task changes or extends that flow. Add a new E2E test only for a core workflow or when existing coverage cannot cleanly express the warranted path.
+Inspect existing E2E tests before adding new E2E. Prefer updating an existing flow when the task changes or extends that flow. Remove existing E2E when it is unnecessary, obsolete, brittle, convoluted, or protects non-core/non-complex behavior. Add a new E2E test only for a core workflow or when existing coverage cannot cleanly express the warranted path.
 
 | Existing test file/flow | Relevant to task? | Action taken | Evidence |
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
+
+## E2E Test Changes
+
+Record every E2E add, update, removal, or explicit skip. Removed tests need a reason, readback/diff evidence, and a note about any remaining critical-flow coverage.
+
+| Test file | Action: added/updated/removed/skipped | Why this action is correct | Diff/readback or command evidence | Critical-flow coverage after change |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
 
 ## Functional Assertion Quality
 
@@ -32,7 +40,7 @@ E2E tests should prove actual core task functionality, not superficial styling o
 
 ## Test Runs
 
-Record the exact bounded test command and its exact output when a test is warranted. If output is long, write it to a repo-local log file and cite that file here, plus the final pass/fail lines copied exactly into the artifact. If no E2E is warranted, record `N/A` and the coverage-decision evidence.
+Record the exact bounded E2E command and its exact output when an E2E command is warranted. If output is long, write it to a repo-local log file and cite that file here, plus the final pass/fail lines copied exactly into the artifact. If no E2E is warranted, record `N/A` and the coverage-decision evidence.
 
 | Command | Timeout | Lifecycle helper/repo `webServer`/setup evidence | Result | Exact output or repo-local log path with final lines | Follow-up |
 | --- | --- | --- | --- | --- | --- |
@@ -50,7 +58,7 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 
 ## Test Selection And Retry Ledger
 
-Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first. For E2E, list the connected specs covered. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task. A repo having one large E2E file, a Playwright `webServer`, or generic "run tests" guidance is not enough. If no E2E is warranted, record `N/A` and do not run an E2E command.
+Record every meaningful E2E command, including reruns. Use the smallest useful scope first. List the connected specs covered. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task. A repo having one large E2E file, a Playwright `webServer`, or generic "run tests" guidance is not enough. If no E2E is warranted, record `N/A` and do not run an E2E command.
 
 | Command | Scope: targeted/connected-multi-spec/explicit-full | Why this scope and connected specs covered; exact full-suite requirement if explicit-full | Previous related failure | Changed or new evidence before rerun | Timeout/quiet-run triage before longer rerun | Outcome | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -69,8 +77,8 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 | Tests run as bounded commands, not watchers | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup | Pending | Pending |
-| No helper/setup/server/run command overrode database path env vars; repo E2E/end-to-end config owned test DB paths | Pending | Pending |
-| No E2E/end-to-end fixture setup, reset, migration, direct SQLite access, or custom script pointed at `.dbs/database.db` | Pending | Pending |
+| Repo E2E/end-to-end config owned test DB paths for helper/setup/server/run commands | Pending | Pending |
+| E2E/end-to-end fixture setup, reset, migration, SQLite access, or custom scripts used repo-owned test DB paths | Pending | Pending |
 | DB/setup/server lifecycle reused across related E2E commands unless code, test, config, fixture, migration, build input, or lifecycle diagnostics invalidated it | Pending | Pending |
 | Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
 | First-run targeted E2E used timeout at or below `30000` ms, or task-specific reason for a different first timeout is recorded | Pending | Pending |
@@ -118,15 +126,17 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
-## Test Quality Review
+## E2E Quality Review
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| Existing tests preserved, migrated, or defended | Pending | Pending |
+| Existing E2E tests preserved, updated, removed, or defended | Pending | Pending |
 | Existing E2E tests inspected before adding new coverage when E2E was warranted | Pending | Pending |
-| Existing E2E flow updated when warranted behavior belongs there | Pending | Pending |
+| Existing E2E flow updated or removed when warranted behavior belongs there or old coverage is no longer useful | Pending | Pending |
 | New E2E test added only when the workflow was core/complex and no existing flow could cover it | Pending | Pending |
-| Exact command output recorded for required E2E/test runs, or `N/A` coverage-decision evidence recorded | Pending | Pending |
+| Removed E2E tests have rationale, diff/readback evidence, and remaining critical-flow coverage notes | Pending | Pending |
+| Identified unnecessary, obsolete, brittle, convoluted, or non-core/non-complex E2E tests were removed or defended | Pending | Pending |
+| Exact command output recorded for required E2E runs, or `N/A` coverage-decision/removal evidence recorded | Pending | Pending |
 | New/updated tests assert user-visible or persisted state when tests were warranted | Pending | Pending |
 | New/updated E2E tests prove real core task functionality when E2E was warranted | Pending | Pending |
 | Superficial color/class/existence-only checks avoided | Pending | Pending |
@@ -136,15 +146,14 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Server/command discipline passed | Pending | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | Pending | Pending |
 | First E2E command established lifecycle ownership before testing | Pending | Pending |
-| No `playwright install` or browser download attempted | Pending | Pending |
+| Browser preflight/lifecycle evidence recorded | Pending | Pending |
 | Test selection and retry ledger complete | Pending | Pending |
-| Connected-spec ledger covers each E2E command; unfiltered full suite was not run without explicit full-E2E task request or concrete exact-task repo requirement | Pending | Pending |
-| No unfiltered full E2E was run after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | Pending | Pending |
-| Broad/full unit commands, if any, were one final sanity check or explicit exception after minimal warranted targeted/connected tests | Pending | Pending |
+| Connected-spec ledger covers each E2E command; explicit full-suite command cites task request or concrete exact-task repo requirement | Pending | Pending |
+| Full E2E rerun, if used after targeted/connected E2E passed, cites related code/test/config/fixture/migration/build-input invalidation | Pending | Pending |
 | Suspected pre-existing/order-dependent failures were diagnosed with narrow evidence before any broader command was considered | Pending | Pending |
-| No confidence-only or blind identical failing-command rerun | Pending | Pending |
+| Repeated E2E commands have material change, stale-output, or diagnostic reasons | Pending | Pending |
 | First-run targeted E2E timeout was at or below `30000` ms or justified | Pending | Pending |
-| No longer timeout used without timer-only/no-useful-output failure plus clean triage | Pending | Pending |
+| Longer timeout, if used, has timer-only/no-useful-output failure plus clean triage evidence | Pending | Pending |
 | Timeout/quiet-run triage recorded for every timed-out, quiet, or longer-rerun command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
@@ -153,39 +162,39 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Metric | Required | Actual |
 | --- | --- | --- |
 | Score | >= 24/30 | 0/30 |
-| Critical E2E/test items, or defended `N/A` decision | all pass | Pending |
+| Critical E2E items, or defended `N/A` decision | all pass | Pending |
 | E2E coverage decision recorded, including `N/A` when no E2E is warranted | yes | Pending |
 | Existing E2E tests inspected before coverage decision when E2E was warranted | yes | Pending |
-| Existing E2E coverage updated when warranted behavior affects existing flow | yes | Pending |
+| Existing E2E coverage updated or removed when warranted by the coverage decision | yes | Pending |
 | New E2E tests added only when existing tests cannot cleanly cover a core/complex workflow | yes | Pending |
+| Removed E2E tests have rationale, diff/readback evidence, and remaining critical-flow coverage notes | yes | Pending |
 | New/affected critical behavior covered or defended | yes | Pending |
 | Tests assert meaningful functional outcomes | yes | Pending |
 | Superficial/flaky one-off checks avoided | yes | Pending |
 | Required tests pass, no E2E was warranted, or unrelated failure evidenced | yes | Pending |
-| Exact command output recorded in artifact or cited repo-local log when a command was required; otherwise `N/A` decision recorded | yes | Pending |
+| Exact E2E command output recorded in artifact or cited repo-local log when a command was required; otherwise `N/A` decision/removal evidence recorded | yes | Pending |
 | Phase 3 build reused, or rebuild reason and output recorded | yes | Pending |
-| Open gaps for E2E/test coverage updated | yes | Pending |
-| No placeholder rows in `open-gaps.md` | yes | Pending |
-| Test quality review passed | yes | Pending |
+| Open gaps for E2E coverage updated | yes | Pending |
+| `open-gaps.md` finalized with real rows or explicit none rows | yes | Pending |
+| E2E quality review passed | yes | Pending |
 | Test selection and retry ledger complete | yes | Pending |
-| Broad/full unit commands were skipped or used once only as final sanity/explicit exception after minimal warranted targeted and connected tests | yes | Pending |
-| No unfiltered full E2E unless task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | yes | Pending |
-| No confidence-only or blind identical failing-command rerun | yes | Pending |
+| E2E command scope matches the coverage decision or an exact full-E2E requirement | yes | Pending |
+| Repeated E2E commands have material change, stale-output, or diagnostic reasons | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
-| No database path override or `.dbs/database.db` Playwright/E2E/end-to-end fixture use | yes | Pending |
+| Repo-owned test database configuration evidence recorded | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | First E2E command established lifecycle ownership before testing | yes | Pending |
 | Existing repo E2E ran through lifecycle helper by default, or native Playwright exception was recorded before command | yes | Pending |
 | First-run targeted E2E timeout was at or below `30000` ms or justified | yes | Pending |
-| No longer timeout used without timer-only/no-useful-output failure plus clean triage | yes | Pending |
+| Longer timeout, if used, has timer-only/no-useful-output failure plus clean triage evidence | yes | Pending |
 | Timeout/quiet-run triage recorded for every timed-out, quiet, or longer-rerun command | yes | Pending |
-| No unowned `nohup`/`disown`/assumed-server path used before diagnosed helper failure | yes | Pending |
-| No repeated DB reset/migrate/seed or server restart between related E2E commands without invalidating state change or lifecycle diagnostic | yes | Pending |
-| No `playwright install` or browser download attempted | yes | Pending |
+| Lifecycle fallback, if used, has recorded helper diagnostics and ownership evidence | yes | Pending |
+| DB/setup/server lifecycle reuse or invalidation reason recorded | yes | Pending |
+| Browser preflight/lifecycle evidence recorded | yes | Pending |
 | Cleanup method recorded and bounded | yes | Pending |
 | `progress.md` current and points to Phase 7 next action | yes | Pending |
-| `progress.md` points to this Phase 6 artifact for regression test files and repair details | yes | Pending |
+| `progress.md` points to this Phase 6 artifact for E2E files and repair details | yes | Pending |
 | `progress.md` Phase Artifact Index and Artifact Pointers current | yes | Pending |
 | Promotion lock verified before marker advance | yes | Pending |
 
