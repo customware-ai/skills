@@ -2,17 +2,11 @@
 
 Use this reference for Phase 5, Phase 6, and Phase 7.
 
-<verification_signoff_workstream>
-
 These phases prove the implementation through real browser interaction, the Phase 6 E2E coverage decision, and final artifact audit. They are internal verification gates, not user confirmation points.
 
 This is a looped gate workstream: Phase 5, Phase 6, and Phase 7 are not complete until their artifacts pass their gates. A failing score, missing evidence, browser issue, weak test, stale gap, placeholder row, or incomplete final audit means stay in or return to the failing phase, repair the work, update the artifact, rescore, and repeat. Do not stop or ask the user to continue when a local repair is available.
 
-</verification_signoff_workstream>
-
 ## Verification Authority
-
-<verification_authority>
 
 Verification authority is:
 
@@ -26,11 +20,7 @@ Verification authority is:
 Static checks, builds, and tests are not substitutes for interactive Playwright verification.
 Interactive Playwright verification is not a reason to create regression tests when the Phase 4 or Phase 6 coverage decision says durable tests are not warranted.
 
-</verification_authority>
-
 ## Open Gaps Reconciliation
-
-<open_gaps_reconciliation>
 
 `task-workflow/open-gaps.md` is a gate artifact during verification.
 
@@ -40,11 +30,7 @@ Interactive Playwright verification is not a reason to create regression tests w
 - Critical gaps must be `Resolved`, `Closed`, or explicitly reclassified with evidence before signoff. They cannot remain `Open`.
 - Template placeholder rows such as `Pending | Pending | Pending` are not clean ledger evidence. Replace them with real gap rows or explicit `None currently recorded` rows before any verification gate passes.
 
-</open_gaps_reconciliation>
-
 ## Progress Ledger Reconciliation
-
-<progress_ledger_reconciliation>
 
 `task-workflow/progress.md` must stay current through verification and signoff.
 
@@ -55,8 +41,6 @@ Interactive Playwright verification is not a reason to create regression tests w
 - Its Current Phase Pointers must identify the current phase artifact, current reference, next local action, and only high-signal active files needed to resume immediately.
 - Its Artifact Pointers must point to the phase-owned artifacts where unit evidence, Playwright scripts, screenshots, runtime logs, E2E files, and verification repair details live.
 - Phase 7 cannot pass if `progress.md` says any phase remains pending, in progress, failing, or locally repairable.
-
-</progress_ledger_reconciliation>
 
 ## Verification Quality Discipline
 
@@ -112,8 +96,6 @@ Verification phases must not stall on foreground servers or watchers.
 
 ## Playwright Failure Triage
 
-<playwright_failure_triage>
-
 When a Phase 5 script or Phase 6 targeted spec fails, diagnose the failure type before rerunning.
 
 - If a selector/action/assertion times out, first prove the page is in the expected state: URL, no not-found/error screen, required DB or fixture record exists, server log has no route/runtime error, and browser console has no fatal error. Do not rerun the same script while the page state is wrong; fix setup, seed, route, or app state first.
@@ -144,11 +126,7 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
   --command-timeout-ms 30000
 ```
 
-</playwright_failure_triage>
-
 ## Phase 5: Interactive Playwright Verification
-
-<phase_5_interactive_playwright>
 
 Phase 5 has two required evidence stages:
 
@@ -183,11 +161,7 @@ Phase 5 has two required evidence stages:
 22. Re-read `references/phase-5-7-verification-signoff.md` before doing Phase 6 work.
 23. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 6.
 
-</phase_5_interactive_playwright>
-
 ## Required Interactive Evidence
-
-<required_interactive_evidence>
 
 The artifact must cite real evidence for the two Phase 5 stages:
 
@@ -211,11 +185,7 @@ Screenshots alone do not prove controls work. A control that matters to the task
 
 Phase 5 is not a happy-path-only check, but it is scoped to the changed surface. Think like a real user who may click nearby controls, enter invalid data, abandon a flow, resize the viewport, use the feature on mobile, or do steps in an unexpected order. If that breaks the task flow or affected nearby UI, fix it before Phase 5 passes.
 
-</required_interactive_evidence>
-
 ## Phase 5 Score
-
-<phase_5_gate>
 
 Score `task-workflow/phase-5-playwright-verification.md` against `50` items:
 
@@ -276,11 +246,7 @@ Pass gate:
 
 If this gate fails, stay in Phase 5.
 
-</phase_5_gate>
-
 ## Phase 6: E2E Coverage Decision And Verification
-
-<phase_6_e2e_coverage>
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
 2. Confirm this reference is loaded as the required current phase reference before Phase 6 work starts.
@@ -305,8 +271,6 @@ If this gate fails, stay in Phase 5.
 21. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
 22. Re-read `references/phase-5-7-verification-signoff.md` before doing Phase 7 work.
 23. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 7.
-
-</phase_6_e2e_coverage>
 
 ## E2E Coverage Decision
 
@@ -367,8 +331,6 @@ If no E2E coverage is warranted, record the reason. If warranted coverage is not
 </e2e_coverage_decision>
 
 ## Phase 6 Score
-
-<phase_6_gate>
 
 Score `task-workflow/phase-6-e2e-verification.md` against `30` items:
 
@@ -438,11 +400,7 @@ Pass gate:
 
 If this gate fails, stay in Phase 6.
 
-</phase_6_gate>
-
 ## Phase 7: Final Audit And Signoff
-
-<phase_7_final_signoff>
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
 2. Confirm this reference is loaded as the required current phase reference before Phase 7 work starts.
@@ -470,11 +428,7 @@ If this gate fails, stay in Phase 6.
 24. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
 25. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
 
-</phase_7_final_signoff>
-
 ## Final Audit Checklist
-
-<final_audit_checklist>
 
 Confirm:
 
@@ -501,11 +455,7 @@ Confirm:
 - MITB completed command from `.tasks/task.md` or the prompt was run after every Phase 7 audit check passed
 - final response can cite changed files, commands/tests run, and final gate status
 
-</final_audit_checklist>
-
 ## Phase 7 Score
-
-<phase_7_gate>
 
 Score `task-workflow/phase-7-final-signoff.md` against `20` items:
 
@@ -559,11 +509,7 @@ Pass gate:
 
 If this gate fails, return to the failing earlier phase.
 
-</phase_7_gate>
-
 ## Promotion Rule
-
-<verification_signoff_promotion_rule>
 
 The task is complete only when Phase 7 passes.
 
@@ -592,5 +538,3 @@ Promotion requirements:
 If any artifact fails this check, do not advance the marker. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase and continue there.
 
 Do not ask the user whether to continue between Phase 5, Phase 6, and Phase 7. The gates decide whether to continue, rework, or return to an earlier phase.
-
-</verification_signoff_promotion_rule>
