@@ -1,10 +1,12 @@
 # Phase 6 - E2E Coverage Decision And Verification
 
-## Coverage Decision
+## E2E Coverage Decision Matrix
 
-| Behavior/path | E2E warranted? | Existing E2E inspected if warranted | Update existing/add new/remove/N/A | Test file | Reason |
-| --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending |
+Use this order for each changed workflow: decide whether E2E is warranted; inspect connected existing E2E; remove unnecessary existing E2E; update connected existing E2E when it can carry the warranted workflow; add a new minimal E2E only when no existing E2E can carry a warranted core/complex workflow; otherwise record `N/A`.
+
+| Behavior/path | E2E warranted? | Existing E2E inspected | Remove existing? | Update existing? | Add new? | Decision and minimal/core reason |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Minimal Coverage Rationale
 
@@ -16,19 +18,19 @@ Small fixes, visual-only changes, copy/color/style changes, spacing/layout tunin
 
 ## Existing E2E Review
 
-Inspect existing E2E tests before adding new E2E. Prefer updating an existing flow when the task changes or extends that flow. Remove existing E2E when it is unnecessary, obsolete, brittle, convoluted, or protects non-core/non-complex behavior. Add a new E2E test only for a core workflow or when existing coverage cannot cleanly express the warranted path.
+Inspect connected existing E2E tests for every changed workflow before choosing an action. Remove unnecessary E2E first, then update an existing flow when the task changes or extends that flow. Add a new E2E test only for a core workflow or when existing coverage cannot cleanly express the warranted path.
 
-| Existing test file/flow | Relevant to task? | Action taken | Evidence |
-| --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending |
+| Existing test file/flow | Connected workflow | Action: remove/update/preserve/unrelated | Reason | Evidence |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
 
 ## E2E Test Changes
 
 Record every E2E add, update, removal, or explicit skip. Removed tests need a reason, readback/diff evidence, and a note about any remaining critical-flow coverage.
 
-| Test file | Action: added/updated/removed/skipped | Why this action is correct | Diff/readback or command evidence | Critical-flow coverage after change |
-| --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending |
+| Test file | Action: added/updated/removed/skipped | Existing-first outcome | Why this action is warranted and minimal | Diff/readback or command evidence | Critical-flow coverage after change |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Functional Assertion Quality
 
@@ -131,14 +133,14 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Existing E2E tests preserved, updated, removed, or defended | Pending | Pending |
-| Existing E2E tests inspected before adding new coverage when E2E was warranted | Pending | Pending |
+| Connected existing E2E tests inspected before remove/update/add/`N/A` decisions | Pending | Pending |
 | Existing E2E flow updated or removed when warranted behavior belongs there or old coverage is no longer useful | Pending | Pending |
 | New E2E test added only when the workflow was core/complex and no existing flow could cover it | Pending | Pending |
 | Removed E2E tests have rationale, diff/readback evidence, and remaining critical-flow coverage notes | Pending | Pending |
 | Identified unnecessary, obsolete, brittle, convoluted, or non-core/non-complex E2E tests were removed or defended | Pending | Pending |
 | Exact command output recorded for required E2E runs, or `N/A` coverage-decision/removal evidence recorded | Pending | Pending |
 | New/updated tests assert user-visible or persisted state when tests were warranted | Pending | Pending |
-| New/updated E2E tests prove real core task functionality when E2E was warranted | Pending | Pending |
+| New/updated E2E tests prove real core task functionality | Pending | Pending |
 | Superficial color/class/existence-only checks avoided | Pending | Pending |
 | Tests avoid brittle implementation details | Pending | Pending |
 | Fixed wait review completed and clean | Pending | Pending |
@@ -164,7 +166,7 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Score | >= 24/30 | 0/30 |
 | Critical E2E items, or defended `N/A` decision | all pass | Pending |
 | E2E coverage decision recorded, including `N/A` when no E2E is warranted | yes | Pending |
-| Existing E2E tests inspected before coverage decision when E2E was warranted | yes | Pending |
+| Connected existing E2E tests inspected before remove/update/add/`N/A` decisions | yes | Pending |
 | Existing E2E coverage updated or removed when warranted by the coverage decision | yes | Pending |
 | New E2E tests added only when existing tests cannot cleanly cover a core/complex workflow | yes | Pending |
 | Removed E2E tests have rationale, diff/readback evidence, and remaining critical-flow coverage notes | yes | Pending |

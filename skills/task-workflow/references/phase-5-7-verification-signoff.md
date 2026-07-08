@@ -140,9 +140,10 @@ The artifact must cite real evidence for the two Phase 5 stages:
 - Playwright script path
 - Stage 1 route or state exercised
 - Stage 1 interaction performed
+- Stage 1 expected user-visible result
 - Stage 1 bad case, non-ideal user action, or surrounding feature checked when relevant
 - Stage 2 viewport checked, including dimensions such as mobile, tablet, desktop, `1920x1080`, or `2560x1440`
-- Stage 2 UI quality result for overlap, cramped layout, clipping, placement, readability, usability, and responsiveness
+- Stage 2 UI quality result for overlap, cramped layout, clipping, placement, readability, usability, responsiveness, navigation access, tap/click targets, dialogs/menus, horizontal scroll, controls outside the viewport, and desktop dead-space
 - screenshot path when visual proof matters
 - screenshot existence proof for every screenshot path cited
 - issue found
@@ -215,11 +216,11 @@ If this gate fails, stay in Phase 5.
 ## Phase 6: E2E Coverage Decision And Verification
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
-2. Decide whether E2E coverage is warranted. E2E is warranted only for a critical user workflow, complex multi-step flow, persistence/navigation boundary, permission boundary, or high-risk regression. Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no new or updated E2E.
-3. Inspect existing E2E tests before creating new ones when E2E is warranted. Identify whether the changed feature belongs in an existing flow, regression suite, or user journey.
-4. Update an existing E2E test first when the warranted behavior extends an existing workflow or could affect existing functionality already covered there.
-5. Add a new E2E test only when the task introduces or changes a core workflow that cannot be cleanly covered by an existing E2E test.
-6. Remove existing E2E tests when they are unnecessary, obsolete, brittle, convoluted, or protect non-core/non-complex flows. Record why removal improves the E2E suite and preserve useful critical-flow coverage elsewhere only when still needed.
+2. For each changed workflow, decide whether E2E coverage is warranted. E2E is warranted only for a critical user workflow, complex multi-step flow, persistence/navigation boundary, permission boundary, or high-risk regression. Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no new or updated E2E.
+3. Inspect connected existing E2E tests for every changed workflow before choosing remove, update, add, or `N/A`. Identify whether the changed feature belongs in an existing flow, regression suite, or user journey.
+4. Remove existing E2E tests when they are unnecessary, obsolete, brittle, convoluted, or protect non-core/non-complex flows. Record why removal improves the E2E suite and preserve useful critical-flow coverage elsewhere only when still needed.
+5. Update an existing E2E test first when the warranted behavior extends an existing workflow or could affect existing functionality already covered there.
+6. Add a new E2E test only when the task introduces or changes a core workflow that cannot be cleanly covered by an existing E2E test.
 7. Do not use E2E to cover isolated non-UI logic. Record E2E `N/A` for that path and cite the Phase 4 unit-test decision when relevant.
 8. Select the smallest useful E2E command that proves only the warranted E2E coverage. Start with new, changed, or directly connected E2E specs and maintain a connected-spec ledger. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; "target repo instructions" must name full E2E or an equivalent all-spec command, not merely say to run tests. If warranted targeted or multi-spec commands already ran the connected specs and no related code, test, config, fixture, migration, or build input changed, that is the evidence; do not add a full E2E run for final confidence, final signoff, state discovery, or reviewer-satisfaction.
 9. Record every meaningful E2E command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
@@ -232,20 +233,22 @@ If this gate fails, stay in Phase 5.
 16. Update `task-workflow/open-gaps.md` for every E2E coverage gap closed, defended, or still open.
 17. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for E2E-file and E2E-repair details, removed-test rationale, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
 18. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-19. Record the E2E coverage decision, existing E2E tests inspected when E2E was warranted, E2E tests updated, E2E tests added, E2E tests removed, commands, exact command output evidence, outcomes, E2E-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps. If no E2E is warranted, record `N/A` with the reason and do not create an E2E test.
+19. Record the E2E coverage decision matrix, connected existing E2E tests inspected for every changed workflow, E2E tests removed, E2E tests updated, E2E tests added, commands, exact command output evidence, outcomes, E2E-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps. If no E2E is warranted, record `N/A` with the reason and do not create an E2E test.
 20. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
 21. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
 
 ## E2E Coverage Decision
 
-Prefer no E2E change unless durable E2E coverage is warranted. When it is warranted, choose the smallest E2E proof that protects the behavior:
+Prefer no E2E change unless durable E2E coverage is warranted. Use this decision order for every changed workflow: decide whether E2E is warranted; inspect connected existing E2E; remove unnecessary existing E2E; update connected existing E2E when it can carry the warranted workflow; add a new minimal E2E only when no existing E2E can carry a warranted core/complex workflow; otherwise record `N/A`.
+
+When E2E is warranted, choose the smallest E2E proof that protects the behavior:
 
 - targeted E2E for one affected critical or complex user flow
 - new, changed, or directly connected E2E specs only by default
 - multi-spec E2E only when multiple changed or adjacent flows must be protected together
 - full Playwright E2E only when the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; do not run it for confidence, final signoff, reviewer-satisfaction, state discovery, suspected pre-existing/order-dependent failures, because many specs appear relevant, or because the repo has one E2E spec file containing many tests. Diagnose those cases with the narrow failing spec/test plus logs, DOM/state, trace, screenshot, or persisted data evidence.
-- update an existing E2E test when warranted behavior modifies or extends an existing user workflow
 - remove an existing E2E test when it is unnecessary, obsolete, brittle, convoluted, or protects a non-core/non-complex flow
+- update an existing E2E test when warranted behavior modifies or extends an existing user workflow
 - add a new E2E test only for a genuinely core workflow or when existing E2E coverage cannot cleanly express the warranted path
 - E2E tests for user-visible multi-step flows
 
@@ -270,7 +273,7 @@ Score `task-workflow/phase-6-e2e-verification.md` against `30` items:
 Critical failures:
 
 - changed critical/core workflow has no E2E coverage and no defensible reason
-- existing E2E tests were not inspected before adding new tests
+- connected existing-E2E inspection/action evidence is missing before a new E2E test is added
 - new E2E test added when an existing E2E flow should have been updated instead
 - existing functionality affected by the task is not protected by the updated or affected E2E run
 - new/updated tests do not prove actual task functionality, persisted state, navigation result, validation behavior, or end-to-end data flow
@@ -309,7 +312,7 @@ Pass gate:
 - score is at least `24/30`
 - every critical E2E item passes, or no E2E command was warranted and the `N/A` decision is defended
 - E2E coverage decision is recorded, including `N/A` when no E2E is warranted
-- existing E2E tests were inspected before deciding whether to update or add coverage when E2E was warranted
+- connected existing E2E tests were inspected before remove/update/add/`N/A` decisions
 - existing E2E tests are updated or removed when warranted by the coverage decision
 - new E2E tests are added only when existing coverage cannot cleanly cover the core/complex workflow
 - new or affected critical behavior has E2E coverage or a documented reason why not
@@ -334,7 +337,7 @@ If this gate fails, stay in Phase 6.
 7. Re-read `task-workflow/progress.md` and confirm it matches `CURRENT_PHASE.txt`, every phase decision, the gap ledger, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and the next local action.
 8. Re-read the fixed-wait review evidence from Phase 5 and Phase 6, re-open the inspected verification files if they changed, and confirm the review is still current.
 9. Re-read the screenshot existence audit from Phase 5 and verify every screenshot path cited in Phase 5 still exists.
-10. Re-read Phase 4 unit-test evidence and Phase 6 E2E evidence. Confirm each phase records its add/update/remove/`N/A` decision, exact command output when a command was required, and removal rationale plus diff/readback evidence when tests were removed.
+10. Re-read Phase 4 unit-test evidence and Phase 6 E2E evidence. Confirm each phase records its remove/update/add/`N/A` decision, exact command output when a command was required, and removal rationale plus diff/readback evidence when tests were removed.
 11. Inspect changed app/server source for `console.*` again. Temporary `console.*` used to debug Phase 5 browser/runtime behavior must be removed before Phase 7 signs off; lasting logging must use the repo-approved logging or telemetry path.
 12. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, timeout/quiet-run triage where applicable, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
 13. Review the final diff.

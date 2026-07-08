@@ -163,13 +163,13 @@ Treat these rules as always active:
 - Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The managed lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when available and fails early if the project Playwright version does not match the sandbox browser cache.
 - Select commands by phase responsibility:
 - Phase 2 completes implementation packets with strict artifact, readback, diff, search, and narrow unblock-command evidence. Defer routine typecheck, lint, build, unit/Vitest, E2E, Playwright, and repo combined check commands such as `pnpm run check` to their owning later phases unless a concrete compile/type issue blocks the current packet and is recorded before the command.
-- Phase 3 reviews connected places, closes missed implementation gaps, performs implementation integrity review, then owns the ordered static/build checkpoint: typecheck, lint, build. When one of those commands fails, inspect enough output to identify visible issue groups, fix every locally-fixable group before rerunning, and record only the groups/fixes/rerun reason. Do not keep huge command logs unless a temporary log is needed for triage; delete temporary full-output logs after extracting issue groups. Record unit/E2E coverage questions for the owning later phase.
+- Phase 3 reviews connected places, closes missed implementation gaps, performs implementation integrity review, then owns the ordered static/build checkpoint: typecheck, lint, build. Use targeted diagnostics or narrow fix checks only to prove a specific issue group. When a broad static/build command fails, inspect enough output to identify visible issue groups, fix every locally-fixable group before rerunning that broad command, and record only the groups/fixes/rerun reason. Do not rerun a broad command after each tiny fix when other visible issue groups remain. Do not keep huge command logs unless a temporary log is needed for triage; delete temporary full-output logs after extracting issue groups. Record unit/E2E coverage questions for the owning later phase.
 - Phase 4 owns unit-test coverage. It decides whether unit, service, component, or integration-style coverage is warranted; then adds, updates, removes, or explicitly skips that coverage. It may remove existing unit tests when they protect non-core, non-complex, obsolete, or convoluted behavior and the artifact explains why removal improves the test suite. Phase 4 does not rerun typecheck, lint, or build when Phase 3 evidence is current.
 - Later phases reuse Phase 3 build evidence unless code, config, dependency/build inputs, migrations, generated assets, stale output, or incompatible verification tooling invalidates it. Do not rebuild in Phase 4, Phase 5, Phase 6, or Phase 7 only to prepare, reconfirm, or feel safe.
 - Phase 6 owns E2E coverage. It decides whether E2E coverage is warranted; then adds, updates, removes, or explicitly skips that coverage. It may remove existing E2E tests when they protect non-core, non-complex, obsolete, brittle, or convoluted behavior and the artifact explains why removal improves the test suite.
-- If unit, E2E, or browser work happens before its owning phase, do not fail the task solely for that timing. Carry the artifact, diff, and command output into the owning phase and make the owning phase's add/update/remove/skip decision current before promotion.
+- If unit, E2E, or browser work happens before its owning phase, do not fail the task solely for that timing. Carry the artifact, diff, and command output into the owning phase and make the owning phase's remove/update/add/skip decision current before promotion.
 - Keep tests minimal. Prefer the fewest tests that protect core behavior or critical workflows. Too many tests for incidental behavior are a codebase problem, not a quality signal.
-- For E2E, run only new, changed, or directly connected specs that are warranted by the Phase 6 decision. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; a repo having a Playwright suite, `webServer`, or "run tests" script is not enough. After minimal warranted E2E evidence passes and no related code, test, config, fixture, migration, or build input changed, do not add a full E2E run as final confidence, final signoff, state discovery, or reviewer-satisfaction evidence.
+- For E2E, run only new, changed, or directly connected specs that are warranted by the Phase 6 decision. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; a repo having a Playwright suite, `webServer`, or "run tests" script is not enough. After warranted targeted or connected E2E evidence passes and no related code, test, config, fixture, migration, or build input changed, do not add a full E2E run as final confidence, final signoff, state discovery, or reviewer-satisfaction evidence.
 - For a single targeted Playwright script or E2E spec, timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. If a single targeted run needs more than two minutes, stop increasing timeouts; split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure first.
 - Do not rerun tests only for confidence. Rerun when quality evidence can change: related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
 - Before rerunning an identical failing test command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the prior output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, test, command scope, or diagnostic strategy before running again. A suspected pre-existing or order-dependent failure is not a reason to broaden to a full suite; prove it with the narrow failing spec/test plus logs/state/trace evidence, then fix it if it is in scope or record it as an unrelated defended gap.
@@ -279,7 +279,7 @@ Phase reference map:
 | `phase-1-task-research` | `references/phase-0-1-startup-research.md` |
 | `phase-2-execution` | `references/phase-2-4-execution-integrity.md` |
 | `phase-3-second-execution` | `references/phase-2-4-execution-integrity.md` |
-| `phase-4-integrity-review` | `references/phase-2-4-execution-integrity.md` |
+| `phase-4-unit-coverage` | `references/phase-2-4-execution-integrity.md` |
 | `phase-5-playwright-verification` | `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md` |
 | `phase-6-e2e-verification` | `references/phase-5-7-verification-signoff.md` |
 | `phase-7-final-signoff` | `references/phase-5-7-verification-signoff.md` |
@@ -314,7 +314,7 @@ These are mandatory:
 - `task-workflow/phase-1-task-research.md`
 - `task-workflow/phase-2-execution.md`
 - `task-workflow/phase-3-second-execution.md`
-- `task-workflow/phase-4-integrity-review.md`
+- `task-workflow/phase-4-unit-coverage.md`
 - `task-workflow/phase-5-playwright-verification.md`
 - `task-workflow/phase-6-e2e-verification.md`
 - `task-workflow/phase-7-final-signoff.md`
@@ -370,7 +370,7 @@ Use standalone interactive Playwright scripts in two stages. Stage 1 proves the 
 
 Detailed process: `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md`.
 
-### Phase 6: Minimal E2E Coverage Decision And Verification
+### Phase 6: E2E Coverage Decision And Verification
 
 Make the E2E coverage decision. Review existing E2E coverage first, update it when a warranted core flow already belongs there, add new E2E tests only for critical or complex workflows that cannot be cleanly covered by existing tests, remove unwanted E2E tests that protect non-core/non-complex or convoluted flows, and avoid E2E for small, visual-only, or incidental UI changes.
 
@@ -463,13 +463,13 @@ These automatically fail the run:
 
 - `references/phase-0-1-startup-research.md`: artifact reset, template copying, task intake, and codebase research.
 - `references/phase-2-4-execution-integrity.md`: primary execution, second execution, gap closure, and integrity checks.
-- `references/phase-5-7-verification-signoff.md`: interactive Playwright verification, minimal warranted E2E coverage, and final audit.
+- `references/phase-5-7-verification-signoff.md`: interactive Playwright verification, E2E coverage decisions, and final audit.
 - `references/playwright-interactive.md`: how this skill uses standalone interactive Playwright scripts.
 - `assets/templates/phase-0-artifact-reset.md`
 - `assets/templates/phase-1-task-research.md`
 - `assets/templates/phase-2-execution.md`
 - `assets/templates/phase-3-second-execution.md`
-- `assets/templates/phase-4-integrity-review.md`
+- `assets/templates/phase-4-unit-coverage.md`
 - `assets/templates/phase-5-playwright-verification.md`
 - `assets/templates/phase-6-e2e-verification.md`
 - `assets/templates/phase-7-final-signoff.md`

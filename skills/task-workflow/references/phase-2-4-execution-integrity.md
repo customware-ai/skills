@@ -48,7 +48,7 @@ Follow the target repo's code rules and the task-relevant development rules extr
 - Phase 2 owns implementation work. Defer unit, E2E, and browser verification work to the owning later phases.
 - Phase 3 owns connected-place repair, implementation integrity review, and typecheck/lint/build. Record unit/E2E coverage questions for the owning later phase.
 - Phase 4 owns unit-test coverage decisions. It may add, update, remove, or skip unit/service/component/integration-style tests and must record why.
-- Phase 6 owns E2E coverage decisions. Do not move E2E add/update/remove work into Phase 2, Phase 3, or Phase 4.
+- Phase 6 owns E2E coverage decisions. Do not move E2E remove/update/add work into Phase 2, Phase 3, or Phase 4.
 - If coverage work happens before its owning phase, treat it as early evidence to be reconciled. Carry the diff and command output into Phase 4 or Phase 6; do not fail the workflow solely because the evidence was produced early.
 
 ## Tool And Command Discipline
@@ -77,13 +77,14 @@ node task-workflow/scripts/server-probe.mjs \
 
 ## Unit Test Coverage Discipline
 
-Phase 4 owns the final unit-level add/update/remove/skip decision for Phase 2-4 work.
+Phase 4 owns the final unit-level remove/update/add/skip decision for Phase 2-4 work.
 
-- First decide whether unit-level coverage is warranted. If the change is small, visual-only, incidental, or adequately proven by Phase 3 static checks and Phase 5 browser verification, record `N/A` and do not create a test.
+- Use this decision order for every changed behavior: decide whether unit-level coverage is warranted; inspect connected existing tests; remove unnecessary existing tests; update connected existing tests when they can carry warranted coverage; add a new minimal test only when no existing test can carry a warranted core behavior; otherwise record `N/A`.
+- If the change is small, visual-only, incidental, or adequately proven by Phase 3 static checks and Phase 5 browser verification, record `N/A` and do not create a test.
 - Unit tests belong to stable core behavior: shared logic, contracts, permissions, critical state machines, parsers, calculations, data transforms, central stores, or reusable components whose behavior must stay strict.
 - Do not add unit tests for every simple component, incidental click, styling change, copy change, color change, spacing/layout tune, or one-off branch.
-- Inspect existing unit/service/component/integration-style tests that touch the changed behavior. Decide whether each should be preserved, updated, removed, or left unrelated.
-- Remove existing tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record why removal improves the test suite and preserve any useful coverage elsewhere if needed.
+- Inspect existing unit/service/component/integration-style tests that touch the changed behavior. Decide whether each should be removed, updated, preserved, or left unrelated before any new-test decision.
+- Remove existing tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record why removal improves the test suite and preserve useful coverage elsewhere only when the behavior remains core.
 - Prefer the smallest useful unit-level command that proves the warranted coverage decision. Avoid broad unit directory globs unless the artifact explains why a connected unit area must run together.
 - A broad/full unit or Vitest suite may be used only as one final sanity check after warranted targeted and connected unit-level tests pass, or when the target repo explicitly requires it for this exact task, the task explicitly asks for it, global/shared infrastructure changed, or targeted/connected output is incomplete or stale.
 - Do not start with a full unit/Vitest suite unless the target repo explicitly requires it for this exact task or the artifact records a concrete global/shared reason that makes targeted-first impossible.
@@ -102,7 +103,7 @@ Phase 3 is the default checkpoint for typecheck, lint, and build.
 - In Phase 3, inspect connected places first. If the task changed a contract, data shape, route, component, store, permission, migration, fixture, test helper, or shared UI pattern, find the connected callers/surfaces and update or defend them before static/build validation.
 - Run typecheck, then lint, then build. If the repo has a single command that combines these, record the combined command and its order instead of inventing duplicate commands.
 - When a command fails, inspect enough output to identify every visible issue group by file, contract, or root cause. Do not rely on truncated `tail`/`head` output as the only evidence if it can hide issue groups. If output is too large, use focused searches, reporter options, or a temporary full-output log; delete any temporary full-output log after extracting issue groups. Record issue groups, fixes, and rerun reason in the artifact, not large pasted logs.
-- Before rerunning the same typecheck, lint, or build command, fix every locally-fixable issue group visible from the prior output. Do not fix one line or one file and rerun while other visible related groups remain unhandled.
+- Use targeted diagnostics or narrow fix checks only to prove a specific issue group. Before rerunning the same broad typecheck, lint, or build command, fix every locally-fixable issue group visible from the prior broad output. Do not fix one line or one file and rerun the broad command while other visible related groups remain unhandled.
 - After typecheck passes, move to lint. After lint passes, move to build. After build passes, record the reusable build evidence: command, output/log path, and the source/config/package/build inputs it depends on.
 - Later phases reuse the Phase 3 build result unless code, config, package/dependency files, migrations/build inputs, or generated assets changed after that build, or unless the previous output is missing, partial, stale, or incompatible with the verification command. Do not run a later build as phase preparation, final confirmation, or because E2E is starting; use the recorded Phase 3 build output.
 - If a later phase changes code, return to the earliest affected phase, update artifacts, and rerun the relevant ordered command from the first invalidated point. Do not rerun build only for confidence when the Phase 3 build evidence is still current.
@@ -245,7 +246,7 @@ A failing Phase 2 artifact is not a stopping state. Fix the implementation or ar
 11. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
 12. Update `task-workflow/progress.md` with the second-pass findings, associated-surface review, integrity review, ordered check results, reusable build evidence, gap state, a pointer to `task-workflow/phase-3-second-execution.md` for repair-file details, and next local action.
 13. Record a second-pass diff review with file evidence.
-14. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
+14. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-unit-coverage`.
 15. Update `task-workflow/progress.md` so current phase and next local action match Phase 4.
 
 Phase 3 is mandatory. It is not a polish pass that can be skipped because Phase 2 seemed complete.
@@ -295,36 +296,37 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 
 ## Phase 4: Unit Test Coverage Decision And Verification
 
-1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
+1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-4-unit-coverage`.
 2. Re-open Phase 3 ordered static/build and integrity evidence. Confirm it is current. If code, config, package/dependency files, migrations/build inputs, or generated assets changed after Phase 3, return to Phase 3 and rerun the invalidated sequence from the first affected point. Do not rerun typecheck, lint, or build inside Phase 4 when Phase 3 evidence is current.
-3. Inspect existing unit, service, component, and integration-style tests that touch the changed behavior, nearby contracts, central logic, or modified components.
-4. Decide whether unit-level coverage is warranted. Use `N/A` when no unit-level test is needed.
-5. Add tests only for stable core behavior, shared logic, contracts, permissions, critical state machines, parsers, calculations, data transforms, central stores, or reusable components whose behavior must stay strict.
+3. For each changed behavior, decide whether unit-level coverage is warranted. Use `N/A` when no unit-level test is needed.
+4. Inspect existing unit, service, component, and integration-style tests that touch the changed behavior, nearby contracts, central logic, or modified components.
+5. Remove existing tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record the removal reason and diff/readback evidence. Preserve useful assertions elsewhere only when the behavior is still core.
 6. Update existing tests when they already own warranted behavior and still provide useful coverage.
-7. Remove tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record the removal reason and diff/readback evidence. Preserve useful assertions elsewhere only when the behavior is still core.
+7. Add tests only when coverage is warranted, the behavior is stable/core, and no existing test can carry it.
 8. Run only the warranted unit-level commands. Use the smallest useful targeted command first. Use broad/full unit or Vitest only as a final sanity or explicit exception with an artifact reason.
 9. Inspect failures and fix root causes. Before rerunning the same command, record what changed or what new diagnostic evidence the rerun will collect.
-10. Record the coverage decision, existing tests inspected, tests added, tests updated, tests removed, command output or `N/A`, failure/fix/rerun evidence, and remaining unit coverage gaps.
+10. Record the coverage decision matrix, existing tests inspected, tests removed, tests updated, tests added, command output or `N/A`, failure/fix/rerun evidence, and remaining unit coverage gaps.
 11. Update `task-workflow/open-gaps.md` for any remaining unit-test coverage gap.
-12. Update `task-workflow/progress.md` with the unit coverage decision, command results, removed-test rationale, a pointer to `task-workflow/phase-4-integrity-review.md` for details, and next local action.
+12. Update `task-workflow/progress.md` with the unit coverage decision, command results, removed-test rationale, a pointer to `task-workflow/phase-4-unit-coverage.md` for details, and next local action.
 13. Confirm no unit test command or watcher remains running in the foreground from Phase 4.
 14. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
 15. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
 
 ## Phase 4 Score
 
-Score `task-workflow/phase-4-integrity-review.md` against `30` items:
+Score `task-workflow/phase-4-unit-coverage.md` against `30` items:
 
 - `8` unit coverage decision items
 - `6` existing-test review items
-- `6` add/update/remove quality items
+- `6` remove/update/add quality items
 - `5` command execution or `N/A` evidence items
 - `5` artifact/gap evidence items
 
 Critical failures:
 
-- unit coverage decision is missing, vague, or not tied to changed behavior and risk
-- existing relevant unit/service/component/integration tests were not inspected before adding new tests
+- unit coverage decision matrix is missing, vague, out of order, or not tied to changed behavior and risk
+- connected existing-test inspection/action evidence is missing before a new unit test is added
+- new unit test was added when a connected existing test could have been updated instead
 - new unit test added for small fixes, visual-only changes, incidental UI behavior, trivial button wiring, or non-core/non-complex behavior without a concrete risk reason
 - existing useful test deleted without preserving still-core coverage or defending why the behavior is no longer core
 - unnecessary, obsolete, convoluted, brittle, or non-core/non-complex tests remain after Phase 4 identifies them as removable
@@ -343,9 +345,9 @@ Pass gate:
 - score is at least `28/30`
 - every critical unit-test coverage item passes
 - Phase 3 ordered typecheck/lint/build evidence is current, or invalidated commands were rerun from the first affected point
-- unit coverage decision is recorded, including `N/A` when no unit-level test is warranted
-- existing relevant unit-level tests were inspected before add/update/remove decisions
-- unit tests were added, updated, removed, or skipped according to the coverage decision
+- unit coverage decision matrix is recorded, including `N/A` when no unit-level test is warranted
+- existing relevant unit-level tests were inspected before remove/update/add decisions
+- unit tests were removed, updated, added, or skipped according to the existing-first coverage decision
 - removed tests have a recorded rationale and readback/diff evidence
 - warranted unit commands pass, no unit command was warranted, or unrelated failures are evidenced
 - no unbounded foreground unit command remains active

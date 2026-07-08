@@ -11,27 +11,29 @@ Re-open Phase 3 ordered typecheck/lint/build and integrity evidence first. Do no
 | Phase 3 evidence still current, or returned to Phase 3 for invalidated command | Pending | Pending |
 | Phase 3 invalidation decision recorded before unit coverage work | Pending | Pending |
 
-## Unit Coverage Decision
+## Unit Coverage Decision Matrix
 
-Decide whether unit, service, component, or integration-style tests are warranted. Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no unit-level test. Unit tests belong to stable core behavior: shared logic, contracts, permissions, critical state machines, parsers, calculations, data transforms, central stores, or reusable components whose behavior must stay strict.
+Use this order for each changed behavior: decide whether unit-level coverage is warranted; inspect connected existing tests; remove unnecessary existing tests; update connected existing tests when they can carry the warranted coverage; add a new minimal test only when no existing test can carry a warranted core behavior; otherwise record `N/A`.
 
-| Behavior/area | Unit-level coverage warranted? | Add/update/remove/N/A | Test file(s) | Reason |
-| --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending |
+Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no unit-level test. Unit tests belong to stable core behavior: shared logic, contracts, permissions, critical state machines, parsers, calculations, data transforms, central stores, or reusable components whose behavior must stay strict.
 
-## Existing Unit Test Review
+| Behavior/area | Unit-level coverage warranted? | Existing related tests inspected | Remove existing? | Update existing? | Add new? | Decision and minimal/core reason |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
-Inspect existing unit, service, component, and integration-style tests that touch the changed behavior, nearby contracts, central logic, or modified components. Remove tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Preserve useful assertions elsewhere only when the behavior is still core.
+## Existing Unit Test Actions
 
-| Existing test file/area | Relevant to task? | Preserve/update/remove/unrelated | Reason | Evidence |
+Record each connected existing unit, service, component, or integration-style test and the action taken. Existing-test actions come before any new-test decision.
+
+| Existing test file/area | Connected behavior | Action: remove/update/preserve/unrelated | Reason | Evidence |
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
 ## Unit Test Changes
 
-| Action | Test file | Why this action is warranted | Diff/readback evidence |
-| --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending |
+| Action | Test file | Existing-first outcome | Why this action is warranted and minimal | Diff/readback evidence |
+| --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending |
 
 ## Unit Test Runs
 
@@ -76,9 +78,9 @@ Use this section whenever tests are removed. A removal is valid only when the te
 | Score | >= 28/30 | 0/30 |
 | Critical unit-test coverage items | all pass | Pending |
 | Phase 3 static/build and integrity evidence current, or returned to Phase 3 for invalidation | yes | Pending |
-| Unit coverage decision recorded, including `N/A` when no unit-level test is warranted | yes | Pending |
-| Existing relevant unit-level tests inspected before add/update/remove decisions | yes | Pending |
-| Unit tests added, updated, removed, or skipped according to the coverage decision | yes | Pending |
+| Unit coverage decision matrix recorded, including `N/A` when no unit-level test is warranted | yes | Pending |
+| Existing connected unit-level tests inspected before remove/update/add decisions | yes | Pending |
+| Unit tests removed, updated, added, or skipped according to the existing-first decision order | yes | Pending |
 | Removed tests have rationale and readback/diff evidence | yes | Pending |
 | Warranted unit commands pass, no unit command was warranted, or unrelated failure evidenced | yes | Pending |
 | Exact command output recorded when a unit command was required; otherwise `N/A` decision recorded | yes | Pending |

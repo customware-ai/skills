@@ -8,7 +8,7 @@
 | 1 | `task-workflow/phase-1-task-research.md` | Pending | Fail | Pending |
 | 2 | `task-workflow/phase-2-execution.md` | Pending | Fail | Pending |
 | 3 | `task-workflow/phase-3-second-execution.md` | Pending | Fail | Pending |
-| 4 | `task-workflow/phase-4-integrity-review.md` | Pending | Fail | Pending |
+| 4 | `task-workflow/phase-4-unit-coverage.md` | Pending | Fail | Pending |
 | 5 | `task-workflow/phase-5-playwright-verification.md` | Pending | Fail | Pending |
 | 6 | `task-workflow/phase-6-e2e-verification.md` | Pending | Fail | Pending |
 
@@ -75,7 +75,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | `task-workflow/phase-1-task-research.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/phase-2-execution.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/phase-3-second-execution.md` | Pending | Pending | Pending | Pending | Pending |
-| `task-workflow/phase-4-integrity-review.md` | Pending | Pending | Pending | Pending | Pending |
+| `task-workflow/phase-4-unit-coverage.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/phase-5-playwright-verification.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/phase-6-e2e-verification.md` | Pending | Pending | Pending | Pending | Pending |
 | `task-workflow/progress.md` | Pending | Current and consistent | Final action ready | Pending | Pending |
@@ -93,8 +93,8 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | --- | --- | --- | --- |
 | Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
 | Phase 5 responsive quality | Required viewports include mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` when UI changed; evidence shows responsive quality passed as a first-class guarantee with no broken UI, excessive 1080p dead space, or unfinished-looking 2560px empty regions | Pending | Pending |
-| Phase 4 unit evidence | Unit coverage decision records add/update/remove/`N/A`; exact command output is recorded when a command was required; removed tests include rationale and diff/readback evidence | Pending | Pending |
-| Phase 6 E2E evidence | E2E coverage decision records add/update/remove/`N/A`; exact E2E command output is recorded when a command was required; removed E2E tests include rationale and diff/readback evidence | Pending | Pending |
+| Phase 4 unit evidence | Unit coverage decision records remove/update/add/`N/A`; exact command output is recorded when a command was required; removed tests include rationale and diff/readback evidence | Pending | Pending |
+| Phase 6 E2E evidence | E2E coverage decision records remove/update/add/`N/A`; exact E2E command output is recorded when a command was required; removed E2E tests include rationale and diff/readback evidence | Pending | Pending |
 | Coverage selection and retry evidence | Phase 4 unit ledger and Phase 6 E2E ledger separately explain scope, `N/A` decisions, removals, rerun basis, outcomes, and next actions | Pending | Pending |
 | Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper by default, repo Playwright `webServer` or manual fallback only with reason/diagnostics; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | DB/setup/server reuse evidence | Phase 5/6 does not repeatedly reset DB, rerun migrate/seed, or restart the server between related E2E commands without an invalidating state change or lifecycle diagnostic | Pending | Pending |

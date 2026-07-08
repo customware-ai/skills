@@ -53,7 +53,7 @@ Phase 0 is the first action after reading `SKILL.md`.
    - `phase-1-task-research.md`
    - `phase-2-execution.md`
    - `phase-3-second-execution.md`
-   - `phase-4-integrity-review.md`
+   - `phase-4-unit-coverage.md`
    - `phase-5-playwright-verification.md`
    - `phase-6-e2e-verification.md`
    - `phase-7-final-signoff.md`

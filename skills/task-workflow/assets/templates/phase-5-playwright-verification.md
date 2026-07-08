@@ -53,7 +53,7 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 
 Prove the changed behavior works through real user interaction. Keep this stage focused on the changed surface and directly related nearby behavior.
 
-| Flow/route/state | Script | Interaction evidence | Result | Fix needed |
+| Flow/route/state | User action sequence | Expected user-visible result | Script/evidence | Result/fix |
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
@@ -61,7 +61,7 @@ Prove the changed behavior works through real user interaction. Keep this stage 
 
 Exercise relevant non-ideal behavior a real user could do while using the changed feature: invalid inputs, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigation away/back, empty states, and nearby controls.
 
-| Scenario | Script | Evidence | Result | Fix/rerun |
+| Scenario | User action | Expected user-visible result | Script/evidence | Result/fix |
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
@@ -77,13 +77,13 @@ Check nearby UI/features sharing the changed surface so the task did not break u
 
 Verify the main changed flow and affected nearby UI on mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` desktop when UI changed. Responsive quality is a first-class Phase 5 pass condition, equal to the task's functional behavior working. Check for broken, cramped, overlapping, clipped, ill-placed, unreadable, unusable, or non-responsive UI; also check navigation access, tap/click targets, dialogs/menus, accidental horizontal scroll, controls outside the viewport, screenshots, and whether normal desktop/1080p has excessive dead space. Some whitespace is fine. `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. Large empty areas are acceptable on 4K/ultrawide only when the layout is intentionally constrained and still coherent.
 
-| Viewport | Flow/area | Screenshot/evidence | UI quality and dead-space result | Fix/rerun |
-| --- | --- | --- | --- | --- |
-| Mobile, e.g. 390x844 | Pending | Pending | Pending | Pending |
-| Tablet, e.g. 768x1024 | Pending | Pending | Pending | Pending |
-| Desktop, e.g. 1440x900 | Pending | Pending | Pending | Pending |
-| Standard desktop, 1920x1080 | Pending | Pending | Pending | Pending |
-| Large desktop, 2560x1440 | Pending | Pending | Pending | Pending |
+| Viewport | Flow/area | Overlap/cramped/clipped/readability result | Responsive/nav/tap/dialog result | Screenshot/evidence | Fix/rerun |
+| --- | --- | --- | --- | --- | --- |
+| Mobile, e.g. 390x844 | Pending | Pending | Pending | Pending | Pending |
+| Tablet, e.g. 768x1024 | Pending | Pending | Pending | Pending | Pending |
+| Desktop, e.g. 1440x900 | Pending | Pending | Pending | Pending | Pending |
+| Standard desktop, 1920x1080 | Pending | Pending | Pending | Pending | Pending |
+| Large desktop, 2560x1440 | Pending | Pending | Pending | Pending | Pending |
 
 ## Screenshot Existence Audit
 
