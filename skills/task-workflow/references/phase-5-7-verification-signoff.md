@@ -157,11 +157,13 @@ Phase 5 has two required evidence stages:
 | Stage 1 | the changed behavior works through real user interaction | primary changed route, touched controls, relevant bad cases, nearby shared UI |
 | Stage 2 | the UI is visually sound and responsive | no broken, cramped, overlapping, clipped, ill-placed, unreadable, unusable, or non-responsive affected UI |
 
+> Phase 5 is intentionally thorough. The Phase 4/Phase 6 test-minimality rules restrict durable automated tests; they do not weaken interactive browser verification. Use as many focused Playwright scripts, probes, viewport passes, screenshots, and clean reruns as needed to prove the changed user experience is functionally correct and visually sound. The constraint is relevance and lifecycle discipline, not fewest checks.
+
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
 2. Read `references/playwright-interactive.md`.
 3. Confirm `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md` are loaded as the required current phase references before Phase 5 work starts.
 4. Confirm `task-workflow/scripts/playwright-lifecycle.mjs` exists and is readable.
-5. Write standalone Playwright scripts under `task-workflow/playwright/`.
+5. Write standalone Playwright scripts under `task-workflow/playwright/`. Multiple scripts are acceptable when they keep the evidence clearer, separate functional and responsive concerns, or isolate failure triage.
 6. Run the scripts through `task-workflow/scripts/playwright-lifecycle.mjs` with the repo's normal local app command, a readiness URL, bounded command timeout, and runtime logs. First-run Phase 5 script/probe timeout should be `15000`-`20000` ms.
 7. Stage 1 - functional behavior: drive the changed feature through real user interactions and prove the task behavior works. Verify primary routes, forms, buttons, menus, dialogs, tables, navigation, save flows, and error states touched or implied by the task.
 8. In Stage 1, exercise only the relevant bad cases and non-ideal user behavior: invalid submissions, empty states, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigating away/back, and nearby controls a real user could click while using the feature.
@@ -239,6 +241,7 @@ Critical failures:
 - `playwright install` or equivalent browser download attempted during verification
 - server PID/log/readiness proof not recorded
 - Stage 1 main touched route or flow not exercised
+- Phase 5 reduced to a shallow smoke check when changed user-facing behavior or UI required real interaction, bad-case, surrounding-feature, or responsive evidence
 - Stage 1 relevant bad cases and non-ideal user actions not exercised for the changed flow
 - surrounding UI/features sharing the changed surface not smoke-tested
 - Stage 2 mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` responsive behavior not checked for the affected UI when UI changed
@@ -260,6 +263,7 @@ Pass gate:
 - every critical Playwright item passes
 - Stage 1 proves every main touched or implied user flow with interactive evidence
 - Stage 1 proves relevant bad cases, non-ideal user actions, and surrounding features with interactive evidence
+- Phase 5 coverage plan explains the focused scripts/probes/viewports used and why they are enough for the changed user-facing scope
 - Stage 2 verifies mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` responsive behavior for the affected UI when UI changed
 - Stage 2 UI quality passes as a first-class guarantee alongside the task's functional behavior
 - screenshots cited in the artifact exist

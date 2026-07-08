@@ -479,6 +479,8 @@ Detailed process: `references/phase-2-4-execution-integrity.md`.
 
 Use standalone interactive Playwright scripts in two stages. Stage 1 proves the changed behavior works through real user interaction. Stage 2 verifies UI quality: no broken, cramped, overlapping, clipped, ill-placed, or non-responsive UI on the affected surfaces. Treat responsive design as a first-class Phase 5 guarantee, equal to proving the task's functional changes work. Some whitespace is fine, but standard desktop viewports such as `1920x1080` must not look broken, clipped, overlapped, unusable, or excessively sparse. Large desktop viewports such as `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. Very large 4K/ultrawide whitespace is acceptable when the layout is intentionally constrained and still coherent.
 
+The Phase 4/Phase 6 test-minimality rules do not shrink Phase 5. Phase 5 is the main user-facing verification phase and may take the time needed to cover changed flows, relevant bad cases, surrounding UI, responsive breakpoints, screenshots, and visual correctness. Use multiple focused Playwright scripts, probes, viewport passes, or reruns when needed to prove the affected user experience is correct; keep them scoped to the changed and adjacent surfaces, but do not reduce Phase 5 to a shallow smoke check.
+
 Detailed process: `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md`.
 
 ### Phase 6: E2E Coverage Decision And Verification

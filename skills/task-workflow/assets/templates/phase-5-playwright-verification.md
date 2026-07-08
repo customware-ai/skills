@@ -49,6 +49,17 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 | Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
+## Phase 5 Coverage Plan
+
+Phase 5 is the main user-facing verification phase. Use multiple focused Playwright scripts, probes, viewport passes, screenshots, or clean reruns when needed to prove changed flows and UI correctness. The limit is relevance to the changed or adjacent surfaces, not the smallest possible number of browser checks.
+
+| Coverage area | Planned script/probe/viewport evidence | Why this is needed for the changed UX | Scope boundary so this does not become a broad unrelated audit |
+| --- | --- | --- | --- |
+| Main changed user flow | Pending | Pending | Pending |
+| Relevant bad case or non-ideal user action | Pending | Pending | Pending |
+| Surrounding shared UI or adjacent workflow | Pending | Pending | Pending |
+| Responsive/visual correctness | Pending | Pending | Pending |
+
 ## Stage 1 - Functional Behavior
 
 Prove the changed behavior works through real user interaction. Keep this stage focused on the changed surface and directly related nearby behavior.
@@ -137,6 +148,7 @@ If matches were found and removed, record the replacement proof here.
 | --- | --- | --- |
 | Score | >= 44/50 | 0/50 |
 | Critical Playwright items | all pass | Pending |
+| Phase 5 coverage plan proves the run was thorough enough for changed user-facing flows and UI | yes | Pending |
 | Stage 1 main touched/implied flows covered | yes | Pending |
 | Stage 1 relevant bad cases and non-ideal user behavior covered | yes | Pending |
 | Surrounding feature smoke completed | yes | Pending |
