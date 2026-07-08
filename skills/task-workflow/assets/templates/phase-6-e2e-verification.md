@@ -4,9 +4,11 @@
 
 Use this order for each changed workflow: decide whether E2E is warranted; inspect connected existing E2E; remove unnecessary existing E2E; update connected existing E2E when it can carry the warranted workflow; add a new minimal E2E only when no existing E2E can carry a warranted core/complex workflow; otherwise record `N/A`.
 
-| Behavior/path | E2E warranted? | Existing E2E inspected | Remove existing? | Update existing? | Add new? | Decision and minimal/core reason |
-| --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+> Strict default: no new E2E. A smoke checklist or reviewer expectation is not enough; the artifact must prove durable E2E risk and existing-first failure.
+
+| Behavior/path | E2E warranted? | Critical/core workflow risk | Existing E2E inspected | Remove/simplify existing? | Update existing? | Add new? | Decision and minimal/core reason |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Minimal Coverage Rationale
 
@@ -18,19 +20,35 @@ Small fixes, visual-only changes, copy/color/style changes, spacing/layout tunin
 
 ## Existing E2E Review
 
-Inspect connected existing E2E tests for every changed workflow before choosing an action. Remove unnecessary E2E first, then update an existing flow when the task changes or extends that flow. Add a new E2E test only for a core workflow or when existing coverage cannot cleanly express the warranted path.
+Inspect connected existing E2E tests for every changed workflow before choosing an action. Remove unnecessary E2E first, then update an existing flow when the task changes or extends that flow. Add a new E2E test only for a core workflow or when existing coverage cannot cleanly express the warranted path. Existing tests created by older agents are not grandfathered; passing status alone is not a reason to preserve them.
 
-| Existing test file/flow | Connected workflow | Action: remove/update/preserve/unrelated | Reason | Evidence |
+| Existing test file/flow | Connected workflow | Old/excess/agent-created? | Action: remove/simplify/update/preserve/unrelated | Reason | Evidence that file was read |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending |
+
+## Old Or Excess E2E Pruning Audit
+
+Use this section for connected E2E tests that may be unnecessary, obsolete, duplicated, brittle, convoluted, or non-core/non-complex. If none are found, record the search/read evidence and `None found`.
+
+| Candidate E2E | Why it might be unnecessary or excessive | Decision: remove/simplify/update/preserve | Critical-flow coverage after decision | Diff/readback evidence |
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
+
+## New E2E Burden Ledger
+
+Complete one row for every new E2E file or case. If no new E2E is added, record `N/A` with the existing-E2E/update/remove evidence that made new coverage unnecessary.
+
+| New E2E file/case | Critical/core workflow protected | Existing E2E read first | Why existing update/remove/`N/A` was insufficient | Minimal user path only? | Cheaper proof rejected | Bulk check: merged/reduced? |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## E2E Test Changes
 
 Record every E2E add, update, removal, or explicit skip. Removed tests need a reason, readback/diff evidence, and a note about any remaining critical-flow coverage.
 
-| Test file | Action: added/updated/removed/skipped | Existing-first outcome | Why this action is warranted and minimal | Diff/readback or command evidence | Critical-flow coverage after change |
-| --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending |
+| Test file | Action: added/updated/removed/skipped | Existing-first outcome | Burden-ledger row or `N/A` | Why this action is warranted and minimal | Diff/readback or command evidence | Critical-flow coverage after change |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Functional Assertion Quality
 
@@ -135,6 +153,9 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Existing E2E tests preserved, updated, removed, or defended | Pending | Pending |
 | Connected existing E2E tests inspected before remove/update/add/`N/A` decisions | Pending | Pending |
 | Existing E2E flow updated or removed when warranted behavior belongs there or old coverage is no longer useful | Pending | Pending |
+| Old/excess connected E2E tests removed, simplified, updated, or explicitly defended | Pending | Pending |
+| New E2E tests, if any, have a complete burden ledger | Pending | Pending |
+| New E2E bulk was merged/reduced or explicitly justified per case | Pending | Pending |
 | New E2E test added only when the workflow was core/complex and no existing flow could cover it | Pending | Pending |
 | Removed E2E tests have rationale, diff/readback evidence, and remaining critical-flow coverage notes | Pending | Pending |
 | Identified unnecessary, obsolete, brittle, convoluted, or non-core/non-complex E2E tests were removed or defended | Pending | Pending |
@@ -169,6 +190,9 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Connected existing E2E tests inspected before remove/update/add/`N/A` decisions | yes | Pending |
 | Existing E2E coverage updated or removed when warranted by the coverage decision | yes | Pending |
 | New E2E tests added only when existing tests cannot cleanly cover a core/complex workflow | yes | Pending |
+| Old/excess connected E2E tests removed, simplified, updated, or explicitly defended | yes | Pending |
+| New E2E tests, if any, have a complete burden ledger | yes | Pending |
+| New E2E bulk was merged/reduced or explicitly justified per case | yes | Pending |
 | Removed E2E tests have rationale, diff/readback evidence, and remaining critical-flow coverage notes | yes | Pending |
 | New/affected critical behavior covered or defended | yes | Pending |
 | Tests assert meaningful functional outcomes | yes | Pending |

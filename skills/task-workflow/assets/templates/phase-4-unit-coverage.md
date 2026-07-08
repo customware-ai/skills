@@ -17,23 +17,41 @@ Use this order for each changed behavior: decide whether unit-level coverage is 
 
 Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no unit-level test. Unit tests belong to stable core behavior: shared logic, contracts, permissions, critical state machines, parsers, calculations, data transforms, central stores, or reusable components whose behavior must stay strict.
 
-| Behavior/area | Unit-level coverage warranted? | Existing related tests inspected | Remove existing? | Update existing? | Add new? | Decision and minimal/core reason |
-| --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+> Strict default: `N/A`, update existing, or remove/simplify existing. A new unit test is an exception and must earn its maintenance cost.
+
+| Behavior/area | Unit-level coverage warranted? | Core/stable risk being protected | Existing related tests inspected | Remove/simplify existing? | Update existing? | Add new? | Decision and minimal/core reason |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Existing Unit Test Actions
 
-Record each connected existing unit, service, component, or integration-style test and the action taken. Existing-test actions come before any new-test decision.
+Record each connected existing unit, service, component, or integration-style test and the action taken. Existing-test actions come before any new-test decision. Existing tests created by older agents are not grandfathered; passing status alone is not a reason to preserve them.
 
-| Existing test file/area | Connected behavior | Action: remove/update/preserve/unrelated | Reason | Evidence |
+| Existing test file/area | Connected behavior | Old/excess/agent-created? | Action: remove/simplify/update/preserve/unrelated | Reason | Evidence that file was read |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending |
+
+## Old Or Excess Unit Test Pruning Audit
+
+Use this section for connected tests that may be unnecessary, obsolete, duplicated, convoluted, brittle, or non-core/non-complex. If none are found, record the search/read evidence and `None found`.
+
+| Candidate test | Why it might be unnecessary or excessive | Decision: remove/simplify/update/preserve | Why preservation is correct, if preserved | Diff/readback evidence |
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
+
+## New Unit Test Burden Ledger
+
+Complete one row for every new unit test file or case. If no new unit test is added, record `N/A` with the existing-test/update/remove evidence that made new coverage unnecessary.
+
+| New test file/case | Stable/core risk protected | Existing tests read first | Why existing update/remove/`N/A` was insufficient | Minimal assertions only? | Cheaper proof rejected | Bulk check: merged/reduced? |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Unit Test Changes
 
-| Action | Test file | Existing-first outcome | Why this action is warranted and minimal | Diff/readback evidence |
-| --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending |
+| Action | Test file | Existing-first outcome | Burden-ledger row or `N/A` | Why this action is warranted and minimal | Diff/readback evidence |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Unit Test Runs
 
@@ -81,6 +99,9 @@ Use this section whenever tests are removed. A removal is valid only when the te
 | Unit coverage decision matrix recorded, including `N/A` when no unit-level test is warranted | yes | Pending |
 | Existing connected unit-level tests inspected before remove/update/add decisions | yes | Pending |
 | Unit tests removed, updated, added, or skipped according to the existing-first decision order | yes | Pending |
+| Old/excess connected tests removed, simplified, updated, or explicitly defended | yes | Pending |
+| New unit tests, if any, have a complete burden ledger | yes | Pending |
+| Test bulk causing max-lines/helper/fixture churn was reduced or explicitly justified per test | yes | Pending |
 | Removed tests have rationale and readback/diff evidence | yes | Pending |
 | Warranted unit commands pass, no unit command was warranted, or unrelated failure evidenced | yes | Pending |
 | Exact command output recorded when a unit command was required; otherwise `N/A` decision recorded | yes | Pending |

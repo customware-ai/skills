@@ -212,6 +212,22 @@ Treat these rules as always active.
 
 ### Minimal Test And Rerun Rules
 
+<test_minimality_contract>
+
+> Tests are production code. Extra tests are not harmless evidence; they are maintenance load, false confidence risk, and future workflow drag.
+
+Phase 4 and Phase 6 must treat test work as a pruning and minimal-coverage decision, not as a "more tests is safer" step.
+
+| Rule | Required behavior |
+| --- | --- |
+| Existing tests are not grandfathered | If an older agent added unnecessary, obsolete, brittle, convoluted, duplicated, or non-core tests, the owning phase must remove or simplify them when they are connected to the current changed behavior. |
+| New tests are exceptions | Add a new test only after proving the behavior is stable/core and no connected existing test can carry the warranted assertion cleanly. |
+| Passing extra tests is not quality evidence | A large passing count does not improve the gate. The gate values necessary coverage, useful assertions, and removal of bad tests. |
+| Test bulk is a warning | If added tests cause max-lines, fixture churn, helper churn, slow commands, broad reruns, or new maintenance structure, stop and re-evaluate whether the tests should be merged, reduced, updated in place, or removed. Do not solve self-created test bulk by adding more structure unless the artifact proves every test remains necessary. |
+| Every new test needs a burden ledger | For each new unit or E2E test case/file, record the core risk, the connected existing tests inspected, why update/remove/`N/A` was insufficient, why the assertion is minimal, and what cheaper proof was rejected. |
+
+</test_minimality_contract>
+
 - Keep tests minimal. Prefer the fewest tests that protect core behavior or critical workflows. Too many tests for incidental behavior are a codebase problem, not a quality signal.
 - For E2E, run only new, changed, or directly connected specs that are warranted by the Phase 6 decision. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; a repo having a Playwright suite, `webServer`, or "run tests" script is not enough. After warranted targeted or connected E2E evidence passes and no related code, test, config, fixture, migration, or build input changed, do not add a full E2E run as final confidence, final signoff, state discovery, or reviewer-satisfaction evidence.
 - For a single targeted Playwright script or E2E spec, timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. If a single targeted run needs more than two minutes, stop increasing timeouts; split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure first.
@@ -518,8 +534,13 @@ These automatically fail the run:
 - adding or requiring unit tests for small fixes, minor UI adjustments, copy changes, color/style changes, spacing/layout tuning, or simple button wiring without a concrete core-behavior or risk reason
 - adding unit tests for trivial component branches, incidental button clicks, visual-only changes, or one-off UI behavior instead of reserving unit tests for core stable behavior
 - keeping unnecessary, obsolete, convoluted, or non-core/non-complex unit tests after Phase 4 identifies them as removable
+- adding unit tests without a per-test necessity ledger proving existing tests could not be updated, the behavior is stable/core, and every new assertion is minimal
+- preserving old agent-created unit tests as "already there" when connected evidence shows they are unnecessary, duplicated, brittle, convoluted, or non-core/non-complex
+- adding enough unit tests to require test-file splitting, helper churn, fixture churn, or broad reruns without first reducing or removing unnecessary test coverage and recording why the remaining bulk is necessary
 - adding a new E2E test for behavior that is not a critical/core workflow, not a complex flow, or can be cleanly covered by updating existing E2E coverage
 - keeping unnecessary, obsolete, brittle, convoluted, or non-core/non-complex E2E tests after Phase 6 identifies them as removable
+- adding E2E tests without a per-test necessity ledger proving existing E2E could not be updated, the workflow is critical/core or complex enough for E2E, and every new assertion is minimal
+- preserving old agent-created E2E tests as "already there" when connected evidence shows they are unnecessary, duplicated, brittle, convoluted, or non-core/non-complex
 - starting with a broad/full unit or Vitest suite in Phase 4 before the warranted targeted/connected unit-level tests, when any are warranted, have passed
 - running the full unit/Vitest suite more than once without a concrete artifact reason from target repo instructions, changed global/shared infrastructure, or incomplete/stale output
 - running broad/full unit or Vitest without Phase 4 artifact evidence that warranted targeted/connected tests already passed and this is the one final sanity check, or that the task/repo/global change explicitly requires the broader scope

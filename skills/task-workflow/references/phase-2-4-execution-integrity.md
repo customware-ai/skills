@@ -123,10 +123,27 @@ Phase 4 owns the final unit-level remove/update/add/skip decision for Phase 2-4 
 - Unit tests belong to stable core behavior: shared logic, contracts, permissions, critical state machines, parsers, calculations, data transforms, central stores, or reusable components whose behavior must stay strict.
 - Do not add unit tests for every simple component, incidental click, styling change, copy change, color change, spacing/layout tune, or one-off branch.
 
+> Strict default: `N/A`, update existing, or remove/simplify existing is preferred over adding tests. A new unit test is an exception that must earn its maintenance cost.
+
 ### Existing-First Hygiene
 
 - Inspect existing unit/service/component/integration-style tests that touch the changed behavior. Decide whether each should be removed, updated, preserved, or left unrelated before any new-test decision.
-- Remove existing tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record why removal improves the test suite and preserve useful coverage elsewhere only when the behavior remains core.
+- Remove existing tests when they are unnecessary, obsolete, duplicated, convoluted, brittle, or protect non-core/non-complex behavior. Record why removal improves the test suite and preserve useful coverage elsewhere only when the behavior remains core.
+- Existing tests created by older agents are not protected by age or by passing status. If they are connected to the current work and fail the minimal/core test standard, remove, merge, or simplify them before adding new tests.
+
+### New Unit Test Burden Ledger
+
+Before adding any new unit test file or case, record a burden ledger entry in `task-workflow/phase-4-unit-coverage.md`.
+
+| Required proof | Meaning |
+| --- | --- |
+| Stable/core risk | The behavior is a durable contract, parser, transform, permission, state machine, central store, or reusable component behavior that should fail loudly when broken. |
+| Existing-test inventory | Specific connected test files were read, not merely searched. |
+| Existing-first rejection | The artifact explains why updating, removing, or preserving existing tests cannot carry the warranted assertion. |
+| Minimal assertion set | Each new assertion protects a distinct required behavior; incidental rendering, text existence, styling, and one-off branches are excluded. |
+| Bulk check | If more than one new unit file, more than three new cases, or any helper/fixture/test-file split is introduced, the artifact itemizes why each remains necessary after reduction. |
+
+If the ledger is missing or generic, do not add the test. If added tests cause max-lines, fixture churn, helper churn, slow broad commands, or repeated reruns, return to the ledger and reduce or remove tests before continuing.
 
 ### Minimal Command Rules
 
@@ -390,12 +407,12 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 3. Re-open Phase 3 ordered static/build and integrity evidence. Confirm it is current. If code, config, package/dependency files, migrations/build inputs, or generated assets changed after Phase 3, return to Phase 3 and rerun the invalidated sequence from the first affected point. Do not rerun typecheck, lint, or build inside Phase 4 when Phase 3 evidence is current.
 4. For each changed behavior, decide whether unit-level coverage is warranted. Use `N/A` when no unit-level test is needed.
 5. Inspect existing unit, service, component, and integration-style tests that touch the changed behavior, nearby contracts, central logic, or modified components.
-6. Remove existing tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record the removal reason and diff/readback evidence. Preserve useful assertions elsewhere only when the behavior is still core.
+6. Remove, merge, or simplify existing tests when they are unnecessary, obsolete, duplicated, convoluted, brittle, or protect non-core/non-complex behavior. This includes tests added by older agents. Record the removal reason and diff/readback evidence. Preserve useful assertions elsewhere only when the behavior is still core.
 7. Update existing tests when they already own warranted behavior and still provide useful coverage.
-8. Add tests only when coverage is warranted, the behavior is stable/core, and no existing test can carry it.
+8. Add tests only when coverage is warranted, the behavior is stable/core, no existing test can carry it, and the New Unit Test Burden Ledger proves every new file/case is minimal.
 9. Run only the warranted unit-level commands. Use the smallest useful targeted command first. Use broad/full unit or Vitest only as a final sanity or explicit exception with an artifact reason.
 10. Inspect failures and fix root causes. Before rerunning the same command, record what changed or what new diagnostic evidence the rerun will collect.
-11. Record the coverage decision matrix, existing tests inspected, tests removed, tests updated, tests added, command output or `N/A`, failure/fix/rerun evidence, and remaining unit coverage gaps.
+11. Record the coverage decision matrix, existing tests inspected, old-agent/excess-test pruning decision, tests removed, tests updated, tests added, new-test burden ledger, command output or `N/A`, failure/fix/rerun evidence, and remaining unit coverage gaps.
 12. Update `task-workflow/open-gaps.md` for any remaining unit-test coverage gap.
 13. Update `task-workflow/progress.md` with the unit coverage decision, command results, removed-test rationale, a pointer to `task-workflow/phase-4-unit-coverage.md` for details, and next local action.
 14. Confirm no unit test command or watcher remains running in the foreground from Phase 4.
@@ -422,9 +439,12 @@ Critical failures:
 - unit coverage decision matrix is missing, vague, out of order, or not tied to changed behavior and risk
 - connected existing-test inspection/action evidence is missing before a new unit test is added
 - new unit test was added when a connected existing test could have been updated instead
+- new unit test was added without a complete burden ledger proving stable/core risk, existing-test inventory, existing-first rejection, minimal assertions, and bulk reduction
 - new unit test added for small fixes, visual-only changes, incidental UI behavior, trivial button wiring, or non-core/non-complex behavior without a concrete risk reason
 - existing useful test deleted without preserving still-core coverage or defending why the behavior is no longer core
-- unnecessary, obsolete, convoluted, brittle, or non-core/non-complex tests remain after Phase 4 identifies them as removable
+- unnecessary, obsolete, duplicated, convoluted, brittle, or non-core/non-complex tests remain after Phase 4 identifies them as removable
+- connected old agent-created tests are preserved without a remove/update/preserve decision and reason
+- test bulk causes max-lines, helper churn, fixture churn, slow broad commands, or repeated reruns and the artifact does not re-evaluate/reduce the added tests
 - test removal lacks reason, diff/readback evidence, or effect on remaining coverage
 - warranted unit-level test was not run
 - unit command failure caused by this task remains unfixed
@@ -443,6 +463,8 @@ Pass gate:
 - unit coverage decision matrix is recorded, including `N/A` when no unit-level test is warranted
 - existing relevant unit-level tests were inspected before remove/update/add decisions
 - unit tests were removed, updated, added, or skipped according to the existing-first coverage decision
+- new unit tests, if any, have a complete burden ledger and minimal assertion proof
+- connected old or excessive tests were removed, simplified, updated, or explicitly defended
 - removed tests have a recorded rationale and readback/diff evidence
 - warranted unit commands pass, no unit command was warranted, or unrelated failures are evidenced
 - no unbounded foreground unit command remains active

@@ -28,8 +28,10 @@
 | Extracted `AGENTS.md` development rules followed | Pending |
 | Phase 3 implementation integrity and static-check evidence is current | Pending |
 | Phase 4 unit coverage decision is current: add, update, remove, or defended `N/A` | Pending |
+| Phase 4 old/excess unit-test pruning audit and new-test burden ledger, if tests were added, are present | Pending |
 | Phase 4 unit command output, defended `N/A`, or removed-test rationale and diff/readback evidence is present | Pending |
 | Phase 6 E2E coverage decision is current: add, update, remove, or defended `N/A` | Pending |
+| Phase 6 old/excess E2E pruning audit and new-E2E burden ledger, if E2E was added, are present | Pending |
 | Phase 6 E2E command output, defended `N/A`, or removed-test rationale and diff/readback evidence is present | Pending |
 | Phase 6 E2E command scope matches the coverage decision or an exact full-E2E requirement | Pending |
 | Phase 6 E2E reruns have material change, stale-output, or diagnostic reasons | Pending |
@@ -93,8 +95,8 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | --- | --- | --- | --- |
 | Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
 | Phase 5 responsive quality | Required viewports include mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` when UI changed; evidence shows responsive quality passed as a first-class guarantee with no broken UI, excessive 1080p dead space, or unfinished-looking 2560px empty regions | Pending | Pending |
-| Phase 4 unit evidence | Unit coverage decision records remove/update/add/`N/A`; exact command output is recorded when a command was required; removed tests include rationale and diff/readback evidence | Pending | Pending |
-| Phase 6 E2E evidence | E2E coverage decision records remove/update/add/`N/A`; exact E2E command output is recorded when a command was required; removed E2E tests include rationale and diff/readback evidence | Pending | Pending |
+| Phase 4 unit evidence | Unit coverage decision records remove/update/add/`N/A`; old/excess pruning audit is complete; every new test has a burden-ledger row; exact command output is recorded when a command was required; removed tests include rationale and diff/readback evidence | Pending | Pending |
+| Phase 6 E2E evidence | E2E coverage decision records remove/update/add/`N/A`; old/excess pruning audit is complete; every new E2E has a burden-ledger row; exact E2E command output is recorded when a command was required; removed E2E tests include rationale and diff/readback evidence | Pending | Pending |
 | Coverage selection and retry evidence | Phase 4 unit ledger and Phase 6 E2E ledger separately explain scope, `N/A` decisions, removals, rerun basis, outcomes, and next actions | Pending | Pending |
 | Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper by default, repo Playwright `webServer` or manual fallback only with reason/diagnostics; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | DB/setup/server reuse evidence | Phase 5/6 does not repeatedly reset DB, rerun migrate/seed, or restart the server between related E2E commands without an invalidating state change or lifecycle diagnostic | Pending | Pending |
@@ -129,6 +131,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 5 UI-quality issues resolved or defended with responsive evidence | yes | Pending |
 | Phase 4 unit-test command output recorded when a command was required, defended `N/A` recorded when none was warranted, or removed-test rationale and diff/readback evidence recorded | yes | Pending |
 | Phase 6 E2E command output recorded when a command was required, defended `N/A` recorded when none was warranted, or removed-test rationale and diff/readback evidence recorded | yes | Pending |
+| Phase 4/6 old-excess test pruning audits are complete and new-test burden ledgers exist when tests were added | yes | Pending |
 | Phase 3 implementation integrity and static-check evidence current | yes | Pending |
 | Phase 7 did not rerun checks/builds/tests/Playwright/E2E unless owning-phase evidence was missing, incomplete, stale, or invalidated | yes | Pending |
 | Phase 4 unit coverage ledger current | yes | Pending |
