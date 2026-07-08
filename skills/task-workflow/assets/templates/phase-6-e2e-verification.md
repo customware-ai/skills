@@ -61,6 +61,8 @@ Record every meaningful E2E/test command, including reruns. Use the smallest use
 | Tests run as bounded commands, not watchers | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup | Pending | Pending |
+| No helper/setup/server/run command overrode database path env vars; repo E2E/end-to-end config owned test DB paths | Pending | Pending |
+| No E2E/end-to-end fixture setup, reset, migration, direct SQLite access, or custom script pointed at `.dbs/database.db` | Pending | Pending |
 | DB/setup/server lifecycle reused across related E2E commands unless code, test, config, fixture, migration, build input, or lifecycle diagnostics invalidated it | Pending | Pending |
 | Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
 | First-run targeted E2E used timeout at or below `30000` ms, or task-specific reason for a different first timeout is recorded | Pending | Pending |
@@ -162,6 +164,7 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | No confidence-only or blind identical failing-command rerun | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
+| No database path override or `.dbs/database.db` Playwright/E2E/end-to-end fixture use | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | First E2E command established lifecycle ownership before testing | yes | Pending |
 | Existing repo E2E ran through lifecycle helper by default, or native Playwright exception was recorded before command | yes | Pending |

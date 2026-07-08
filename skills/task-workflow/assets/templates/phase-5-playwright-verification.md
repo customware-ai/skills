@@ -39,6 +39,8 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 | Playwright scripts run as bounded helper commands | Pending | Pending |
 | Runtime logs preserved under `task-workflow/runtime/` | Pending | Pending |
 | Pre-server setup, if needed, ran through lifecycle `--setup` or justified repo/fallback setup without manual chain bundling | Pending | Pending |
+| No helper/setup/server/run command overrode database path env vars; repo E2E/end-to-end config owned test DB paths | Pending | Pending |
+| No Playwright/custom script wrote fixtures, reset, migrated, or directly accessed `.dbs/database.db`; fixture writes used repo test DB path only | Pending | Pending |
 | Fetch/stale DB/stale build/wrong-port issues were diagnosed through lifecycle logs/readiness before any fallback | Pending | Pending |
 | First-run targeted script/probe used `15000`-`20000` ms timeout, or task-specific reason for a different first timeout is recorded | Pending | Pending |
 | Longer timeout, if used, followed timer-only/no-useful-output failure plus helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage | Pending | Pending |
@@ -149,6 +151,7 @@ If matches were found and removed, record the replacement proof here.
 | No fixed waits in audited Playwright/E2E files | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
+| No database path override or `.dbs/database.db` Playwright/E2E/end-to-end fixture use | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | First app/browser command established lifecycle ownership before testing | yes | Pending |
 | First-run targeted script/probe timeout was `15000`-`20000` ms or justified | yes | Pending |

@@ -12,6 +12,7 @@ Use this reference in Phase 5.
 - Pass the repo's normal local command to the lifecycle helper with `--server` for helper-owned custom scripts.
 - Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
 - Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts.
+- Do not set database file/path env vars through helper `--env`, setup, server, or run commands. Do not change the repo's internal E2E/end-to-end database file path. Use the repo's existing E2E/end-to-end database configuration. `.dbs/database.db` is the live workspace/production database; production databases must never be used for testing or fixture setup.
 - If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone.
 - If a selector/action/assertion times out, first prove the page is in the expected state: URL, no not-found/error screen, required DB or fixture record exists, server log has no route/runtime error, and browser console has no fatal error. Do not rerun the same script while the page state is wrong; fix setup, seed, route, or app state first.
 - If the helper times out or produces no useful output, inspect helper setup/server/run logs and readiness evidence before rerunning. The next run must change setup, server command, ready URL, test command, fixture, timeout reason, or diagnostic output.

@@ -15,7 +15,7 @@ function printUsage() {
 Common options:
   --setup "command"              Run bounded setup before server startup; repeatable.
   --run "command"                Run bounded verification command after readiness; repeatable.
-  --env NAME=value               Add an environment variable; repeatable.
+  --env NAME=value               Add an environment variable; repeatable. Database path variables are rejected.
   --ready-text "text"            Require response body text during readiness polling.
   --ready-timeout-ms 30000       Startup readiness timeout.
   --command-timeout-ms 300000    Per-run command timeout.
@@ -88,6 +88,45 @@ function parseArgs(argv) {
 	return args;
 }
 
+// E2E/end-to-end database paths are owned by the target repo's checked-in test config.
+// Agents must never override them here, and must never point test runs at the
+// live workspace/production database `.dbs/database.db`.
+const BLOCKED_DATABASE_ENV_KEYS = new Set([
+	'DATABASE_PATH',
+	'DATABASE_FILE_PATH',
+	'DATABASE_FILENAME',
+	'E2E_DATABASE_FILE_PATH',
+	'PLAYWRIGHT_DATABASE_FILE_PATH',
+	'TEST_DATABASE_PATH',
+	'TEST_DATABASE_FILE_PATH',
+	'SQLITE_DATABASE_PATH',
+	'SQLITE_DB_PATH',
+	'DB_PATH',
+	'DB_FILE',
+	'DB_FILENAME'
+]);
+
+function isDatabasePathOverrideKey(key) {
+	const normalized = key.toUpperCase();
+	const looksLikeDatabaseFilePathKey =
+		/(DATABASE|SQLITE|DB)/.test(normalized) && /(PATH|FILE|FILENAME)/.test(normalized);
+
+	return BLOCKED_DATABASE_ENV_KEYS.has(normalized) || looksLikeDatabaseFilePathKey;
+}
+
+function isWorkspaceDatabasePath(value) {
+	const normalized = value.replaceAll('\\', '/');
+	return normalized === '.dbs/database.db' || normalized.endsWith('/.dbs/database.db');
+}
+
+function assertAllowedEnvOverride(key, value) {
+	if (isDatabasePathOverrideKey(key) || (/(DATABASE|DB|SQLITE)/i.test(key) && isWorkspaceDatabasePath(value))) {
+		throw new Error(
+			`Refusing --env ${key}=... Database file paths are owned by the repo/test config and must not be changed through playwright-lifecycle. Never point verification at .dbs/database.db; that is the live workspace database.`
+		);
+	}
+}
+
 function buildEnv(args) {
 	const env = { ...process.env };
 
@@ -106,7 +145,10 @@ function buildEnv(args) {
 			throw new Error(`Invalid --env value: ${entry}`);
 		}
 
-		env[entry.slice(0, separatorIndex)] = entry.slice(separatorIndex + 1);
+		const key = entry.slice(0, separatorIndex);
+		const value = entry.slice(separatorIndex + 1);
+		assertAllowedEnvOverride(key, value);
+		env[key] = value;
 	}
 
 	return env;
