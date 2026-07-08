@@ -45,7 +45,8 @@ If implementation discovers that the Phase 1 plan is wrong, record the plan chan
 
 `task-workflow/progress.md` is part of every Phase 2, Phase 3, and Phase 4 resume path.
 
-- Read it after compaction before choosing the next action.
+- After compaction, resume, retry, reconnect, or new coding session, use `progress.md` and `CURRENT_PHASE.txt` to identify current status, then re-read the main `SKILL.md`, `open-gaps.md`, the current phase artifact, and the required current phase reference before choosing the next action.
+- At every Phase 2, Phase 3, or Phase 4 start or promotion, re-read this reference before doing phase work.
 - Keep it current after each meaningful Phase 2 work packet, Phase 3 gap-closure pass, Phase 4 check/fix loop, blocker, gate result, and phase promotion.
 - It must summarize enough context from earlier phases to continue without conversation memory: task goal, key repo instructions, implementation direction, active work queue, latest checks, and next local action.
 - Its Current Phase Pointers must identify the current phase artifact, current reference, next local action, and only high-signal active files needed to resume immediately.
@@ -60,9 +61,14 @@ If implementation discovers that the Phase 1 plan is wrong, record the plan chan
 
 Follow the target repo's code rules and the task-relevant development rules extracted from `AGENTS.md`. Do not make the task pass by weakening code quality.
 
+### Do
+
 - Prefer existing contracts, schemas, route patterns, services, and local test structure when a test phase actually owns coverage work.
 - Avoid broad unsafe type assertions such as `as never`, `as any`, or equivalent type erasure unless a narrow repo-specific boundary genuinely requires it and the artifact explains why.
 - Do not silence lint, type, or runtime warnings introduced by this task.
+
+### Phase Ownership
+
 - Phase 2 owns implementation work. Defer unit, E2E, and browser verification work to the owning later phases.
 - Phase 3 owns connected-place repair, implementation integrity review, and typecheck/lint/build. Record unit/E2E coverage questions for the owning later phase.
 - Phase 4 owns unit-test coverage decisions. It may add, update, remove, or skip unit/service/component/integration-style tests and must record why.
@@ -76,6 +82,8 @@ Follow the target repo's code rules and the task-relevant development rules extr
 <tool_command_discipline>
 
 These phases must not stall on unbounded tools.
+
+### File And Command Safety
 
 - After every gate-relevant file write or patch, read back the target file or inspect the diff before relying on the change.
 - If a write, patch, generated file, or command result is invalid, partial, missing, or uncertain, repair that exact issue before starting the next packet.
@@ -93,6 +101,9 @@ node task-workflow/scripts/server-probe.mjs \
 
 - `server-probe.mjs` captures the server PID, writes `task-workflow/runtime/server-probe.pid`, preserves server output in `task-workflow/runtime/server-probe.log`, runs each `--run` command only after readiness, writes run logs as `task-workflow/runtime/server-probe-run-*.log`, and stops only the captured PID/process group.
 - If server readiness is not proven before the timeout, treat startup as failed, cite the helper's log evidence, and retry only with a corrected helper invocation or implementation change. If the helper reports that the ready URL already responds before startup, do not kill unknown processes; pick a task-owned port or stop the exact known PID outside the helper with evidence. Broad process-name cleanup is only for explicit sandbox-owned recovery when PID/port cleanup is impossible and the artifact records why.
+
+### Phase-Owned Commands
+
 - Phase 2 may run narrow non-test checks only when needed to unblock implementation or prove a specific work packet. Defer routine typecheck, lint, build, unit/Vitest, E2E, Playwright, and repo combined check commands such as `pnpm run check` to owning later phases. If a compile/type issue blocks the current packet, `pnpm run check` or an equivalent combined static command is allowed only with blocker/result evidence. Keep Phase 2 evidence strict through artifact updates, readback, diff review, targeted search, and any narrow non-test unblock command that was actually needed.
 - Phase 3 owns the normal ordered static/build checkpoint after the implementation, connected-place sweep, and integrity review: typecheck, then lint, then build. Each command must run only after the prior command is passing unless the target repo combines them in one documented command.
 - Phase 4 owns unit-test commands. Phase 5 owns interactive browser verification. Phase 6 owns E2E coverage decisions. If Phase 2 or Phase 3 discovers unit/E2E/browser work may be needed, record it for the owning phase and continue the ordered gates.
@@ -105,12 +116,20 @@ node task-workflow/scripts/server-probe.mjs \
 
 Phase 4 owns the final unit-level remove/update/add/skip decision for Phase 2-4 work.
 
+### Decision Order
+
 - Use this decision order for every changed behavior: decide whether unit-level coverage is warranted; inspect connected existing tests; remove unnecessary existing tests; update connected existing tests when they can carry warranted coverage; add a new minimal test only when no existing test can carry a warranted core behavior; otherwise record `N/A`.
 - If the change is small, visual-only, incidental, or adequately proven by Phase 3 static checks and Phase 5 browser verification, record `N/A` and do not create a test.
 - Unit tests belong to stable core behavior: shared logic, contracts, permissions, critical state machines, parsers, calculations, data transforms, central stores, or reusable components whose behavior must stay strict.
 - Do not add unit tests for every simple component, incidental click, styling change, copy change, color change, spacing/layout tune, or one-off branch.
+
+### Existing-First Hygiene
+
 - Inspect existing unit/service/component/integration-style tests that touch the changed behavior. Decide whether each should be removed, updated, preserved, or left unrelated before any new-test decision.
 - Remove existing tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record why removal improves the test suite and preserve useful coverage elsewhere only when the behavior remains core.
+
+### Minimal Command Rules
+
 - Prefer the smallest useful unit-level command that proves the warranted coverage decision. Avoid broad unit directory globs unless the artifact explains why a connected unit area must run together.
 - A broad/full unit or Vitest suite may be used only as one final sanity check after warranted targeted and connected unit-level tests pass, or when the target repo explicitly requires it for this exact task, the task explicitly asks for it, global/shared infrastructure changed, or targeted/connected output is incomplete or stale.
 - Do not start with a full unit/Vitest suite unless the target repo explicitly requires it for this exact task or the artifact records a concrete global/shared reason that makes targeted-first impossible.
@@ -129,12 +148,17 @@ Phase 4 owns the final unit-level remove/update/add/skip decision for Phase 2-4 
 
 Phase 3 is the default checkpoint for typecheck, lint, and build.
 
+### Do
+
 - Complete Phase 2 implementation packets first, including only warranted docs edits, while preserving packet-level evidence.
 - In Phase 3, inspect connected places first. If the task changed a contract, data shape, route, component, store, permission, migration, fixture, test helper, or shared UI pattern, find the connected callers/surfaces and update or defend them before static/build validation.
 - Run typecheck, then lint, then build. If the repo has a single command that combines these, record the combined command and its order instead of inventing duplicate commands.
 - When a command fails, inspect enough output to identify every visible issue group by file, contract, or root cause. Do not rely on truncated `tail`/`head` output as the only evidence if it can hide issue groups. If output is too large, use focused searches, reporter options, or a temporary full-output log; delete any temporary full-output log after extracting issue groups. Record issue groups, fixes, and rerun reason in the artifact, not large pasted logs.
 - Use targeted diagnostics or narrow fix checks only to prove a specific issue group. Before rerunning the same broad typecheck, lint, or build command, fix every locally-fixable issue group visible from the prior broad output. Do not fix one line or one file and rerun the broad command while other visible related groups remain unhandled.
 - After typecheck passes, move to lint. After lint passes, move to build. After build passes, record the reusable build evidence: command, output/log path, and the source/config/package/build inputs it depends on.
+
+### Reuse And Invalidation
+
 - Later phases reuse the Phase 3 build result unless code, config, package/dependency files, migrations/build inputs, or generated assets changed after that build, or unless the previous output is missing, partial, stale, or incompatible with the verification command. Do not run a later build as phase preparation, final confirmation, or because E2E is starting; use the recorded Phase 3 build output.
 - If a later phase changes code, return to the earliest affected phase, update artifacts, and rerun the relevant ordered command from the first invalidated point. Do not rerun build only for confidence when the Phase 3 build evidence is still current.
 
@@ -154,7 +178,6 @@ If the task touches multiple layers, prefer this order unless the repo architect
 4. frontend data access and state wiring
 5. route/page/component implementation
 6. docs required by changed behavior
-7. docs required by changed behavior
 
 Record deviations in the phase artifact. Do not backfill the checklist after coding without evidence.
 
@@ -221,19 +244,21 @@ If source files have been edited and `phase-2-execution.md` still has a blank or
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-2-execution`.
 2. Re-open `task-workflow/CURRENT_PHASE.txt` and confirm it says `phase-2-execution` before editing implementation files.
-3. Keep the Phase 2 start checkpoint section in `task-workflow/phase-2-execution.md`; fill it before scoring the Phase 2 gate.
-4. Execute the Phase 1 plan in order, one auditable work packet at a time.
-5. Keep changes scoped to the task.
-6. Reuse existing contracts, patterns, components, services, and route shapes.
-7. Update docs when the task logically changes documentation.
-8. Do not write, update, remove, or run unit/Vitest, E2E, or Playwright tests in Phase 2.
-9. Immediately after each packet, record the completed or in-progress implementation step with file evidence before starting the next packet.
-10. Record any skipped, blocked, or deferred step in `task-workflow/open-gaps.md`.
-11. Replace `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows before scoring the gate.
-12. Update `task-workflow/progress.md` before scoring and before promotion, pointing to `task-workflow/phase-2-execution.md` for the full edited-file list and keeping only high-signal active files in progress.
-13. Do not run final signoff from this phase.
-14. After the Phase 2 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-3-second-execution`.
-15. Update `task-workflow/progress.md` so current phase and next local action match Phase 3.
+3. Confirm this reference is loaded as the required current phase reference before Phase 2 work starts.
+4. Keep the Phase 2 start checkpoint section in `task-workflow/phase-2-execution.md`; fill it before scoring the Phase 2 gate.
+5. Execute the Phase 1 plan in order, one auditable work packet at a time.
+6. Keep changes scoped to the task.
+7. Reuse existing contracts, patterns, components, services, and route shapes.
+8. Update docs when the task logically changes documentation.
+9. Do not write, update, remove, or run unit/Vitest, E2E, or Playwright tests in Phase 2.
+10. Immediately after each packet, record the completed or in-progress implementation step with file evidence before starting the next packet.
+11. Record any skipped, blocked, or deferred step in `task-workflow/open-gaps.md`.
+12. Replace `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows before scoring the gate.
+13. Update `task-workflow/progress.md` before scoring and before promotion, pointing to `task-workflow/phase-2-execution.md` for the full edited-file list and keeping only high-signal active files in progress.
+14. Do not run final signoff from this phase.
+15. After the Phase 2 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-3-second-execution`.
+16. Re-read this reference before doing Phase 3 work.
+17. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 3.
 
 </phase_2_primary_execution>
 
@@ -288,20 +313,22 @@ A failing Phase 2 artifact is not a stopping state. Fix the implementation or ar
 <phase_3_second_execution_static_checks>
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-3-second-execution`.
-2. Re-read the task, Phase 1 plan, Phase 2 artifact, and open gaps.
-3. Review the implementation as if continuing someone else's work.
-4. Find missing routes, missing actions, weak wiring, incomplete state, fragile data flow, stale docs, and accidental scope creep.
-5. Review associated surfaces for consistency. If a UI element was changed in one place, find similar UI elements and update or explicitly defend consistency. If an API/service/schema change enables one flow, verify other callers, routes, mutations, queries, permissions, and docs that share that contract are covered.
-6. Review code integrity: imports, symbols, route/action wiring, schema/data shapes, state transitions, extracted `AGENTS.md` rules, unrelated edit risk, unsafe casts, warnings, and lasting `console.*`.
-7. Use code inspection, artifact review, targeted search, and narrow file/state checks for the second pass. Do not write, update, remove, or run unit/Vitest or E2E tests in Phase 3.
-8. Close every gap that can be closed from local context.
-9. Run the ordered static/build checkpoint: typecheck, lint, build. For each failure, identify visible issue groups, fix every locally-fixable group together, and rerun that same command before moving to the next command. If a temporary full-output log was needed to triage a large failure, delete it after extracting issue groups.
-10. Record reusable build evidence after a passing build, including when later phases may reuse it and what would invalidate it.
-11. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
-12. Update `task-workflow/progress.md` with the second-pass findings, associated-surface review, integrity review, ordered check results, reusable build evidence, gap state, a pointer to `task-workflow/phase-3-second-execution.md` for repair-file details, and next local action.
-13. Record a second-pass diff review with file evidence.
-14. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-unit-coverage`.
-15. Update `task-workflow/progress.md` so current phase and next local action match Phase 4.
+2. Confirm this reference is loaded as the required current phase reference before Phase 3 work starts.
+3. Re-read the task, Phase 1 plan, Phase 2 artifact, and open gaps.
+4. Review the implementation as if continuing someone else's work.
+5. Find missing routes, missing actions, weak wiring, incomplete state, fragile data flow, stale docs, and accidental scope creep.
+6. Review associated surfaces for consistency. If a UI element was changed in one place, find similar UI elements and update or explicitly defend consistency. If an API/service/schema change enables one flow, verify other callers, routes, mutations, queries, permissions, and docs that share that contract are covered.
+7. Review code integrity: imports, symbols, route/action wiring, schema/data shapes, state transitions, extracted `AGENTS.md` rules, unrelated edit risk, unsafe casts, warnings, and lasting `console.*`.
+8. Use code inspection, artifact review, targeted search, and narrow file/state checks for the second pass. Do not write, update, remove, or run unit/Vitest or E2E tests in Phase 3.
+9. Close every gap that can be closed from local context.
+10. Run the ordered static/build checkpoint: typecheck, lint, build. For each failure, identify visible issue groups, fix every locally-fixable group together, and rerun that same command before moving to the next command. If a temporary full-output log was needed to triage a large failure, delete it after extracting issue groups.
+11. Record reusable build evidence after a passing build, including when later phases may reuse it and what would invalidate it.
+12. Update `task-workflow/open-gaps.md` after each gap is closed or defended.
+13. Update `task-workflow/progress.md` with the second-pass findings, associated-surface review, integrity review, ordered check results, reusable build evidence, gap state, a pointer to `task-workflow/phase-3-second-execution.md` for repair-file details, and next local action.
+14. Record a second-pass diff review with file evidence.
+15. After the Phase 3 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-4-unit-coverage`.
+16. Re-read this reference before doing Phase 4 work.
+17. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 4.
 
 Phase 3 is mandatory. It is not a polish pass that can be skipped because Phase 2 seemed complete.
 
@@ -359,20 +386,22 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 <phase_4_unit_coverage>
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-4-unit-coverage`.
-2. Re-open Phase 3 ordered static/build and integrity evidence. Confirm it is current. If code, config, package/dependency files, migrations/build inputs, or generated assets changed after Phase 3, return to Phase 3 and rerun the invalidated sequence from the first affected point. Do not rerun typecheck, lint, or build inside Phase 4 when Phase 3 evidence is current.
-3. For each changed behavior, decide whether unit-level coverage is warranted. Use `N/A` when no unit-level test is needed.
-4. Inspect existing unit, service, component, and integration-style tests that touch the changed behavior, nearby contracts, central logic, or modified components.
-5. Remove existing tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record the removal reason and diff/readback evidence. Preserve useful assertions elsewhere only when the behavior is still core.
-6. Update existing tests when they already own warranted behavior and still provide useful coverage.
-7. Add tests only when coverage is warranted, the behavior is stable/core, and no existing test can carry it.
-8. Run only the warranted unit-level commands. Use the smallest useful targeted command first. Use broad/full unit or Vitest only as a final sanity or explicit exception with an artifact reason.
-9. Inspect failures and fix root causes. Before rerunning the same command, record what changed or what new diagnostic evidence the rerun will collect.
-10. Record the coverage decision matrix, existing tests inspected, tests removed, tests updated, tests added, command output or `N/A`, failure/fix/rerun evidence, and remaining unit coverage gaps.
-11. Update `task-workflow/open-gaps.md` for any remaining unit-test coverage gap.
-12. Update `task-workflow/progress.md` with the unit coverage decision, command results, removed-test rationale, a pointer to `task-workflow/phase-4-unit-coverage.md` for details, and next local action.
-13. Confirm no unit test command or watcher remains running in the foreground from Phase 4.
-14. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
-15. Update `task-workflow/progress.md` so current phase and next local action match Phase 5.
+2. Confirm this reference is loaded as the required current phase reference before Phase 4 work starts.
+3. Re-open Phase 3 ordered static/build and integrity evidence. Confirm it is current. If code, config, package/dependency files, migrations/build inputs, or generated assets changed after Phase 3, return to Phase 3 and rerun the invalidated sequence from the first affected point. Do not rerun typecheck, lint, or build inside Phase 4 when Phase 3 evidence is current.
+4. For each changed behavior, decide whether unit-level coverage is warranted. Use `N/A` when no unit-level test is needed.
+5. Inspect existing unit, service, component, and integration-style tests that touch the changed behavior, nearby contracts, central logic, or modified components.
+6. Remove existing tests when they are unnecessary, obsolete, convoluted, brittle, or protect non-core/non-complex behavior. Record the removal reason and diff/readback evidence. Preserve useful assertions elsewhere only when the behavior is still core.
+7. Update existing tests when they already own warranted behavior and still provide useful coverage.
+8. Add tests only when coverage is warranted, the behavior is stable/core, and no existing test can carry it.
+9. Run only the warranted unit-level commands. Use the smallest useful targeted command first. Use broad/full unit or Vitest only as a final sanity or explicit exception with an artifact reason.
+10. Inspect failures and fix root causes. Before rerunning the same command, record what changed or what new diagnostic evidence the rerun will collect.
+11. Record the coverage decision matrix, existing tests inspected, tests removed, tests updated, tests added, command output or `N/A`, failure/fix/rerun evidence, and remaining unit coverage gaps.
+12. Update `task-workflow/open-gaps.md` for any remaining unit-test coverage gap.
+13. Update `task-workflow/progress.md` with the unit coverage decision, command results, removed-test rationale, a pointer to `task-workflow/phase-4-unit-coverage.md` for details, and next local action.
+14. Confirm no unit test command or watcher remains running in the foreground from Phase 4.
+15. After the Phase 4 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
+16. Read `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md` before doing Phase 5 work.
+17. Update `task-workflow/progress.md` so current phase, current phase references, and next local action match Phase 5.
 
 </phase_4_unit_coverage>
 

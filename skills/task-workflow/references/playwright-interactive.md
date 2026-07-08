@@ -12,6 +12,8 @@ Use this reference in Phase 5.
 
 <interactive_playwright_rules>
 
+### Lifecycle Rules
+
 - Run Phase 5 browser scripts through `task-workflow/scripts/playwright-lifecycle.mjs`.
 - The first browser script run must establish lifecycle ownership. Do not run a script against an assumed existing local server and then treat `fetch failed`, redirects, stale data, or stale build output as a reason to manually start or kill servers.
 - Use the lifecycle helper as the default owner for Playwright/app-server startup, including repo E2E commands when Phase 6 runs them. Put `pnpm exec playwright test ...` inside helper `--run` by default. Use repo Playwright `webServer` ownership only when the helper cannot own the server for that exact command, and record the reason before running it.
@@ -20,12 +22,18 @@ Use this reference in Phase 5.
 - Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts.
 - Do not set database file/path env vars through helper `--env`, setup, server, or run commands. Do not change the repo's internal E2E/end-to-end database file path. Use the repo's existing E2E/end-to-end database configuration. `.dbs/database.db` is the live workspace/production database; production databases must never be used for testing or fixture setup.
 - If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone.
+
+### Failure Triage Rules
+
 - If a selector/action/assertion times out, first prove the page is in the expected state: URL, no not-found/error screen, required DB or fixture record exists, server log has no route/runtime error, and browser console has no fatal error. Do not rerun the same script while the page state is wrong; fix setup, seed, route, or app state first.
 - If the helper times out or produces no useful output, inspect helper setup/server/run logs and readiness evidence before rerunning. The next run must change setup, server command, ready URL, test command, fixture, timeout reason, or diagnostic output.
 - If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management.
 - If the server appears stale, wrong, or on the wrong port, inspect helper runtime logs/readiness output first; use repo Playwright `webServer` output only for commands where `webServer` owns lifecycle. Put DB reset, migration, seed, or fixture setup in helper `--setup`, then restart through the lifecycle owner instead of switching to broad process cleanup.
 - If manual fallback is unavoidable, keep PID ownership: capture the server PID/log path under `task-workflow/runtime/`, prove readiness, and clean up only that PID/process group. Do not use `nohup`, `disown`, or untracked background servers as the normal fallback.
 - Do not run `playwright install` or any browser download command. The lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when the cache exists and fails early on a revision mismatch.
+
+### Script Authoring Rules
+
 - Prefer `127.0.0.1` over `localhost`.
 - Write scripts under `task-workflow/playwright/`.
 - Save screenshots under `task-workflow/screenshots/`.

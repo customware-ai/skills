@@ -113,6 +113,19 @@ This workflow shape is not optional:
 
 If the work skips one of those phase boundaries, the run is off track.
 
+### Phase Ownership Matrix
+
+| Phase | Owns | Required evidence |
+| --- | --- | --- |
+| Phase 0 | artifact reset and scaffold | fresh artifacts, helper scripts, marker, no source edits |
+| Phase 1 | task intake and research | task/domain/attachments/AGENTS/selected skills read, codebase research, implementation plan |
+| Phase 2 | primary implementation | scoped work packets, file evidence, readback/diff/search proof |
+| Phase 3 | second execution, integrity, static checks | connected-surface review, typecheck, lint, build, reusable build evidence |
+| Phase 4 | unit-test coverage decision | add/update/remove/skip decision, existing-test inspection, minimal unit command or `N/A` |
+| Phase 5 | interactive Playwright verification | Stage 1 behavior proof, Stage 2 UI/responsive proof, screenshots, lifecycle evidence |
+| Phase 6 | E2E coverage decision | add/update/remove/skip decision, connected E2E inspection, minimal E2E command or `N/A` |
+| Phase 7 | final audit and signoff | artifact integrity review, current evidence, MITB completion command after audit |
+
 </mandatory_process_shape>
 
 ## Looped Gate Contract
@@ -121,7 +134,7 @@ If the work skips one of those phase boundaries, the run is off track.
 
 Every phase follows the same loop:
 
-1. Load the phase's reference instructions.
+1. Re-read the required reference file or files for the phase from the Phase Reference Map.
 2. Perform the phase work.
 3. Update the phase artifact with concrete evidence.
 4. Score the phase against its gate.
@@ -143,7 +156,9 @@ The only acceptable end state is Phase 7 passed with every earlier phase still p
 
 <autonomous_run_contract>
 
-Treat these rules as always active:
+Treat these rules as always active.
+
+### Gate And Artifact Rules
 
 - Every phase must end with an objective gate.
 - Every gate must be recorded in the phase-owned artifact file.
@@ -155,20 +170,27 @@ Treat these rules as always active:
 - `task-workflow/progress.md` is the compact resume ledger. It is not proof that gates passed, but it must stay current enough to resume the run after compaction.
 - After every phase start, meaningful Phase 2 work packet, phase gate result, blocker discovery, and phase promotion, update `task-workflow/progress.md` with the current phase, earliest failing phase if any, last completed gate, next local action, and a compact summary of relevant context.
 - Keep the `Current Phase Pointers`, `Phase Artifact Index`, and `Artifact Pointers` in `task-workflow/progress.md` current. They must point to the current phase artifact, current phase reference, and high-signal active files only. Do not duplicate full researched-file, edited-file, Playwright, screenshot, log, or test inventories from phase artifacts into `progress.md`.
-- After compaction, resume, retry, reconnect, or new coding session, read `task-workflow/progress.md` and `task-workflow/CURRENT_PHASE.txt` before choosing the next action. If they disagree, inspect the phase artifacts and continue from the earliest failing phase.
+- After compaction, resume, retry, reconnect, or new coding session, re-read this `SKILL.md`, `task-workflow/progress.md`, `task-workflow/CURRENT_PHASE.txt`, the current phase artifact, `task-workflow/open-gaps.md`, and the required current phase reference file or files before choosing the next action. If they disagree, inspect the phase artifacts and continue from the earliest failing phase.
 - A phase may advance the current phase marker only after its phase-owned artifact has `Decision: Pass`, a passing score, all critical items passing, and no placeholder `Pending` rows in the gate or required evidence sections.
 - The current phase marker must be written before work belonging to that phase begins. The marker is not merely cleanup after phase work.
 - Before writing the next phase marker, re-open the current phase artifact and verify the promotion lock in writing inside that artifact.
+- Immediately after writing a new phase marker, read the required reference file or files for that new phase before doing any work in that phase.
 - If `CURRENT_PHASE.txt` points past the earliest failing phase artifact, artifact gates win. Correct `CURRENT_PHASE.txt` back to the earliest failing phase and continue there.
 - When filling artifact templates, preserve auditable evidence for every required semantic category. Exact row wording may be condensed only if the same evidence remains clear and scorable.
 - `task-workflow/open-gaps.md` is a gate artifact. A later phase may not claim a gap is resolved unless the gap ledger is updated in the same phase.
 - A gap cannot remain `Open` after the phase named in its owner or next-action field has passed. If the later phase completed the work, move the gap to `Resolved Gaps`; if the gap is not real, reclassify or close it with evidence.
 - `task-workflow/open-gaps.md` must not contain template placeholder rows such as `Pending` after Phase 0. If there are no gaps, replace placeholder rows with explicit `None currently recorded` rows.
 - Phase 7 cannot pass while any critical gap remains `Open`, stale, or contradicted by another phase artifact.
+
+### Verification File Rules
+
 - Phase 5 and Phase 6 must review the interactive scripts and E2E tests for fixed waits before passing.
 - A fixed wait in `task-workflow/playwright` or `tests/e2e` is a gate failure. Do not justify it. Replace it with deterministic Playwright waits/assertions such as `locator.waitFor(...)`, `expect(locator)...`, `waitForURL(...)`, `waitForResponse(...)`, or persisted-state assertions, then rerun verification.
 - Phase 5, Phase 6, and Phase 7 may pass only when their artifacts document that the inspected verification files contain no fixed waits and cite the deterministic waits/assertions used instead.
 - If later work reveals missing evidence from an earlier phase, return to that earlier phase, repair it, and re-pass the gate.
+
+### Write And Command Rules
+
 - After every file write, patch, generated-file creation, or artifact update that matters to a gate, perform a readback check before relying on it. Use `sed`, `rg`, `ls`, `git diff`, or the repo's normal inspection command to prove the file exists and contains the intended change.
 - If a write/edit tool reports an invalid write, missing file, failed patch, partial output, or uncertain result, stop that work packet, repair the write with a supported edit method, read it back, and only then continue. Do not proceed as if a failed write happened.
 - Commands must be bounded. Do not leave long-lived servers, watchers, or interactive commands running in the foreground as the active tool call.
@@ -178,13 +200,18 @@ Treat these rules as always active:
 - The helper's `--env` is not a database-path override mechanism. Never set `E2E_DATABASE_FILE_PATH`, `DATABASE_PATH`, `DB_PATH`, or any similar database file/path variable in helper, setup, server, or run commands. The agent must not change the repo's internal E2E/end-to-end database file path. Test database paths must come from the repo's checked-in E2E/end-to-end config or the already-materialized environment. `.dbs/database.db` is the live workspace/production database; production databases must never be used for testing. Using `.dbs/database.db` for Playwright, E2E, or fixture setup is a critical failure even if it appears only in `task-workflow/`.
 - Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, seed, or test database preparation into lifecycle `--setup "..."` for helper-owned runs. Treat setup plus server startup as reusable for the current verification batch: prefer one helper-owned run with the needed script/spec commands, or rerun setup only after code, migrations, fixtures, DB state, build inputs, or the prior setup output changed. Do not repeatedly delete/recreate the DB or restart the server before each targeted script/spec just because another E2E command is next. If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone. If server state, database state, port ownership, or build freshness looks wrong, diagnose through the current lifecycle owner logs/readiness first and rerun through that owner after any code/setup fix. If the helper times out or produces no useful output, treat that as lifecycle/setup evidence, inspect `task-workflow/runtime/server.log`, `task-workflow/runtime/setup-*.log`, readiness output, and `task-workflow/runtime/run-*.log`, then change the setup, server command, ready URL, test command, fixture, or diagnostic before rerunning. If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management with captured PID/log/readiness/cleanup evidence. Broad process-name cleanup is only a recorded sandbox recovery after PID/port cleanup is impossible.
 - Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The managed lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when available and fails early if the project Playwright version does not match the sandbox browser cache.
-- Select commands by phase responsibility:
+
+### Phase-Owned Command Rules
+
 - Phase 2 completes implementation packets with strict artifact, readback, diff, search, and narrow unblock-command evidence. Defer routine typecheck, lint, build, unit/Vitest, E2E, Playwright, and repo combined check commands such as `pnpm run check` to their owning later phases unless a concrete compile/type issue blocks the current packet and is recorded before the command.
 - Phase 3 reviews connected places, closes missed implementation gaps, performs implementation integrity review, then owns the ordered static/build checkpoint: typecheck, lint, build. Use targeted diagnostics or narrow fix checks only to prove a specific issue group. When a broad static/build command fails, inspect enough output to identify visible issue groups, fix every locally-fixable group before rerunning that broad command, and record only the groups/fixes/rerun reason. Do not rerun a broad command after each tiny fix when other visible issue groups remain. Do not keep huge command logs unless a temporary log is needed for triage; delete temporary full-output logs after extracting issue groups. Record unit/E2E coverage questions for the owning later phase.
 - Phase 4 owns unit-test coverage. It decides whether unit, service, component, or integration-style coverage is warranted; then adds, updates, removes, or explicitly skips that coverage. It may remove existing unit tests when they protect non-core, non-complex, obsolete, or convoluted behavior and the artifact explains why removal improves the test suite. Phase 4 does not rerun typecheck, lint, or build when Phase 3 evidence is current.
 - Later phases reuse Phase 3 build evidence unless code, config, dependency/build inputs, migrations, generated assets, stale output, or incompatible verification tooling invalidates it. Do not rebuild in Phase 4, Phase 5, Phase 6, or Phase 7 only to prepare, reconfirm, or feel safe.
 - Phase 6 owns E2E coverage. It decides whether E2E coverage is warranted; then adds, updates, removes, or explicitly skips that coverage. It may remove existing E2E tests when they protect non-core, non-complex, obsolete, brittle, or convoluted behavior and the artifact explains why removal improves the test suite.
 - If unit, E2E, or browser work happens before its owning phase, do not fail the task solely for that timing. Carry the artifact, diff, and command output into the owning phase and make the owning phase's remove/update/add/skip decision current before promotion.
+
+### Minimal Test And Rerun Rules
+
 - Keep tests minimal. Prefer the fewest tests that protect core behavior or critical workflows. Too many tests for incidental behavior are a codebase problem, not a quality signal.
 - For E2E, run only new, changed, or directly connected specs that are warranted by the Phase 6 decision. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; a repo having a Playwright suite, `webServer`, or "run tests" script is not enough. After warranted targeted or connected E2E evidence passes and no related code, test, config, fixture, migration, or build input changed, do not add a full E2E run as final confidence, final signoff, state discovery, or reviewer-satisfaction evidence.
 - For a single targeted Playwright script or E2E spec, timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. If a single targeted run needs more than two minutes, stop increasing timeouts; split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure first.
@@ -192,6 +219,9 @@ Treat these rules as always active:
 - Before rerunning an identical failing test command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the prior output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, test, command scope, or diagnostic strategy before running again. A suspected pre-existing or order-dependent failure is not a reason to broaden to a full suite; prove it with the narrow failing spec/test plus logs/state/trace evidence, then fix it if it is in scope or record it as an unrelated defended gap.
 - Phase 5 and Phase 6 artifacts must record timeout values and any quiet-run/timeout triage before the gate can pass. A first-run targeted Playwright command longer than the Phase 5/Phase 6 budgets, or any longer rerun without recorded timer-only failure plus clean state triage, is a gate failure.
 - If a command appears hung or idle and the next workflow action is locally available, stop the command, record the evidence in the current phase artifact or gap ledger, and continue with the bounded recovery path.
+
+### Continuation Rules
+
 - Every phase gate is an internal control point, not a user confirmation checkpoint.
 - If a phase gate passes, continue directly into the next phase without asking whether to continue.
 - If a phase gate fails, rework the phase, rerun the gate, and keep looping without asking the user for permission to continue.
@@ -285,6 +315,26 @@ These are hard constraints:
 <reference_loading_rules>
 
 Do not load every reference file by default.
+
+### Compaction And Resume Reload Rule
+
+After compaction, resume, retry, reconnect, or a new coding session, use `task-workflow/progress.md` and `task-workflow/CURRENT_PHASE.txt` to identify the current status, then re-read:
+
+1. this main `SKILL.md`
+2. `task-workflow/progress.md`
+3. `task-workflow/CURRENT_PHASE.txt`
+4. the current phase artifact
+5. `task-workflow/open-gaps.md`
+6. the required reference file or files for the current phase from the Phase Reference Map
+7. the repo-relative instruction/context files listed in `progress.md`
+
+Do not rely on conversation memory after compaction. `progress.md` and `CURRENT_PHASE.txt` identify where the run is, but they do not replace the main skill, current phase reference, current phase artifact, or gap ledger. The run may continue only after those files have been reloaded.
+
+### Phase Start Reference Rule
+
+Every time a phase starts, including immediately after a phase promotion, read the required reference file or files for that new phase before doing phase work.
+
+If `CURRENT_PHASE.txt` changes, the next local action is to load the reference file or files named for the new marker in the Phase Reference Map. Phase work before that read is invalid.
 
 On a fresh run:
 
@@ -437,6 +487,8 @@ The phase references are not optional expansion material. They are the detailed 
 
 These automatically fail the run:
 
+### Phase Boundary And Artifact Fails
+
 - editing app/source files before Phase 1 passes
 - editing app/source files before Phase 0 artifacts exist
 - editing implementation/source files while `task-workflow/CURRENT_PHASE.txt` still says `phase-0-artifact-reset` or `phase-1-task-research`
@@ -444,7 +496,8 @@ These automatically fail the run:
 - skipping artifact reset
 - failing to copy the artifact templates before implementation work
 - failing to create, read after compaction, or keep `task-workflow/progress.md` current enough to resume the run
-- after retry, reconnect, or a new coding session, continuing work before reading `task-workflow/progress.md` and `task-workflow/CURRENT_PHASE.txt`
+- after compaction, retry, reconnect, or a new coding session, continuing work before using `task-workflow/progress.md` and `task-workflow/CURRENT_PHASE.txt` to identify status, then re-reading `SKILL.md`, the current phase artifact, `open-gaps.md`, and the required current phase reference file or files
+- after a phase marker changes, starting work in the new phase before reading the required reference file or files for that phase
 - failing to record and re-read the selected repo-relative instruction/context files in `task-workflow/progress.md`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and relevant available skill files from `.agents/skills/`
 - reading `AGENTS.md` only as context instead of extracting and following the task-relevant development rules it defines
 - editing `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files under `.agents/skills/`, or `AGENTS.md` without the user/task explicitly requesting an edit to that exact reference file
@@ -457,6 +510,9 @@ These automatically fail the run:
 - passing Phase 5 while any screenshot path cited in the artifact is missing or not verified with existence proof
 - passing Phase 6 while required E2E runs are only described and the exact command output is not recorded in the artifact or in a cited repo-local log file
 - running Phase 5 or Phase 6 Playwright/E2E commands without the correct lifecycle owner recorded: helper by default, repo Playwright `webServer` or manual fallback only with a recorded reason/diagnostic made before the command
+
+### Test Hygiene And Coverage Fails
+
 - adding or requiring unit tests for small fixes, minor UI adjustments, copy changes, color/style changes, spacing/layout tuning, or simple button wiring without a concrete core-behavior or risk reason
 - adding unit tests for trivial component branches, incidental button clicks, visual-only changes, or one-off UI behavior instead of reserving unit tests for core stable behavior
 - keeping unnecessary, obsolete, convoluted, or non-core/non-complex unit tests after Phase 4 identifies them as removable
@@ -469,12 +525,18 @@ These automatically fail the run:
 - running repo combined check commands such as `pnpm run check` in Phase 2 without a concrete compile/type blocker recorded before the command
 - rerunning typecheck, lint, or build before all visible locally-fixable issue groups from the prior output are fixed; truncated `tail`/`head` output alone is not enough if it hides issue groups, and temporary full-output logs must be deleted after extraction
 - rerunning build in Phase 4, Phase 5, Phase 6, or Phase 7 when Phase 3 build evidence is current and no invalidating change is recorded
+
+### Playwright And E2E Command Fails
+
 - running native `pnpm exec playwright test ...` in Phase 6 instead of running it through `task-workflow/scripts/playwright-lifecycle.mjs --run ...`, unless repo `webServer` ownership is required and recorded before the command
 - running the unfiltered full Playwright/E2E suite when the task did not explicitly ask for full E2E and no concrete written repo instruction names full E2E/all-spec execution for this exact task
 - starting a first-run targeted Phase 5 Playwright script above `20000` ms or a first-run targeted Phase 6 E2E above `30000` ms without a task-specific artifact reason
 - increasing a Playwright/E2E timeout after any useful failure evidence, or increasing it after a timer-only/no-output failure without recorded helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage proving the app and test are valid to rerun
 - rerunning tests only for confidence, or blindly rerunning the same failing test command without recording a material implementation, test, config, environment, output-staleness, or diagnostic reason
 - running `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification instead of using the sandbox browser cache or recording the helper's browser-preflight mismatch
+
+### Continuity And Evidence Fails
+
 - passing Phase 3 or Phase 7 while changed app/server source still contains `console.*` outside the active Phase 5 debug loop
 - producing a final response or stopping summary while `CURRENT_PHASE.txt` is before `phase-7-final-signoff`
 - producing a final response or stopping summary while any required artifact still says `Decision: Fail`, has a failing score, or contains pending gate evidence
@@ -489,6 +551,9 @@ These automatically fail the run:
 - leaving a long-lived dev server, watcher, or interactive command in the foreground until the session stalls
 - relying on a file write or patch without readback evidence when the file matters to a gate
 - continuing after a failed, invalid, or uncertain write result without repairing and rereading the target file
+
+### Final Signoff Fails
+
 - signing off while critical open gaps remain
 - signing off while `task-workflow/open-gaps.md` contains stale open gaps that a passed later phase claims to have resolved
 - signing off while `task-workflow/open-gaps.md` still contains template placeholder rows such as `Pending`
@@ -498,7 +563,7 @@ These automatically fail the run:
 - signing off while any final quality scorecard category is below `8/10`
 - deleting existing tests without equivalent replacement coverage or a written artifact defense
 - using broad unsafe casts or warning suppression to bypass the type system without a narrow evidence-backed reason
-- relying on conversation memory after compaction instead of re-reading this skill, phase references, and artifacts
+- relying on conversation memory after compaction instead of using `progress.md` and `CURRENT_PHASE.txt` for status and re-reading this skill, required phase reference files, and artifacts
 - failing to enumerate `.tasks/files/` even when it is empty
 - failing to read or inspect every task attachment/supporting file in `.tasks/files/` before Phase 1 planning
 - bulk-reading every skill file in `.agents/skills/` instead of selecting and reading only task-relevant skills

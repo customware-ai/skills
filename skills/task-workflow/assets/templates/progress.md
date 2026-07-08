@@ -4,7 +4,8 @@ This file is the compact resume state for the task. Hard rule: re-read it after 
 
 ## Resume Instructions
 
-- Re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference before choosing the next action after compaction, resume, retry, reconnect, or new coding session.
+- Use this file and `CURRENT_PHASE.txt` to identify current status after compaction, resume, retry, reconnect, or new coding session; then re-read `SKILL.md`, `open-gaps.md`, the current phase artifact, and the current phase reference before choosing the next action.
+- When `CURRENT_PHASE.txt` changes, re-read the required current phase reference before doing any work in the new phase.
 - Re-read the refs below after compaction, resume, retry, reconnect, or new coding session; keep paths repo-relative and update this section when Phase 1 selects task-relevant skill files.
 - Treat refs as read-only unless the task explicitly asks to edit that exact reference file. This is especially strict for `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, and selected skill files under `.agents/skills/`.
 - If this file disagrees with phase artifacts, trust the earliest failing phase artifact and repair this file.
@@ -89,7 +90,8 @@ Keep pointers only. Do not duplicate detailed lists already recorded in phase ar
 
 ## Resume Rules
 
-- After compaction, resume, retry, reconnect, or new coding session, re-read `SKILL.md`, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current phase artifact, and the current phase reference.
+- After compaction, resume, retry, reconnect, or new coding session, use this file and `CURRENT_PHASE.txt` to identify current status, then re-read `SKILL.md`, `open-gaps.md`, the current phase artifact, and the current phase reference.
+- After any phase promotion or marker change, read the required phase reference from the Phase Artifact Index before starting work in that phase.
 - After compaction, resume, retry, reconnect, or new coding session, also re-read the repo-relative files listed in `Refs`, including `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and only the relevant skill files selected from `.agents/skills/` in Phase 1.
 - If this file and `CURRENT_PHASE.txt` disagree, inspect the phase artifacts and continue from the earliest failing phase.
 - Use Current Phase Pointers and Phase Artifact Index to find the detailed phase artifact and reference before choosing the next action.

@@ -18,7 +18,11 @@ The artifact trail is the source of truth for the run.
 
 Phase 0 exists so a new task never inherits stale proof from an older task. The agent owns artifact creation directly by copying templates from `assets/templates/` and the managed lifecycle helpers from `assets/scripts/`; no scaffold script is required.
 
-`task-workflow/progress.md` is the compact resume ledger. It must be reset with the rest of `task-workflow/`, copied from template, and updated in Phase 0 before promotion. Hard rule: after compaction or resume, always read `progress.md` immediately after `SKILL.md` and before choosing the next action.
+`task-workflow/progress.md` is the compact resume ledger. It must be reset with the rest of `task-workflow/`, copied from template, and updated in Phase 0 before promotion. Hard rule: after compaction or resume, use `progress.md` and `CURRENT_PHASE.txt` to identify current status, then read `SKILL.md`, `open-gaps.md`, the current phase artifact, and the required current phase reference before choosing the next action.
+
+At every phase start or promotion, read the required reference file or files for the new `CURRENT_PHASE.txt` marker before doing phase work. Phase 0 and Phase 1 both use this reference.
+
+### MITB Inputs
 
 When running in MITB, use repo-relative inputs from the target repo:
 
@@ -28,11 +32,17 @@ When running in MITB, use repo-relative inputs from the target repo:
 - available skill files: `.agents/skills/`
 - workflow skill: `.agents/skills/task-workflow/SKILL.md`
 
+### Required Reads
+
 `AGENTS.md` is the target repo's binding development-instructions file. It controls project-specific architecture, type safety, test expectations, UX standards, commands, code style, docs, prohibited patterns, and completion rules. Extract the task-relevant rules from it before planning, and read any docs it explicitly requires for the task.
 
 Phase 1 must enumerate `.tasks/files/` even when it is empty and read or inspect every task attachment/supporting file before planning. Available skill files are stored under `.agents/skills/`: select and read only relevant skill `SKILL.md` files from `.agents/skills/`. Do not bulk-read every skill file under `.agents/skills/`.
 
+### Read-Only Inputs
+
 The Phase 1 inputs are read-only. `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, selected skill files under `.agents/skills/`, and other reference files must be read, cited, and summarized only. Do not write to them. Do not rewrite, normalize, consolidate, trim, clean up, reformat, or "fix" these files. This is especially strict for files under `.tasks/`: they are canonical MITB task inputs, not workflow artifacts. If they conflict or look stale, record the issue in the Phase 1 artifact or `open-gaps.md` and keep going from the safest interpretation.
+
+### Source-Edit Boundary
 
 Do not inspect implementation files in app, server, tests, packages, src, or equivalent source directories before Phase 0 artifacts exist.
 Do not edit implementation files before Phase 1 passes.
@@ -83,8 +93,9 @@ Phase 0 is the first action after reading `SKILL.md`.
    - confirmation that no implementation files were edited
 8. Fill `task-workflow/progress.md` with the task source, current phase, Phase 0 reset summary, seeded Resume Instructions, seeded Refs for `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, `.tasks/files/`, the task attachment location, the `.agents/skills/` location, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and next local action.
 9. After every other Phase 0 gate row passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-1-task-research`.
-10. Update `task-workflow/progress.md` so current phase and next local action match Phase 1.
-11. Re-open `task-workflow/phase-0-artifact-reset.md`, record marker after promotion as `phase-1-task-research`, then mark the Phase 0 decision.
+10. Re-read this required reference for Phase 1 before doing Phase 1 work.
+11. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 1.
+12. Re-open `task-workflow/phase-0-artifact-reset.md`, record marker after promotion as `phase-1-task-research`, then mark the Phase 0 decision.
 
 </phase_0_artifact_reset>
 
@@ -153,8 +164,9 @@ If this gate fails, stay in Phase 0.
 21. Update `task-workflow/progress.md` with the compact task summary, repo instructions read, domain/context files read, task attachments/supporting files read, selected relevant skill files, implementation direction, verification plan, risks, current phase artifact/reference pointers, only high-signal active files if needed, and next local action.
 22. Update the Refs section in `task-workflow/progress.md` so future compaction/resume reads `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.md`, relevant task attachments/supporting files from `.tasks/files/`, and only the relevant skill files selected from `.agents/skills/` in Phase 1.
 23. After every Phase 1 gate requirement passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-2-execution`.
-24. Update `task-workflow/progress.md` so current phase and next local action match Phase 2.
-25. Record that Phase 2 was promoted only after Phase 1 passed.
+24. Re-read `references/phase-2-4-execution-integrity.md` before doing Phase 2 work.
+25. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 2.
+26. Record that Phase 2 was promoted only after Phase 1 passed and the required Phase 2 reference was loaded.
 
 </phase_1_task_research>
 

@@ -48,7 +48,8 @@ Interactive Playwright verification is not a reason to create regression tests w
 
 `task-workflow/progress.md` must stay current through verification and signoff.
 
-- Read it after compaction before choosing the next verification action.
+- After compaction, resume, retry, reconnect, or new coding session, use `progress.md` and `CURRENT_PHASE.txt` to identify current status, then re-read the main `SKILL.md`, `open-gaps.md`, the current phase artifact, and the required current phase reference before choosing the next verification action.
+- At every Phase 5, Phase 6, or Phase 7 start or promotion, re-read the required reference file or files for the current phase before doing phase work.
 - Update it after each Phase 5 browser issue/fix/rerun, Phase 6 E2E coverage decision or E2E run, Phase 7 audit result, blocker, gate pass/fail, and promotion.
 - It must summarize latest browser evidence, Phase 4 unit evidence, Phase 6 E2E evidence, fixed-wait review state, open gaps, current phase, earliest failing phase, and next local action.
 - Its Current Phase Pointers must identify the current phase artifact, current reference, next local action, and only high-signal active files needed to resume immediately.
@@ -63,11 +64,16 @@ Interactive Playwright verification is not a reason to create regression tests w
 
 Interactive scripts and E2E tests must wait on user-visible state or app signals.
 
+### Do
+
 - Prefer role/text locators, URL assertions, network-visible state, persisted data checks, and `expect` retries.
 - Do not use fixed waits such as `waitForTimeout`, `setTimeout`, or `sleep(...)` in `task-workflow/playwright` or `tests/e2e`.
 - Do not use fixed waits as "stabilization", "mutation timing", "dialog close", "navigation timing", "screenshot timing", "animation timing", or "followed by assertion" helpers. These labels do not make a fixed wait acceptable.
 - Phase 5 and Phase 6 must inspect their interactive scripts and E2E tests before scoring the gate.
 - Record the files inspected and whether they contain any fixed waits.
+
+### Gate Rule
+
 - If any fixed wait is present, the phase fails. Remove every fixed wait, replace it with a deterministic Playwright wait/assertion, rerun the affected script/test, and review the files again before passing.
 - Remove debug-only Playwright scripts or include them in the fixed-wait review. Debug scripts under `task-workflow/playwright` are part of the verification surface.
 - A click, form submit, fill action, mutation trigger, screenshot timing note, or "dialog animation" note is not assertion/state-wait evidence.
@@ -82,11 +88,16 @@ Interactive scripts and E2E tests must wait on user-visible state or app signals
 
 Verification phases must not stall on foreground servers or watchers.
 
+### Lifecycle Ownership
+
 - Default to `task-workflow/scripts/playwright-lifecycle.mjs` for Playwright scripts, browser probes, app-server startup, readiness, Playwright browser preflight, bounded command execution, output capture, and cleanup.
 - The first Phase 5 browser command or Phase 6 Playwright/E2E command that needs a running app must establish lifecycle ownership before the browser/test runs. Do not point a script at an assumed existing `127.0.0.1` server first and then treat `fetch failed`, redirects, not-found data, stale DB state, stale build output, or wrong-port behavior as evidence for manual server management.
 - In Phase 6, existing repo E2E tests still run through the helper by default: put `pnpm exec playwright test ...` inside the helper's `--run` while the helper owns setup, server startup, readiness, browser preflight, output capture, and cleanup.
 - Use native Playwright with repo `webServer` ownership only when the helper cannot own the server for that exact command, such as a repo config that cannot target an already-running helper server and cannot have `webServer` bypassed for the selected spec. Record that reason before running the native command. A repo merely having a Playwright config, `webServer`, global setup, or existing E2E file is not enough.
 - The helper runs each `--setup` command before server startup with bounded timeout and `task-workflow/runtime/setup-*.log`, starts the app server in the background, records `task-workflow/runtime/server.pid`, writes `task-workflow/runtime/server.log`, polls the supplied readiness URL, runs each `--run` command with bounded timeout and `task-workflow/runtime/run-*.log`, and stops the server process group after the run unless `--keep-server` is explicitly used and justified.
+
+### Database And Server Safety
+
 - Database file paths are not a lifecycle-helper option. Do not set `E2E_DATABASE_FILE_PATH`, `DATABASE_PATH`, `DB_PATH`, or any similar database file/path variable with helper `--env`, `--setup`, `--server`, `--run`, native Playwright commands, or custom scripts. Do not change the repo's internal E2E/end-to-end database file path. Use the target repo's checked-in E2E/end-to-end database config or already-materialized environment. `.dbs/database.db` is the live workspace/production database, not a test database; production databases must never be used for testing. Any Playwright/E2E/end-to-end fixture write, reset, migration, or direct SQLite access against `.dbs/database.db` is a critical failure.
 - Do not assume a backgrounded process started successfully just because the command returned. A server is ready only after the helper records a successful readiness result.
 - Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, seed, or test fixture preparation into lifecycle `--setup "..."` for helper-owned runs. Treat setup plus server startup as reusable for the current verification batch: prefer one helper-owned run with the needed script/spec commands, or rerun setup only after code, migrations, fixtures, DB state, build inputs, or the prior setup output changed. Do not repeatedly delete/recreate the DB or restart the server before each targeted script/spec just because another E2E command is next. If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone. If the helper times out or produces no useful output, treat that as lifecycle/setup evidence, inspect `task-workflow/runtime/server.log`, `task-workflow/runtime/setup-*.log`, readiness output, and `task-workflow/runtime/run-*.log`, then change the setup, server command, ready URL, test command, fixture, or diagnostic before rerunning. If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management with captured PID/log/readiness/cleanup evidence.
@@ -139,27 +150,36 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
 
 <phase_5_interactive_playwright>
 
+Phase 5 has two required evidence stages:
+
+| Stage | Must prove | Scope |
+| --- | --- | --- |
+| Stage 1 | the changed behavior works through real user interaction | primary changed route, touched controls, relevant bad cases, nearby shared UI |
+| Stage 2 | the UI is visually sound and responsive | no broken, cramped, overlapping, clipped, ill-placed, unreadable, unusable, or non-responsive affected UI |
+
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-5-playwright-verification`.
 2. Read `references/playwright-interactive.md`.
-3. Confirm `task-workflow/scripts/playwright-lifecycle.mjs` exists and is readable.
-4. Write standalone Playwright scripts under `task-workflow/playwright/`.
-5. Run the scripts through `task-workflow/scripts/playwright-lifecycle.mjs` with the repo's normal local app command, a readiness URL, bounded command timeout, and runtime logs. First-run Phase 5 script/probe timeout should be `15000`-`20000` ms.
-6. Stage 1 - functional behavior: drive the changed feature through real user interactions and prove the task behavior works. Verify primary routes, forms, buttons, menus, dialogs, tables, navigation, save flows, and error states touched or implied by the task.
-7. In Stage 1, exercise only the relevant bad cases and non-ideal user behavior: invalid submissions, empty states, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigating away/back, and nearby controls a real user could click while using the feature.
-8. In Stage 1, smoke-test surrounding UI/features that share the changed surface, such as adjacent navigation, list/detail transitions, filters/search, dialogs, menus, sidebars, and nearby actions that could be accidentally broken by the implementation.
-9. Stage 2 - UI and responsive quality: verify the affected UI is not broken, cramped, overlapping, clipped, ill-placed, unreadable, unusable, or non-responsive. Check mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` desktop viewports when the task changes UI. Treat this as equal to proving the task's functional changes work: Phase 5 fails if either Stage 1 behavior or Stage 2 UI quality is broken. Standard desktop/1080p screens must not have excessive dead space that makes the app look abandoned or sparse. `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. 4K/ultrawide whitespace is acceptable when the layout is intentionally constrained and still coherent.
-10. Keep Phase 5 scripts focused on proving the changed behavior and affected UI quality. Do not turn Phase 5 into a broad app audit unrelated to the changed surface.
-11. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
-12. Verify every screenshot path cited in the Phase 5 artifact exists before scoring the gate. Record the file-existence command/readback proof in `task-workflow/phase-5-playwright-verification.md`.
-13. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to the earliest affected phase, usually Phase 2 for source fixes, then re-pass Phase 3 static checks and Phase 4 unit coverage before re-entering Phase 5.
-14. Fix discovered issues and rerun the scripts from clean Node.js processes through the lifecycle helper. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
-15. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
-16. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
-17. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
-18. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-19. Record Stage 1 functional behavior coverage, Stage 2 UI/responsive quality coverage, relevant bad-case coverage, surrounding-feature smoke, screenshots, screenshot existence proof, lifecycle helper command, readiness proof, runtime log paths, timeout/quiet-run triage, cleanup result, issues, fixes, open-gap status, and fixed-wait review evidence.
-20. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
-21. Update `task-workflow/progress.md` so current phase and next local action match Phase 6.
+3. Confirm `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md` are loaded as the required current phase references before Phase 5 work starts.
+4. Confirm `task-workflow/scripts/playwright-lifecycle.mjs` exists and is readable.
+5. Write standalone Playwright scripts under `task-workflow/playwright/`.
+6. Run the scripts through `task-workflow/scripts/playwright-lifecycle.mjs` with the repo's normal local app command, a readiness URL, bounded command timeout, and runtime logs. First-run Phase 5 script/probe timeout should be `15000`-`20000` ms.
+7. Stage 1 - functional behavior: drive the changed feature through real user interactions and prove the task behavior works. Verify primary routes, forms, buttons, menus, dialogs, tables, navigation, save flows, and error states touched or implied by the task.
+8. In Stage 1, exercise only the relevant bad cases and non-ideal user behavior: invalid submissions, empty states, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigating away/back, and nearby controls a real user could click while using the feature.
+9. In Stage 1, smoke-test surrounding UI/features that share the changed surface, such as adjacent navigation, list/detail transitions, filters/search, dialogs, menus, sidebars, and nearby actions that could be accidentally broken by the implementation.
+10. Stage 2 - UI and responsive quality: verify the affected UI is not broken, cramped, overlapping, clipped, ill-placed, unreadable, unusable, or non-responsive. Check mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` desktop viewports when the task changes UI. Treat this as equal to proving the task's functional changes work: Phase 5 fails if either Stage 1 behavior or Stage 2 UI quality is broken. Standard desktop/1080p screens must not have excessive dead space that makes the app look abandoned or sparse. `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. 4K/ultrawide whitespace is acceptable when the layout is intentionally constrained and still coherent.
+11. Keep Phase 5 scripts focused on proving the changed behavior and affected UI quality. Do not turn Phase 5 into a broad app audit unrelated to the changed surface.
+12. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
+13. Verify every screenshot path cited in the Phase 5 artifact exists before scoring the gate. Record the file-existence command/readback proof in `task-workflow/phase-5-playwright-verification.md`.
+14. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to the earliest affected phase, usually Phase 2 for source fixes, then re-pass Phase 3 static checks and Phase 4 unit coverage before re-entering Phase 5.
+15. Fix discovered issues and rerun the scripts from clean Node.js processes through the lifecycle helper. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
+16. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
+17. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
+18. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
+19. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+20. Record Stage 1 functional behavior coverage, Stage 2 UI/responsive quality coverage, relevant bad-case coverage, surrounding-feature smoke, screenshots, screenshot existence proof, lifecycle helper command, readiness proof, runtime log paths, timeout/quiet-run triage, cleanup result, issues, fixes, open-gap status, and fixed-wait review evidence.
+21. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
+22. Re-read `references/phase-5-7-verification-signoff.md` before doing Phase 6 work.
+23. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 6.
 
 </phase_5_interactive_playwright>
 
@@ -259,26 +279,28 @@ If this gate fails, stay in Phase 5.
 <phase_6_e2e_coverage>
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
-2. For each changed workflow, decide whether E2E coverage is warranted. E2E is warranted only for a critical user workflow, complex multi-step flow, persistence/navigation boundary, permission boundary, or high-risk regression. Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no new or updated E2E.
-3. Inspect connected existing E2E tests for every changed workflow before choosing remove, update, add, or `N/A`. Identify whether the changed feature belongs in an existing flow, regression suite, or user journey.
-4. Remove existing E2E tests when they are unnecessary, obsolete, brittle, convoluted, or protect non-core/non-complex flows. Record why removal improves the E2E suite and preserve useful critical-flow coverage elsewhere only when still needed.
-5. Update an existing E2E test first when the warranted behavior extends an existing workflow or could affect existing functionality already covered there.
-6. Add a new E2E test only when the task introduces or changes a core workflow that cannot be cleanly covered by an existing E2E test.
-7. Do not use E2E to cover isolated non-UI logic. Record E2E `N/A` for that path and cite the Phase 4 unit-test decision when relevant.
-8. Select the smallest useful E2E command that proves only the warranted E2E coverage. Start with new, changed, or directly connected E2E specs and maintain a connected-spec ledger. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; "target repo instructions" must name full E2E or an equivalent all-spec command, not merely say to run tests. If warranted targeted or multi-spec commands already ran the connected specs and no related code, test, config, fixture, migration, or build input changed, that is the evidence; do not add a full E2E run for final confidence, final signoff, state discovery, or reviewer-satisfaction.
-9. Record every meaningful E2E command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
-10. Do not rerun E2E tests only for confidence. Rerun when related implementation changed, the E2E test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
-11. Before rerunning the exact same failing E2E command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, E2E test, command scope, or diagnostic strategy before running again.
-12. When E2E tests are warranted, run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup, including existing repo E2E specs. Put the native E2E command inside helper `--run`. Use native Playwright with repo `webServer` only when the helper cannot own the server for that exact command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command. First-run targeted Phase 6 E2E timeout should be at most `30000` ms. Keep one setup/server lifecycle for the related verification batch when the DB/build/server inputs remain valid; do not reset DB, rerun migrations/seed, or restart the server between targeted specs unless the previous run changed or invalidated that state. When a failing E2E run suggests stale DB, stale server, wrong build, redirect, missing fixture data, not-found page state, selector timeout, or no useful helper output, inspect helper run/server/setup logs plus page state before rerunning through the same lifecycle owner. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
-13. Fix failures and rerun with the smallest command that can prove the fix.
-14. Record the exact command output for every required E2E run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`. If no E2E is warranted, record `N/A` with the coverage-decision evidence instead of command output.
-15. Review the interactive scripts and any E2E tests used in this phase for fixed waits and record the files inspected plus the result. If no E2E test was used, record `N/A` for E2E test inspection.
-16. Update `task-workflow/open-gaps.md` for every E2E coverage gap closed, defended, or still open.
-17. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for E2E-file and E2E-repair details, removed-test rationale, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
-18. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-19. Record the E2E coverage decision matrix, connected existing E2E tests inspected for every changed workflow, E2E tests removed, E2E tests updated, E2E tests added, commands, exact command output evidence, outcomes, E2E-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps. If no E2E is warranted, record `N/A` with the reason and do not create an E2E test.
-20. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
-21. Update `task-workflow/progress.md` so current phase and next local action match Phase 7.
+2. Confirm this reference is loaded as the required current phase reference before Phase 6 work starts.
+3. For each changed workflow, decide whether E2E coverage is warranted. E2E is warranted only for a critical user workflow, complex multi-step flow, persistence/navigation boundary, permission boundary, or high-risk regression. Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no new or updated E2E.
+4. Inspect connected existing E2E tests for every changed workflow before choosing remove, update, add, or `N/A`. Identify whether the changed feature belongs in an existing flow, regression suite, or user journey.
+5. Remove existing E2E tests when they are unnecessary, obsolete, brittle, convoluted, or protect non-core/non-complex flows. Record why removal improves the E2E suite and preserve useful critical-flow coverage elsewhere only when still needed.
+6. Update an existing E2E test first when the warranted behavior extends an existing workflow or could affect existing functionality already covered there.
+7. Add a new E2E test only when the task introduces or changes a core workflow that cannot be cleanly covered by an existing E2E test.
+8. Do not use E2E to cover isolated non-UI logic. Record E2E `N/A` for that path and cite the Phase 4 unit-test decision when relevant.
+9. Select the smallest useful E2E command that proves only the warranted E2E coverage. Start with new, changed, or directly connected E2E specs and maintain a connected-spec ledger. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task; "target repo instructions" must name full E2E or an equivalent all-spec command, not merely say to run tests. If warranted targeted or multi-spec commands already ran the connected specs and no related code, test, config, fixture, migration, or build input changed, that is the evidence; do not add a full E2E run for final confidence, final signoff, state discovery, or reviewer-satisfaction.
+10. Record every meaningful E2E command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
+11. Do not rerun E2E tests only for confidence. Rerun when related implementation changed, the E2E test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
+12. Before rerunning the exact same failing E2E command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, E2E test, command scope, or diagnostic strategy before running again.
+13. When E2E tests are warranted, run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup, including existing repo E2E specs. Put the native E2E command inside helper `--run`. Use native Playwright with repo `webServer` only when the helper cannot own the server for that exact command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command. First-run targeted Phase 6 E2E timeout should be at most `30000` ms. Keep one setup/server lifecycle for the related verification batch when the DB/build/server inputs remain valid; do not reset DB, rerun migrations/seed, or restart the server between targeted specs unless the previous run changed or invalidated that state. When a failing E2E run suggests stale DB, stale server, wrong build, redirect, missing fixture data, not-found page state, selector timeout, or no useful helper output, inspect helper run/server/setup logs plus page state before rerunning through the same lifecycle owner. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
+14. Fix failures and rerun with the smallest command that can prove the fix.
+15. Record the exact command output for every required E2E run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`. If no E2E is warranted, record `N/A` with the coverage-decision evidence instead of command output.
+16. Review the interactive scripts and any E2E tests used in this phase for fixed waits and record the files inspected plus the result. If no E2E test was used, record `N/A` for E2E test inspection.
+17. Update `task-workflow/open-gaps.md` for every E2E coverage gap closed, defended, or still open.
+18. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for E2E-file and E2E-repair details, removed-test rationale, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
+19. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
+20. Record the E2E coverage decision matrix, connected existing E2E tests inspected for every changed workflow, E2E tests removed, E2E tests updated, E2E tests added, commands, exact command output evidence, outcomes, E2E-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps. If no E2E is warranted, record `N/A` with the reason and do not create an E2E test.
+21. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
+22. Re-read `references/phase-5-7-verification-signoff.md` before doing Phase 7 work.
+23. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 7.
 
 </phase_6_e2e_coverage>
 
@@ -287,6 +309,19 @@ If this gate fails, stay in Phase 5.
 <e2e_coverage_decision>
 
 Prefer no E2E change unless durable E2E coverage is warranted. Use this decision order for every changed workflow: decide whether E2E is warranted; inspect connected existing E2E; remove unnecessary existing E2E; update connected existing E2E when it can carry the warranted workflow; add a new minimal E2E only when no existing E2E can carry a warranted core/complex workflow; otherwise record `N/A`.
+
+### Decision Order
+
+| Step | Action |
+| --- | --- |
+| 1 | decide whether E2E is warranted for a core, critical, complex, persistence, navigation, permission, or high-risk workflow |
+| 2 | inspect connected existing E2E tests before adding anything new |
+| 3 | remove unnecessary, obsolete, brittle, convoluted, or non-core/non-complex E2E tests |
+| 4 | update an existing E2E test when it already owns the workflow |
+| 5 | add one minimal new E2E test only when existing coverage cannot carry a warranted workflow |
+| 6 | record `N/A` when E2E is not warranted |
+
+### Command Scope
 
 When E2E is warranted, choose the smallest E2E proof that protects the behavior:
 
@@ -298,6 +333,8 @@ When E2E is warranted, choose the smallest E2E proof that protects the behavior:
 - update an existing E2E test when warranted behavior modifies or extends an existing user workflow
 - add a new E2E test only for a genuinely core workflow or when existing E2E coverage cannot cleanly express the warranted path
 - E2E tests for user-visible multi-step flows
+
+### Assertion Quality
 
 E2E coverage must protect actual core task functionality. Prefer assertions that prove a user-visible outcome, persisted state, navigation result, saved record, validation behavior, permission behavior, or end-to-end data flow. Avoid tests whose main value is checking superficial styling, color, class names, incidental copy, or whether a button exists without proving a critical workflow works.
 
@@ -384,29 +421,30 @@ If this gate fails, stay in Phase 6.
 <phase_7_final_signoff>
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
-2. Re-read every phase artifact.
-3. Confirm every previous gate passed and remains current.
-4. Confirm `task-workflow/open-gaps.md` has no unresolved critical gap.
-5. Confirm no open gap is stale or contradicted by Phase 5, Phase 6, or test evidence.
-6. Confirm `task-workflow/open-gaps.md` has no placeholder `Pending` rows.
-7. Re-read `task-workflow/progress.md` and confirm it matches `CURRENT_PHASE.txt`, every phase decision, the gap ledger, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and the next local action.
-8. Re-read the fixed-wait review evidence from Phase 5 and Phase 6, re-open the inspected verification files if they changed, and confirm the review is still current.
-9. Re-read the screenshot existence audit from Phase 5 and verify every screenshot path cited in Phase 5 still exists.
-10. Re-read Phase 4 unit-test evidence and Phase 6 E2E evidence. Confirm each phase records its remove/update/add/`N/A` decision, exact command output when a command was required, and removal rationale plus diff/readback evidence when tests were removed.
-11. Inspect changed app/server source for `console.*` again. Temporary `console.*` used to debug Phase 5 browser/runtime behavior must be removed before Phase 7 signs off; lasting logging must use the repo-approved logging or telemetry path.
-12. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, timeout/quiet-run triage where applicable, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
-13. Review the final diff.
-14. Re-run only commands whose earlier proof was invalidated by later edits, changed test/config state, incomplete/stale output, or an explicit exact-task requirement from the task or repo instructions. If unit evidence is invalidated, return to Phase 4; if E2E evidence is invalidated, return to Phase 6. Do not add full unit/Vitest or full Playwright runs only to feel more confident.
-15. Score the final result in all quality categories.
-16. Confirm the final implementation follows the task-relevant development rules extracted from `AGENTS.md`.
-17. Confirm task completion summary is accurate.
-18. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
-19. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
-20. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
-21. Treat the completed command as the final external task action. Plan all typecheck, lint, build, unit test, E2E test, app server, server probe, browser probe, and verification work before task completion.
-22. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
-23. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
-24. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
+2. Confirm this reference is loaded as the required current phase reference before Phase 7 work starts.
+3. Re-read every phase artifact.
+4. Confirm every previous gate passed and remains current.
+5. Confirm `task-workflow/open-gaps.md` has no unresolved critical gap.
+6. Confirm no open gap is stale or contradicted by Phase 5, Phase 6, or test evidence.
+7. Confirm `task-workflow/open-gaps.md` has no placeholder `Pending` rows.
+8. Re-read `task-workflow/progress.md` and confirm it matches `CURRENT_PHASE.txt`, every phase decision, the gap ledger, Current Phase Pointers, Phase Artifact Index, Artifact Pointers, and the next local action.
+9. Re-read the fixed-wait review evidence from Phase 5 and Phase 6, re-open the inspected verification files if they changed, and confirm the review is still current.
+10. Re-read the screenshot existence audit from Phase 5 and verify every screenshot path cited in Phase 5 still exists.
+11. Re-read Phase 4 unit-test evidence and Phase 6 E2E evidence. Confirm each phase records its remove/update/add/`N/A` decision, exact command output when a command was required, and removal rationale plus diff/readback evidence when tests were removed.
+12. Inspect changed app/server source for `console.*` again. Temporary `console.*` used to debug Phase 5 browser/runtime behavior must be removed before Phase 7 signs off; lasting logging must use the repo-approved logging or telemetry path.
+13. Record an artifact integrity review by re-opening each phase artifact and checking its decision, score, required evidence, timeout/quiet-run triage where applicable, and consistency with `CURRENT_PHASE.txt`, `progress.md`, and `open-gaps.md`.
+14. Review the final diff.
+15. Re-run only commands whose earlier proof was invalidated by later edits, changed test/config state, incomplete/stale output, or an explicit exact-task requirement from the task or repo instructions. If unit evidence is invalidated, return to Phase 4; if E2E evidence is invalidated, return to Phase 6. Do not add full unit/Vitest or full Playwright runs only to feel more confident.
+16. Score the final result in all quality categories.
+17. Confirm the final implementation follows the task-relevant development rules extracted from `AGENTS.md`.
+18. Confirm task completion summary is accurate.
+19. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
+20. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
+21. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
+22. Treat the completed command as the final external task action. Plan all typecheck, lint, build, unit test, E2E test, app server, server probe, browser probe, and verification work before task completion.
+23. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
+24. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
+25. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
 
 </phase_7_final_signoff>
 
