@@ -475,6 +475,8 @@ Detailed process: `references/phase-5-7-verification-signoff.md`.
 
 Re-read every artifact, confirm all previous gates still pass after the last edit, review the final diff, run the required MITB completed command only after all Phase 7 audit checks pass, and sign off only if the artifact trail proves completion.
 
+Phase 7 is an evidence validator for missed work, not a validation rerun phase. If a required check, build, test, Playwright run, E2E run, or other phase-owned command was already completed correctly in its owning phase and the evidence is current, Phase 7 must only verify that evidence. Rerun a command only when the owning phase missed the required command, the recorded evidence is missing/incomplete/stale, or later changes invalidated it; otherwise never rerun checks, builds, tests, Playwright, or E2E in Phase 7.
+
 Detailed process: `references/phase-5-7-verification-signoff.md`.
 
 The phase references are not optional expansion material. They are the detailed execution instructions for the current workstream.

@@ -22,7 +22,7 @@
 
 | Proof | Evidence |
 | --- | --- |
-| Final checks current after last code change | Pending |
+| Final checks current after last code change, verified from owning-phase evidence without rerun unless missing/stale/invalidated | Pending |
 | Open critical gaps resolved | Pending |
 | Stale/deferred open gaps reconciled | Pending |
 | Extracted `AGENTS.md` development rules followed | Pending |
@@ -48,7 +48,7 @@
 
 ## MITB Task Completion Command
 
-Run this only after all prior Phase 7 audit checks are clean. Prefer the exact `Completed:` command from `.tasks/task.md`; otherwise use the exact command supplied in the prompt. Do not synthesize project/task identifiers when the task file or prompt provides them. If any Phase 7 audit check fails, do not run this command; loop back to the earliest failing phase first. Treat this as the final external task action and plan all checks, tests, builds, server probes, browser probes, and verification commands before it.
+Run this only after all prior Phase 7 audit checks are clean. Prefer the exact `Completed:` command from `.tasks/task.md`; otherwise use the exact command supplied in the prompt. Do not synthesize project/task identifiers when the task file or prompt provides them. If any Phase 7 audit check fails, do not run this command; loop back to the earliest failing phase first. Treat this as the final external task action. Phase 7 must verify existing owning-phase evidence for checks, tests, builds, server probes, browser probes, and verification commands; run one only if the owning phase missed it, the evidence is missing/incomplete/stale, or later changes invalidated it.
 
 | Item | Evidence |
 | --- | --- |
@@ -130,6 +130,7 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 4 unit-test command output recorded when a command was required, defended `N/A` recorded when none was warranted, or removed-test rationale and diff/readback evidence recorded | yes | Pending |
 | Phase 6 E2E command output recorded when a command was required, defended `N/A` recorded when none was warranted, or removed-test rationale and diff/readback evidence recorded | yes | Pending |
 | Phase 3 implementation integrity and static-check evidence current | yes | Pending |
+| Phase 7 did not rerun checks/builds/tests/Playwright/E2E unless owning-phase evidence was missing, incomplete, stale, or invalidated | yes | Pending |
 | Phase 4 unit coverage ledger current | yes | Pending |
 | Phase 6 E2E coverage ledger current | yes | Pending |
 | Phase 6 E2E command scope matches coverage decision or exact full-E2E requirement | yes | Pending |
