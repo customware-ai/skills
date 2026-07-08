@@ -31,9 +31,9 @@ Update this table immediately after each small work packet. Do not leave this ta
 | Gate-relevant writes were read back or verified in diff before relying on them | Pending | Pending |
 | Failed/invalid/uncertain write results were repaired before continuing | Pending | Pending |
 | Routine typecheck, lint, build, and combined check commands such as `pnpm run check` were deferred to Phase 3 unless a concrete compile/type blocker required them | Pending | Pending |
-| Phase 2 tests, if any, were limited to the new or updated targeted test file for the current packet; no broad unit directory commands were run | Pending | Pending |
+| Phase 2 tests, if any, were justified by a core behavior, contract, or large enough current-packet risk and limited to the narrow warranted test; no broad unit directory commands were run | Pending | Pending |
 | Pre-Phase-5 API/runtime server probes used `task-workflow/scripts/server-probe.mjs`, or none were needed | Pending | Pending |
-| No Phase 5 interactive Playwright or Phase 6 E2E creation was used as a Phase 2 substitute | Pending | Pending |
+| No Phase 5 interactive Playwright or Phase 6 E2E coverage work was used as a Phase 2 substitute | Pending | Pending |
 | No long-lived server, watcher, or interactive command remains running in the foreground | Pending | Pending |
 
 ## Plan Changes
@@ -44,7 +44,7 @@ Update this table immediately after each small work packet. Do not leave this ta
 
 ## Checks During Execution
 
-Phase 2 evidence must stay strict, but routine typecheck, lint, build, and combined check commands such as `pnpm run check` belong to Phase 3 after the connected-place sweep. Record only narrow checks that were needed to unblock or prove a specific implementation packet. For tests, Phase 2 may run only the new or updated targeted test file needed for the current packet; broad unit directory commands belong later only when justified.
+Phase 2 evidence must stay strict, but routine typecheck, lint, build, and combined check commands such as `pnpm run check` belong to Phase 3 after the connected-place sweep. Record only narrow checks that were needed to unblock or prove a specific implementation packet. For tests, first decide whether any test is warranted. Small fixes, visual-only changes, simple button wiring, and incidental UI behavior normally need no Phase 2 test. If a core behavior, contract, or large enough current-packet risk needs proof, run only the narrow warranted test; broad unit directory commands belong later only when justified.
 
 | Check | Result | Notes |
 | --- | --- | --- |

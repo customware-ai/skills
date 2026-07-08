@@ -49,15 +49,17 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 | Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
-## Interactive Coverage
+## Stage 1 - Functional Behavior
 
-| Flow/route/state | Script | Screenshot/evidence | Result | Fix needed |
+Prove the changed behavior works through real user interaction. Keep this stage focused on the changed surface and directly related nearby behavior.
+
+| Flow/route/state | Script | Interaction evidence | Result | Fix needed |
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
-## User-Perspective Stress Coverage
+## Stage 1 - Relevant User-Perspective Stress Coverage
 
-Exercise non-ideal behavior a real user could do while using the feature: invalid inputs, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigation away/back, empty states, and nearby controls.
+Exercise relevant non-ideal behavior a real user could do while using the changed feature: invalid inputs, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigation away/back, empty states, and nearby controls.
 
 | Scenario | Script | Evidence | Result | Fix/rerun |
 | --- | --- | --- | --- | --- |
@@ -71,9 +73,9 @@ Check nearby UI/features sharing the changed surface so the task did not break u
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
-## Responsive UI And Visual Quality
+## Stage 2 - Responsive UI And Visual Quality
 
-Verify the main changed flow and nearby UI on mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` desktop when UI changed. Responsive quality is a first-class Phase 5 pass condition, equal to the task's functional behavior working. Check overlap, overflow, clipping, readable text, navigation access, tap/click targets, dialogs/menus, accidental horizontal scroll, controls outside the viewport, screenshots, and whether normal desktop/1080p has excessive dead space. Some whitespace is fine. `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. Large empty areas are acceptable on 4K/ultrawide only when the layout is intentionally constrained and still coherent.
+Verify the main changed flow and affected nearby UI on mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` desktop when UI changed. Responsive quality is a first-class Phase 5 pass condition, equal to the task's functional behavior working. Check for broken, cramped, overlapping, clipped, ill-placed, unreadable, unusable, or non-responsive UI; also check navigation access, tap/click targets, dialogs/menus, accidental horizontal scroll, controls outside the viewport, screenshots, and whether normal desktop/1080p has excessive dead space. Some whitespace is fine. `2560x1440` may have some extra whitespace, but not broad empty regions that make the UI feel unfinished. Large empty areas are acceptable on 4K/ultrawide only when the layout is intentionally constrained and still coherent.
 
 | Viewport | Flow/area | Screenshot/evidence | UI quality and dead-space result | Fix/rerun |
 | --- | --- | --- | --- | --- |
@@ -135,12 +137,12 @@ If matches were found and removed, record the replacement proof here.
 | --- | --- | --- |
 | Score | >= 44/50 | 0/50 |
 | Critical Playwright items | all pass | Pending |
-| Main touched/implied flows covered | yes | Pending |
-| Bad cases and non-ideal user behavior covered | yes | Pending |
+| Stage 1 main touched/implied flows covered | yes | Pending |
+| Stage 1 relevant bad cases and non-ideal user behavior covered | yes | Pending |
 | Surrounding feature smoke completed | yes | Pending |
-| Mobile/tablet/desktop/1080p/2560px responsive UI verified when UI changed | yes | Pending |
-| Responsive UI quality passes as a first-class guarantee alongside task functionality | yes | Pending |
-| No unresolved overlap, clipping, unusable control, accidental horizontal scroll, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | yes | Pending |
+| Stage 2 mobile/tablet/desktop/1080p/2560px responsive UI verified when UI changed | yes | Pending |
+| Stage 2 responsive UI quality passes as a first-class guarantee alongside task functionality | yes | Pending |
+| No unresolved broken, cramped, overlapping, clipped, ill-placed, unusable, non-responsive, accidental horizontal scroll, excessive 1080p dead-space, or unfinished-looking 2560px empty-region issue | yes | Pending |
 | Screenshot paths exist | yes | Pending |
 | Screenshot existence audit completed for every cited path | yes | Pending |
 | Phase 3 build reused, or rebuild reason and output recorded | yes | Pending |

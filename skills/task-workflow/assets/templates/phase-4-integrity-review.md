@@ -20,9 +20,9 @@ Re-open Phase 3 ordered typecheck/lint/build evidence first. Do not rerun typech
 
 ## Test Selection And Retry Ledger
 
-Record every meaningful check/test command. Use `N/A` only when no test command is relevant.
+Record every meaningful check/test command. Use `N/A` when no test command is warranted by the minimal coverage decision.
 
-| Command | Scope: targeted/connected/final-sanity-full/exception-full | Why this scope | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
+| Command | Scope: N/A/targeted/connected/final-sanity-full/exception-full | Why this scope or why no test is warranted | Previous related failure | Changed or new evidence before rerun | Outcome | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
@@ -66,9 +66,9 @@ Changed app/server source must not keep `console.*`. Temporary `console.*` may b
 | Critical integrity items | all pass | Pending |
 | Required checks pass or unrelated failure evidenced | yes | Pending |
 | Phase 3 typecheck/lint/build evidence current, or invalidated sequence rerun from first affected command | yes | Pending |
-| Test/check command selection and retry evidence recorded | yes | Pending |
-| Targeted tests ran before broad/full unit or Vitest suite | yes | Pending |
-| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
+| Test/check command selection and retry evidence recorded, including `N/A` when no test is warranted | yes | Pending |
+| Minimal warranted targeted/connected tests ran before broad/full unit or Vitest suite, or no such tests were warranted | yes | Pending |
+| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after minimal warranted targeted and connected tests | yes | Pending |
 | Broad/full unit commands, if any, have final sanity/explicit exception reasons | yes | Pending |
 | No confidence-only or blind identical failing-command rerun | yes | Pending |
 | No runtime-blocking issue remains | yes | Pending |

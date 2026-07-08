@@ -1,14 +1,22 @@
-# Phase 6 - E2E Test Creation And Verification
+# Phase 6 - Minimal E2E Coverage Decision And Verification
 
 ## Coverage Decision
 
-| Behavior/path | Existing E2E inspected | Update existing or add new? | Test file | Reason |
-| --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending |
+| Behavior/path | E2E warranted? | Existing E2E inspected if warranted | Update existing/add new/N/A | Test file | Reason |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending |
+
+## Minimal Coverage Rationale
+
+Small fixes, visual-only changes, copy/color/style changes, spacing/layout tuning, simple button wiring, and incidental UI behavior normally require no new or updated E2E. E2E is warranted only for critical user workflows, complex multi-step flows, persistence/navigation boundaries, permission boundaries, or high-risk regressions.
+
+| Change type/risk | Why E2E is or is not warranted | Lower-level test better fit? | Evidence |
+| --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending |
 
 ## Existing E2E Review
 
-Inspect existing E2E tests first. Prefer updating an existing flow when the task changes or extends that flow. Add a new E2E test only for a genuinely new workflow or when existing coverage cannot cleanly express the path.
+Inspect existing E2E tests first when E2E is warranted. Prefer updating an existing flow when the task changes or extends that flow. Add a new E2E test only for a core workflow or when existing coverage cannot cleanly express the warranted path.
 
 | Existing test file/flow | Relevant to task? | Action taken | Evidence |
 | --- | --- | --- | --- |
@@ -16,7 +24,7 @@ Inspect existing E2E tests first. Prefer updating an existing flow when the task
 
 ## Functional Assertion Quality
 
-E2E tests should prove actual task functionality, not superficial styling or existence. Prefer assertions for user-visible outcomes, persisted state, navigation results, validation behavior, permissions, or end-to-end data flow. Avoid primary assertions about color, CSS class, incidental copy, or a button merely existing unless the task itself is specifically about that behavior.
+E2E tests should prove actual core task functionality, not superficial styling or existence. Prefer assertions for user-visible outcomes, persisted state, navigation results, validation behavior, permissions, or end-to-end data flow. Avoid primary assertions about color, CSS class, incidental copy, or a button merely existing unless the task itself is specifically about that behavior and is critical enough for E2E.
 
 | Test file | Functional outcome proved | User-visible/persisted assertion | Superficial checks avoided? |
 | --- | --- | --- | --- |
@@ -24,7 +32,7 @@ E2E tests should prove actual task functionality, not superficial styling or exi
 
 ## Test Runs
 
-Record the exact bounded test command and its exact output. If output is long, write it to a repo-local log file and cite that file here, plus the final pass/fail lines copied exactly into the artifact.
+Record the exact bounded test command and its exact output when a test is warranted. If output is long, write it to a repo-local log file and cite that file here, plus the final pass/fail lines copied exactly into the artifact. If no E2E is warranted, record `N/A` and the coverage-decision evidence.
 
 | Command | Timeout | Lifecycle helper/repo `webServer`/setup evidence | Result | Exact output or repo-local log path with final lines | Follow-up |
 | --- | --- | --- | --- | --- | --- |
@@ -42,7 +50,7 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 
 ## Test Selection And Retry Ledger
 
-Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first. For E2E, list the connected specs covered. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task. A repo having one large E2E file, a Playwright `webServer`, or generic "run tests" guidance is not enough.
+Record every meaningful E2E/test command, including reruns. Use the smallest useful scope first. For E2E, list the connected specs covered. Never run the unfiltered full E2E suite unless the task explicitly asks for full E2E or a concrete written repo instruction names full E2E/all-spec execution for this exact task. A repo having one large E2E file, a Playwright `webServer`, or generic "run tests" guidance is not enough. If no E2E is warranted, record `N/A` and do not run an E2E command.
 
 | Command | Scope: targeted/connected-multi-spec/explicit-full | Why this scope and connected specs covered; exact full-suite requirement if explicit-full | Previous related failure | Changed or new evidence before rerun | Timeout/quiet-run triage before longer rerun | Outcome | Next action |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -115,12 +123,12 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Existing tests preserved, migrated, or defended | Pending | Pending |
-| Existing E2E tests inspected before adding new coverage | Pending | Pending |
-| Existing E2E flow updated when changed behavior belongs there | Pending | Pending |
-| New E2E test added only when necessary | Pending | Pending |
-| Exact command output recorded for required E2E/test runs | Pending | Pending |
-| New/updated tests assert user-visible or persisted state | Pending | Pending |
-| New/updated E2E tests prove real task functionality | Pending | Pending |
+| Existing E2E tests inspected before adding new coverage when E2E was warranted | Pending | Pending |
+| Existing E2E flow updated when warranted behavior belongs there | Pending | Pending |
+| New E2E test added only when the workflow was core/complex and no existing flow could cover it | Pending | Pending |
+| Exact command output recorded for required E2E/test runs, or `N/A` coverage-decision evidence recorded | Pending | Pending |
+| New/updated tests assert user-visible or persisted state when tests were warranted | Pending | Pending |
+| New/updated E2E tests prove real core task functionality when E2E was warranted | Pending | Pending |
 | Superficial color/class/existence-only checks avoided | Pending | Pending |
 | Tests avoid brittle implementation details | Pending | Pending |
 | Fixed wait review completed and clean | Pending | Pending |
@@ -132,7 +140,7 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Test selection and retry ledger complete | Pending | Pending |
 | Connected-spec ledger covers each E2E command; unfiltered full suite was not run without explicit full-E2E task request or concrete exact-task repo requirement | Pending | Pending |
 | No unfiltered full E2E was run after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | Pending | Pending |
-| Broad/full unit commands, if any, were one final sanity check or explicit exception after targeted/connected tests | Pending | Pending |
+| Broad/full unit commands, if any, were one final sanity check or explicit exception after minimal warranted targeted/connected tests | Pending | Pending |
 | Suspected pre-existing/order-dependent failures were diagnosed with narrow evidence before any broader command was considered | Pending | Pending |
 | No confidence-only or blind identical failing-command rerun | Pending | Pending |
 | First-run targeted E2E timeout was at or below `30000` ms or justified | Pending | Pending |
@@ -145,21 +153,22 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Metric | Required | Actual |
 | --- | --- | --- |
 | Score | >= 24/30 | 0/30 |
-| Critical E2E/test items | all pass | Pending |
-| Existing E2E tests inspected before coverage decision | yes | Pending |
-| Existing E2E coverage updated when task affects existing flow | yes | Pending |
-| New E2E tests added only when existing tests cannot cleanly cover the workflow | yes | Pending |
-| New/affected behavior covered or defended | yes | Pending |
+| Critical E2E/test items, or defended `N/A` decision | all pass | Pending |
+| E2E coverage decision recorded, including `N/A` when no E2E is warranted | yes | Pending |
+| Existing E2E tests inspected before coverage decision when E2E was warranted | yes | Pending |
+| Existing E2E coverage updated when warranted behavior affects existing flow | yes | Pending |
+| New E2E tests added only when existing tests cannot cleanly cover a core/complex workflow | yes | Pending |
+| New/affected critical behavior covered or defended | yes | Pending |
 | Tests assert meaningful functional outcomes | yes | Pending |
 | Superficial/flaky one-off checks avoided | yes | Pending |
-| Required tests pass or unrelated failure evidenced | yes | Pending |
-| Exact command output recorded in artifact or cited repo-local log | yes | Pending |
+| Required tests pass, no E2E was warranted, or unrelated failure evidenced | yes | Pending |
+| Exact command output recorded in artifact or cited repo-local log when a command was required; otherwise `N/A` decision recorded | yes | Pending |
 | Phase 3 build reused, or rebuild reason and output recorded | yes | Pending |
 | Open gaps for E2E/test coverage updated | yes | Pending |
 | No placeholder rows in `open-gaps.md` | yes | Pending |
 | Test quality review passed | yes | Pending |
 | Test selection and retry ledger complete | yes | Pending |
-| Broad/full unit commands were skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
+| Broad/full unit commands were skipped or used once only as final sanity/explicit exception after minimal warranted targeted and connected tests | yes | Pending |
 | No unfiltered full E2E unless task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | yes | Pending |
 | No confidence-only or blind identical failing-command rerun | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |

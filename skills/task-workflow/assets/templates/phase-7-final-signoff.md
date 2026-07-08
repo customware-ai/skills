@@ -27,9 +27,9 @@
 | Stale/deferred open gaps reconciled | Pending |
 | Extracted `AGENTS.md` development rules followed | Pending |
 | Phase 3 did not use broad/full unit, Vitest, or Playwright/E2E as review/confidence/state-discovery commands | Pending |
-| Phase 4/6 test selection and retry ledgers current | Pending |
-| Targeted and connected tests prove the changed behavior before any final sanity/exception-full unit command | Pending |
-| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | Pending |
+| Phase 4/6 minimal test selection and retry ledgers current, including `N/A` when no test is warranted | Pending |
+| Minimal warranted targeted and connected tests prove the core changed behavior before any final sanity/exception-full unit command, or no test was warranted | Pending |
+| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after minimal warranted targeted and connected tests | Pending |
 | No unfiltered full E2E unless the task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | Pending |
 | No unfiltered full E2E after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | Pending |
 | Broad/full unit commands, if any, have final sanity/explicit exception reasons | Pending |
@@ -93,8 +93,8 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | --- | --- | --- | --- |
 | Phase 5 screenshots | Every screenshot path cited in Phase 5 exists | Pending | Pending |
 | Phase 5 responsive quality | Required viewports include mobile, tablet, desktop, standard `1920x1080`, and large `2560x1440` when UI changed; evidence shows responsive quality passed as a first-class guarantee with no broken UI, excessive 1080p dead space, or unfinished-looking 2560px empty regions | Pending | Pending |
-| Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log | Pending | Pending |
-| Test selection and retry evidence | Phase 3 boundary plus Phase 4/6 ledgers explain targeted-first order, connected-spec coverage, final full-unit sanity/exception reason if used, no confidence-only/state-discovery full-suite run, rerun basis, outcomes, and next actions | Pending | Pending |
+| Phase 6 E2E/test output | Exact command output recorded in artifact or cited repo-local log when a command was required; otherwise defended `N/A` coverage decision recorded | Pending | Pending |
+| Test selection and retry evidence | Phase 3 boundary plus Phase 4/6 ledgers explain the minimal coverage decision, `N/A` where no test is warranted, connected-spec coverage when warranted, final full-unit sanity/exception reason if used, no confidence-only/state-discovery full-suite run, rerun basis, outcomes, and next actions | Pending | Pending |
 | Managed lifecycle evidence | Phase 5/6 records the correct lifecycle owner: helper by default, repo Playwright `webServer` or manual fallback only with reason/diagnostics; readiness, browser preflight, cleanup, and runtime logs are cited | Pending | Pending |
 | DB/setup/server reuse evidence | Phase 5/6 does not repeatedly reset DB, rerun migrate/seed, or restart the server between related E2E commands without an invalidating state change or lifecycle diagnostic | Pending | Pending |
 | Timeout/quiet-run triage evidence | Phase 5/6 records timeout values and triage for every timed-out, quiet, or longer-rerun Playwright/E2E command; no longer timeout is used without timer-only/no-useful-output failure plus clean state triage | Pending | Pending |
@@ -126,11 +126,11 @@ Re-open every required phase artifact. Do not infer pass status from memory or f
 | Phase 5 cited screenshots exist | yes | Pending |
 | Phase 5 responsive-quality evidence current and first-class when UI changed | yes | Pending |
 | No unresolved broken UI, excessive 1080p dead-space issue, or unfinished-looking 2560px empty-region issue | yes | Pending |
-| Phase 6 exact E2E/test command output recorded | yes | Pending |
+| Phase 6 exact E2E/test command output recorded when a command was required, or defended `N/A` coverage decision recorded | yes | Pending |
 | Phase 3 did not use broad/full test commands as review/confidence/state-discovery commands | yes | Pending |
-| Phase 4/6 test selection and retry ledgers current | yes | Pending |
-| Targeted and connected tests prove the changed behavior before any final sanity/exception-full unit command | yes | Pending |
-| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after targeted and connected tests | yes | Pending |
+| Phase 4/6 minimal test selection and retry ledgers current | yes | Pending |
+| Minimal warranted targeted and connected tests prove the core changed behavior before any final sanity/exception-full unit command, or no test was warranted | yes | Pending |
+| Full unit/Vitest suite was skipped or used once only as final sanity/explicit exception after minimal warranted targeted and connected tests | yes | Pending |
 | No unfiltered full E2E unless the task explicitly requested full E2E or a concrete written repo instruction named full E2E/all-spec for this exact task | yes | Pending |
 | No unfiltered full E2E after targeted/connected E2E already passed unless related code, test, config, fixture, migration, or build input changed | yes | Pending |
 | Broad/full unit commands, if any, have final sanity/explicit exception reasons | yes | Pending |

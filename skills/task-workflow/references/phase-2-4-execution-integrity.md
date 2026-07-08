@@ -13,7 +13,7 @@ Implementation authority is:
 1. the task body
 2. target repo instructions, especially the task-relevant development rules extracted from `AGENTS.md`
 3. Phase 1 research and implementation plan
-4. existing repo contracts, route patterns, service boundaries, components, and test structure
+4. existing repo contracts, route patterns, service boundaries, components, and minimal test structure
 
 If implementation discovers that the Phase 1 plan is wrong, record the plan change in the current phase artifact and cite the file or runtime evidence that forced the change. Return to Phase 1 only when the original research is no longer adequate.
 
@@ -38,7 +38,7 @@ If implementation discovers that the Phase 1 plan is wrong, record the plan chan
 - Its Phase Artifact Index and Artifact Pointers must point to the phase-owned artifacts where detailed researched-file, edited-file, check/log, and test evidence lives.
 - If `progress.md` says a later phase than the earliest failing phase artifact, the phase artifact wins. Correct `CURRENT_PHASE.txt` and `progress.md`, then continue from the earliest failing phase.
 
-## Code And Coverage Discipline
+## Code And Minimal Coverage Discipline
 
 Follow the target repo's code rules and the task-relevant development rules extracted from `AGENTS.md`. Do not make the task pass by weakening code quality.
 
@@ -46,6 +46,9 @@ Follow the target repo's code rules and the task-relevant development rules extr
 - Avoid broad unsafe type assertions such as `as never`, `as any`, or equivalent type erasure unless a narrow repo-specific boundary genuinely requires it and the artifact explains why.
 - Do not silence lint, type, or runtime warnings introduced by this task.
 - Do not delete existing tests just because they fail after the new task. Migrate, replace, or document why the old coverage no longer represents valid behavior.
+- Do not create tests by default. Create or update tests only when the change is large enough, core enough, or risky enough to need durable regression coverage.
+- Small fixes, copy changes, color/style changes, spacing/layout tuning, simple button wiring, and minor UI-only changes normally need no new unit, component, integration, or E2E test. Record `N/A` with the reason when no test is warranted.
+- Unit tests belong to stable core behavior: shared logic, contracts, permissions, critical state machines, parsers, calculations, or central components whose behavior must stay strict. Do not write unit tests for every simple component, incidental click, visual change, or one-off branch.
 
 ## Tool And Command Discipline
 
@@ -69,23 +72,23 @@ node task-workflow/scripts/server-probe.mjs \
 - If server readiness is not proven before the timeout, treat startup as failed, cite the helper's log evidence, and retry only with a corrected helper invocation or implementation change. If the helper reports that the ready URL already responds before startup, do not kill unknown processes; pick a task-owned port or stop the exact known PID outside the helper with evidence. Broad process-name cleanup is only for explicit sandbox-owned recovery when PID/port cleanup is impossible and the artifact records why.
 - Phase 2 may run narrow checks only when needed to unblock implementation or prove a specific work packet. It must not run routine typecheck, lint, build, or repo combined check commands such as `pnpm run check` after edits. `pnpm run check` or an equivalent combined static command is allowed in Phase 2 only when a concrete compile/type issue blocks the current packet and the artifact records that blocker before the command. Keep Phase 2 evidence strict through artifact updates, readback, diff review, targeted search, and any narrow unblock command that was actually needed.
 - Phase 3 owns the normal ordered static/build checkpoint after the implementation and connected-place sweep: typecheck, then lint, then build. Each command must run only after the prior command is passing unless the target repo combines them in one documented command.
-- Phase 5 interactive browser verification and Phase 6 durable E2E coverage belong to their own phases. If Phase 2 discovers browser/E2E work is needed, record the gap and continue the ordered gates.
+- Phase 5 interactive browser verification and the Phase 6 minimal E2E coverage decision belong to their own phases. If Phase 2 discovers browser/E2E work may be needed, record the gap and continue the ordered gates.
 
-## Test Selection And Retry Discipline
+## Minimal Test Selection And Retry Discipline
 
-Phase 2, Phase 3, and Phase 4 checks must prove the implementation without turning validation into a blind retry loop or starting with expensive broad suites.
+Phase 2, Phase 3, and Phase 4 checks must prove the implementation without turning validation into a blind retry loop, broad-suite habit, or test-writing exercise.
 
 - Prefer the smallest useful command that can prove or disprove the current risk.
-- Create or update tests for the changed behavior before broad validation.
-- For changed service, query, schema, or pure logic, run the new or updated targeted unit/service tests first.
-- For changed route, component, store, or UI state logic, run the new or updated targeted route/component tests first.
-- In Phase 2, stop at the new or updated targeted test file needed for the current packet unless a concrete blocker requires another narrow command. Do not run broad unit directory globs such as `tests/unit/contracts/ tests/unit/services/ tests/unit/components/` in Phase 2.
-- Then run connected tests that share the changed contracts, fixtures, routes, stores, or user workflow in Phase 4 or Phase 6, after Phase 3 closes connected implementation gaps and static/build evidence is current.
+- First decide whether any new or updated test is warranted. If the change is small, visual-only, or incidental, record why no test is needed and rely on code review, static/build checks, and Phase 5 interactive verification when UI changed.
+- For changed service, query, schema, pure logic, or central state, write or run a targeted unit/service test only when the behavior is core enough to need strict regression protection.
+- For changed route, component, store, or UI state logic, write or run a targeted route/component test only when the component or state transition is central, reusable, or risky enough to justify it.
+- In Phase 2, stop at the narrow warranted test for the current packet when one is needed; otherwise do not run tests. Do not run broad unit directory globs such as `tests/unit/contracts/ tests/unit/services/ tests/unit/components/` in Phase 2.
+- Run connected tests in Phase 4 only when the minimal coverage decision identifies shared contracts, fixtures, routes, stores, or user workflows that need protection before browser verification.
 - Phase 3 is primarily inspection and gap closure. It may run a targeted check only after a Phase 3 repair or when one narrow command is needed to prove a specific suspected issue. It must not run full unit/Vitest or full Playwright/E2E as a Phase 3 review tool, global regression check, or "understand current state" command.
-- A broad/full unit or Vitest suite may be used only as one final sanity check after targeted and connected tests pass, or when the target repo explicitly requires it for this exact task, the task explicitly asks for it, global/shared infrastructure changed, or targeted/connected output is incomplete or stale.
+- A broad/full unit or Vitest suite may be used only as one final sanity check after minimal warranted targeted and connected tests pass, or when the target repo explicitly requires it for this exact task, the task explicitly asks for it, global/shared infrastructure changed, or targeted/connected output is incomplete or stale.
 - Do not start with a full unit/Vitest suite unless the target repo explicitly requires it for this exact task or the artifact records a concrete global/shared reason that makes targeted-first impossible.
 - If a full unit/Vitest suite is justified and fails, inspect the failure and rerun the smallest failing or affected command. Do not immediately rerun the full suite.
-- Record every meaningful check/test command in the Phase 4 artifact with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
+- Record every meaningful check/test command in the Phase 4 artifact with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action. If no test command is warranted, record `N/A` and the reason.
 - Do not rerun tests only for confidence. Rerun when related implementation changed, the test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
 - Before rerunning the exact same failing command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs/state/output first, then change the implementation, test, command scope, or diagnostic strategy before running again.
 - When a failure appears pre-existing, order-dependent, or unrelated, keep the command scope narrow. Use the failing test/spec, logs, DOM/state, trace, screenshot, or persisted data evidence to prove the classification; do not run a full suite just to discover the global state.
@@ -95,7 +98,7 @@ Phase 2, Phase 3, and Phase 4 checks must prove the implementation without turni
 
 Phase 3 is the default checkpoint for typecheck, lint, and build.
 
-- Complete Phase 2 implementation packets first, including required tests/docs edits, while preserving packet-level evidence.
+- Complete Phase 2 implementation packets first, including only warranted tests/docs edits, while preserving packet-level evidence.
 - In Phase 3, inspect connected places first. If the task changed a contract, data shape, route, component, store, permission, migration, fixture, test helper, or shared UI pattern, find the connected callers/surfaces and update or defend them before static/build validation.
 - Run typecheck, then lint, then build. If the repo has a single command that combines these, record the combined command and its order instead of inventing duplicate commands.
 - When a command fails, inspect enough output to identify every visible issue group by file, contract, or root cause. Do not rely on truncated `tail`/`head` output as the only evidence if it can hide issue groups. If output is too large, use focused searches, reporter options, or a temporary full-output log; delete any temporary full-output log after extracting issue groups. Record issue groups, fixes, and rerun reason in the artifact, not large pasted logs.
@@ -115,7 +118,7 @@ If the task touches multiple layers, prefer this order unless the repo architect
 3. service or API route changes
 4. frontend data access and state wiring
 5. route/page/component implementation
-6. focused tests
+6. minimal warranted tests
 7. docs required by changed behavior
 
 Record deviations in the phase artifact. Do not backfill the checklist after coding without evidence.
@@ -236,7 +239,7 @@ A failing Phase 2 artifact is not a stopping state. Fix the implementation or ar
 3. Review the implementation as if continuing someone else's work.
 4. Find missing routes, missing actions, weak wiring, incomplete state, fragile data flow, untested behavior, stale docs, and accidental scope creep.
 5. Review associated surfaces for consistency. If a UI element was changed in one place, find similar UI elements and update or explicitly defend consistency. If an API/service/schema change enables one flow, verify other callers, routes, mutations, queries, permissions, tests, and docs that share that contract are covered.
-6. Use code inspection, artifact review, targeted search, and narrow file/state checks for the second pass. Do not run full unit/Vitest or full Playwright/E2E in Phase 3. If test execution is needed after a Phase 3 repair, run the smallest targeted command that proves that repair; otherwise record the check to run in Phase 4 or Phase 6.
+6. Use code inspection, artifact review, targeted search, and narrow file/state checks for the second pass. Do not run full unit/Vitest or full Playwright/E2E in Phase 3. If test execution is needed after a Phase 3 repair, run the smallest warranted command that proves that repair; otherwise record the check to run in Phase 4 or Phase 6.
 7. Close every gap that can be closed from local context.
 8. Run the ordered static/build checkpoint: typecheck, lint, build. For each failure, identify visible issue groups, fix every locally-fixable group together, and rerun that same command before moving to the next command. If a temporary full-output log was needed to triage a large failure, delete it after extracting issue groups.
 9. Record reusable build evidence after a passing build, including when later phases may reuse it and what would invalidate it.
@@ -293,7 +296,7 @@ A failing Phase 3 artifact is not a stopping state. Continue the second-pass rev
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-4-integrity-review`.
 2. Re-open Phase 3 ordered static/build evidence and confirm it is still current. If code, config, package/dependency files, migrations/build inputs, or generated assets changed after Phase 3, rerun the invalidated command sequence from the first affected point. Do not rerun build only because Phase 4, Phase 5, Phase 6, or Phase 7 is starting.
-3. Select any remaining relevant tests using the Test Selection And Retry Discipline above. Do not rerun typecheck, lint, or build in Phase 4 when Phase 3 evidence is current.
+3. Select any remaining warranted tests using the Minimal Test Selection And Retry Discipline above. Do not rerun typecheck, lint, or build in Phase 4 when Phase 3 evidence is current.
 4. Run the selected checks/tests and record the command scope, reason, previous related failure, changed-since-failure evidence, outcome, and next action in the Phase 4 artifact.
 5. Inspect failures and fix root causes.
 6. Review code for broken imports, undefined symbols, wrong route wiring, schema drift, data-shape drift, stale mocks, and accidental unrelated edits.
@@ -322,9 +325,10 @@ Critical failures:
 - required check not run and no valid reason recorded
 - check failure caused by this task remains unfixed
 - runtime-blocking issue remains
-- test/check command selection is not recorded with scope and reason
-- broad/full unit or Vitest command is run before targeted and connected tests, repeated after a clean pass, or run without a concrete artifact reason
-- full unit/Vitest suite is run as anything other than one final sanity check after targeted and connected tests pass, or an explicit task/repo/global exception
+- test/check command selection is not recorded with scope and reason, including `N/A` when no test is warranted
+- broad/full unit or Vitest command is run before minimal warranted targeted and connected tests, repeated after a clean pass, or run without a concrete artifact reason
+- full unit/Vitest suite is run as anything other than one final sanity check after minimal warranted targeted and connected tests pass, or an explicit task/repo/global exception
+- tests are added for small fixes, visual-only changes, incidental UI behavior, or trivial button wiring without a concrete core-behavior or risk reason
 - typecheck, lint, or build is rerun in Phase 4 while Phase 3 evidence is current and no invalidating change is recorded
 - tests are rerun only for confidence, or the same failing test command is rerun blindly without a material change, output-staleness, or diagnostic justification
 - lint/type warnings introduced by this task remain unresolved or undefended
@@ -342,7 +346,7 @@ Pass gate:
 - every critical integrity item passes
 - required repo checks pass or any remaining failure is unrelated and documented with evidence
 - Phase 3 ordered typecheck/lint/build evidence is current, or invalidated commands were rerun from the first affected point
-- test/check command selection and retry evidence is recorded
+- test/check command selection and retry evidence is recorded, including `N/A` when no test is warranted
 - no known runtime-blocking issue remains
 - no known violation of extracted `AGENTS.md` development rules remains
 - no changed app/server source contains `console.*` outside the active Phase 5 debug loop

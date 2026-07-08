@@ -41,12 +41,12 @@ Record the passing build output so later phases can reuse it instead of rebuildi
 
 ## Phase 3 Test Boundary
 
-Phase 3 is an inspection and gap-closure pass. Record any narrow command used to prove a Phase 3 repair. If no command was needed, state that verification is deferred to Phase 4 or Phase 6 with the exact check to run there. Broad/full unit, Vitest, or Playwright/E2E suites are not valid Phase 3 review tools.
+Phase 3 is an inspection and gap-closure pass. Record any narrow command used to prove a Phase 3 repair. If no command was needed or no test is warranted, state that and identify any later Phase 4 or Phase 6 check only when the minimal coverage decision requires it. Broad/full unit, Vitest, or Playwright/E2E suites are not valid Phase 3 review tools.
 
 | Item | Evidence |
 | --- | --- |
 | No broad/full unit, Vitest, or Playwright/E2E suite used as Phase 3 review/confidence/state-discovery command | Pending |
-| Any Phase 3 test command was targeted to a specific repair or suspected issue | Pending |
+| Any Phase 3 test command was warranted and targeted to a specific repair or suspected issue | Pending |
 | Suspected pre-existing/order-dependent failures, if any, were classified from narrow logs/state/trace evidence rather than full-suite discovery | Pending |
 
 ## Gate
