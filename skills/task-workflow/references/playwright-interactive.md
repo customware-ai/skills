@@ -13,7 +13,8 @@ Use this reference in Phase 5.
 - Run Phase 5 browser scripts through `task-workflow/scripts/playwright-lifecycle.mjs`.
 - The first browser script run must establish lifecycle ownership. Do not run a script against an assumed existing local server and then treat `fetch failed`, redirects, stale data, or stale build output as a reason to manually start or kill servers.
 - Use the lifecycle helper as the default owner for Playwright/app-server startup, including repo E2E commands when Phase 6 runs them. Put `pnpm exec playwright test ...` inside helper `--run` by default. Use repo Playwright `webServer` ownership only when the helper cannot own the server for that exact command, and record the reason before running it.
-- Pass the repo's normal local command to the lifecycle helper with `--server` for helper-owned custom scripts.
+- Discover the repo's expected verification lifecycle from `AGENTS.md`, `package.json`, README/docs, Playwright config, and `tests/e2e` helpers before choosing commands. The expected pattern is a repo-owned setup command that prepares isolated E2E/test state and deterministic seed data, plus a repo-owned server command that starts the app against that isolated state.
+- Pass the repo-owned verification server command to the lifecycle helper with `--server` when it exists. If the repo has no named server command for that pattern, use the normal local command only after proving it will run against isolated E2E/test state, not production/live data.
 - Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
 - Put only isolated repo-owned test/E2E setup such as test DB reset, test migration, or test seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts. Never put production/live DB reset, seed, cleanup, direct SQLite, or verification-only migration in Phase 5 setup.
 - Do not set database file/path env vars through helper `--env`, setup, server, or run commands. Do not change the repo's internal E2E/end-to-end database file path. Use the repo's existing E2E/end-to-end database configuration. `.dbs/database.db` is the live workspace/production database; production databases must never be used for testing or fixture setup. Deleting or corrupting live user data can cause the user to lose his job.
@@ -45,13 +46,13 @@ Use this reference in Phase 5.
 ```bash
 node task-workflow/scripts/playwright-lifecycle.mjs \
 	--setup "pnpm run prepare:e2e" \
-	--server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
+	--server "pnpm run start:e2e" \
 	--ready-url "http://127.0.0.1:4444" \
 	--run "node task-workflow/playwright/verify-main-flow.mjs" \
 	--command-timeout-ms 20000
 ```
 
-`prepare:e2e` is a placeholder for the repo's checked-in isolated E2E/test setup. Do not copy this example with raw production `db:migrate`, `seed`, `rm .dbs/database.db`, or any command that writes the live/default database. The helper writes server and command logs under `task-workflow/runtime/`. Cite those paths in the Phase 5 artifact when output is too long to paste directly.
+`prepare:e2e` and `start:e2e` are example names for the expected repo-owned isolated setup/server pattern. Use those exact commands when the repo provides them. In older repos, map the example to equivalent repo-owned commands or task-local setup that preserves the same isolation. Do not copy this example with raw production `db:migrate`, `seed`, `rm .dbs/database.db`, or any command that writes the live/default database. The helper writes server and command logs under `task-workflow/runtime/`. Cite those paths in the Phase 5 artifact when output is too long to paste directly.
 
 Timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. Record timeout values, quiet-run evidence, triage checks, and longer-rerun reasons in the current phase artifact. If one targeted run needs more than two minutes, split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure before increasing timeout.
 
