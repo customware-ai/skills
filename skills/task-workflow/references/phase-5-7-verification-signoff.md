@@ -17,7 +17,7 @@ Verification authority is:
 5. real browser behavior observed through standalone Playwright scripts
 6. Phase 4 unit-test evidence and Phase 6 E2E evidence when a phase-owned coverage decision says durable coverage is warranted
 
-Static checks, builds, and tests are not substitutes for interactive Playwright verification.
+Check/lint validation, builds, and tests are not substitutes for interactive Playwright verification.
 Interactive Playwright verification is not a reason to create regression tests when the Phase 4 or Phase 6 coverage decision says durable tests are not warranted.
 
 ## Open Gaps Reconciliation
@@ -156,7 +156,7 @@ Phase 5 has two required evidence stages:
 11. Keep Phase 5 scripts focused on proving the changed behavior and affected UI quality. Do not turn Phase 5 into a broad app audit unrelated to the changed surface.
 12. Capture screenshots under `task-workflow/screenshots/` for the main changed flows and responsive evidence.
 13. Verify every screenshot path cited in the Phase 5 artifact exists before scoring the gate. Record the file-existence command/readback proof in `task-workflow/phase-5-playwright-verification.md`.
-14. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to the earliest affected phase, usually Phase 2 for source fixes, then re-pass Phase 3 static checks and Phase 4 unit coverage before re-entering Phase 5.
+14. If Phase 5 finds a broken flow, bad-case failure, surrounding-feature regression, missing screenshot file, or responsive/UI-quality issue, Phase 5 fails. Record it in the artifact and `open-gaps.md`, return to the earliest affected phase, usually Phase 2 for source fixes, then re-pass Phase 3 check/lint evidence and Phase 4 unit coverage before re-entering Phase 5.
 15. Fix discovered issues and rerun the scripts from clean Node.js processes through the lifecycle helper. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
 16. Review the interactive scripts and E2E tests created so far for fixed waits and record the files inspected plus the result.
 17. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
@@ -229,7 +229,7 @@ Critical failures:
 - screenshot path cited but file does not exist
 - screenshot paths are cited without file-existence proof in the artifact
 - discovered critical UI/runtime issue remains unresolved
-- Phase 5-discovered issue was not routed back to the earliest affected phase, then through Phase 3 static checks and Phase 4 unit coverage before rechecking
+- Phase 5-discovered issue was not routed back to the earliest affected phase, then through Phase 3 check/lint evidence and Phase 4 unit coverage before rechecking
 - script uses DOM shortcuts as a substitute for normal user interaction
 - script contains any fixed wait in the audited files
 - fixed-wait review not recorded
@@ -435,7 +435,7 @@ If this gate fails, stay in Phase 6.
 19. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
 20. If any Phase 7 audit check fails, do not run the completed command. Set `task-workflow/CURRENT_PHASE.txt` to the earliest failing phase, repair the work, update evidence, rescore, loop forward through the gates, and re-enter Phase 7.
 21. Run the completed command only after every prior Phase 7 audit check is clean. Record the exact command and result in `task-workflow/phase-7-final-signoff.md` and `task-workflow/progress.md`.
-22. Treat the completed command as the final external task action. Before task completion, verify that required typecheck, lint, build, unit test, E2E test, app server, server probe, browser probe, and verification evidence already exists in the owning phase artifacts, or loop back to the owning phase only for missing, incomplete, stale, or invalidated evidence.
+22. Treat the completed command as the final external task action. Before task completion, verify that required check, lint, build, unit test, E2E test, app server, server probe, browser probe, and verification evidence already exists in the owning phase artifacts, or loop back to the owning phase only for missing, incomplete, stale, or invalidated evidence.
 23. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
 24. Update `task-workflow/progress.md` so the last completed gate is Phase 7, the Current Phase Pointers, Phase Artifact Index, and Artifact Pointers are current, task-completion evidence is recorded, and the only next action is final response.
 25. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.

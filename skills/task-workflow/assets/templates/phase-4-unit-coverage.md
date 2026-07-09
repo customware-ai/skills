@@ -2,11 +2,11 @@
 
 ## Phase 3 Evidence Review
 
-Re-open Phase 3 ordered typecheck/lint/build and integrity evidence first. Do not rerun typecheck, lint, or build here when Phase 3 evidence is current. If later code/config/package/build-input changes invalidated Phase 3, return to Phase 3 and rerun from the first invalidated command. Starting Phase 4/5/6/7, preparing E2E, or doing final signoff is not an invalidation reason.
+Re-open Phase 3 ordered check/lint/build and integrity evidence first. Do not rerun check, lint, or build here when Phase 3 evidence is current. If later code/config/package/build-input changes invalidated Phase 3, return to Phase 3 and rerun from the first invalidated command. Starting Phase 4/5/6/7, preparing E2E, or doing final signoff is not an invalidation reason.
 
 | Check | Status | Evidence |
 | --- | --- | --- |
-| Phase 3 typecheck/lint/build evidence re-opened | Pending | Pending |
+| Phase 3 check/lint/build evidence re-opened | Pending | Pending |
 | Phase 3 implementation integrity evidence re-opened | Pending | Pending |
 | Phase 3 evidence still current, or returned to Phase 3 for invalidated command | Pending | Pending |
 | Phase 3 invalidation decision recorded before unit coverage work | Pending | Pending |
@@ -95,7 +95,7 @@ Use this section whenever tests are removed. A removal is valid only when the te
 | --- | --- | --- |
 | Score | >= 28/30 | 0/30 |
 | Critical unit-test coverage items | all pass | Pending |
-| Phase 3 static/build and integrity evidence current, or returned to Phase 3 for invalidation | yes | Pending |
+| Phase 3 check/build and integrity evidence current, or returned to Phase 3 for invalidation | yes | Pending |
 | Unit coverage decision matrix recorded, including `N/A` when no unit-level test is warranted | yes | Pending |
 | Existing connected unit-level tests inspected before remove/update/add decisions | yes | Pending |
 | Unit tests removed, updated, added, or skipped according to the existing-first decision order | yes | Pending |

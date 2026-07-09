@@ -57,7 +57,7 @@ Production/live workspace databases, especially `.dbs/database.db`, are not scra
 
 ## Checks During Execution
 
-Phase 2 evidence must stay strict, but routine typecheck, lint, build, unit/Vitest, E2E, Playwright, and combined check commands such as `pnpm run check` belong to later owning phases after the connected-place sweep. Record only narrow non-test checks that were needed to unblock or prove a specific implementation packet.
+Phase 2 evidence must stay strict, but routine check, lint, build, unit/Vitest, E2E, Playwright, and combined check commands such as `pnpm run check` belong to later owning phases after the connected-place sweep. Record only narrow non-test checks that were needed to unblock or prove a specific implementation packet.
 
 | Check | Result | Notes |
 | --- | --- | --- |

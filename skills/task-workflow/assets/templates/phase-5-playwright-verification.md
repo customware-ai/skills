@@ -173,7 +173,7 @@ If matches were found and removed, record the replacement proof here.
 | Phase 3 build reused, or rebuild reason and output recorded | yes | Pending |
 | Production/live database safety evidence is recorded and clean | yes | Pending |
 | Critical UI/runtime issues resolved or defended | yes | Pending |
-| Phase 5 failures routed to the earliest affected phase, then Phase 3 static checks and Phase 4 unit coverage were re-passed before rechecking | yes | Pending |
+| Phase 5 failures routed to the earliest affected phase, then Phase 3 check/lint evidence and Phase 4 unit coverage were re-passed before rechecking | yes | Pending |
 | Open gaps for interactive verification updated | yes | Pending |
 | `open-gaps.md` finalized with real rows or explicit none rows | yes | Pending |
 | Audited Playwright/E2E files use deterministic waits/assertions | yes | Pending |

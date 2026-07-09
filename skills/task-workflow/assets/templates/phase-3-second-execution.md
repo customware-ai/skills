@@ -1,4 +1,4 @@
-# Phase 3 - Second Execution, Integrity, And Static Checks
+# Phase 3 - Second Execution, Integrity, And Check/Lint Validation
 
 ## Second-Pass Review
 
@@ -51,7 +51,7 @@ Production/live workspace databases, especially `.dbs/database.db`, are not scra
 | Migration files/scripts created or changed in Phase 2 or Phase 3? If yes, app migration command ran against production/live default DB before Phase 3 pass | Pending | Pending |
 | Migration command, if any, records target DB/source, reason, output, and no seed/reset/test cleanup mixed into it | Pending | Pending |
 | No manual query, data manipulation, direct SQLite, seed, reset, fixture, data repair, cleanup, delete, or truncate touched production/live DB | Pending | Pending |
-| Static/build validation did not depend on modifying production/live user data outside legitimate migrations | Pending | Pending |
+| Check/build validation did not depend on modifying production/live user data outside legitimate migrations | Pending | Pending |
 
 ## Ordered Static And Build Checkpoint
 
@@ -59,9 +59,9 @@ Run this checkpoint after the second-pass connected-place review and any Phase 3
 
 | Step | Command | First result and visible issue groups | Batch fix evidence | Temp full-output log deleted? | Rerun/final result |
 | --- | --- | --- | --- | --- | --- |
-| Typecheck | Pending | Pending | Pending | Pending | Pending |
-| Lint | Pending | Pending | Pending | Pending | Pending |
-| Build | Pending | Pending | Pending | Pending | Pending |
+| Check (`pnpm run check` or repo equivalent) | Pending | Pending | Pending | Pending | Pending |
+| Focused lint (`pnpm run lint` or repo equivalent, only when useful) | Pending | Pending | Pending | Pending | Pending |
+| Build, when separate from check | Pending | Pending | Pending | Pending | Pending |
 
 ## Reusable Build Evidence
 
@@ -76,7 +76,7 @@ Record the passing build output so later phases can reuse it instead of rebuildi
 
 ## Downstream Coverage Handoff
 
-Phase 3 is an inspection, integrity, and static-check pass. Record coverage questions for the owning later phase instead of deciding them here.
+Phase 3 is an inspection, integrity, and check/lint validation pass. Record coverage questions for the owning later phase instead of deciding them here.
 
 | Item | Evidence |
 | --- | --- |
@@ -95,7 +95,7 @@ Phase 3 is an inspection, integrity, and static-check pass. Record coverage ques
 | Implementation integrity review completed and clean | yes | Pending |
 | Production/live database safety evidence is recorded and clean | yes | Pending |
 | Logging review completed with repo-approved logging/telemetry evidence | yes | Pending |
-| Ordered typecheck, lint, and build checkpoint passed or missing commands have repo-specific evidence | yes | Pending |
+| Ordered check, focused lint if used, and build checkpoint passed or missing commands have repo-specific evidence | yes | Pending |
 | Command failures grouped, locally-fixable groups fixed as a batch, and temporary full-output logs deleted before rerunning | yes | Pending |
 | Reusable build evidence recorded | yes | Pending |
 | Downstream unit/E2E coverage handoff recorded where relevant | yes | Pending |

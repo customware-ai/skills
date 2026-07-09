@@ -52,7 +52,7 @@ If implementation files, generated app files, build outputs, or database files a
 
 Re-read this `SKILL.md` after every compaction before continuing work. Re-load the phase references and current task artifacts too. Do not rely on conversational memory.
 
-This skill is a gated execution protocol, not a loose set of suggestions. It turns a task into a repeatable, artifact-driven workflow. The target app must be implemented from the task, target repo, and local codebase evidence, then proven through Phase 3 static checks, Phase 4 unit-test coverage decision, Phase 5 interactive Playwright verification, Phase 6 E2E coverage decision, and final audit.
+This skill is a gated execution protocol, not a loose set of suggestions. It turns a task into a repeatable, artifact-driven workflow. The target app must be implemented from the task, target repo, and local codebase evidence, then proven through Phase 3 check/lint evidence, Phase 4 unit-test coverage decision, Phase 5 interactive Playwright verification, Phase 6 E2E coverage decision, and final audit.
 
 Assume this skill may run fully autonomously and may be compacted mid-run. No human is expected to watch the run line by line. The artifact files are therefore the enforcement system. A phase is not complete because the Agent feels confident. A phase is complete only when its required artifact shows a real passing score and all critical items pass.
 
@@ -95,7 +95,7 @@ This workflow shape is not optional:
 3. Research the codebase and record the implementation plan.
 4. Execute the primary implementation.
 5. Execute a second gap-closure pass.
-6. Run second-pass integrity review and static checks.
+6. Run second-pass integrity review and repo check/lint validation.
 7. Make the unit-test coverage decision: add, update, remove, or explicitly skip unit tests.
 8. Verify interactively with standalone Playwright scripts.
 9. Make the E2E coverage decision: add, update, remove, or explicitly skip E2E tests.
@@ -110,7 +110,7 @@ If the work skips one of those phase boundaries, the run is off track.
 | Phase 0 | artifact reset and scaffold | fresh artifacts, helper scripts, marker, no source edits |
 | Phase 1 | task intake and research | task/domain/attachments/AGENTS/selected skills read, codebase research, implementation plan |
 | Phase 2 | primary implementation | scoped work packets, file evidence, readback/diff/search proof |
-| Phase 3 | second execution, integrity, static checks | connected-surface review, typecheck, lint, build, reusable build evidence |
+| Phase 3 | second execution, integrity, check/lint validation | connected-surface review, repo check, focused lint when useful, build, reusable build evidence |
 | Phase 4 | unit-test coverage decision | add/update/remove/skip decision, existing-test inspection, minimal unit command or `N/A` |
 | Phase 5 | interactive Playwright verification | Stage 1 behavior proof, Stage 2 UI/responsive proof, screenshots, lifecycle evidence |
 | Phase 6 | E2E coverage decision | add/update/remove/skip decision, connected E2E inspection, minimal E2E command or `N/A` |
@@ -191,9 +191,9 @@ Treat these rules as always active.
 
 ### Phase-Owned Command Rules
 
-- Phase 2 completes implementation packets with strict artifact, readback, diff, search, and narrow unblock-command evidence. Defer routine typecheck, lint, build, unit/Vitest, E2E, Playwright, and repo combined check commands such as `pnpm run check` to their owning later phases unless a concrete compile/type issue blocks the current packet and is recorded before the command.
-- Phase 3 reviews connected places, closes missed implementation gaps, performs implementation integrity review, then owns the ordered static/build checkpoint: typecheck, lint, build. Use targeted diagnostics or narrow fix checks only to prove a specific issue group. When a broad static/build command fails, inspect enough output to identify visible issue groups, fix every locally-fixable group before rerunning that broad command, and record only the groups/fixes/rerun reason. Do not rerun a broad command after each tiny fix when other visible issue groups remain. Do not keep huge command logs unless a temporary log is needed for triage; delete temporary full-output logs after extracting issue groups. Record unit/E2E coverage questions for the owning later phase.
-- Phase 4 owns unit-test coverage. It decides whether unit, service, component, or integration-style coverage is warranted; then adds, updates, removes, or explicitly skips that coverage. It may remove existing unit tests when they protect non-core, non-complex, obsolete, or convoluted behavior and the artifact explains why removal improves the test suite. Phase 4 does not rerun typecheck, lint, or build when Phase 3 evidence is current.
+- Phase 2 completes implementation packets with strict artifact, readback, diff, search, and narrow unblock-command evidence. Defer routine check, lint, build, unit/Vitest, E2E, Playwright, and repo combined check commands such as `pnpm run check` to their owning later phases unless a concrete compile/type issue blocks the current packet and is recorded before the command.
+- Phase 3 reviews connected places, closes missed implementation gaps, performs implementation integrity review, then owns the ordered check/build checkpoint: repo check, focused lint when useful, and build when the repo has a separate build. Use targeted diagnostics or narrow fix checks only to prove a specific issue group. When a broad check/build command fails, inspect enough output to identify visible issue groups, fix every locally-fixable group before rerunning that broad command, and record only the groups/fixes/rerun reason. Do not rerun a broad command after each tiny fix when other visible issue groups remain. Do not keep huge command logs unless a temporary log is needed for triage; delete temporary full-output logs after extracting issue groups. Record unit/E2E coverage questions for the owning later phase.
+- Phase 4 owns unit-test coverage. It decides whether unit, service, component, or integration-style coverage is warranted; then adds, updates, removes, or explicitly skips that coverage. It may remove existing unit tests when they protect non-core, non-complex, obsolete, or convoluted behavior and the artifact explains why removal improves the test suite. Phase 4 does not rerun check, lint, or build when Phase 3 evidence is current.
 - Later phases reuse Phase 3 build evidence unless code, config, dependency/build inputs, migrations, generated assets, stale output, or incompatible verification tooling invalidates it. Do not rebuild in Phase 4, Phase 5, Phase 6, or Phase 7 only to prepare, reconfirm, or feel safe.
 - Phase 6 owns E2E coverage. It decides whether E2E coverage is warranted; then adds, updates, removes, or explicitly skips that coverage. It may remove existing E2E tests when they protect non-core, non-complex, obsolete, brittle, or convoluted behavior and the artifact explains why removal improves the test suite.
 - If unit, E2E, or browser work happens before its owning phase, do not fail the task solely for that timing. Carry the artifact, diff, and command output into the owning phase and make the owning phase's remove/update/add/skip decision current before promotion.
@@ -262,7 +262,7 @@ If an actual external blocker prevents completion, record the blocker in the cur
 
 ## OpenCode Turn Continuity Guard
 
-When running inside OpenCode or another tool-driven coding session, the Agent must not end its assistant turn just because a command finished, a typecheck passed, lint started, files were edited, or a phase artifact is temporarily failing.
+When running inside OpenCode or another tool-driven coding session, the Agent must not end its assistant turn just because a command finished, a check passed, lint started, files were edited, or a phase artifact is temporarily failing.
 
 After every tool result, before returning control to the user, check:
 
@@ -271,7 +271,7 @@ After every tool result, before returning control to the user, check:
 - Does the current phase gate still contain `Pending`, `0/...`, or missing evidence?
 - Is the next required workflow action locally available?
 
-If the answer to any of the first three is yes and the next action is locally available, immediately continue with that next action in the same run. Do not stop at a narrative checkpoint such as "now run lint", "typecheck passes", "next I will update the artifact", or "remaining work is...".
+If the answer to any of the first three is yes and the next action is locally available, immediately continue with that next action in the same run. Do not stop at a narrative checkpoint such as "now run lint", "check passes", "next I will update the artifact", or "remaining work is...".
 
 The only valid stopping states are:
 
@@ -291,7 +291,7 @@ These are hard constraints:
 - Backend/data work must follow the repo's existing service, contract, query, and persistence boundaries.
 - Frontend runtime code must not import server-only runtime modules.
 - Reusable UI styling belongs in shared primitives, component-local styling, or existing design tokens, not fake global one-off component classes.
-- Phase 3 static checks, Phase 4 unit-test work, Phase 5 interactive Playwright verification, and Phase 6 E2E work are separate gates. None is a substitute for another.
+- Phase 3 check/lint evidence, Phase 4 unit-test work, Phase 5 interactive Playwright verification, and Phase 6 E2E work are separate gates. None is a substitute for another.
 - The Agent must review the app part by part, route by route, state by state, and flow by flow.
 - If a critical visible action, route, data mutation, or verification path remains fake, broken, or unreviewed, the run has not passed.
 - Existing tests must not be deleted merely to make the new task pass. If obsolete tests are removed, replace their useful coverage or document why the old coverage no longer applies.
@@ -431,9 +431,9 @@ Execute the researched plan in order, keep changes scoped, and record implementa
 
 Detailed process: `references/phase-2-4-execution-integrity.md`.
 
-### Phase 3: Second Execution, Integrity, And Static Checks
+### Phase 3: Second Execution, Integrity, And Check/Lint Validation
 
-Review the implementation as a continuation pass, close missing or weak work, propagate consistency to associated UI/API/data surfaces, run implementation integrity review, and complete the ordered typecheck/lint/build checkpoint. Do not write or run unit/Vitest or E2E tests in Phase 3.
+Review the implementation as a continuation pass, close missing or weak work, propagate consistency to associated UI/API/data surfaces, run implementation integrity review, and complete the ordered check/build checkpoint. Do not write or run unit/Vitest or E2E tests in Phase 3.
 
 Detailed process: `references/phase-2-4-execution-integrity.md`.
 
@@ -518,9 +518,9 @@ These automatically fail the run:
 - starting with a broad/full unit or Vitest suite in Phase 4 before the warranted targeted/connected unit-level tests, when any are warranted, have passed
 - running the full unit/Vitest suite more than once without a concrete artifact reason from target repo instructions, changed global/shared infrastructure, or incomplete/stale output
 - running broad/full unit or Vitest without Phase 4 artifact evidence that warranted targeted/connected tests already passed and this is the one final sanity check, or that the task/repo/global change explicitly requires the broader scope
-- running routine typecheck, lint, or build after every small Phase 2 edit instead of preserving packet evidence and using Phase 3 as the ordered static/build checkpoint
+- running routine check, lint, or build after every small Phase 2 edit instead of preserving packet evidence and using Phase 3 as the ordered check/build checkpoint
 - running repo combined check commands such as `pnpm run check` in Phase 2 without a concrete compile/type blocker recorded before the command
-- rerunning typecheck, lint, or build before all visible locally-fixable issue groups from the prior output are fixed; truncated `tail`/`head` output alone is not enough if it hides issue groups, and temporary full-output logs must be deleted after extraction
+- rerunning check, lint, or build before all visible locally-fixable issue groups from the prior output are fixed; truncated `tail`/`head` output alone is not enough if it hides issue groups, and temporary full-output logs must be deleted after extraction
 - rerunning build in Phase 4, Phase 5, Phase 6, or Phase 7 when Phase 3 build evidence is current and no invalidating change is recorded
 
 ### Playwright And E2E Command Fails
@@ -543,7 +543,7 @@ These automatically fail the run:
 - completing multiple Phase 2 implementation packets before updating their execution-log rows with file evidence
 - replacing evidence tables with prose
 - skipping the second execution pass
-- treating Phase 3 static checks as a substitute for Phase 4 unit-test coverage decisions, Phase 5 interactive Playwright verification, or Phase 6 E2E coverage decisions
+- treating Phase 3 check/lint evidence as a substitute for Phase 4 unit-test coverage decisions, Phase 5 interactive Playwright verification, or Phase 6 E2E coverage decisions
 - treating Playwright verification as a substitute for warranted Phase 4 or Phase 6 test work
 - running Phase 5 interactive Playwright verification or Phase 6 E2E coverage work as a substitute for completing the Phase 2 gate
 - leaving a long-lived dev server, watcher, or interactive command in the foreground until the session stalls

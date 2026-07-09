@@ -66,7 +66,7 @@ Update status and notes only. Full evidence belongs in each phase artifact.
 | 0 - Artifact reset | Pending | `task-workflow/phase-0-artifact-reset.md` | `references/phase-0-1-startup-research.md` | Pending |
 | 1 - Research | Pending | `task-workflow/phase-1-task-research.md` | `references/phase-0-1-startup-research.md` | Pending |
 | 2 - Primary execution | Pending | `task-workflow/phase-2-execution.md` | `references/phase-2-4-execution-integrity.md` | Pending |
-| 3 - Second execution and static checks | Pending | `task-workflow/phase-3-second-execution.md` | `references/phase-2-4-execution-integrity.md` | Pending |
+| 3 - Second execution and check/lint validation | Pending | `task-workflow/phase-3-second-execution.md` | `references/phase-2-4-execution-integrity.md` | Pending |
 | 4 - Unit coverage | Pending | `task-workflow/phase-4-unit-coverage.md` | `references/phase-2-4-execution-integrity.md` | Pending |
 | 5 - Playwright verification | Pending | `task-workflow/phase-5-playwright-verification.md` | `references/phase-5-7-verification-signoff.md`; `references/playwright-interactive.md` | Pending |
 | 6 - E2E coverage | Pending | `task-workflow/phase-6-e2e-verification.md` | `references/phase-5-7-verification-signoff.md` | Pending |
@@ -83,7 +83,7 @@ Keep pointers only. Do not duplicate detailed lists already recorded in phase ar
 | Playwright evidence | `task-workflow/playwright/`; `task-workflow/screenshots/` | `task-workflow/phase-5-playwright-verification.md` | Pending |
 | Managed Playwright lifecycle helper | `task-workflow/scripts/playwright-lifecycle.mjs`; `task-workflow/runtime/` | `task-workflow/phase-5-playwright-verification.md`; `task-workflow/phase-6-e2e-verification.md`; `task-workflow/phase-7-final-signoff.md` | Pending |
 | Managed server probe helper | `task-workflow/scripts/server-probe.mjs`; `task-workflow/runtime/` | `task-workflow/phase-2-execution.md`; `task-workflow/phase-3-second-execution.md` when a narrow runtime probe is required | Pending |
-| Static/build checkpoint | repo-native typecheck/lint/build output or `task-workflow/runtime/` logs | `task-workflow/phase-3-second-execution.md` | Pending |
+| Check/build checkpoint | repo-native check/lint/build output or `task-workflow/runtime/` logs | `task-workflow/phase-3-second-execution.md` | Pending |
 | Production/live DB safety | DB/migration/setup evidence in execution and verification artifacts | `task-workflow/phase-2-execution.md`; `task-workflow/phase-3-second-execution.md`; `task-workflow/phase-5-playwright-verification.md`; `task-workflow/phase-6-e2e-verification.md` | Pending |
 | Unit evidence | `task-workflow/runtime/` or exact pasted command output | `task-workflow/phase-4-unit-coverage.md` | Pending |
 | E2E evidence | `task-workflow/runtime/` or exact pasted command output | `task-workflow/phase-6-e2e-verification.md` | Pending |
