@@ -49,6 +49,19 @@ Reuse the Phase 3 passing build unless code, config, package/dependency files, m
 | Background server cleaned up by helper or explicitly handed to next bounded command | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
+## Production Database Safety
+
+Production/live workspace databases, especially `.dbs/database.db`, are not scratch files. Deleting, resetting, reseeding, truncating, manipulating, or corrupting them can destroy user work and can cause the user to lose his job. Phase 5 may use only isolated test/E2E state proved by repo-owned config. The production/live DB may not be touched for Playwright setup, fixture setup, seed, reset, debug, cleanup, manual queries, direct SQLite, data repair, or any data manipulation.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Every setup/server/run command that mentions DB/data state was reviewed before running | Pending | Pending |
+| Production/live DB paths, including `.dbs/database.db` or equivalent default user-data DB, were not deleted/reset/seeded/truncated/migrated/opened with write risk | Pending | Pending |
+| Playwright fixture/setup data used isolated repo-owned test/E2E config, not production/live DB | Pending | Pending |
+| No raw `rm`, `sqlite3`, seed, reset, fixture, cleanup, or direct DB command targeted production/live DB | Pending | Pending |
+| No manual query, data manipulation, data repair, delete, or truncate touched production/live DB | Pending | Pending |
+| If the task created/changed a migration, Phase 2/3 artifact already records production/live app migration evidence; Phase 5 did not rerun it as test setup | Pending | Pending |
+
 ## Phase 5 Coverage Plan
 
 Phase 5 is the main user-facing verification phase. Use multiple focused Playwright scripts, probes, viewport passes, screenshots, or clean reruns when needed to prove changed flows and UI correctness. The limit is relevance to the changed or adjacent surfaces, not the smallest possible number of browser checks.
@@ -158,6 +171,7 @@ If matches were found and removed, record the replacement proof here.
 | Screenshot paths exist | yes | Pending |
 | Screenshot existence audit completed for every cited path | yes | Pending |
 | Phase 3 build reused, or rebuild reason and output recorded | yes | Pending |
+| Production/live database safety evidence is recorded and clean | yes | Pending |
 | Critical UI/runtime issues resolved or defended | yes | Pending |
 | Phase 5 failures routed to the earliest affected phase, then Phase 3 static checks and Phase 4 unit coverage were re-passed before rechecking | yes | Pending |
 | Open gaps for interactive verification updated | yes | Pending |

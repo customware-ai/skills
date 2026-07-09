@@ -108,6 +108,19 @@ Record every meaningful E2E command, including reruns. Use the smallest useful s
 | Background server cleaned up after tests | Pending | Pending |
 | Cleanup method recorded and bounded | Pending | Pending |
 
+## Production Database Safety
+
+Production/live workspace databases, especially `.dbs/database.db`, are not scratch files. Deleting, resetting, reseeding, truncating, manipulating, or corrupting them can destroy user work and can cause the user to lose his job. Phase 6 may use only isolated test/E2E state proved by repo-owned config. The production/live DB may not be touched for E2E setup, fixture setup, seed, reset, debug, cleanup, manual queries, direct SQLite, data repair, or any data manipulation.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Every setup/server/run command that mentions DB/data state was reviewed before running | Pending | Pending |
+| Production/live DB paths, including `.dbs/database.db` or equivalent default user-data DB, were not deleted/reset/seeded/truncated/migrated/opened with write risk | Pending | Pending |
+| E2E fixture/setup data used isolated repo-owned test/E2E config, not production/live DB | Pending | Pending |
+| No raw `rm`, `sqlite3`, seed, reset, fixture, cleanup, or direct DB command targeted production/live DB | Pending | Pending |
+| No manual query, data manipulation, data repair, delete, or truncate touched production/live DB | Pending | Pending |
+| If the task created/changed a migration, Phase 2/3 artifact already records production/live app migration evidence; Phase 6 did not rerun it as test setup | Pending | Pending |
+
 ## Fixed Wait Review
 
 Inspect the Playwright scripts and E2E tests used in this phase.
@@ -208,6 +221,7 @@ Record every timed-out, quiet, or longer-timeout E2E/helper run. A longer rerun 
 | Repeated E2E commands have material change, stale-output, or diagnostic reasons | yes | Pending |
 | Fixed wait review completed and clean | yes | Pending |
 | Server/command discipline passed | yes | Pending |
+| Production/live database safety evidence is recorded and clean | yes | Pending |
 | Repo-owned test database configuration evidence recorded | yes | Pending |
 | Correct lifecycle owner managed startup/readiness/cleanup | yes | Pending |
 | First E2E command established lifecycle ownership before testing | yes | Pending |

@@ -82,7 +82,10 @@ Verification phases must not stall on foreground servers or watchers.
 
 ### Database And Server Safety
 
-- Database file paths are not a lifecycle-helper option. Do not set `E2E_DATABASE_FILE_PATH`, `DATABASE_PATH`, `DB_PATH`, or any similar database file/path variable with helper `--env`, `--setup`, `--server`, `--run`, native Playwright commands, or custom scripts. Do not change the repo's internal E2E/end-to-end database file path. Use the target repo's checked-in E2E/end-to-end database config or already-materialized environment. `.dbs/database.db` is the live workspace/production database, not a test database; production databases must never be used for testing. Any Playwright/E2E/end-to-end fixture write, reset, migration, or direct SQLite access against `.dbs/database.db` is a critical failure.
+- Database file paths are not a lifecycle-helper option. Do not set `E2E_DATABASE_FILE_PATH`, `DATABASE_PATH`, `DB_PATH`, or any similar database file/path variable with helper `--env`, `--setup`, `--server`, `--run`, native Playwright commands, or custom scripts. Do not change the repo's internal E2E/end-to-end database file path. Use the target repo's checked-in E2E/end-to-end database config or already-materialized environment. `.dbs/database.db` is the live workspace/production database, not a test database; production databases must never be used for testing. Any Playwright/E2E/end-to-end fixture write, reset, migration, seed, direct SQLite access, inspection-with-write-risk, cleanup, debugging, manual query, or data manipulation against `.dbs/database.db` is a critical failure.
+- Treat production/live database safety as job-critical. Deleting, resetting, reseeding, truncating, or corrupting the production database can destroy user work and can cause the user to lose his job. This is not an acceptable verification risk, even in a sandbox, because the workflow trains agents to touch live user data.
+- The only allowed production/live database action is the app's required migration command for a real schema change. This does not permit working on `.dbs/database.db` or any production/live DB. If the task creates or changes a migration, that migration must already have been run against the production/live default DB in the owning implementation/static-check phase, recorded as migration evidence, and not mixed with seed/reset/fixture/test cleanup. Verification phases may use only isolated test/E2E database state proved by repo-owned config.
+- Before any Phase 5 or Phase 6 command that mentions `db`, `database`, `sqlite`, `migrate`, `seed`, `fixture`, `reset`, `.dbs`, `rm`, `truncate`, or similar data-state words, record the target database path/source in the phase artifact. If the target is production/live, unknown, or only assumed safe, do not run the command.
 - Do not assume a backgrounded process started successfully just because the command returned. A server is ready only after the helper records a successful readiness result.
 - Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as DB reset, migration, seed, or test fixture preparation into lifecycle `--setup "..."` for helper-owned runs. Treat setup plus server startup as reusable for the current verification batch: prefer one helper-owned run with the needed script/spec commands, or rerun setup only after code, migrations, fixtures, DB state, build inputs, or the prior setup output changed. Do not repeatedly delete/recreate the DB or restart the server before each targeted script/spec just because another E2E command is next. If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone. If the helper times out or produces no useful output, treat that as lifecycle/setup evidence, inspect `task-workflow/runtime/server.log`, `task-workflow/runtime/setup-*.log`, readiness output, and `task-workflow/runtime/run-*.log`, then change the setup, server command, ready URL, test command, fixture, or diagnostic before rerunning. If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management with captured PID/log/readiness/cleanup evidence.
 - Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when present and fails early when the project Playwright version does not match the sandbox browser cache.
@@ -108,7 +111,7 @@ Example helper shape:
 
 ```bash
 node task-workflow/scripts/playwright-lifecycle.mjs \
-  --setup "pnpm run db:migrate" \
+  --setup "pnpm run prepare:e2e" \
   --server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
   --ready-url "http://127.0.0.1:4444" \
   --run "node task-workflow/playwright/verify-main-flow.mjs" \
@@ -119,12 +122,14 @@ For E2E:
 
 ```bash
 node task-workflow/scripts/playwright-lifecycle.mjs \
-  --setup "pnpm run db:migrate" \
+  --setup "pnpm run prepare:e2e" \
   --server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
   --ready-url "http://127.0.0.1:4444" \
   --run "pnpm exec playwright test tests/e2e/changed-flow.spec.ts --reporter=line" \
   --command-timeout-ms 30000
 ```
+
+`prepare:e2e` is a placeholder for the repo's checked-in isolated E2E/test setup. Do not copy these examples with a raw production `db:migrate`, `seed`, `rm .dbs/database.db`, or any command that writes the live/default database.
 
 ## Phase 5: Interactive Playwright Verification
 
@@ -142,7 +147,7 @@ Phase 5 has two required evidence stages:
 3. Confirm `references/phase-5-7-verification-signoff.md` and `references/playwright-interactive.md` are loaded as the required current phase references before Phase 5 work starts.
 4. Confirm `task-workflow/scripts/playwright-lifecycle.mjs` exists and is readable.
 5. Write standalone Playwright scripts under `task-workflow/playwright/`. Multiple scripts are acceptable when they keep the evidence clearer, separate functional and responsive concerns, or isolate failure triage.
-6. Run the scripts through `task-workflow/scripts/playwright-lifecycle.mjs` with the repo's normal local app command, a readiness URL, bounded command timeout, and runtime logs. First-run Phase 5 script/probe timeout should be `15000`-`20000` ms.
+6. Run the scripts through `task-workflow/scripts/playwright-lifecycle.mjs` with the repo's normal local app command, a readiness URL, bounded command timeout, runtime logs, and production/live database safety proof. First-run Phase 5 script/probe timeout should be `15000`-`20000` ms.
 7. Stage 1 - functional behavior: drive the changed feature through real user interactions and prove the task behavior works. Verify primary routes, forms, buttons, menus, dialogs, tables, navigation, save flows, and error states touched or implied by the task.
 8. In Stage 1, exercise only the relevant bad cases and non-ideal user behavior: invalid submissions, empty states, cancel/close paths, repeated clicks where relevant, out-of-order actions, navigating away/back, and nearby controls a real user could click while using the feature.
 9. In Stage 1, smoke-test surrounding UI/features that share the changed surface, such as adjacent navigation, list/detail transitions, filters/search, dialogs, menus, sidebars, and nearby actions that could be accidentally broken by the implementation.
@@ -156,7 +161,7 @@ Phase 5 has two required evidence stages:
 17. Update `task-workflow/open-gaps.md` for every browser/runtime/manual-verification gap closed, defended, or still open.
 18. Update `task-workflow/progress.md` with browser evidence summary, a pointer to `task-workflow/phase-5-playwright-verification.md` for Playwright/screenshot/log details, fixed-wait review state, open gaps, and next local action.
 19. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-20. Record Stage 1 functional behavior coverage, Stage 2 UI/responsive quality coverage, relevant bad-case coverage, surrounding-feature smoke, screenshots, screenshot existence proof, lifecycle helper command, readiness proof, runtime log paths, timeout/quiet-run triage, cleanup result, issues, fixes, open-gap status, and fixed-wait review evidence.
+20. Record Stage 1 functional behavior coverage, Stage 2 UI/responsive quality coverage, relevant bad-case coverage, surrounding-feature smoke, screenshots, screenshot existence proof, lifecycle helper command, readiness proof, runtime log paths, production/live database non-use proof, timeout/quiet-run triage, cleanup result, issues, fixes, open-gap status, and fixed-wait review evidence.
 21. After the Phase 5 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-6-e2e-verification`.
 22. Re-read `references/phase-5-7-verification-signoff.md` before doing Phase 6 work.
 23. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 6.
@@ -168,6 +173,7 @@ The artifact must cite real evidence for the two Phase 5 stages:
 - launch command and local URL
 - lifecycle helper command
 - readiness proof and runtime log path
+- proof that no command used, deleted, reset, seeded, migrated, inspected-with-write-risk, or directly modified the production/live database
 - Playwright script path
 - Stage 1 route or state exercised
 - Stage 1 interaction performed
@@ -205,6 +211,9 @@ Critical failures:
 - lifecycle helper not used for Phase 5 app startup and script execution, except after recorded helper failure and a justified fallback
 - first app/browser command ran against an assumed existing server instead of establishing helper/repo lifecycle ownership
 - manual cleanup, fixed `sleep`, DB-delete, or server-start command chain used instead of the lifecycle helper before a diagnosed helper failure
+- any Phase 5 command deletes, resets, reseeds, truncates, migrates, directly opens with write risk, or modifies the production/live workspace database, including `.dbs/database.db` or equivalent default user-data DB
+- Phase 5 artifact lacks proof that DB/fixture/setup commands targeted only isolated repo-owned test/E2E state
+- production/live DB access is treated as harmless because the run is a sandbox, because the file is local, or because the command appears under `task-workflow/`
 - first-run targeted Phase 5 Playwright script/probe uses a timeout above `20000` ms without a task-specific artifact reason
 - Phase 5 timeout is increased after useful failure evidence, or after timer-only/no-output failure without recorded helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage proving the app and script are valid to rerun
 - timeout/quiet-run triage is missing from the Phase 5 artifact after any timed-out, quiet, or longer-rerun command
@@ -243,6 +252,7 @@ Pass gate:
 - fixed-wait review is recorded and clean
 - `task-workflow/open-gaps.md` has no placeholder `Pending` rows
 - any background server started for the phase is cleaned up or explicitly handed to the next bounded command
+- production/live database safety proof is recorded and clean
 
 If this gate fails, stay in Phase 5.
 
@@ -260,14 +270,14 @@ If this gate fails, stay in Phase 5.
 10. Record every meaningful E2E command with its scope, why that scope was selected, any previous related failure, what changed since that failure, outcome, and next action.
 11. Do not rerun E2E tests only for confidence. Rerun when related implementation changed, the E2E test changed, config/environment changed, previous output was incomplete/stale, or the next run gathers a narrower diagnostic needed to fix a real failure.
 12. Before rerunning the exact same failing E2E command, record what changed since the previous run or what new evidence the rerun will collect. If nothing changed and the previous output is complete, inspect logs, DOM/state, traces, screenshots, or persisted data first, then change the implementation, E2E test, command scope, or diagnostic strategy before running again.
-13. When E2E tests are warranted, run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup, including existing repo E2E specs. Put the native E2E command inside helper `--run`. Use native Playwright with repo `webServer` only when the helper cannot own the server for that exact command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command. First-run targeted Phase 6 E2E timeout should be at most `30000` ms. Keep one setup/server lifecycle for the related verification batch when the DB/build/server inputs remain valid; do not reset DB, rerun migrations/seed, or restart the server between targeted specs unless the previous run changed or invalidated that state. When a failing E2E run suggests stale DB, stale server, wrong build, redirect, missing fixture data, not-found page state, selector timeout, or no useful helper output, inspect helper run/server/setup logs plus page state before rerunning through the same lifecycle owner. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
+13. When E2E tests are warranted, run the existing, updated, new, and connected tests needed to prove existing functionality still works and the new additions work with it. Use `task-workflow/scripts/playwright-lifecycle.mjs` as the default lifecycle owner for Playwright and app-server startup, including existing repo E2E specs. Put the native E2E command inside helper `--run`. Use native Playwright with repo `webServer` only when the helper cannot own the server for that exact command, or after the helper has failed once or twice with recorded diagnostics. If setup is required before a helper-owned server starts, pass it with `--setup` instead of chaining setup, server start, and test execution in one shell command. First-run targeted Phase 6 E2E timeout should be at most `30000` ms. Keep one setup/server lifecycle for the related verification batch when the DB/build/server inputs remain valid; do not reset DB, rerun migrations/seed, or restart the server between targeted specs unless the previous run changed or invalidated isolated test/E2E state. Never reset, seed, inspect, or migrate the production/live database for E2E. When a failing E2E run suggests stale DB, stale server, wrong build, redirect, missing fixture data, not-found page state, selector timeout, or no useful helper output, inspect helper run/server/setup logs plus page state before rerunning through the same lifecycle owner. Use a longer timeout only after a timer-only/no-useful-output failure and recorded clean triage proves the app and test are valid to rerun.
 14. Fix failures and rerun with the smallest command that can prove the fix.
 15. Record the exact command output for every required E2E run. If output is long, write it to a repo-local log file, cite that path, and copy the final pass/fail lines exactly into `task-workflow/phase-6-e2e-verification.md`. If no E2E is warranted, record `N/A` with the coverage-decision evidence instead of command output.
 16. Review the interactive scripts and any E2E tests used in this phase for fixed waits and record the files inspected plus the result. If no E2E test was used, record `N/A` for E2E test inspection.
 17. Update `task-workflow/open-gaps.md` for every E2E coverage gap closed, defended, or still open.
 18. Update `task-workflow/progress.md` with a pointer to `task-workflow/phase-6-e2e-verification.md` for E2E-file and E2E-repair details, removed-test rationale, command results summary, fixed-wait review state, coverage gaps, artifact pointer updates, and next local action.
 19. Replace all `open-gaps.md` placeholder rows with real rows or explicit `None currently recorded` rows.
-20. Record the E2E coverage decision matrix, connected existing E2E tests inspected for every changed workflow, old-agent/excess-E2E pruning decision, E2E tests removed, E2E tests updated, E2E tests added, New E2E Burden Ledger, commands, exact command output evidence, outcomes, E2E-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps. If no E2E is warranted, record `N/A` with the reason and do not create an E2E test.
+20. Record the E2E coverage decision matrix, connected existing E2E tests inspected for every changed workflow, old-agent/excess-E2E pruning decision, E2E tests removed, E2E tests updated, E2E tests added, New E2E Burden Ledger, commands, exact command output evidence, production/live database non-use proof, outcomes, E2E-selection/retry evidence, fixed-wait review evidence, and remaining coverage gaps. If no E2E is warranted, record `N/A` with the reason and do not create an E2E test.
 21. After the Phase 6 gate passes, set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
 22. Re-read `references/phase-5-7-verification-signoff.md` before doing Phase 7 work.
 23. Update `task-workflow/progress.md` so current phase, current phase reference, and next local action match Phase 7.
@@ -359,8 +369,9 @@ Critical failures:
 - first E2E command depends on an assumed existing server instead of establishing helper/repo lifecycle ownership
 - Playwright/E2E command uses manual cleanup, fixed `sleep`, DB-delete, or server-start command chains instead of lifecycle `--setup` plus managed server/run steps before a diagnosed helper failure
 - any Playwright/E2E/script/helper command sets `E2E_DATABASE_FILE_PATH`, `DATABASE_PATH`, `DB_PATH`, or any similar database file/path override instead of using repo-owned E2E/end-to-end config
-- any Playwright/E2E/end-to-end fixture setup, reset, migration, direct SQLite access, or custom script points at `.dbs/database.db`
-- reviewer or artifact treats a database-path violation as ignorable because it appears in `task-workflow/`; workflow artifacts that mutate sandbox state are runtime-critical
+- any Playwright/E2E/end-to-end fixture setup, reset, seed, migration, direct SQLite access, cleanup, inspection-with-write-risk, or custom script points at `.dbs/database.db` or any equivalent production/live default user-data DB
+- reviewer or artifact treats a database-path violation as ignorable because it appears in `task-workflow/`, is "only local", or is "only sandbox"; workflow artifacts that mutate sandbox state are runtime-critical and train agents to destroy live data
+- any production/live database write occurs outside the app's required migration command for a real schema change, in the owning phase, with explicit migration evidence
 - first-run targeted Phase 6 E2E uses a timeout above `30000` ms without a task-specific artifact reason
 - Phase 6 timeout is increased after useful failure evidence, or after timer-only/no-output failure without recorded helper-log/readiness/URL/DB-fixture/server-log/browser-console/network/page-state triage proving the app and spec are valid to rerun
 - timeout/quiet-run triage is missing from the Phase 6 artifact after any timed-out, quiet, or longer-rerun command

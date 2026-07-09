@@ -84,6 +84,7 @@ Keep pointers only. Do not duplicate detailed lists already recorded in phase ar
 | Managed Playwright lifecycle helper | `task-workflow/scripts/playwright-lifecycle.mjs`; `task-workflow/runtime/` | `task-workflow/phase-5-playwright-verification.md`; `task-workflow/phase-6-e2e-verification.md`; `task-workflow/phase-7-final-signoff.md` | Pending |
 | Managed server probe helper | `task-workflow/scripts/server-probe.mjs`; `task-workflow/runtime/` | `task-workflow/phase-2-execution.md`; `task-workflow/phase-3-second-execution.md` when a narrow runtime probe is required | Pending |
 | Static/build checkpoint | repo-native typecheck/lint/build output or `task-workflow/runtime/` logs | `task-workflow/phase-3-second-execution.md` | Pending |
+| Production/live DB safety | DB/migration/setup evidence in execution and verification artifacts | `task-workflow/phase-2-execution.md`; `task-workflow/phase-3-second-execution.md`; `task-workflow/phase-5-playwright-verification.md`; `task-workflow/phase-6-e2e-verification.md` | Pending |
 | Unit evidence | `task-workflow/runtime/` or exact pasted command output | `task-workflow/phase-4-unit-coverage.md` | Pending |
 | E2E evidence | `task-workflow/runtime/` or exact pasted command output | `task-workflow/phase-6-e2e-verification.md` | Pending |
 | Task completion evidence | `.tasks/task.md`; `/workspace/mitb/task_complete.mjs` | `task-workflow/phase-7-final-signoff.md` | Pending |

@@ -15,8 +15,8 @@ Use this reference in Phase 5.
 - Use the lifecycle helper as the default owner for Playwright/app-server startup, including repo E2E commands when Phase 6 runs them. Put `pnpm exec playwright test ...` inside helper `--run` by default. Use repo Playwright `webServer` ownership only when the helper cannot own the server for that exact command, and record the reason before running it.
 - Pass the repo's normal local command to the lifecycle helper with `--server` for helper-owned custom scripts.
 - Do not manually combine server cleanup, server start, sleeps, DB cleanup, and script execution in one shell command.
-- Put pre-server setup such as DB reset, migration, or seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts.
-- Do not set database file/path env vars through helper `--env`, setup, server, or run commands. Do not change the repo's internal E2E/end-to-end database file path. Use the repo's existing E2E/end-to-end database configuration. `.dbs/database.db` is the live workspace/production database; production databases must never be used for testing or fixture setup.
+- Put only isolated repo-owned test/E2E setup such as test DB reset, test migration, or test seed into lifecycle `--setup "..."`; it is bounded and logged before the server starts. Never put production/live DB reset, seed, cleanup, direct SQLite, or verification-only migration in Phase 5 setup.
+- Do not set database file/path env vars through helper `--env`, setup, server, or run commands. Do not change the repo's internal E2E/end-to-end database file path. Use the repo's existing E2E/end-to-end database configuration. `.dbs/database.db` is the live workspace/production database; production databases must never be used for testing or fixture setup. Deleting or corrupting live user data can cause the user to lose his job.
 - If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone.
 
 ### Failure Triage Rules
@@ -24,7 +24,7 @@ Use this reference in Phase 5.
 - If a selector/action/assertion times out, first prove the page is in the expected state: URL, no not-found/error screen, required DB or fixture record exists, server log has no route/runtime error, and browser console has no fatal error. Do not rerun the same script while the page state is wrong; fix setup, seed, route, or app state first.
 - If the helper times out or produces no useful output, inspect helper setup/server/run logs and readiness evidence before rerunning. The next run must change setup, server command, ready URL, test command, fixture, timeout reason, or diagnostic output.
 - If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management.
-- If the server appears stale, wrong, or on the wrong port, inspect helper runtime logs/readiness output first; use repo Playwright `webServer` output only for commands where `webServer` owns lifecycle. Put DB reset, migration, seed, or fixture setup in helper `--setup`, then restart through the lifecycle owner instead of switching to broad process cleanup.
+- If the server appears stale, wrong, or on the wrong port, inspect helper runtime logs/readiness output first; use repo Playwright `webServer` output only for commands where `webServer` owns lifecycle. Put only isolated test DB reset, test migration, test seed, or fixture setup in helper `--setup`, then restart through the lifecycle owner instead of switching to broad process cleanup.
 - If manual fallback is unavoidable, keep PID ownership: capture the server PID/log path under `task-workflow/runtime/`, prove readiness, and clean up only that PID/process group. Do not use `nohup`, `disown`, or untracked background servers as the normal fallback.
 - Do not run `playwright install` or any browser download command. The lifecycle helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when the cache exists and fails early on a revision mismatch.
 
@@ -44,14 +44,14 @@ Use this reference in Phase 5.
 
 ```bash
 node task-workflow/scripts/playwright-lifecycle.mjs \
-	--setup "pnpm run db:migrate" \
+	--setup "pnpm run prepare:e2e" \
 	--server "pnpm run dev -- --host 127.0.0.1 --port 4444" \
 	--ready-url "http://127.0.0.1:4444" \
 	--run "node task-workflow/playwright/verify-main-flow.mjs" \
 	--command-timeout-ms 20000
 ```
 
-The helper writes server and command logs under `task-workflow/runtime/`. Cite those paths in the Phase 5 artifact when output is too long to paste directly.
+`prepare:e2e` is a placeholder for the repo's checked-in isolated E2E/test setup. Do not copy this example with raw production `db:migrate`, `seed`, `rm .dbs/database.db`, or any command that writes the live/default database. The helper writes server and command logs under `task-workflow/runtime/`. Cite those paths in the Phase 5 artifact when output is too long to paste directly.
 
 Timeout increases are not a retry strategy. Start with the smallest practical timeout: `15000`-`20000` ms for Phase 5 launch/page-state/custom-script probes and up to `30000` ms for first-run Phase 6 targeted E2E where Playwright runner startup adds overhead. If the run fails with any useful error, assertion output, not-found state, console/runtime error, route error, fixture/DB miss, or helper diagnostic, use that evidence to diagnose; do not retry with a larger timeout. A larger timeout is allowed only when the first run ended only because the timer expired with no useful response or explanation, and only after helper logs, readiness, URL, not-found/error state, required DB/fixture records, server runtime logs, browser console, and network/page state prove the app and test are in the correct state to run. Only then may one rerun use `60000` ms, and never more than `120000` ms for one targeted script/spec. Record timeout values, quiet-run evidence, triage checks, and longer-rerun reasons in the current phase artifact. If one targeted run needs more than two minutes, split the verifier or diagnose lifecycle, setup, fixture, page-state, console, network, or test-design failure before increasing timeout.
 

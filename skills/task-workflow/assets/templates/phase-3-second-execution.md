@@ -39,6 +39,20 @@ Changed app/server source must not keep `console.*`. Temporary `console.*` may b
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
+## Production Database Safety
+
+Production/live workspace databases, especially `.dbs/database.db`, are not scratch files. Deleting, resetting, reseeding, truncating, manipulating, or corrupting them can destroy user work and can cause the user to lose his job. The only allowed production/live DB action is the repo's required app migration command for a real schema change. If Phase 2 or Phase 3 created or changed a migration, the repo's app migration command must run against the production/live default DB before this phase passes. No other production/live DB action is allowed.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Connected data/migration work reviewed for production/live DB safety | Pending | Pending |
+| Production/live DB paths, including `.dbs/database.db` or equivalent default user-data DB, were not deleted/reset/seeded/truncated/used as fixtures | Pending | Pending |
+| Production/live DB action, if any, was only the repo's required app migration command for a real schema change | Pending | Pending |
+| Migration files/scripts created or changed in Phase 2 or Phase 3? If yes, app migration command ran against production/live default DB before Phase 3 pass | Pending | Pending |
+| Migration command, if any, records target DB/source, reason, output, and no seed/reset/test cleanup mixed into it | Pending | Pending |
+| No manual query, data manipulation, direct SQLite, seed, reset, fixture, data repair, cleanup, delete, or truncate touched production/live DB | Pending | Pending |
+| Static/build validation did not depend on modifying production/live user data outside legitimate migrations | Pending | Pending |
+
 ## Ordered Static And Build Checkpoint
 
 Run this checkpoint after the second-pass connected-place review and any Phase 3 repairs. Use the repo's native commands. If the repo has no separate command for an item, record the repo-specific reason. If a command fails, inspect enough output to identify visible issue groups, fix every locally-fixable group as a batch, then rerun that same command before moving to the next row. If a temporary full-output log is needed for large output, delete it after extracting issue groups.
@@ -79,6 +93,7 @@ Phase 3 is an inspection, integrity, and static-check pass. Record coverage ques
 | Associated UI/API/data surfaces reviewed for consistency | yes | Pending |
 | Related surfaces fixed or explicitly defended | yes | Pending |
 | Implementation integrity review completed and clean | yes | Pending |
+| Production/live database safety evidence is recorded and clean | yes | Pending |
 | Logging review completed with repo-approved logging/telemetry evidence | yes | Pending |
 | Ordered typecheck, lint, and build checkpoint passed or missing commands have repo-specific evidence | yes | Pending |
 | Command failures grouped, locally-fixable groups fixed as a batch, and temporary full-output logs deleted before rerunning | yes | Pending |

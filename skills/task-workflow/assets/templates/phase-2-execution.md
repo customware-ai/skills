@@ -35,6 +35,20 @@ Update this table immediately after each small work packet. Do not leave this ta
 | Pre-Phase-5 API/runtime server probes used `task-workflow/scripts/server-probe.mjs`, or none were needed | Pending | Pending |
 | Foreground command cleanup or bounded-command result recorded | Pending | Pending |
 
+## Production Database Safety
+
+Production/live workspace databases, especially `.dbs/database.db`, are not scratch files. Deleting, resetting, reseeding, truncating, manipulating, or corrupting them can destroy user work and can cause the user to lose his job. The only allowed production/live DB action is the repo's required app migration command for a real schema change. If this phase creates or changes a migration, the repo's app migration command must run against the production/live default DB after the migration exists. No other production/live DB action is allowed.
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Any command touching DB/data state was reviewed before running | Pending | Pending |
+| Production/live DB paths, including `.dbs/database.db` or equivalent default user-data DB, were not deleted/reset/seeded/truncated/used as fixtures | Pending | Pending |
+| Production/live DB action, if any, was only the repo's required app migration command for a real schema change | Pending | Pending |
+| Migration files/scripts created or changed? If yes, app migration command ran against production/live default DB after creation | Pending | Pending |
+| Migration command, if any, records target DB/source, reason, output, and no seed/reset/test cleanup mixed into it | Pending | Pending |
+| No manual query, data manipulation, direct SQLite, seed, reset, fixture, data repair, cleanup, delete, or truncate touched production/live DB | Pending | Pending |
+| Test/fixture DB work, if any, used isolated repo-owned test config rather than production/live DB | Pending | Pending |
+
 ## Plan Changes
 
 | Change | Reason | Evidence |
@@ -62,6 +76,7 @@ Phase 2 evidence must stay strict, but routine typecheck, lint, build, unit/Vite
 | Failed write/tool results repaired with readback evidence | yes | Pending |
 | Narrow implementation unblock commands, if any, have blocker/result evidence | yes | Pending |
 | Unit/E2E/browser verification needs discovered during implementation are handed to owning later phases | yes | Pending |
+| Production/live database safety evidence is recorded and clean | yes | Pending |
 | Foreground command cleanup or bounded-command result recorded | yes | Pending |
 | Final implementation packet sweep recorded | yes | Pending |
 | `open-gaps.md` finalized with real rows or explicit none rows | yes | Pending |
