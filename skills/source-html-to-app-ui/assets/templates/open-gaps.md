@@ -1,17 +1,27 @@
 # Open Gaps
 
-Use `Open`, `Resolved`, `Closed`, `Reclassified non-blocking`, or `None`. Phase 3 fails on ordinary unresolved, stale, contradicted, or placeholder gaps.
+This is a gate artifact. A phase cannot pass while it owns an unresolved ordinary or critical gap. Do not delete a gap to make a gate pass.
 
-The first real Phase 2 comparison must replace the fresh Phase 0 `None` row with real mismatch rows or explicit route/state and page-section evidence after adversarial comparison.
+## Open Gaps
 
-## Active Gaps Or Explicit Comparison Evidence
+| Gap ID | Route/state | Section/interaction/theme/viewport | Specific mismatch or missing proof | Severity | Owning phase | Source evidence | Target evidence | Next local fix or verification | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Open |
 
-| Route/state | Page section | Visible mismatch | Severity | Status | Owner/next fix | Source evidence | Target evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| None currently recorded | None currently recorded | Fresh Phase 0 row; replace in first Phase 2 comparison | None | None | Recheck each phase | Source inputs | Target not captured |
+After fresh Phase 0 setup, replace the placeholder with discovered gaps or one explicit `None currently recorded` row. The first real Phase 2 comparison must replace that `None` row with actual mismatch rows or explicit route/section comparison evidence.
 
-## Resolved Or Defended Gaps
+## Resolved Gaps
 
-| Route/state | Page section | Visible mismatch | Severity | Status | Owner/next fix or defense | Source evidence | Target evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| None currently recorded | None currently recorded | No resolved gaps yet | None | None | Recheck each phase | Source inputs | Target not captured |
+| Gap ID | Owning phase | Fix | Source evidence reopened | Target evidence recaptured and opened | Resolution proof | Resolved in phase |
+| --- | --- | --- | --- | --- | --- | --- |
+| None yet | N/A | N/A | N/A | N/A | N/A | N/A |
+
+## Reconciliation Audit
+
+| Check | Pass/Fail | Evidence |
+| --- | --- | --- |
+| No placeholder remains after Phase 0 | Fail | Pending |
+| Every open gap has an owner and next local action | Fail | Pending |
+| No gap owned by a passed phase remains open | Fail | Pending |
+| Every resolved visual gap cites reopened source and recaptured/opened target evidence | Fail | Pending |
+| Phase artifacts and this ledger agree | Fail | Pending |

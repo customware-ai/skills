@@ -1,4 +1,4 @@
 interface:
   display_name: "Source HTML to App UI"
-  short_description: "Autonomous gated rebuild from source HTML"
-  default_prompt: "Use $source-html-to-app-ui to rebuild the provided source HTML app from interactive Playwright-discovered references and the design-system JSON, following the skill's phase gates exactly."
+  short_description: "Strict paired-Playwright UI reproduction workflow"
+  default_prompt: "Use $source-html-to-app-ui to rebuild the provided source HTML app. Follow every phase, evidence gate, paired source-target Playwright comparison, repair loop, and completion lock exactly."

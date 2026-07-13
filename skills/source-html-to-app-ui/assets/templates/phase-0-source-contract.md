@@ -1,93 +1,125 @@
 # Phase 0: Source Contract
 
-## Startup And Fresh Scaffold
+## Phase Metadata
 
-| Requirement | Status | Evidence |
-| --- | --- | --- |
-| Target `AGENTS.md` and required instructions read before first target-repo write | Pending |  |
-| Existing target-repo `task-workflow/` deleted completely after instruction loading and before implementation writes | Pending |  |
-| Fresh reset/reseed was the first target-repo write | Pending |  |
-| Reseed contains only four templates, empty approved roots, verbatim spec, marker/ledgers, and byte-identical helper | Pending |  |
-| No old artifact, image, script, log, gap, score, or decision was reused | Pending |  |
-| No implementation file changed before Phase 1 began | Pending |  |
-| Mode is delivery, or explicit throwaway validation | Pending |  |
-| Exact source HTML and design JSON paths confirmed | Pending |  |
-| `task-workflow/spec.json` copied verbatim and byte identity proved | Pending |  |
-| Only approved `task-workflow/` runtime roots/artifacts created; none generated outside | Pending |  |
-| Lifecycle helper copied byte-for-byte | Pending |  |
-| Marker is `phase-0-source-contract` | Pending |  |
-
-## Target Instructions And Structure
-
-| Area | Exact paths | Applicable rules/patterns |
-| --- | --- | --- |
-| Instructions/docs | Pending | Pending |
-| Routes/layouts | Pending | Pending |
-| Theme/tokens/primitives | Pending | Pending |
-| Checks/builds | Pending | Pending |
-
-## Source Launch And Lifecycle
-
-| Item | Evidence |
+| Field | Value |
 | --- | --- |
-| Launch method, command/path/URL, and behavior-preservation rationale | Pending |
-| Source-only port and `runtime/source/` helper evidence | Pending |
-| Source browser-script paths and fixed-wait audit | Pending |
-| Timeout values and diagnosis-before-extension evidence | Pending |
+| Marker set before phase work | `phase-0-source-contract` / Pending |
+| Main skill reread | Pending |
+| Phase references read | Pending |
+| Started | Pending |
+| Last gate attempt | Pending |
 
-## Route And State Inventory
+## First-Write Boundary
 
-| ID | Route/state | Real-input reach steps | Desktop evidence | Mobile evidence | Sections | Interaction families | Status |
+| Critical requirement | Pass/Fail | Concrete evidence |
+| --- | --- | --- |
+| Target instructions read before first write | Fail | Pending |
+| Old `task-workflow/` removed | Fail | Pending |
+| Fresh reseed was first target-repo write | Fail | Pending |
+| All five phase templates and ledgers copied fresh | Fail | Pending |
+| Spec copied byte-for-byte | Fail | Pending |
+| Lifecycle helper copied byte-for-byte | Fail | Pending |
+| Empty approved script/evidence/runtime roots created | Fail | Pending |
+| No implementation/config/generated/build file changed early | Fail | Pending |
+| No old artifact/image/script/log/gap/score reused | Fail | Pending |
+| Generated task artifacts confined to `task-workflow/` | Fail | Pending |
+
+## Target Instruction And Repository Contract
+
+| Area | Exact files/paths inspected | Binding rules/patterns | Evidence |
+| --- | --- | --- | --- |
+| `AGENTS.md` and required docs | Pending | Pending | Pending |
+| Routes and layouts | Pending | Pending | Pending |
+| Themes, tokens, typography, primitives | Pending | Pending | Pending |
+| Brand assets | Pending | Pending | Pending |
+| Start/check/lint/build commands | Pending | Pending | Pending |
+| UI-only architecture boundary | Pending | Pending | Pending |
+
+## Managed Source Lifecycle
+
+| Requirement | Evidence |
+| --- | --- |
+| Source launch method and behavior-preservation rationale | Pending |
+| Exact helper command, source-only port, ready URL | Pending |
+| `runtime/source/` readiness/run/cleanup logs | Pending |
+| Helper byte identity | Pending |
+| Source script paths and fixed-wait audit | Pending |
+| Timeout values and any triage | Pending |
+
+## Route, State, And Interaction Inventory
+
+| ID | Route/state | Exact real-input reach steps | Interaction families | Desktop source image | Mobile source image | Image opened? | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+| Pending | Pending | Pending | Pending | Pending | Pending | No | Fail |
 
 ## Section Evidence
 
-| Section ID | Route/state | Role | Source screenshot/crop | Structure/style contract | Behavior/scroll/theme contract | Status |
-| --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+| Section ID | Route/state | Source order/role | Source section image | Image opened? | Structure/style/content contract | Behavior/theme contract | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | No | Pending | Pending | Fail |
 
-## Source Shell, Drawer, And Theme Evidence
+## Shell, Sidebar, Drawer, And Theme Discovery
 
-| Requirement when present | Real input | Observed contract | Evidence | Status |
+| Requirement when present | Real input and measurements | Source evidence | Observed contract | Pass/Fail/N/A with proof |
 | --- | --- | --- | --- | --- |
-| Document/content scroll ownership and sidebar stability | Pending | Pending | Pending | Pending |
-| Shell/sidebar viewport-height behavior | Pending | Pending | Pending | Pending |
-| Drawer open/close, overlay, body lock/restoration | Pending | Pending | Pending | Pending |
-| Source theme states and behavior | Pending | Pending | Pending | Pending |
+| Document/content scroll ownership | Pending | Pending | Pending | Fail |
+| Sidebar bounds and viewport-height coverage | Pending | Pending | Pending | Fail |
+| Pre/post-scroll blank-region inspection | Pending | Pending | Pending | Fail |
+| Mobile drawer open/close/overlay/body lock | Pending | Pending | Pending | Fail |
+| Source themes and theme behavior | Pending | Pending | Pending | Fail |
 
 ## Reproduction And Adaptation Contract
 
-| Contract item | Source/design evidence | Required target behavior | Status |
-| --- | --- | --- | --- |
-| Source-backed routes/states/sections/interactions/themes/viewports | Pending | One-to-one match | Pending |
-| Omitted responsive sizes | Pending | Conservative adaptation; correct objective layout failures | Pending |
-| Source-omitted target-exposed theme | Pending | Conservative token/spec derivation and readability; no new direction | Pending |
-| Explicit exclusions | Task/skill | No invented routes/content/behavior/backend/business logic | Pending |
+| Contract ID | Source/design evidence | Required target route/state/section/interaction/theme behavior | Omitted-size safety rule | Explicit exclusions | Status |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Fail |
 
-## Source Acceptance Score
+## Open-Gap Reconciliation
+
+| Check | Evidence | Pass/Fail |
+| --- | --- | --- |
+| Placeholder rows removed from `open-gaps.md` | Pending | Fail |
+| Discovery gaps recorded or explicit `None currently recorded` row present | Pending | Fail |
+
+## Scorecard
 
 | Category | Passed | Total | Evidence |
 | --- | ---: | ---: | --- |
-| Route coverage | 0 | 10 | Pending |
-| State/interaction coverage | 0 | 10 | Pending |
-| Desktop evidence | 0 | 10 | Pending |
-| Mobile evidence | 0 | 10 | Pending |
-| Section/behavior/theme contract | 0 | 10 | Pending |
+| Fresh scaffold and first-write integrity | 0 | 10 | Pending |
+| Target instructions and repository contract | 0 | 8 | Pending |
+| Route/state/interaction discovery | 0 | 10 | Pending |
+| Desktop/mobile/section source evidence | 0 | 12 | Pending |
+| Scroll/drawer/theme/reproduction contract | 0 | 10 | Pending |
+| **Total** | **0** | **50** | Pending |
 
-## Critical Gate
+Required: at least `48/50`.
 
-| Critical item | Status | Evidence/repair |
+## Non-Compensating Critical Gate
+
+| Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
-| Fresh reset/reseed, first-write proof, no-old-state proof, no-early-implementation proof, inputs, spec identity, and target inspection complete | Pending |  |
-| Every source route/state/section/interaction has accepted evidence | Pending |  |
-| Desktop/mobile, scroll/drawer/theme contracts are complete | Pending |  |
-| Source fixed-wait audit passes | Pending |  |
-| Reproduction/adaptation contract is complete and UI-only | Pending |  |
-| Every cited path exists and required table remains auditable | Pending |  |
+| First-write, reset, spec, helper, and no-early-implementation boundary passes | Fail | Pending |
+| Exact inputs and binding target instructions are recorded | Fail | Pending |
+| Every route/state/section/interaction family has real-input source evidence | Fail | Pending |
+| Desktop/mobile images are complete, readable, and opened | Fail | Pending |
+| Scroll/sidebar/drawer/theme discovery is complete when applicable | Fail | Pending |
+| Source scripts have no fixed waits and lifecycle contract passes | Fail | Pending |
+| Reproduction contract is one-to-one, responsive-safe, and UI-only | Fail | Pending |
+| No required placeholder, unsupported assumption, or ordinary discovery gap remains | Fail | Pending |
+
+## Promotion Lock
+
+| Lock item | Evidence |
+| --- | --- |
+| Artifact reopened after final evidence update | Pending |
+| Gate-critical source images reopened | Pending |
+| Score and critical rows independently verified | Pending |
+| `open-gaps.md` reconciled | Pending |
+| `progress.md` updated | Pending |
+| Next marker/reference identified | Pending |
 
 - Score: `0/50`
-- Required: at least `48/50`
-- Critical items: Pending
-- Promotion lock: Pending
+- Critical items: Fail
+- Promotion lock: Fail
 - Decision: Fail
