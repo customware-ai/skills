@@ -78,7 +78,7 @@ Record specific mismatches such as "target heading is one hierarchy level too la
 
 Phase 2 proves the implementation is structurally legitimate, passes target-required repo checks, and behaves safely across matching source-target viewport pairs. It is the first real comparison phase.
 
-Phase 2 is not a shallow build/check phase. It must run Playwright, produce paired images, open those images, record mismatches, and repair structural or responsive failures before promotion.
+Phase 2 is not a shallow build/check phase. It must run Playwright, produce paired images, open those images, record mismatches, and repair structural or responsive failures before promotion. The task prompt's build/check requirements are additional checks only; they do not define completion and cannot make this phase pass without the paired Playwright corpus. If the browser or lifecycle helper is unavailable, this phase remains `Fail` until the failure is recovered or recorded as a genuine external blocker. Never convert missing browser evidence to `N/A` or skip ahead.
 
 ### Integrity Review
 

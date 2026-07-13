@@ -6,7 +6,7 @@ This reference is mandatory whenever `CURRENT_PHASE.txt` equals `phase-4-final-a
 
 <final_audit_authority>
 
-Phase 4 does not assume earlier phases were honest or correct. It reopens and audits their evidence before unlocking completion.
+Phase 4 does not assume earlier phases were honest or correct. It reopens and audits their evidence before unlocking completion. Build/check success is only one audit row. It can never unlock the completion command when paired, opened, section-level Playwright evidence is missing, target-only, or stale.
 
 The completion command is irreversible external signaling: it tells the system and user that the approved product UI is finished. Calling it with weak, stale, fabricated, or contradictory evidence can deliver a broken project and put the user's job at risk. It is do-or-die. Do not call completion because the build passes, screenshots exist, the task has taken a long time, or the Agent wants to stop.
 
@@ -99,6 +99,8 @@ Pass only when:
 <completion_command_lock>
 
 Copy the exact completion command from the task instructions. Never synthesize identifiers.
+
+The command is forbidden unless the preceding Phase 0 source Playwright proof, Phase 2 paired responsive proof, and Phase 3 section-by-section fidelity proof are all current and passing. The task instructions may require build/check, but those commands are not an alternate completion gate. A browser failure is a failed audit item, not permission to skip visual proof.
 
 Record in the Phase 4 artifact:
 

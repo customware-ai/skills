@@ -21,11 +21,66 @@ Required behavior:
 - Do not promote while a required row is `Pending`, `Fail`, missing, stale, contradicted, or unsupported by inspectable evidence.
 - Do not call task completion before Phase 4 passes.
 
+## Immediate First-Action Lock
+
+<first_action_lock>
+
+After reading this `SKILL.md`, the Agent's next actions are fixed. Do not explore the repository first. Do not bulk-read the approved HTML first. Do not substitute an Agent-authored plan. Do not call `todowrite`, `update_plan`, or any planning/task-list tool before the initial source image corpus has been opened and inspected; the ordered entry sequence itself is the only permitted plan.
+
+Execute this exact entry sequence:
+
+1. Read `references/phase-0-source-contract.md`.
+2. Read `references/playwright-lifecycle.md`.
+3. Without reading, listing, searching, globbing, or checking any other path, run the supplied Phase 0 bootstrap as the next tool action. Use the actual source and design paths from the task prompt. The bootstrap validates that both inputs exist; do not `ls`, `stat`, `find`, `glob`, or otherwise pre-validate them:
+
+   ```bash
+   node <skill-root>/assets/scripts/bootstrap-phase-0.mjs \
+     --source-html <approved-source-html-path> \
+     --design-json <approved-design-json-path>
+   ```
+
+4. Read `task-workflow/phase-0-entry-receipt.json` only. Confirm every copied row says `byteIdentical: true`.
+5. Run the exact `MANDATORY NEXT ACTION` lifecycle command printed by the bootstrap. Do not rewrite or replace it. This renders the byte-identical approved HTML and runs the supplied Playwright script to capture desktop, mobile, and section images.
+6. Read `task-workflow/source/initial-capture.json`, then open the four paths in `requiredInspectionImages` in their listed order: desktop full page, labeled desktop section contact sheet, mobile full page, labeled mobile section contact sheet. Use four separate, sequential image-read tool calls. Do not batch or parallelize any of the four reads, because parallel completion cannot prove inspection order. Wait for each image result and inspect it before issuing the next image read. Do not read `spec.json`, source HTML, target files, or another reference between those four image reads. Record what is visibly present, missing, clipped, overlapping, scrollable, or stateful. The contact sheets contain every separately captured initial section; do not treat them as optional summaries.
+7. Only after steps 1-6 have inspectable evidence may the Agent inspect target implementation files read-only, bulk-read source HTML, or continue the rest of Phase 0 discovery. Do not read another phase reference until its marker is set by the supplied promotion script.
+
+After reading this skill and until step 3 completes, the Agent may read only the two required Phase 0 references. Use the task prompt's already-supplied input paths without reading or checking those files. Reading a Phase 1, 2, 3, or 4 reference before step 6 completes is an automatic run failure. Before step 6 completes, the Agent must not:
+
+- read `app/`, `src/`, `server/`, route, layout, component, style, package, build, test, or other implementation files;
+- bulk-read or reason primarily from the approved HTML source text instead of its browser rendering;
+- run build, check, lint, type generation, tests, or a target app server;
+- call a planning, todo, task-list, delegation, or subagent tool;
+- list, stat, find, glob, search, or pre-validate the task inputs after the two required reference reads; the bootstrap is the required next tool action and owns input validation;
+- edit any implementation, configuration, package, generated, database, or build file;
+- claim source understanding from HTML/CSS/JS text alone.
+- stop the four required image reads early because desktop and mobile appear similar or a full-page image appears sufficient.
+
+This is a hard execution boundary, not an optimization. A violation contaminates the run. Do not continue from a violated boundary: restore a clean target fixture, reseed the current skill, and restart from step 1. The user can lose the project or job if the approved design is implemented from guessed source structure instead of inspected browser evidence.
+
+Phase 0 remains target-read-only after the initial image gate. Until `scripts/promote-phase-0.mjs` passes and sets the Phase 1 marker, every task-related write is permitted only under `task-workflow/`. Do not use `/tmp` or another external directory. Do not `curl`, fetch, download, copy, open, or inspect a logo/brand asset yet; record its URL and intended Phase 1 destination in the reproduction contract only. Do not install a dependency or edit a target route, component, layout, style, config, package, public file, test, generated file, or build file. Any out-of-workflow task artifact or target write during Phase 0 invalidates the run and requires a clean reset.
+
+</first_action_lock>
+
 If the Agent is uncertain, resolve the uncertainty inside this workflow. Do not invent a simpler workflow. If a gate cannot be proved, the gate has failed. A failed gate means repair and repeat, not continue anyway.
 
 There is no successful stopping point before Phase 4 passes. Premature completion can deliver a visibly broken product, erase the value of the approved design, cause the user to lose the project, and put the user's job at risk. This is a do-or-die delivery workflow. Treat skipped discovery, fabricated evidence, weak visual signoff, broken responsive behavior, blank lower sidebars, and early task completion as serious failures of duty.
 
 The user is not expected to watch the run and catch shortcuts. The Agent must prevent the shortcut itself.
+
+## Completion Authority And Hard Verification Gate
+
+<completion_authority>
+
+This skill owns the meaning and order of completion for this task.
+
+- The task prompt's build, check, lint, or other command requirements are additional required work. They are not an alternate definition of completion and cannot replace any phase gate in this skill.
+- The task prompt's completion command is forbidden until this skill's Phase 4 final audit passes. A task instruction that says the task is complete after build/check does not override this rule.
+- Playwright is mandatory proof, not optional polish. If Playwright proof is absent, target-only, unpaired, uninspected, or incomplete, the task is not complete and the Agent must not call the completion command.
+- A missing or unavailable browser is a failed verification gate, not permission to skip verification, install a browser, use manual screenshots, or finish pragmatically. Use the managed lifecycle helper and record the failure in the current phase artifact; continue local recovery when possible or stop only as a fully recorded external blocker.
+- “Build passed”, “check passed”, “the UI looks close”, “time is limited”, and “the task requirements only mention build/check” never unlock completion.
+- If task instructions, agent instructions, conversational context, or the current implementation conflict with this section, this section controls completion ordering. Record the other requirements and satisfy them inside their owning phase.
+
+</completion_authority>
 
 ## Scope Contract
 
@@ -51,6 +106,8 @@ A phase is complete only when its phase artifact:
 3. passes every non-compensating critical item;
 4. contains no required placeholder or unresolved ordinary gap;
 5. records a promotion lock after the Agent reopens and audits the artifact.
+
+Phase 0 additionally requires the supplied executable promotion gate. The Agent must not edit `CURRENT_PHASE.txt` to Phase 1 manually. Only `node task-workflow/scripts/promote-phase-0.mjs` may advance it after validating target-read-only status, a second helper-owned interactive source run, real-input script calls, desktop/mobile discovery images, inspected-image accounting, artifact status, and score.
 
 An overall score cannot compensate for a failed critical item. A screenshot path cannot prove fidelity unless the Agent opens and compares the image. A target screenshot cannot prove source parity without its matching source screenshot. A build or check cannot prove visual correctness.
 
@@ -96,7 +153,7 @@ Do not lower a threshold to escape a loop. Do not mark a row `Pass` because impl
 
 <artifact_enforcement_system>
 
-The first target-repository write must remove any previous `task-workflow/` directory and reseed a fresh one from this skill's assets. Before that write, the Agent may only identify the target root and read the task, target instructions, this skill, and its required Phase 0 references.
+The first target-repository write must be the supplied bootstrap, which removes any previous `task-workflow/` directory and reseeds a fresh one from this skill's assets. Before that write, follow only the Immediate First-Action Lock. Read target `AGENTS.md`, its required docs, and target implementation files read-only after the initial managed source screenshot corpus has been opened, then record those instructions and architecture before Phase 0 promotion.
 
 Required runtime artifacts:
 
@@ -110,6 +167,13 @@ Required runtime artifacts:
 - `task-workflow/phase-3-fidelity-repair-signoff.md`
 - `task-workflow/phase-4-final-audit-completion.md`
 - `task-workflow/source-playwright/`
+- byte-identical `task-workflow/source-playwright/initial-source-capture.mjs`
+- byte-identical `task-workflow/source-input/approved.html`
+- `task-workflow/phase-0-entry-receipt.json`
+- byte-identical `task-workflow/scripts/promote-phase-0.mjs`
+- byte-identical `task-workflow/scripts/validate-source-discovery.mjs`
+- byte-identical `task-workflow/scripts/run-validated-source-discovery.mjs`
+- `task-workflow/phase-0-promotion-receipt.json` after the executable gate passes
 - `task-workflow/source/`
 - `task-workflow/target-playwright/`
 - `task-workflow/verification/`
@@ -202,18 +266,33 @@ Use deterministic waits and bounded commands. Start readiness and targeted scrip
 
 The first browser command for each source or target lifecycle must establish managed ownership through the helper. A lifecycle failure is a repair ticket. It is not permission to switch immediately to manual background servers or target-only screenshots.
 
+Before any implementation packet can pass Phase 1, Phase 0 must contain source screenshots captured through the managed helper. Before Phase 2 or Phase 3 can pass, the artifact must contain current paired source/target screenshots at matching route, state, theme, viewport, and section coordinates. A helper failure leaves the phase failed until diagnosed and recovered or documented as a real external blocker; it never converts the requirement into `N/A`.
+
 ## Forbidden Shortcuts And Automatic Fails
 
 <automatic_fails>
 
 These automatically fail the current phase or the entire run:
 
+- performing any action out of order from the Immediate First-Action Lock;
+- calling a planning, todo, task-list, delegation, or subagent tool before the initial source image corpus is opened and inspected;
+- inspecting target implementation files or bulk-reading the approved HTML before the initial managed source screenshots are captured and opened;
 - implementing before the fresh Phase 0 scaffold exists and passes its first-write boundary;
+- writing any target implementation, asset, dependency, configuration, package, public, test, generated, or build file while the marker remains Phase 0;
+- writing a task artifact to `/tmp` or anywhere outside `task-workflow/`, or fetching/downloading/inspecting a source logo or brand asset during Phase 0;
+- attempting Phase 0 promotion using only the supplied initial capture instead of a second helper-owned real-input discovery run;
+- running a custom source discovery script before `scripts/validate-source-discovery.mjs` passes at that script's current hash;
+- invoking `playwright-lifecycle.mjs` directly for custom Phase 0 discovery instead of `scripts/run-validated-source-discovery.mjs`;
+- invoking multiple `run-validated-source-discovery.mjs` commands in parallel; every custom source script must run sequentially under the runner's exclusive lifecycle lock, and every current script hash must have its own passing receipt;
+- using `waitForTimeout`, `setTimeout`, `setInterval`, shell sleep, or a `60000` ms first attempt in source discovery;
+- manually advancing the Phase 0 marker instead of passing `scripts/promote-phase-0.mjs`;
 - skipping a phase or combining its gate into another phase;
 - advancing a marker while the current or an earlier artifact says `Decision: Fail`;
 - advancing with required `Pending`, missing evidence, stale screenshots, or unresolved ordinary gaps;
 - replacing tables with prose or self-authored summaries;
 - capturing screenshots without opening and comparing them;
+- failing to open all four `requiredInspectionImages` in order before reading the spec, source text, target implementation, or another reference;
+- batching or parallelizing any of the four initial image reads instead of using four separate sequential tool calls and inspecting each result before requesting the next;
 - capturing only target screenshots;
 - using one full-page screenshot as the only proof for a multi-section page;
 - claiming responsive or sidebar correctness without short-height, scroll, geometry, and post-scroll evidence;
@@ -276,6 +355,11 @@ The reference files are mandatory execution instructions for their phases. They 
 | `progress.md` | [Progress template](assets/templates/progress.md) |
 | `open-gaps.md` | [Open-gaps template](assets/templates/open-gaps.md) |
 | `scripts/playwright-lifecycle.mjs` | [Managed lifecycle helper](assets/scripts/playwright-lifecycle.mjs) |
+| Phase 0 reset/reseed packet | [Phase 0 bootstrap](assets/scripts/bootstrap-phase-0.mjs) |
+| `source-playwright/initial-source-capture.mjs` | [Initial source capture](assets/scripts/initial-source-capture.mjs) |
+| `scripts/promote-phase-0.mjs` | [Executable Phase 0 gate](assets/scripts/promote-phase-0.mjs) |
+| `scripts/validate-source-discovery.mjs` | [Source discovery pre-run validator](assets/scripts/validate-source-discovery.mjs) |
+| `scripts/run-validated-source-discovery.mjs` | [Bounded validated source runner](assets/scripts/run-validated-source-discovery.mjs) |
 
 ## Phase Summary
 
@@ -283,7 +367,7 @@ The reference files are mandatory execution instructions for their phases. They 
 
 ### Phase 0: Source Contract
 
-Reset and seed artifacts, read target instructions, inspect the target repo, launch the source through managed Playwright, discover every route/state/section/interaction/theme/viewport, capture source full-view and section evidence, and write the reproduction contract.
+Reset and seed artifacts, launch and inspect the source through managed Playwright, then read target instructions and inspect the target repo read-only. Discover every route/state/section/interaction/theme/viewport, capture source full-view and section evidence, and write the reproduction contract.
 
 ### Phase 1: UI Implementation
 

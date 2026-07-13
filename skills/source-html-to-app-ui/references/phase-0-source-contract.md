@@ -10,33 +10,46 @@ Phase 0 owns the trusted basis for the entire implementation. If source discover
 
 Do not rush Phase 0 to reach implementation. The approved source is the product contract. Missing a route, state, section, interaction, scroll behavior, theme, or viewport can cause the Agent to deliver the wrong product and place the user's project or job at risk.
 
-Phase 0 must produce inspectable source evidence, not a source-code interpretation. Reading HTML is necessary for orientation but does not replace opening the source in Playwright and exercising it with real input.
+Phase 0 must produce inspectable source evidence, not a source-code interpretation. The initial understanding must come from opening the source in managed Playwright and inspecting screenshots. Read HTML/CSS/JS text only after the initial browser corpus is captured and opened, and then only to support selectors, state reachability, and precise implementation details.
+
+Phase 0 is target-read-only for its entire duration. After the initial image gate, inspect target files only to record architecture and constraints. Do not download/copy/open source logo or brand assets, even under `/tmp`; record source URLs and intended Phase 1 destinations as contract evidence only. Do not install dependencies or edit any target file. Every task-related write must stay under `task-workflow/` until the supplied promotion gate passes.
 
 </phase_0_authority>
 
+## Mandatory Phase 0 Entry Sequence
+
+<phase_0_entry_sequence>
+
+The first Phase 0 actions are not discretionary:
+
+| Order | Required action | Promotion evidence |
+| ---: | --- | --- |
+| 1 | Read this reference and `playwright-lifecycle.md` immediately after the main skill | tool/read evidence recorded in the artifact |
+| 2 | As the next tool action, without listing or pre-validating inputs, run `assets/scripts/bootstrap-phase-0.mjs` with the task prompt's source HTML and design JSON paths; the bootstrap owns existence validation | `phase-0-entry-receipt.json` and fresh scaffold |
+| 3 | Read only the entry receipt and confirm every copied artifact is byte-identical | receipt readback |
+| 4 | Run the exact `MANDATORY NEXT ACTION` printed by the bootstrap | exact helper command and runtime logs |
+| 5 | Read `source/initial-capture.json`, then open all four `requiredInspectionImages` in order using four separate sequential image-read tool calls; wait for and inspect each result before requesting the next; never batch or parallelize these reads; do not insert an intervening spec/source/target/reference read | ordered desktop/mobile full-page and labeled section-contact-sheet inspection findings |
+| 6 | Only now read other references, inspect target files, or bulk-read source HTML | timestamped/order evidence |
+
+Calling a planning/todo/delegation tool; inserting `ls`, `stat`, `find`, glob, search, or path validation before the bootstrap; reading another phase reference; listing or reading target implementation; batching or parallelizing the four initial image reads; reading spec/source text before all four required images; stopping the image sequence early; using a manual server; or making any non-workflow write before order 5 completes is an automatic run failure. The failure cannot be repaired in place because the discovery context is contaminated. Restore a clean fixture and restart.
+
+</phase_0_entry_sequence>
+
 ## First-Write Boundary
 
-Before the first target-repository write:
+The Immediate First-Action Lock is the complete authority before the first target-repository write. Use the input paths already supplied in the task prompt. Do not pre-validate them, re-read their files, inspect target `AGENTS.md`, or insert another action before the bootstrap. The bootstrap owns input validation. Read target `AGENTS.md` and its required docs only after all four initial source images have been opened, then record every binding instruction before Phase 0 promotion.
 
-1. Read the task instructions.
-2. Read target `AGENTS.md` and every task-relevant file it requires.
-3. Read the source HTML and design JSON paths.
-4. Read the main skill and this reference.
-5. Identify the target root and confirm delivery mode.
+The first target-repository write must be the supplied bootstrap command. Do not manually recreate its work:
 
-The first target-repository write must be one reset-and-reseed packet:
-
-```text
-delete old task-workflow/
-copy all five phase templates
-copy progress.md and open-gaps.md templates
-copy lifecycle helper byte-for-byte
-copy design JSON byte-for-byte to task-workflow/spec.json
-create empty source/target script, evidence, and runtime roots
-set CURRENT_PHASE.txt to phase-0-source-contract
+```bash
+node <skill-root>/assets/scripts/bootstrap-phase-0.mjs \
+  --source-html <approved-source-html-path> \
+  --design-json <approved-design-json-path>
 ```
 
-Do not edit implementation, configuration, package, generated, or build files before this packet is complete and read back.
+The bootstrap deletes old `task-workflow/`, copies all templates and inputs byte-for-byte, copies the lifecycle and initial source-capture scripts byte-for-byte, creates all evidence/runtime roots, sets the marker, writes a hash receipt, and prints the one permitted next browser command.
+
+Do not inspect or edit implementation, configuration, package, generated, or build files before this packet is complete, the initial source browser corpus is captured, and every initial image is opened.
 
 ### Required First-Write Evidence
 
@@ -46,7 +59,11 @@ Do not edit implementation, configuration, package, generated, or build files be
 | Templates fresh | file list and comparison to skill assets |
 | Spec byte-identical | byte comparison with exact input path |
 | Helper byte-identical | byte comparison with skill asset |
+| Source HTML byte-identical | entry receipt comparison with the task input |
+| Initial source script byte-identical | entry receipt comparison with the skill asset |
+| Exact order | bootstrap was the next action after the two required reference reads; printed lifecycle command was next after receipt readback |
 | No early implementation | clean diff/status evidence covering the boundary |
+| No early target/source-text exploration | ordered tool evidence proving browser images were opened before implementation reads or bulk HTML reads |
 | Artifact confinement | listing proving generated workflow files exist only under `task-workflow/` |
 
 A stale artifact, copied-forward score, reused screenshot, modified helper, missing template, or implementation edit before the boundary is an automatic Phase 0 failure.
@@ -64,6 +81,24 @@ Read and record:
 - constraints that affect UI-only implementation.
 
 Do not use Phase 0 to plan backend, persistence, auth, API, or business logic. If the source appears to imply these systems, reproduce only their visible UI state using local state and static data.
+
+## Mandatory Second Interactive Source Run
+
+The supplied initial capture proves only the default rendered state. It can never complete route, state, or interaction discovery by itself.
+
+Before scoring Phase 0:
+
+1. After the initial four images are opened, inspect source text only for selectors and reachable state logic.
+2. Create at least one additional focused script under `task-workflow/source-playwright/` that uses real Playwright input calls such as `click`, `fill`, `press`, `selectOption`, `wheel`, `tap`, or drag.
+3. Before any custom browser run, execute `node task-workflow/scripts/validate-source-discovery.mjs <custom-script-path> [...]`. Repair until it passes. Any script edit invalidates the hash receipt and requires revalidation.
+4. Run each validated script only through `node task-workflow/scripts/run-validated-source-discovery.mjs <custom-script-path>`, one command at a time. Never invoke two validated runners in parallel. The runner verifies the hash, takes an exclusive source-lifecycle lock, invokes the unchanged lifecycle helper, hardcodes `15000`/`20000` ms limits, and records that script hash in `source/discovery/lifecycle-run-receipts.json`. Do not invoke the lifecycle helper directly for custom discovery. Split focused scripts rather than increasing time, but execute every split script sequentially. Every current custom script hash must have its own passing receipt. This must create a non-empty `run-02.log`.
+5. Capture every discovered destination/state under `source/discovery/desktop/` and `source/discovery/mobile/`, with at least two images in each.
+6. The discovery run may write `source/discovery/manifest.json` with `inputActions` and `images`. The browser script must not mention, create, or populate `imagesOpened`; screenshot capture is not image inspection.
+7. Open every manifest image. Only after the final visual read, edit the manifest once to add `imagesOpened` as the exact ordered copy of the inspected `images` list.
+8. Complete and reopen the Phase 0 artifact and ledgers.
+9. Run `node task-workflow/scripts/promote-phase-0.mjs`. Do not edit the marker manually.
+
+If a visible navigation/control family has not been exercised with real input, Phase 0 fails. If only `initial-source-capture.mjs` ran, Phase 0 fails. If a custom script contains a fixed wait, ran without a current validation receipt and matching lifecycle-run receipt, ran concurrently with another validated source runner, or used `60000` ms without a qualifying timer-only retry record, Phase 0 fails. If any target file outside `task-workflow/` changed, the executable gate fails and the run must be reset.
 
 ## Source Launch Contract
 
@@ -110,6 +145,7 @@ Capture under `task-workflow/source/`:
 
 - a full-page or full-view image for every route/state at every source-represented desktop and mobile viewport;
 - a readable image for every visible section;
+- labeled contact sheets that make every initial section inspectable at desktop and mobile without silently skipping individual section evidence;
 - interaction-state images when a state changes visible UI;
 - drawer/menu/dialog open images when present;
 - pre-scroll and post-scroll images for sidebar layouts;
@@ -200,8 +236,10 @@ Before promotion:
 6. Write the promotion lock and `Decision: Pass`.
 7. Read the artifact back.
 8. Update `progress.md`.
-9. Set `CURRENT_PHASE.txt` to `phase-1-ui-implementation`.
+9. Run `node task-workflow/scripts/promote-phase-0.mjs`; it sets `CURRENT_PHASE.txt` to `phase-1-ui-implementation` only when every executable check passes.
 10. Read `references/phase-1-ui-implementation.md` before implementation.
+
+Steps 9-10 are executable: after the artifact and progress ledger are complete, run `node task-workflow/scripts/promote-phase-0.mjs`. It alone writes the Phase 1 marker and promotion receipt. Then read the Phase 1 reference as the next action.
 
 If any step fails, remain in Phase 0 and repair it. Do not implement anyway.
 
