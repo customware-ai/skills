@@ -35,25 +35,41 @@
 | Source | Pending | Pending | Pending | Pending | Pending | Fail |
 | Target | Pending | Pending | Pending | Pending | Pending | Fail |
 
+## Evidence Identity And Integrity Ledger
+
+Keep every source-target full-view and same-framed section pair traceable through rows here or a linked complete manifest. Every path maps to one side, identity, and revision. Record the evidence packet before visual scoring.
+
+| Evidence ID | Route/state/theme | Browser viewport width x height | Scroll/section framing | Source unique path/revision | Target unique path/revision | Actual source/target image dimensions and difference review | Source/target capture time and lifecycle run | Target newer than invalidating change? | Source opened/result | Target opened/result | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | No | Pending | Pending | Fail |
+
+## Bounded Pair Comparison Findings
+
+Complete one row for each small readable comparison packet. Use one pair for tall full views or a compact related batch for smaller section images, and record findings before moving to unrelated work.
+
+| Evidence ID | Content/order | Geometry/layout | Spacing | Typography | Color/background | Borders/radii/shadows | Controls/assets | Clipping/overlap | State/scroll/responsive | Specific mismatch or match evidence | Decision/next pair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Fail |
+
 ## Model-Owned Verification Packet Reviews
 
 Complete one row for every route/state family and viewport/theme packet. Every review item must pass before beginning the next packet. This is an Agent review, not a script result.
 
-| Packet | Pair identity | Coverage | Lifecycle ownership | Images opened | Geometry/safety | Real input | Code integrity | Freshness | Gap ledger | Decision/repair |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+| Packet | Pair identity | Coverage | Lifecycle ownership | Images opened separately | Evidence integrity | Objective fidelity | Geometry/safety | Real input | Code integrity | Freshness | Artifact/gap sync | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
 
 ## Paired Full-View Evidence
 
-| Route/state | Reach steps | Theme | Viewport | Source image | Target image | Both opened? | Findings | Result/repair |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | No | Pending | Fail |
+| Evidence ID | Route/state | Reach steps | Theme | Viewport | Source image/open result | Target image/open result | Dimensions/freshness | Concrete findings by category | Result/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Fail |
 
 ## Paired Section Evidence
 
-| Route/state | Section ID/order | Viewport/theme | Source section image | Target section image | Both opened? | Structure/style/content findings | Result/repair |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | No | Pending | Fail |
+| Evidence ID | Route/state | Section ID/order | Viewport/theme | Source section image/open result | Target section image/open result | Dimensions/freshness | Structure/style/content findings | Result/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Fail |
 
 ## Responsive Geometry And Safety Matrix
 
@@ -66,14 +82,20 @@ Complete one row for every route/state family and viewport/theme packet. Every r
 
 ## Deterministic Sidebar Proof
 
-| Proof when sidebar exists | Real input/measurement | Source evidence | Target evidence | Pass/Fail/N/A with proof |
-| --- | --- | --- | --- | --- |
-| Forced-overflow short-height desktop | Pending | Pending | Pending | Fail |
-| Document remains non-scroll owner | Pending | Pending | Pending | Fail |
-| Content `scrollTop` moves | Pending | Pending | Pending | Fail |
-| Sidebar bounds remain stable | Pending | Pending | Pending | Fail |
-| Shell/sidebar cover viewport height | Pending | Pending | Pending | Fail |
-| Post-scroll image has no blank lower-sidebar region | Pending | Pending | Pending | Fail |
+Copy each number verbatim from the side-specific manifest before scoring. Calculate target deltas in this table; source numbers are comparison context only.
+
+| Measurement | Source before | Source after | Target before | Target after | Target calculation/pass predicate | Result |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| Document `scrollTop` | Pending | Pending | Pending | Pending | after - before = `0` | Fail |
+| Named content-pane `scrollTop` | Pending | Pending | Pending | Pending | after - before > `0` | Fail |
+| Sidebar top | Pending | Pending | Pending | Pending | absolute delta <= `1px` | Fail |
+| Sidebar bottom | Pending | Pending | Pending | Pending | absolute delta <= `1px` | Fail |
+| Sidebar height / viewport height | Pending | Pending | Pending | Pending | height and bottom equal viewport within `1px` | Fail |
+
+| Visual proof | Real input | Source evidence opened | Target evidence opened | Target metric/image agreement | Result |
+| --- | --- | --- | --- | --- | --- |
+| Forced-overflow short-height pre/post pair | Pending | Pending | Pending | Pending | Fail |
+| Post-scroll image has no blank lower-sidebar region | Pending | Pending | Pending | Pending | Fail |
 
 ## Mobile Drawer Proof
 
@@ -123,8 +145,12 @@ Required: at least `48/50`.
 | Every route/state has paired full-view evidence | Fail | Pending |
 | Every section has readable paired section evidence | Fail | Pending |
 | Every gate-critical image was opened and compared | Fail | Pending |
+| Every pair has identity-safe source/target paths, matching browser viewport/framing, reviewed image dimensions, lifecycle times, and current freshness | Fail | Pending |
+| Every pair has separate source/target open proof and current category findings | Fail | Pending |
+| No blank/black block, omission, clipping, collision, unreadable content, or gross layout/style mismatch remains | Fail | Pending |
 | Desktop/tablet/mobile/short-height safety passes | Fail | Pending |
 | Sidebar and drawer proof passes when applicable | Fail | Pending |
+| Sidebar rows contain verbatim target metrics, explicit deltas, and every target predicate passes | Fail | Pending |
 | Theme and important interaction-state proof passes | Fail | Pending |
 | Managed lifecycle and fixed-wait audit pass | Fail | Pending |
 | Gap ledger contains real comparison evidence and no ordinary open gap | Fail | Pending |
@@ -137,6 +163,7 @@ Required: at least `48/50`.
 | Score and every critical row independently verified | Pending |
 | Evidence invalidation and gap ledger reconciled | Pending |
 | `progress.md` updated | Pending |
+| Marker, Phases 0-2, progress, gaps, and evidence ledger agree | Pending |
 | Next marker/references identified | Pending |
 
 - Score: `0/50`

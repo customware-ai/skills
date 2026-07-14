@@ -8,7 +8,7 @@ This reference is mandatory in Phases 0, 2, and 3.
 
 Use the unchanged `task-workflow/scripts/playwright-lifecycle.mjs` copied from this skill's assets. It owns server startup, readiness, browser command bounds, logs, and PID-scoped cleanup.
 
-Lifecycle discipline protects evidence integrity. A stale server, wrong route, failed readiness probe, abandoned process, or manually edited helper can produce convincing but false screenshots. False visual evidence can ship a broken approved design and cost the user their project or job.
+Lifecycle discipline protects evidence integrity. A stale server, wrong route, failed readiness probe, abandoned process, or modified helper can produce convincing but false screenshots. Use the helper so each screenshot has a known server, route, readiness result, log, and cleanup owner.
 
 Do not edit the copied helper. Do not replace it with an Agent-authored approximation. Byte identity is a gate.
 
@@ -41,6 +41,16 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
 ```
 
 The first source browser command and first target browser command must establish helper ownership. Do not run browser scripts against an assumed or manually started server first.
+
+Source and target are sequential helper-owned lifecycles, not two manually managed simultaneous servers:
+
+1. invoke the helper with the source server, source ready URL, source runtime directory, and source script;
+2. let the helper stop and clean up the source server;
+3. invoke the helper with the target server, target ready URL, target runtime directory, and target script;
+4. let the helper stop and clean up the target server;
+5. compare the saved source and target evidence after both runs.
+
+For equivalent interaction proof, use the same focused manifest in separate source and target helper runs. Do not keep both servers alive, create a dual-background-server command, or use process inspection to imitate lifecycle ownership.
 
 ## Browser Script Rules
 
@@ -100,27 +110,28 @@ After a helper failure, inspect before rerunning:
 | selectors and inputs | did the script target current visible UI? |
 | screenshot directory | was any partial or stale evidence produced? |
 
-Record the diagnosis and material change before rerun. Blindly repeating the same command is an automatic fail.
+Record the diagnosis and material change before rerun so the next attempt can produce new evidence.
 
 If the helper itself appears broken, first compare it byte-for-byte with the skill asset. Restore the byte-identical asset if modified. Diagnose the invocation and server command. Do not patch the helper.
 
 </failure_triage>
 
-## Forbidden Process And Server Shortcuts
+## Lifecycle Safeguards
 
-Never use:
+Prefer the helper-owned lifecycle and avoid:
 
 - `pkill -f` or broad process-name cleanup;
 - `nohup` or `disown`;
 - background server chains combined with fixed sleeps;
 - arbitrary port hunting;
+- `lsof`, broad process listings, or process-name/port enumeration as lifecycle management;
 - repeated manual server start/curl/screenshot loops;
 - a server inherited from an unknown previous command;
 - browser installation or downloads;
 - direct browser scripts after an undiagnosed helper failure;
 - edits to `playwright-lifecycle.mjs`.
 
-Choose a free source-only or target-only port before invoking the lifecycle helper and keep that port recorded in the phase artifact. The helper owns the server process and PID-scoped cleanup for the run. Never respond to a port failure with broad process inspection or cleanup, shell `sleep`, or manual background-server management. Preserve lifecycle logs, diagnose the specific invocation, choose another known-free task-owned port when necessary, and rerun through the helper.
+Choose explicit, distinct task-owned source and target ports before invoking the lifecycle helper and record them in the phase artifact. If the ready URL already responds before helper ownership begins, do not inspect or kill the unknown process; select another explicit task-owned port. The helper owns the server process and PID-scoped cleanup for the run. Never respond to a port failure with broad process inspection or cleanup, shell `sleep`, or manual background-server management. Preserve lifecycle logs, diagnose the specific invocation, choose another task-owned port when necessary, and rerun through the helper.
 
 ## Evidence Required For A Passing Lifecycle Gate
 
@@ -135,5 +146,6 @@ Choose a free source-only or target-only port before invoking the lifecycle help
 | Fixed-wait audit | inspected script paths and deterministic waits used |
 | Timeout record | values plus triage for any timeout/retry |
 | Screenshot ownership | files written only to the correct source/target root |
+| Sequential ownership | source helper finished/cleaned up before target helper began |
 
 Missing lifecycle evidence blocks the owning phase. "Screenshots were captured successfully" is not enough.

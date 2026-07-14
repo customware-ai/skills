@@ -15,9 +15,9 @@
 
 Complete the packets in order: artifact integrity; evidence freshness; final diff/scope/gaps; completion lock. Every review item must pass before beginning the next packet. This is an Agent review, not a script result.
 
-| Packet | Complete reopening | Score integrity | Critical integrity | Cross-artifact consistency | Evidence pairing | Freshness | UI-only scope | Gap reconciliation | Completion safety | Decision/repair |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+| Packet | Complete reopening | Score integrity | Critical integrity | Cross-artifact consistency | Evidence pairing | Path/dimension/open integrity | Freshness | UI-only scope | Gap reconciliation | Completion safety | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
 
 ## Artifact Integrity Audit
 
@@ -40,8 +40,17 @@ Complete the packets in order: artifact integrity; evidence freshness; final dif
 | Section pairs | Pending | Pending | Pending | No | Fail |
 | Interaction states | Pending | Pending | Pending | No | Fail |
 | Responsive/sidebar/drawer geometry | Pending | Pending | Pending | No | Fail |
+| Target sidebar raw metrics and recomputed predicates | Pending | recompute from current target manifest | Pending | No | Fail |
 | Themes | Pending | Pending | Pending | No | Fail |
 | Final desktop/mobile | Pending | Pending | Pending | No | Fail |
+
+## Final Evidence Integrity Audit
+
+Audit in small readable packets: one pair for tall full views or compact related batches for smaller sections. Write/read back each packet before moving to unrelated work.
+
+| Evidence ID | Distinct identity-safe source/target paths | Browser viewport/framing and image-dimension review | Capture ownership/time | Target freshness | Source opened/result | Target opened/result | Concrete category findings | No overwrite/conflicting mapping | Pass/Fail |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Fail | Fail |
 
 ## Final Diff And Scope Audit
 
@@ -56,6 +65,7 @@ Complete the packets in order: artifact integrity; evidence freshness; final dif
 | No config weakening, hidden warnings, debug code, or process workaround remains | Fail | Pending |
 | Required checks/build evidence is current | Fail | Pending |
 | Routes/content/behavior/design remain source-backed | Fail | Pending |
+| Current target document/content/sidebar deltas were recomputed and satisfy every sidebar predicate | Fail | Pending |
 
 ## Gap And Final Visual Reconciliation
 
@@ -102,8 +112,10 @@ Required: exactly `50/50`.
 | Every prior score, critical gate, and promotion lock remains valid | Fail | Pending |
 | Marker, progress, gaps, artifacts, images, and diff agree | Fail | Pending |
 | Every visual proof exists, is current, and was opened | Fail | Pending |
+| Every pair has identity-safe paths, matching browser viewport/framing, reviewed image dimensions, capture times, separate open proof, and concrete findings | Fail | Pending |
 | Paired route/state/section and final desktop/mobile evidence is complete | Fail | Pending |
 | Responsive/sidebar/drawer/theme/interaction proof remains valid | Fail | Pending |
+| Sidebar validity comes from current target values and image agreement, not prior Pass labels or source values | Fail | Pending |
 | No open/stale gap or placeholder remains | Fail | Pending |
 | Final diff is UI-only and contains no shortcut/helper modification | Fail | Pending |
 | Required checks/build evidence remains current | Fail | Pending |
@@ -116,6 +128,7 @@ Required: exactly `50/50`.
 | --- | --- |
 | Phase 4 artifact completed and reopened | Pending |
 | `progress.md` updated and reopened | Pending |
+| Marker, all phase artifacts, progress, gaps, and evidence rows agree | Pending |
 | Score verified at exactly `50/50` | Pending |
 | Every critical item verified `Pass` | Pending |
 | Exact completion command ready as literal final tool action | Pending |

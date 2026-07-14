@@ -6,11 +6,11 @@ This reference is mandatory whenever `CURRENT_PHASE.txt` equals `phase-4-final-a
 
 <phase_authority>
 
-Phase 4 does not assume earlier phases were honest or correct. It reopens and audits their evidence before unlocking completion. Build/check success is one audit row and can never substitute for paired, opened, section-level Playwright evidence.
+Phase 4 independently checks that earlier phase scores still match the finished UI and current evidence before unlocking completion. Treat build/check success as one audit row alongside paired, opened, section-level Playwright evidence.
 
 The Agent plans, reviews, and scores Phase 4 directly from reopened artifacts, current images, lifecycle evidence, the complete target diff, gap reconciliation, and the exact task completion command. Do not create or use scripts for audit review, phase scoring, completion unlock, or promotion. The task completion command itself is the only completion operation.
 
-Calling completion with weak, stale, fabricated, target-only, or contradictory evidence can ship a visibly broken project and put the user's job at risk. Do not complete because the build passes, screenshots exist, the task took a long time, or the Agent wants to stop.
+Call completion when the final audit confirms the implemented UI, responsive/sidebar behavior, current paired evidence, checks, and phase scores all pass. Route any missing work back to its owning phase first.
 
 </phase_authority>
 
@@ -50,10 +50,11 @@ Then:
 1. reopen every declared input completely;
 2. inspect evidence rows, cited paths, images, and current state—not only `Pass` labels;
 3. record contradictions, stale evidence, missing proof, and affected owning phase;
-4. mark every packet-review row `Pass` or `Fail`;
-5. if any row fails, return to the earliest owning phase, repair and repass forward through every invalidated phase;
-6. re-enter Phase 4 and repeat the failed audit packet;
-7. begin the next packet only when every row passes.
+4. update and read back Phase 4, `progress.md`, and `open-gaps.md`;
+5. mark every packet-review row `Pass` or `Fail`;
+6. if any row fails, return to the earliest owning phase, repair and repass forward through every invalidated phase;
+7. re-enter Phase 4 and repeat the failed audit packet;
+8. begin the next packet only when every row passes.
 
 ### Audit Packet Review Checklist
 
@@ -64,6 +65,7 @@ Then:
 | Critical integrity | every non-compensating item still passes independently |
 | Cross-artifact consistency | marker, ledger, gaps, contracts, images, and diff agree |
 | Evidence pairing | every visual claim has matching opened source-target proof |
+| Evidence integrity | paths are identity-safe, browser viewport/framing matches, dimension differences were reviewed, target is fresh, and open/findings records are concrete |
 | Evidence freshness | target proof is newer than every invalidating change |
 | UI-only scope | final diff contains no forbidden behavior or shortcut |
 | Gap reconciliation | no ordinary/critical/stale/placeholder gap remains |
@@ -90,6 +92,8 @@ For every artifact verify existence, decision, score arithmetic, concrete rows, 
 
 Searching for the word `Pass` is not an audit. Read the evidence rows.
 
+The marker, `progress.md`, `open-gaps.md`, every phase artifact, and the evidence ledger must describe the same latest event and earliest failing phase. A stale ledger is a failed artifact-integrity packet even when every scorecard says `Pass`.
+
 ## Evidence Freshness Packet
 
 Identify every route, state, section, theme, viewport, interaction, and geometry claim affected by the last implementation change. Confirm:
@@ -102,6 +106,12 @@ Identify every route, state, section, theme, viewport, interaction, and geometry
 - section images remain readable and are not replaced by an unreadable full-page image;
 - sidebar/drawer/scroll proof remains current when applicable;
 - every final score point maps to current evidence.
+
+For a sidebar, reopen the current target measurement manifest and recompute document delta, content delta, sidebar top/bottom deltas, and viewport coverage. Compare the resulting target values with the current post-scroll target image. Earlier phase labels and source-side values are context only; Phase 4 passes this item from current target values.
+
+For every final visual row, confirm identity-safe source/target paths, matching browser viewport/framing, reviewed actual image dimensions, capture ownership/time, target freshness, separate source/target open records, and concrete findings. Treat unexplained overwrites or conflicting identity mappings as stale evidence.
+
+Perform the visual audit in small readable packets. Use one pair at a time for giant full-page images and compact related batches for smaller section images. Record each packet before moving on. If a model/tool response fails while viewing evidence, resume from the last written evidence packet.
 
 Missing or stale proof belongs to Phase 2 or 3. Return there, repair it, repass the affected phase, and then audit again.
 
@@ -119,6 +129,7 @@ Inspect the complete target diff and connected owners. Pass only when:
 - required checks/build evidence is current;
 - routes, sections, interactions, themes, content, assets, and styling remain source-backed;
 - shell/sidebar/content scroll ownership remains structurally and visually proved.
+- current target sidebar metrics independently satisfy every numeric content-scroll predicate.
 
 Reconcile every resolved and open gap against the final diff and current source-target evidence.
 
@@ -159,6 +170,7 @@ Every critical item must independently pass:
 - every prior score, packet review, critical gate, and promotion lock remains valid;
 - marker, ledger, gaps, contracts, images, evidence, and diff agree;
 - every visual claim has current opened paired source-target proof;
+- every visual row has identity-safe paths, matching browser viewport/framing, reviewed dimensions, current capture times, separate open proof, and concrete findings;
 - every route/state/section/interaction/theme/viewport remains complete;
 - final desktop/mobile images are current and opened;
 - responsive/sidebar/drawer/scroll proof remains valid when applicable;
@@ -175,11 +187,12 @@ The Agent calculates the score from audit evidence. Do not use a checker or unlo
 Before completion:
 
 1. reopen Phase 4 and `progress.md`;
-2. independently verify audit packet reviews, `50/50` arithmetic, and every critical row;
-3. verify the exact command is the sole remaining action;
-4. write `Decision: Pass` and the completion lock;
-5. run the exact completion command as the literal final tool action;
-6. do not run any tool afterward;
-7. respond directly from the command result.
+2. reopen `open-gaps.md`, `CURRENT_PHASE.txt`, and the final evidence-ledger rows and confirm all artifacts agree;
+3. independently verify audit packet reviews, `50/50` arithmetic, and every critical row;
+4. update and read back `progress.md` with the exact command as the sole remaining action;
+5. write and read back `Decision: Pass` and the completion lock;
+6. run the exact completion command as the literal final tool action;
+7. do not run any tool afterward;
+8. respond directly from the command result.
 
 If any check before command execution fails, continue the repair loop. Do not call completion or produce a completion-style response.

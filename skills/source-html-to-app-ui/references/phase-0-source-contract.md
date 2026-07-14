@@ -59,9 +59,10 @@ Then:
 2. reopen every created/updated artifact and every captured image;
 3. reconcile findings against the complete HTML and existing inventory;
 4. record actual evidence, missing coverage, contradictions, and gaps;
-5. mark every packet-review row `Pass` or `Fail`;
-6. if any row fails, repair the same packet and repeat the review;
-7. begin the next packet only when every review row passes.
+5. update and read back the Phase 0 artifact, `progress.md`, and `open-gaps.md` before another packet;
+6. mark every packet-review row `Pass` or `Fail`;
+7. if any row fails, repair the same packet and repeat the review;
+8. begin the next packet only when every review row passes.
 
 ### Discovery Packet Review Checklist
 
@@ -75,6 +76,7 @@ Then:
 | Source reconciliation | browser findings and complete HTML declarations agree |
 | Fixed-wait audit | custom Playwright scripts use deterministic waits |
 | Scope boundary | target implementation remained read-only and later work was not pulled forward |
+| Artifact synchronization | Phase 0, progress, and gaps record this packet and the same sole next action |
 | Gap ledger | missing or contradictory evidence has an owner and next repair |
 
 This checklist is an Agent review recorded in the Phase 0 artifact, never a script result.
@@ -149,6 +151,14 @@ Open every gate-critical image after capture. If the evidence set is large, use 
 
 If an image is blank, unsettled, faded, clipped, stale, unreadable, or captures an entrance animation, fix the script/state and recapture it.
 
+### Source Evidence Identity And Inspection
+
+Give every image a stable evidence ID and a unique non-reused path containing source, page/state, theme, viewport, section/full-view identity, and revision. Record dimensions, capture time, lifecycle run, opened time, and concrete visible findings for each row.
+
+Never reuse one path for desktop and mobile or overwrite an earlier revision. If a recapture is required, create a new revision path and mark the prior row invalidated. Opening a contact sheet does not prove that unreadable constituent images were inspected.
+
+Inspect source evidence in small readable packets. Use one image at a time for very tall full views and compact related batches for smaller section/state images. Record findings in the Phase 0 artifact after each meaningful packet and keep `progress.md` current enough to resume. This protects visual attention and context without capping pages, states, sections, themes, viewports, or screenshots.
+
 ### 5. Sidebar, Drawer, Scroll, And Theme Discovery
 
 When a sidebar exists, inspect a short-height desktop viewport with enough content to force overflow. Record:
@@ -158,6 +168,15 @@ When a sidebar exists, inspect a short-height desktop viewport with enough conte
 - sidebar top and bottom bounds;
 - pre-scroll and post-scroll screenshots;
 - whether a blank lower-sidebar region appears.
+
+Keep two contracts distinct:
+
+| Contract | Required record |
+| --- | --- |
+| Observed source behavior | the source's actual document/content scroll values and sidebar bounds before/after input |
+| Required target behavior | a viewport-bounded shell whose document stays still, named content pane scrolls, and sidebar top/bottom stay fixed to the viewport |
+
+The source observation is reference evidence. If the source uses document scrolling or sticky positioning, carry its visible result into the target while adapting the target shell to the required content-only scroll architecture. Write that adaptation explicitly into the reproduction contract.
 
 When a mobile drawer exists, record real-input open/close behavior, overlay, full-height geometry, background interception, body/document lock, and scroll restoration.
 
@@ -190,6 +209,8 @@ Write one contract row for every required source-backed item:
 
 The contract must cover all pages, states, sections, interaction families, themes, assets, navigation, shell/sidebar/drawer behavior, and responsive safety.
 
+For a sidebar contract, name the planned shell owner, sidebar owner, and content-scroll owner. The target outcome must state that document scroll remains unchanged while content scroll increases; a contract that merely says `sticky 100vh` is incomplete.
+
 ## Phase 0 Model Gate
 
 Score the Phase 0 artifact row by row:
@@ -217,6 +238,7 @@ Every critical item must independently pass:
 - every cited image was opened and inspected;
 - custom Playwright scripts contain no fixed waits and ran through lifecycle ownership;
 - sidebar/drawer/scroll/theme behavior is proved when applicable;
+- observed source scroll behavior and required target scroll behavior are recorded separately, with a named viewport shell and content scroller in the target contract;
 - design JSON and target architecture were inspected after source discovery;
 - every contract row has source evidence, a target owner, responsive behavior, and explicit exclusions;
 - no required placeholder, unsupported assumption, or ordinary discovery gap remains.
@@ -229,12 +251,13 @@ Before promoting:
 
 1. reopen the Phase 0 artifact;
 2. reopen gate-critical source images across all pages and both desktop/mobile;
-3. verify the inventory and contract have identical coverage;
-4. verify score arithmetic and every critical row;
-5. reconcile `open-gaps.md`;
-6. update and reopen `progress.md`;
-7. write `Decision: Pass` and the promotion lock;
-8. set `CURRENT_PHASE.txt` to `phase-1-ui-implementation`;
-9. read `references/phase-1-ui-implementation.md` before implementation.
+3. verify every evidence row has a unique path, dimensions, lifecycle run, opened time, and concrete findings;
+4. verify the inventory and contract have identical coverage;
+5. verify score arithmetic and every critical row;
+6. reconcile and reopen `open-gaps.md`;
+7. update and reopen `progress.md` and confirm it names Phase 0's promotion as the sole next action;
+8. write and read back `Decision: Pass` and the promotion lock;
+9. set `CURRENT_PHASE.txt` to `phase-1-ui-implementation`;
+10. immediately update `progress.md`, then read `references/phase-1-ui-implementation.md` before implementation.
 
 If any check fails, remain in Phase 0 and continue the loop.

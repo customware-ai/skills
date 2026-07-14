@@ -24,8 +24,10 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 | Current phase references | Pending |
 | Earliest failing phase | Pending |
 | Last completed gate | Pending |
+| Last concrete event | Pending |
 | Sole next local action | Pending |
 | Active files | Pending |
+| Active evidence IDs | Pending |
 | External blocker | None |
 | Last updated | Pending |
 
@@ -42,9 +44,17 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 
 ## Current Work Packet
 
-| Owning phase | Contract/evidence scope | Intended owners | Actual changed files | Last readback/review result | Sole next action |
-| --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending |
+| Owning phase | Contract/evidence scope | Intended owners | Actual changed files | Current evidence IDs | Last readback/review result | Sole next action |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+
+## Current Bounded Evidence Review
+
+Record the current small source-target comparison packet. Use one pair for tall full views or a compact related batch for readable section images. Write findings before moving to unrelated work.
+
+| Evidence ID | Pair identity | Source path/open result | Target path/open result | Dimensions/freshness | Concrete findings | Decision/next pair |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Phase Artifact Index
 
@@ -72,9 +82,18 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 
 ## Gate And Invalidation Ledger
 
-| Event | Phase | Evidence invalidated | Marker correction required? | Repair/next action |
-| --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending |
+| Event | Phase | Evidence invalidated | Marker correction required? | Phase/progress/gaps read back? | Repair/next action |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | No | Pending |
+
+## Artifact Synchronization
+
+| Check | Pass/Fail | Evidence |
+| --- | --- | --- |
+| Marker, this ledger, current phase artifact, and gaps name the same phase/event | Fail | Pending |
+| Latest packet, issue, fix, recapture, gate, or promotion is recorded | Fail | Pending |
+| Current evidence IDs point to unique, current rows | Fail | Pending |
+| Sole next action is identical across current artifacts | Fail | Pending |
 
 ## Final Completion State
 

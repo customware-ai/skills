@@ -26,17 +26,17 @@
 
 ## Work Packet Ledger
 
-| Packet | Layer | Contract IDs and opened source evidence | Intended owners | UI-only outcome and explicit exclusions | Actual files | Readback/diff proof | Result and sole next action |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+| Packet | Layer | Contract IDs and opened source evidence | Intended owners | UI-only outcome and explicit exclusions | Actual files | Readback/diff proof | Phase/progress/gaps sync proof | Result and sole next action |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Model-Owned Packet Reviews
 
 Complete one row after every packet. Every review item must pass before beginning the next packet. This is an Agent review recorded in this artifact, not a script result.
 
-| Packet | Contract coverage | Owner scope | Layer boundary | Source fidelity | Target-native/UI-only | Readback | Focused diff | Gap ledger | Decision/repair |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+| Packet | Contract coverage | Owner scope | Layer boundary | Source fidelity | Target-native/UI-only | Readback | Focused diff | Artifact sync | Gap ledger | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
 
 ## Complete Contract Mapping
 
@@ -50,6 +50,8 @@ Complete one row after every packet. Every review item must pass before beginnin
 | --- | --- | --- |
 | Viewport-height shell owns layout | Fail | Pending |
 | Sidebar is structurally full-height | Fail | Pending |
+| Exact viewport shell owner is named and bounds document overflow | Fail | Pending |
+| Exact content-scroller owner is named and owns `overflow-y` | Fail | Pending |
 | Content pane is intended sole vertical scroll owner | Fail | Pending |
 | Document ordinary vertical scrolling is prevented | Fail | Pending |
 | Blank lower-sidebar region is structurally prevented | Fail | Pending |
@@ -90,10 +92,12 @@ Required: at least `48/50`.
 | Every work packet passed the model-owned packet review | Fail | Pending |
 | No packet contains undeclared or later-layer behavior | Fail | Pending |
 | Sidebar/content overflow ownership is structurally correct when present | Fail | Pending |
+| Shell audit proves a named viewport owner and content scroller; sticky/document-scroll architecture is not used as proof | Fail | Pending |
 | Responsive/mobile implementation exists | Fail | Pending |
 | Navigation/assets requirements pass | Fail | Pending |
 | UI-only scope and all shortcut bans pass | Fail | Pending |
 | Every significant packet has readback/diff evidence | Fail | Pending |
+| Phase artifact, progress, and gaps were updated/read back after every packet | Fail | Pending |
 | No required placeholder or ordinary implementation gap remains | Fail | Pending |
 
 ## Promotion Lock
@@ -105,6 +109,7 @@ Required: at least `48/50`.
 | Score and critical rows independently verified | Pending |
 | `open-gaps.md` reconciled | Pending |
 | `progress.md` updated | Pending |
+| Marker, Phase 0-1 artifacts, progress, and gaps agree on the sole next action | Pending |
 | Next marker and references identified | Pending |
 
 - Score: `0/50`

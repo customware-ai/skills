@@ -59,9 +59,10 @@ Then:
 4. inspect the focused diff and connected callers/consumers;
 5. compare the result against the packet's source evidence and exclusions;
 6. record actual files, readback/diff findings, and remaining gaps;
-7. mark every packet-review row `Pass` or `Fail`;
-8. if any row fails, repair the same packet and repeat the review;
-9. begin the next packet only when all packet rows pass.
+7. update and read back the Phase 1 artifact, `progress.md`, and `open-gaps.md`;
+8. mark every packet-review row `Pass` or `Fail`;
+9. if any row fails, repair the same packet and repeat the review;
+10. begin the next packet only when all packet rows pass.
 
 ### Packet Review Checklist
 
@@ -75,6 +76,7 @@ Then:
 | UI-only scope | no backend/API/database/auth/business behavior |
 | Readback | every changed file was reopened after the edit |
 | Focused diff | additions and removals were inspected for accidental scope |
+| Artifact synchronization | Phase 1, progress, and gaps record this packet and the same sole next action |
 | Gap ledger | new or unresolved issues are recorded with an owner and next fix |
 
 This checklist is a model condition recorded in the Phase 1 artifact. It is never executed as a script.
@@ -89,6 +91,8 @@ When a sidebar exists, implement the shell structurally so:
 - ordinary document scrolling does not reveal a blank region below the sidebar;
 - sidebar bounds remain stable while content scrolls;
 - mobile changes to a full-height drawer or the source-backed mobile pattern.
+
+Record the exact element/component that owns each role: viewport shell, sidebar, main column, and content scroller. Code review passes when the shell is viewport-bounded, document overflow is contained, the main column can shrink, and the named content pane has vertical overflow ownership. `position: sticky` plus `min-height: 100vh` does not establish that ownership because the document can still move the sidebar out of view.
 
 Do not rely on a fixed pixel height, a decorative background strip, or sticky positioning alone. Code structure must make the blank-lower-sidebar failure impossible.
 
@@ -144,6 +148,7 @@ Every critical item must independently pass:
 - all packets passed the model-owned review checklist;
 - no packet contains undeclared or later-layer behavior;
 - shell/sidebar/content overflow ownership is structurally correct when applicable;
+- sidebar ownership names a viewport-bounded shell and content scroller rather than relying on document scroll or sticky positioning;
 - responsive/mobile implementation exists for every contracted surface;
 - themes, navigation, and assets follow the reproduction contract;
 - no source runtime dependency, wrapper, gallery, iframe, or raw injection exists;
@@ -161,10 +166,11 @@ Before promotion:
 2. reopen the Phase 1 artifact and complete target diff;
 3. reopen high-risk shell/sidebar/responsive owners;
 4. independently verify score arithmetic and every critical item;
-5. reconcile `open-gaps.md`;
-6. update and reopen `progress.md`;
-7. write `Decision: Pass` and the promotion lock;
-8. set `CURRENT_PHASE.txt` to `phase-2-paired-responsive-proof`;
-9. read the paired-fidelity and lifecycle references before Phase 2 work.
+5. reopen Phase 0 and verify no Phase 1 change invalidated its contract or source evidence;
+6. reconcile and reopen `open-gaps.md`;
+7. update and reopen `progress.md` and confirm promotion is the sole next action;
+8. write and read back `Decision: Pass` and the promotion lock;
+9. set `CURRENT_PHASE.txt` to `phase-2-paired-responsive-proof`;
+10. immediately update `progress.md`, then read the paired-fidelity and lifecycle references before Phase 2 work.
 
 If any check fails, remain in Phase 1 and continue the repair loop.

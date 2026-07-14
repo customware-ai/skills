@@ -5,22 +5,20 @@ description: Rebuild a provided source HTML application as a real, authored, hig
 
 # Source HTML To App UI
 
-## Strict Instruction Contract
+## Quality Objective And Operating Contract
 
-This file is strict implementation instruction, not loose guidance or optional reference material.
+Use this canonical five-phase workflow to reproduce the approved source HTML as a high-quality target UI.
 
-If the Agent reads this skill, execute it exactly as written, in phase order, to the letter.
+Judge success primarily from the finished experience:
 
-- Do not reinterpret, reorder, combine, skip, abbreviate, or replace phases.
-- Do not replace evidence with confidence, prose, a green build, or broad visual similarity.
-- Do not replace paired Playwright verification with target-only screenshots.
-- Do not reduce verification because it appears difficult, expensive, repetitive, or time-consuming.
-- Do not promote while a required row is `Pending`, `Fail`, missing, stale, contradicted, or unsupported.
-- Do not call task completion before Phase 4 passes.
+- every source page, meaningful state, section, and interaction is represented;
+- the target UI closely preserves the source layout, styling, content, hierarchy, and behavior;
+- responsive layouts remain usable without overlap, clipping, cutoff, or incorrect overflow;
+- a desktop sidebar stays full-height while the intended content pane scrolls, and mobile uses the source-backed drawer pattern;
+- paired Playwright images show the source and implementation at matching routes, states, themes, and viewports;
+- the final audit finds any missing quality work, routes it back to the owning phase, and calls task completion after the repaired gates pass.
 
-If a gate cannot be proved, it has failed. A failed gate means remain in that phase, repair the work or evidence, rescore it, and repeat. Do not stop while a local repair remains.
-
-There is no successful stopping point before Phase 4 passes. Premature completion can deliver a visibly broken product, erase the approved design's value, cost the user the project, and put the user's job at risk. Treat skipped discovery, fabricated evidence, target-only proof, broken responsive behavior, blank lower sidebars, and early completion as serious failures of duty.
+Treat each phase gate as an AI self-review. Inspect the work, award points from concrete evidence, identify weak areas, repair them, and rescore. A failed gate means continue the phase loop; it is not a stopping report. Preserve phase order and the important proof requirements while allowing sensible task-specific variation in packet size, artifact wording, and implementation technique.
 
 ## Scope Contract
 
@@ -31,15 +29,15 @@ Implement UI only:
 - local UI state and source-backed interactions;
 - responsive behavior and safe adaptation where the source is incomplete.
 
-Do not implement backend, API, persistence, database, authentication, server behavior, or business logic. Use realistic static data and local UI state only where required to reproduce visible behavior.
+Keep implementation UI-only: routes, components, styling, assets, responsive behavior, and local interaction state. Use realistic static data and local UI state where needed, leaving backend, API, persistence, database, authentication, server behavior, and business logic unchanged.
 
-The target must be an authored application. The source HTML is a discovery input, never a runtime dependency. Do not inject, embed, iframe, import, parse at runtime, or wrap the source HTML as the implementation.
+Author the target as a real application. Use the source HTML for discovery and comparison rather than injecting, embedding, iframing, importing, parsing, or wrapping it at runtime.
 
 ## Core Execution Invariant
 
 <core_execution_invariant>
 
-The Agent owns every phase evaluation. Phase gates are evidence-backed model reviews, not executable validator scripts.
+The Agent owns every phase evaluation. Use evidence-backed model reviews—not executable validator scripts—to score gates. Quality gates are internal control points that identify and drive the next repair until the UI and evidence are good enough to promote.
 
 Do not create or use phase-check, phase-promotion, packet-closeout, receipt, forced-read, hash-acknowledgement, or scoring scripts. The only supplied runtime script in this skill is `playwright-lifecycle.mjs`, which owns browser/server lifecycle. Custom Playwright interaction and capture scripts are allowed and required, but run them through the lifecycle helper.
 
@@ -55,6 +53,8 @@ An overall score cannot compensate for a failed critical item. A screenshot path
 
 If later work invalidates earlier evidence, return to the earliest affected phase, mark it failed, repair it, refresh the evidence, rescore it, and loop forward again.
 
+Promote from current phase artifacts, ledgers, opened evidence, and readback proof rather than from a summary claim alone.
+
 </core_execution_invariant>
 
 ## Mandatory Process Shape
@@ -69,9 +69,9 @@ If later work invalidates earlier evidence, return to the earliest affected phas
 | 3 | `phase-3-fidelity-repair-signoff` | section-by-section fidelity repair, adversarial checks, real-input interaction proof | at least `49/50`; desktop and mobile each at least `48/50` | one-to-one visual and behavioral signoff |
 | 4 | `phase-4-final-audit-completion` | artifact review, final diff/scope audit, literal-final completion command | exactly `50/50` | every previous gate remains valid and completion is unlocked |
 
-The phases perform different work. Do not move work to a later phase to avoid an earlier gate.
+Keep each issue in the phase that owns it. Repair and repass that phase before continuing forward.
 
-The only acceptable end state is Phase 4 passed and the exact task completion command run as the literal final tool action. The only acceptable earlier stop is a proven external blocker with no local recovery, recorded in the current phase artifact and `task-workflow/open-gaps.md`.
+Continue through Phase 4, then run the exact task completion command as the literal final tool action. Pause earlier only for a proven external blocker with no local recovery, recorded in the current phase artifact and `task-workflow/open-gaps.md`.
 
 </mandatory_process_shape>
 
@@ -90,7 +90,7 @@ Every phase follows this model-owned loop:
 9. If the gate passes, write the promotion lock, reopen the artifact, verify the arithmetic and evidence, update `progress.md`, then set the next marker.
 10. Immediately load the next phase references and continue without asking the user whether to proceed.
 
-Do not lower a threshold to escape the loop. Do not mark rows `Pass` merely because code or screenshots exist. Never invent points. Every awarded point must map to a concrete evidence row.
+Keep thresholds stable. Award points for concrete evidence and actual quality, not merely because code or screenshots exist.
 
 ## Artifact System
 
@@ -117,15 +117,46 @@ Create these runtime artifacts:
 - `task-workflow/runtime/source/`
 - `task-workflow/runtime/target/`
 
-Keep every generated task artifact under `task-workflow/`. Source scripts, screenshots, manifests, and notes belong under its source paths. Target scripts and evidence belong under its target/verification paths. Do not generate task screenshots, scripts, logs, or ledgers elsewhere.
+Keep every generated task artifact under `task-workflow/`. Source scripts, screenshots, manifests, and notes belong under its source paths. Target scripts and evidence belong under its target/verification paths. This single task-owned boundary keeps the next task's cleanup complete and predictable.
 
 Copy the supplied design JSON byte-for-byte to `task-workflow/spec.json`. Treat all old workflow artifacts, screenshots, scripts, logs, gaps, scores, and decisions as contaminated prior-run state.
 
-Copy the templates under `assets/templates/` without removing required tables, evidence categories, scorecards, critical gates, or promotion locks. Fill them as the work proceeds; do not prefill `Pass`.
+Copy the templates under `assets/templates/` and preserve their evidence categories, scorecards, critical gates, and promotion locks. Exact wording may be condensed or adapted when the same evidence remains clear and scorable. Fill them as work proceeds.
 
 `CURRENT_PHASE.txt` is a resume pointer, not proof. Phase artifacts and evidence decide whether a phase passed. `progress.md` is a compact resume ledger, not a substitute for phase evidence.
 
 </artifact_system>
+
+## Artifact Truth And Update Cadence
+
+<artifact_truth>
+
+The artifact trail is the source of truth for the run. `CURRENT_PHASE.txt`, `progress.md`, `open-gaps.md`, the current phase artifact, prior promotion locks, the evidence ledger, and the actual files on disk must agree.
+
+Update the current phase artifact, `progress.md`, and `open-gaps.md` after every:
+
+- phase start;
+- meaningful discovery, implementation, verification, comparison, or audit packet;
+- newly found mismatch or invalidated evidence group;
+- repair and recapture;
+- gate result;
+- phase promotion.
+
+`progress.md` must always identify the current marker, current artifact and references, earliest failing phase, last completed gate, active packet, current evidence IDs, and sole next local action. It points to detailed phase evidence; it does not duplicate the full corpus.
+
+After every gate-relevant file write, patch, generated artifact, screenshot capture, or ledger update, read it back before relying on it. A successful tool response is not readback. If a write is partial, missing, uncertain, or contradicted by another artifact, stop the packet, repair the write, read it back, and then continue.
+
+Before a phase passes, confirm:
+
+- the marker, phase artifact, `progress.md`, and `open-gaps.md` identify the same current phase and next action;
+- the latest meaningful issue, fix, evidence packet, gate, and promotion state is recorded;
+- every gap has a current owner/status and no passed phase owns an unresolved blocking gap;
+- evidence rows point to current, correctly identified, opened media;
+- required gate placeholders are replaced with real evidence or a justified `N/A`.
+
+Before promotion, reopen the current and all earlier phase artifacts, `progress.md`, `open-gaps.md`, and the current evidence rows. Reconcile contradictions first. Do not change the phase marker until the artifact trail is current and the promotion lock has been read back.
+
+</artifact_truth>
 
 ## Compaction, Resume, And Reconnect Contract
 
@@ -142,9 +173,11 @@ After every compaction, resume, retry, reconnect, or new coding session, re-read
 7. the references mapped to that phase;
 8. task inputs, source HTML, design JSON, and active implementation files required by that phase.
 
-Do not act from conversational memory. If the marker, progress ledger, gap ledger, and artifacts disagree, artifact gates win. Move the marker and ledger back to the earliest failing phase before continuing.
+Resume from the artifacts rather than conversational memory. If the marker, progress ledger, gap ledger, and artifacts disagree, let the artifact gates win and move the marker and ledger back to the earliest failing phase before continuing.
 
 After promotion, read the newly mapped references before work in the new phase.
+
+A provider interruption, compaction, malformed model/tool response, or image-context failure is not an external blocker while local artifacts remain readable. Resume from the ledgers, reduce the next comparison to one bounded evidence pair, and continue. Never reload a large screenshot corpus into one turn to reconstruct context.
 
 </resume_contract>
 
@@ -154,17 +187,21 @@ After promotion, read the newly mapped references before work in the new phase.
 
 - Use real user input for routes, drawers, menus, tabs, forms, filters, selections, and other visible interaction families.
 - Record exact reach steps for every route and state.
-- Capture every source page and meaningful state discovered from the HTML and browser behavior. Never impose a fixed page, state, section, or screenshot limit.
+- Capture every source page and meaningful state discovered from the HTML and browser behavior. Let the actual inventory determine the page, state, section, and screenshot count.
 - Capture desktop and mobile source evidence for every discovered page and meaningful state.
 - Capture paired source and target full-page/full-view images at matching route, state, theme, viewport, and scroll positions.
 - Capture paired section images for every visible page section. A full-page image alone is insufficient when section details are unreadable.
-- Open and compare every gate-critical image. Record actual mismatches, fixes, recapture paths, and final decisions.
-- Record browser geometry and scroll measurements where layout behavior matters.
-- Treat missing, unreadable, stale, mismatched, unpaired, or unopened evidence as `Fail`.
+- Assign every screenshot a stable image ID. Use a unique path that identifies side, route, state, theme, viewport, section/full-view framing, and revision. Keep one image identity per path and use a new revision path after recapture. An unchanged source image may support later target-repair comparisons when its identity and framing still match.
+- Before comparison, verify each source-target pair has distinct paths, the same browser viewport and framing intent, recorded actual image dimensions, and a target capture newer than its latest invalidating implementation change. Treat a full-page height difference as useful layout-mismatch evidence rather than blocking the comparison.
+- Open and compare every gate-critical image. Record separate source-opened and target-opened results, concrete visual findings, fixes, recapture paths, and final decisions. A blanket statement such as “all images opened” is not evidence.
+- Inspect the corpus in small readable comparison packets and record findings before moving to unrelated work. For tall pages, open one source-target pair at a time or use same-framed section pairs so details remain readable. Packet size may vary with image size; coverage still includes every required route, state, section, viewport, and theme.
+- Compare pairs across content presence/order, geometry/layout, spacing, typography, color, borders/radii/shadows, backgrounds, controls, assets, clipping/overlap, interaction state, scroll ownership, and responsive transformation. Record blank or black blocks, missing branding/content, clipped actions, wrong colors, collisions, and unreadable text as repairable mismatches.
+- Record browser geometry and scroll measurements where layout behavior matters. Copy source and target measurements into separate side-labeled artifact fields directly from their own manifests, calculate target deltas from the target values, and score the target only from those target values.
+- Keep missing, unreadable, stale, mismatched, unpaired, or unopened evidence unresolved until repaired or recaptured.
 - Keep `open-gaps.md` current. A gap is not resolved until the owning phase updates it with source and target proof.
-- Do not use one viewport's evidence to pass another viewport.
+- Score desktop and mobile from their own evidence.
 
-When a sidebar exists, visual proof must include a forced-overflow short-height desktop state, real scrolling, stable sidebar geometry, full viewport-height coverage, content-only scrolling, and a post-scroll screenshot proving no blank lower-sidebar region.
+When a sidebar exists, visual proof must include a forced-overflow short-height desktop state, real scrolling, stable sidebar geometry, full viewport-height coverage, content-only scrolling, and a post-scroll screenshot proving no blank lower-sidebar region. The target passes this proof only when its own recorded values show: document `scrollTop` unchanged, content-pane `scrollTop` increased, sidebar top/bottom unchanged within one pixel, and sidebar height/bottom covering the viewport within one pixel. Record the arithmetic explicitly. Source measurements describe the reference; they never replace or relax the target predicates.
 
 When a mobile drawer exists, separately prove open, close, overlay, full-viewport geometry, background interception, body/document scroll lock, and scroll restoration using real input and screenshots.
 
@@ -174,59 +211,54 @@ When a mobile drawer exists, separately prove open, close, overlay, full-viewpor
 
 - Match accepted source evidence one-to-one wherever evidence exists.
 - Reproduce source-backed routes, content, sections, visual hierarchy, spacing, typography, colors, controls, states, interactions, themes, and layout behavior.
+- Preserve source visual outcomes while applying the required target safety architecture. A desktop sidebar target uses a viewport-bounded shell with a named content-pane scroll owner even when the source happens to use document scrolling with sticky positioning.
 - For source-omitted breakpoints, extrapolate conservatively from the source, design JSON, and target tokens.
 - Correct objective responsive defects at unrepresented sizes: overlap, clipping, cutoff, wrong overflow, accidental page scroll, horizontal canvas overflow, unusable controls, and blank lower-sidebar regions.
 - Reproduce source themes. If the target exposes a theme omitted by the source, derive it conservatively and verify readability without inventing a new visual direction.
-- Do not add a theme switch unless the target requires one.
+- Add a theme switch only when the target requires one.
 - Use the real repository logo when available.
 - Disable navigation that has no accepted destination.
-- Never invent routes, product content, product behavior, backend logic, business logic, or an alternate design direction.
+- Stay within accepted routes, product content, visible behavior, and design direction.
 
 ## Managed Playwright Contract
 
 Use the unchanged `task-workflow/scripts/playwright-lifecycle.mjs` helper for source and target browser runs. Run custom Playwright discovery, interaction, capture, measurement, and comparison scripts through the helper's `--run` command. Keep source and target ports, scripts, screenshots, and runtime logs separate.
 
-Never use or advocate:
+Source and target capture are two separate lifecycle-owned runs. Start the source through the helper, capture and stop it; start the target through the helper, capture and stop it; then compare the saved evidence. When equivalent live interaction proof is needed, run the same focused interaction manifest once against source and once against target through separate helper-owned runs.
 
-- `pkill -f`;
-- `disown` or `nohup`;
-- fixed sleeps as readiness or state proof;
-- blind reruns;
-- repeated manual server loops;
-- arbitrary port sweeping;
-- browser downloads;
-- editing the copied lifecycle helper.
+Keep lifecycle ownership clean through these preferred practices:
 
-Use deterministic waits and bounded commands. Start readiness and targeted script timeouts at `15000`-`20000` ms. If a run fails with useful evidence, diagnose and fix that evidence. Permit one `60000` ms retry only after a timer-only quiet failure and recorded clean triage. Never exceed `120000` ms for one targeted script.
+- choose explicit, distinct task-owned ports before each run;
+- let the helper start the server, detect readiness, run the script, and perform PID-scoped cleanup;
+- use deterministic browser conditions instead of fixed sleeps;
+- diagnose recorded lifecycle evidence before a focused rerun;
+- split broad capture work into bounded scripts whose failure points are clear;
+- preserve the copied lifecycle helper byte-for-byte.
 
-The first browser command for each source or target lifecycle must establish managed ownership through the helper. A lifecycle failure is a repair ticket, not permission to switch to manual server handling or target-only screenshots.
+These practices replace broad process controls such as `pkill`, `lsof`, background-server loops, arbitrary port sweeping, and manual browser downloads.
 
-## Forbidden Shortcuts And Automatic Fails
+Use deterministic waits and bounded commands. Start readiness and targeted script timeouts at `15000`-`20000` ms. If a run fails with useful evidence, diagnose and fix that evidence. Permit one `60000` ms retry only after a timer-only quiet failure and recorded clean triage. Keep one targeted script within `120000` ms by splitting larger verification work.
 
-<automatic_fails>
+Establish helper ownership with the first browser command for each source or target lifecycle. Treat a lifecycle failure as a focused repair ticket and resume through managed lifecycle with paired evidence.
 
-These automatically fail the current phase:
+## Outcome Guardrails
 
-- creating or using a script to decide a phase score, phase pass, promotion, packet review, or closeout;
-- implementing before the fresh Phase 0 artifacts exist and Phase 0 passes;
-- skipping a phase or combining its gate into another phase;
-- advancing while the current or earlier artifact says `Decision: Fail`;
-- advancing with required `Pending`, missing evidence, stale screenshots, or unresolved ordinary gaps;
-- replacing required evidence tables with prose;
-- capturing screenshots without opening and comparing them;
-- discovering only a sampled or fixed number of source pages/states;
-- capturing only target screenshots;
-- using one full-page screenshot as the only proof for a multi-section page;
-- claiming responsive or sidebar correctness without short-height, scroll, geometry, and post-scroll evidence;
-- claiming mobile correctness without real-input drawer and mobile viewport proof when a drawer exists;
-- calling build/check evidence visual fidelity evidence;
-- treating Playwright as optional or too time-consuming;
-- editing the lifecycle helper or bypassing managed lifecycle after an undiagnosed failure;
-- signing off while any source-target pair, section, interaction family, critical gate, or viewport is unproved;
-- calling task completion before Phase 4 passes;
-- stopping while the next local repair or phase action exists.
+<outcome_guardrails>
 
-</automatic_fails>
+Preserve these core conditions. If one is missing, return to its owning phase, repair it, and rescore.
+
+| Condition to preserve | Required outcome |
+| --- | --- |
+| Model-owned gates | the Agent scores and promotes from evidence; scripts collect evidence but do not decide pass/fail |
+| Phase ownership | each phase begins after its predecessor passes and repairs return to the earliest affected phase |
+| Complete source contract | discovery covers every source page, meaningful state, visible section, interaction family, desktop, and mobile |
+| Authored UI-only target | the implementation uses real target routes/components/local state and does not run or embed the source HTML |
+| Paired visual proof | source and target images are current, correctly paired, opened, and compared at readable scale |
+| Responsive shell quality | desktop/mobile layouts avoid overlap and cutoff; the target document stays still while the named content pane scrolls, the sidebar bounds remain viewport-stable, and mobile drawer ownership is proved when applicable |
+| Managed browser lifecycle | custom Playwright runs use the unchanged lifecycle helper with deterministic waits and focused recovery |
+| Final completion | Phase 4 rechecks prior gates, routes any missing work back through the loop, then runs the exact task-completion command as the last tool action |
+
+</outcome_guardrails>
 
 ## Final Response Guard
 

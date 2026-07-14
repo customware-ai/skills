@@ -47,9 +47,9 @@
 
 Complete one row after every discovery packet. Every review item must pass before beginning the next packet. This is an Agent review, not a script result.
 
-| Packet | Declared coverage | Lifecycle ownership | Real-input reachability | Evidence completeness | Images opened | Source reconciliation | Fixed-wait audit | Scope boundary | Gap ledger | Decision/repair |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+| Packet | Declared coverage | Lifecycle ownership | Real-input reachability | Evidence completeness | Images opened | Source reconciliation | Fixed-wait audit | Scope boundary | Artifact sync | Gap ledger | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
 
 ## Route, State, And Interaction Inventory
 
@@ -59,13 +59,15 @@ Complete one row after every discovery packet. Every review item must pass befor
 
 ## Complete Source Evidence Matrix
 
-| Page/state ID | Viewport/theme | Full-view image | Section/state images | Lifecycle run evidence | Every image opened? | Visible findings | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | No | Pending | Fail |
+Keep every image identity traceable through rows here or a linked complete capture manifest. Paths are unique and revisioned; desktop/mobile and distinct sections keep separate image identities.
+
+| Evidence ID | Page/state | Theme/viewport | Full-view or section identity | Unique revisioned path | Dimensions | Capture time/lifecycle run | Opened time | Concrete visible findings | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Fail |
 
 ## Section Evidence
 
-| Section ID | Page/state | Source order/role | Desktop image | Mobile image | Images opened? | Structure/style/content contract | Behavior/theme contract | Status |
+| Section ID | Page/state | Source order/role | Desktop evidence ID | Mobile evidence ID | Each image opened separately? | Structure/style/content contract | Behavior/theme contract | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | No | Pending | Pending | Fail |
 
@@ -78,6 +80,15 @@ Complete one row after every discovery packet. Every review item must pass befor
 | Short-height pre/post-scroll blank-region inspection | Pending | Pending | Pending | Fail |
 | Mobile drawer open/close/overlay/body lock/restoration | Pending | Pending | Pending | Fail |
 | Source themes and target-required derivation rule | Pending | Pending | Pending | Fail |
+
+### Source Observation Versus Required Target Ownership
+
+| Item | Source observed value/owner | Required target value/owner | Planned target element/component | Status |
+| --- | --- | --- | --- | --- |
+| Document vertical scroll | Pending | unchanged during content scroll | Pending | Fail |
+| Content-pane vertical scroll | Pending | named pane increases `scrollTop` | Pending | Fail |
+| Sidebar top/bottom | Pending | viewport-stable within `1px` | Pending | Fail |
+| Viewport-height shell | Pending | bounded to viewport and contains document overflow | Pending | Fail |
 
 ## Design And Target Repository Contract
 
@@ -127,8 +138,10 @@ Required: at least `48/50`.
 | Every discovery packet passed the model-owned review | Fail | Pending |
 | Every inventory item has desktop/mobile and readable section/state evidence | Fail | Pending |
 | Every cited image was opened and inspected | Fail | Pending |
+| Every image has one unique path, dimensions, capture/open times, and concrete findings | Fail | Pending |
 | Custom Playwright scripts have no fixed waits and use lifecycle ownership | Fail | Pending |
 | Sidebar/drawer/scroll/theme discovery is complete when applicable | Fail | Pending |
+| Source-observed and target-required scroll contracts are separate and name the target shell/content owners | Fail | Pending |
 | Design and target architecture research is complete | Fail | Pending |
 | Reproduction contract has complete evidence, owners, adaptation, and exclusions | Fail | Pending |
 | No required placeholder, unsupported assumption, or ordinary discovery gap remains | Fail | Pending |
@@ -139,10 +152,12 @@ Required: at least `48/50`.
 | --- | --- |
 | Artifact reopened after final evidence update | Pending |
 | Gate-critical source images reopened across all pages and viewports | Pending |
+| Evidence IDs, paths, dimensions, capture/open times, and findings audited | Pending |
 | Inventory and contract coverage reconciled | Pending |
 | Score arithmetic and critical rows independently verified | Pending |
 | `open-gaps.md` reconciled | Pending |
 | `progress.md` updated and reopened | Pending |
+| Marker, phase artifact, progress, and gaps agree on the sole next action | Pending |
 | Next marker/reference identified | Pending |
 
 - Score: `0/50`
