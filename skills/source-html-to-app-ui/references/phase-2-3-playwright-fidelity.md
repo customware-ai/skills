@@ -98,7 +98,7 @@ Route missing implementation back to Phase 1. Do not patch around a Phase 1 cont
 
 ### Repo Checkpoint
 
-Run only commands required by recorded target instructions, in their required order. Capture complete enough output to identify all failures and warnings.
+Run the task-required checks and the relevant target package scripts in their required order. Capture complete enough output to identify all failures and warnings.
 
 When a check or build fails:
 

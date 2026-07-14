@@ -12,7 +12,7 @@ Do not rush Phase 0 to reach implementation. The approved source is the product 
 
 Phase 0 must produce inspectable source evidence, not a source-code interpretation. The initial understanding must come from opening the source in managed Playwright and inspecting screenshots. Read HTML/CSS/JS text only after the initial browser corpus is captured and opened, and then only to support selectors, state reachability, and precise implementation details.
 
-Phase 0 is target-read-only for its entire duration. After the initial image gate, inspect target files only to record architecture and constraints. Do not download/copy/open source logo or brand assets, even under `/tmp`; record source URLs and intended Phase 1 destinations as contract evidence only. Do not install dependencies or edit any target file. Every task-related write must stay under `task-workflow/` until the supplied promotion gate passes.
+Phase 0 is target-read-only for its entire duration. Inspect the design JSON and target files only after the complete HTML-derived desktop/mobile evidence set has been captured and opened, and then only in the mandatory order below to record architecture and constraints. Existing target-repository brand assets may be inspected read-only after the design read. If an expected target directory is absent, record that fact; do not create it. Do not run `mkdir`, `touch`, copy/move/remove commands, installers, formatters, or generators against the target. Do not download/copy/open externally referenced source logo or brand assets, even under `/tmp`; a task-level source-brand exception applies only after Phase 0 promotion in Phase 1. Record source URLs and intended Phase 1 destinations as contract evidence only. Do not install dependencies or edit any target file. Every task-related write must stay under `task-workflow/` until the supplied promotion gate passes. The executable promotion gate compares the complete target file hashes, symlinks, and directory tree with the bootstrap baseline, so empty/preparatory directories also fail.
 
 </phase_0_authority>
 
@@ -24,20 +24,24 @@ The first Phase 0 actions are not discretionary:
 
 | Order | Required action | Promotion evidence |
 | ---: | --- | --- |
-| 1 | Read this reference and `playwright-lifecycle.md` immediately after the main skill | tool/read evidence recorded in the artifact |
+| 1 | Read this reference in one tool call, wait for the result, then read `playwright-lifecycle.md` in a second tool call; never batch or parallelize the reads | ordered tool/read evidence recorded in the artifact |
 | 2 | As the next tool action, without listing or pre-validating inputs, run `assets/scripts/bootstrap-phase-0.mjs` with the task prompt's source HTML and design JSON paths; the bootstrap owns existence validation | `phase-0-entry-receipt.json` and fresh scaffold |
-| 3 | Read only the entry receipt and confirm every copied artifact is byte-identical | receipt readback |
+| 3 | Read only the already-named entry receipt directly—no intervening directory listing or existence probe—and confirm every copied artifact is byte-identical | receipt readback |
 | 4 | Run the exact `MANDATORY NEXT ACTION` printed by the bootstrap | exact helper command and runtime logs |
-| 5 | Read `source/initial-capture.json`, then open all four `requiredInspectionImages` in order using four separate sequential image-read tool calls; wait for and inspect each result before requesting the next; never batch or parallelize these reads; do not insert an intervening spec/source/target/reference read | ordered desktop/mobile full-page and labeled section-contact-sheet inspection findings |
-| 6 | Only now read other references, inspect target files, or bulk-read source HTML | timestamped/order evidence |
+| 5 | Separately read the already-named `source/initial-capture.json` directly—no `ls`, `stat`, `find`, glob, search, `wc`, or existence probe; lifecycle stdout is not a substitute. Only after that read, open all four `requiredInspectionImages` in order using four separate sequential image-read tool calls; wait for and inspect each result before requesting the next; never batch or parallelize these reads; do not insert an intervening spec/source/target/reference read | ordered desktop/mobile full-page and labeled section-contact-sheet inspection findings |
+| 6 | Read the approved HTML/CSS/JavaScript directly and completely to EOF without a preceding shell probe; if a read is truncated, continue from its next offset until every line has been inspected | complete source audit findings |
+| 7 | As the next action, run `node task-workflow/scripts/initialize-source-inventory.mjs`; read its generated inventory, reconcile it against the complete HTML, mark the audit passed, run `scripts/finalize-source-inventory.mjs`, then separately read its complete receipt | complete, hash-bound page/state inventory and finalization receipt |
+| 8 | Validate the unchanged supplied inventory capture, run every printed lifecycle mode separately and sequentially, read its canonical manifest, and open every dynamic `inspectionImages` sheet in listed order | complete desktop/mobile page, section, state, and shell evidence visibly covered exactly once |
+| 9 | After adding `imagesOpened`, read `task-workflow/spec.json` directly and completely as the immediate next tool action | exact ordered design-read evidence |
+| 10 | Only then inspect target implementation and existing target-repository brand assets read-only | timestamped/order evidence |
 
-Calling a planning/todo/delegation tool; inserting `ls`, `stat`, `find`, glob, search, or path validation before the bootstrap; reading another phase reference; listing or reading target implementation; batching or parallelizing the four initial image reads; reading spec/source text before all four required images; stopping the image sequence early; using a manual server; or making any non-workflow write before order 5 completes is an automatic run failure. The failure cannot be repaired in place because the discovery context is contaminated. Restore a clean fixture and restart.
+Calling a planning/todo/task-list/delegation/subagent tool anywhere in Phase 0; drafting future-phase implementation, build/check, verification, or completion steps; batching or parallelizing the two mandatory reference reads; inserting `ls`, `stat`, `find`, glob, search, `wc`, path validation, or any other probe anywhere between orders 2 and 7; reading another phase reference; listing or reading target implementation; batching or parallelizing the four initial image reads; reading spec/source text before all four required images; stopping either image sequence early; reading the design JSON or target implementation before every inventory-driven capture mode passes and every dynamic inspection sheet is opened; after source inspection, listing/searching target paths, inspecting target implementation/assets, or reasoning about implementation before completely reading `task-workflow/spec.json`; authoring or modifying source-capture code; using a manual server; or making any non-workflow write before order 5 completes is an automatic run failure. The failure cannot be repaired in place because the discovery context is contaminated. Restore a clean fixture and restart.
 
 </phase_0_entry_sequence>
 
 ## First-Write Boundary
 
-The Immediate First-Action Lock is the complete authority before the first target-repository write. Use the input paths already supplied in the task prompt. Do not pre-validate them, re-read their files, inspect target `AGENTS.md`, or insert another action before the bootstrap. The bootstrap owns input validation. Read target `AGENTS.md` and its required docs only after all four initial source images have been opened, then record every binding instruction before Phase 0 promotion.
+The Immediate First-Action Lock is the complete authority before the first target-repository write. Use the input paths already supplied in the task prompt. Do not pre-validate them, re-read their files, inspect target files, or insert another action before the bootstrap. The bootstrap owns input validation. Read `task-workflow/spec.json` only after every HTML-inventoried source image has been captured and opened, but then read it as the immediate next path before any target listing/search/read. Record the target architecture before Phase 0 promotion.
 
 The first target-repository write must be the supplied bootstrap command. Do not manually recreate its work:
 
@@ -47,9 +51,9 @@ node <skill-root>/assets/scripts/bootstrap-phase-0.mjs \
   --design-json <approved-design-json-path>
 ```
 
-The bootstrap deletes old `task-workflow/`, copies all templates and inputs byte-for-byte, copies the lifecycle and initial source-capture scripts byte-for-byte, creates all evidence/runtime roots, sets the marker, writes a hash receipt, and prints the one permitted next browser command.
+The bootstrap deletes old `task-workflow/`, copies all templates and inputs byte-for-byte, copies the lifecycle, inventory, gate, and source-capture scripts byte-for-byte, creates all evidence/runtime roots, sets the marker, writes a hash receipt, and prints the one permitted next browser command.
 
-Do not inspect or edit implementation, configuration, package, generated, or build files before this packet is complete, the initial source browser corpus is captured, and every initial image is opened.
+Do not inspect or edit implementation, configuration, package, generated, or build files before this packet is complete and every image from the finalized source inventory has been captured and opened.
 
 ### Required First-Write Evidence
 
@@ -63,20 +67,29 @@ Do not inspect or edit implementation, configuration, package, generated, or bui
 | Initial source script byte-identical | entry receipt comparison with the skill asset |
 | Exact order | bootstrap was the next action after the two required reference reads; printed lifecycle command was next after receipt readback |
 | No early implementation | clean diff/status evidence covering the boundary |
-| No early target/source-text exploration | ordered tool evidence proving browser images were opened before implementation reads or bulk HTML reads |
+| No invisible/preparatory target mutation | `phase-0-target-baseline.json` exactly matches target files, symlinks, and directories at promotion |
+| No early target/spec exploration | ordered tool evidence proving the complete inventory-driven browser corpus was opened before target or design JSON reads |
 | Artifact confinement | listing proving generated workflow files exist only under `task-workflow/` |
 
 A stale artifact, copied-forward score, reused screenshot, modified helper, missing template, or implementation edit before the boundary is an automatic Phase 0 failure.
 
 ## Target Instruction And Repository Contract
 
+Start this contract only after the complete source manifest has been read, every listed dynamic inspection sheet has been opened, `imagesOpened` has been added exactly once, and `task-workflow/spec.json` has been read completely.
+
+The start order is fixed:
+
+1. Read `task-workflow/spec.json` directly and completely. Do not list or search target paths first.
+2. Only then list/search/read target implementation paths and inspect existing target-repository brand assets read-only.
+
+Do not reason about routes, assets, architecture, dependencies, or implementation before step 1 finishes. If target inspection begins first, the run is contaminated and must restart.
+
 Read and record:
 
-- binding target instructions and required docs;
 - existing route registration and layout boundaries;
 - theme provider, tokens, typography, and shared primitives;
 - existing logo and brand assets;
-- app start, check, lint, type, and build commands required by target instructions;
+- app start, check, lint, type, and build commands available in the target;
 - existing frontend architecture and file ownership;
 - constraints that affect UI-only implementation.
 
@@ -84,21 +97,59 @@ Do not use Phase 0 to plan backend, persistence, auth, API, or business logic. I
 
 ## Mandatory Second Interactive Source Run
 
-The supplied initial capture proves only the default rendered state. It can never complete route, state, or interaction discovery by itself.
+The supplied four-image initial capture proves only that the default rendered state can be inspected. It is a startup sanity corpus, never the Phase 0 evidence set, page count, or completion limit.
 
 Before scoring Phase 0:
 
-1. After the initial four images are opened, inspect source text only for selectors and reachable state logic.
-2. Create at least one additional focused script under `task-workflow/source-playwright/` that uses real Playwright input calls such as `click`, `fill`, `press`, `selectOption`, `wheel`, `tap`, or drag.
-3. Before any custom browser run, execute `node task-workflow/scripts/validate-source-discovery.mjs <custom-script-path> [...]`. Repair until it passes. Any script edit invalidates the hash receipt and requires revalidation.
-4. Run each validated script only through `node task-workflow/scripts/run-validated-source-discovery.mjs <custom-script-path>`, one command at a time. Never invoke two validated runners in parallel. The runner verifies the hash, takes an exclusive source-lifecycle lock, invokes the unchanged lifecycle helper, hardcodes `15000`/`20000` ms limits, and records that script hash in `source/discovery/lifecycle-run-receipts.json`. Do not invoke the lifecycle helper directly for custom discovery. Split focused scripts rather than increasing time, but execute every split script sequentially. Every current custom script hash must have its own passing receipt. This must create a non-empty `run-02.log`.
-5. Capture every discovered destination/state under `source/discovery/desktop/` and `source/discovery/mobile/`, with at least two images in each.
-6. The discovery run may write `source/discovery/manifest.json` with `inputActions` and `images`. The browser script must not mention, create, or populate `imagesOpened`; screenshot capture is not image inspection.
-7. Open every manifest image. Only after the final visual read, edit the manifest once to add `imagesOpened` as the exact ordered copy of the inspected `images` list.
-8. Complete and reopen the Phase 0 artifact and ledgers.
-9. Run `node task-workflow/scripts/promote-phase-0.mjs`. Do not edit the marker manually.
+1. After the initial four images are opened, read `task-workflow/source-input/approved.html` completely to EOF, including all HTML, CSS, and JavaScript. If output is truncated, continue reading until every line has been inspected. First understand how many pages exist and exactly which pages, destinations, states, wizard steps, tabs, filters, drawers, dialogs, and disabled controls exist. Do not read the design JSON or inspect target implementation before this audit is complete.
+2. Your next action after the complete source read must be `node task-workflow/scripts/initialize-source-inventory.mjs`. It writes a hash-bound skeleton from every runtime candidate. Do not hand-author a smaller inventory or skip this initializer.
+3. Read the generated inventory. Reconcile it against the complete HTML: add source-declared pages/states runtime heuristics missed, correct labels/selectors/ownership/disabled proof, and preserve every runtime mapping exactly once. Set `sourceOnlyDeclarationsReviewed` to `true`, `sourceAuditStatus` to `Pass`, and add concrete `sourceAuditNotes` naming the source declarations reviewed.
+4. Run `node task-workflow/scripts/finalize-source-inventory.mjs`. It rejects stale hashes, missing runtime mappings, duplicate mappings, invalid ownership, incomplete audit fields, and wrong counts. Separately read `source/discovery/source-inventory-audit-receipt.json` in full and confirm its page count plus page identities match the HTML audit. Any later inventory edit invalidates the receipt and requires finalization plus receipt read again.
+5. Do not author, copy, or modify source-capture code. Run exactly `node task-workflow/scripts/validate-source-discovery.mjs task-workflow/source-playwright/inventory-source-discovery.mjs`. Copy that literal command. Keep both paths repo-relative even if the tool accepts absolute paths; do not resolve, prefix, or rewrite either path. The validator intentionally rejects an absolute script argument. It also rejects any change from the byte-identical script installed by the bootstrap.
+6. Run every lifecycle command printed by the validator separately, sequentially, and without an intervening target/spec read. The runner verifies the supplied script hash, owns the source lifecycle, automatically divides an arbitrarily large finalized inventory into sequential bounded execution batches, uses `15000`/`20000` ms per lifecycle batch, and records one complete receipt for each required mode only after all of that mode's candidates pass. A batch size is process isolation, never an evidence limit. Never invoke the lifecycle helper directly for this capture.
+7. The supplied script consumes the finalized inventory rather than a page list. Across its lifecycle-owned batches, it iterates every `inventory.pages` entry at desktop and mobile, captures each full page plus its visible sections, iterates every `inventory.states` entry at desktop and mobile using real input, and captures desktop/mobile shell evidence. Before each screenshot it drives finite browser animations and transitions to their final state, then waits for stable frames, so evidence cannot freeze midway through motion. The HTML decides the counts. There is no fixed minimum, maximum, representative sample, first-page shortcut, or four-image cap.
+8. Separately read the completed canonical `source/discovery/manifest.json`. Confirm its page/state counts and identities exactly match the finalized inventory and that desktop/mobile evidence exists for each entry.
+9. The canonical manifest keeps raw evidence in `images`, dynamic readable contact sheets in `inspectionImages`, and an `inspectionCoverage` mapping. The supplied script must prove that the sheets visibly include every raw evidence file exactly once. Grouping is only an inspection transport; it must never omit or sample a page, state, viewport, section, scroll state, or drawer state. The browser script must not mention, create, or populate `imagesOpened`; screenshot capture is not image inspection.
+10. Open every `inspectionImages` sheet separately and sequentially in listed order. Never inspect only representative sheets or replace a sheet read with its path. Reject any panel caught during an entrance animation or transition: faded, transparent, blank, partially populated, moving, or otherwise unsettled evidence is invalid even when its file exists. Stop Phase 0 instead of treating corrupt evidence as source truth. Only after every sheet and every labeled panel is complete and visually valid, edit the manifest once to add `imagesOpened` as the exact ordered copy of the inspected `inspectionImages` list.
+11. Only now read `task-workflow/spec.json` directly and completely as the immediate next tool action. Only then inspect target implementation and existing target-repository brand assets read-only, complete the Phase 0 contract and ledgers, and score the phase. Any target listing/search/read or implementation reasoning before the design read, or any `Pass` or score written before this point, invalidates the run.
+12. Reopen the completed artifacts, then run `node task-workflow/scripts/promote-phase-0.mjs`. Do not edit the marker manually.
 
-If a visible navigation/control family has not been exercised with real input, Phase 0 fails. If only `initial-source-capture.mjs` ran, Phase 0 fails. If a custom script contains a fixed wait, ran without a current validation receipt and matching lifecycle-run receipt, ran concurrently with another validated source runner, or used `60000` ms without a qualifying timer-only retry record, Phase 0 fails. If any target file outside `task-workflow/` changed, the executable gate fails and the run must be reset.
+Use this inventory shape exactly; arrays grow to match the HTML and have no fixed limit:
+
+```json
+{
+  "sourceAuditStatus": "Pass",
+  "sourceAuditNotes": ["Reviewed every navigation declaration, view container, and state-control family through EOF."],
+  "sourceOnlyDeclarationsReviewed": true,
+  "initialInventoryFingerprint": "<source/initial-capture.json inventoryFingerprint>",
+  "sourceHtmlSha256": "<approved.html SHA-256>",
+  "pageCount": 1,
+  "pages": [
+    {
+      "candidateId": "page:<stable-name>",
+      "label": "<visible page name>",
+      "sourceSelectors": ["<HTML selector/declaration evidence>"],
+      "runtimeCandidateIds": ["surface:<mapped runtime id>"],
+      "disabled": false,
+      "disabledSourceEvidence": ""
+    }
+  ],
+  "stateCount": 1,
+  "states": [
+    {
+      "candidateId": "state:<stable-name>",
+      "ownerPageCandidateId": "page:<stable-name>",
+      "label": "<state/control name>",
+      "sourceSelectors": ["<HTML selector/declaration evidence>"],
+      "runtimeCandidateIds": ["state:<mapped runtime id>"],
+      "disabled": false,
+      "disabledSourceEvidence": ""
+    }
+  ]
+}
+```
+
+If the complete HTML was not read first, the initializer was skipped, the finalizer or complete receipt read was skipped, a source HTML page/state is absent from the inventory, any runtime candidate is unmapped, the supplied capture script changed, any required lifecycle mode was skipped, any inventoried page/state lacks desktop/mobile/full-page/section evidence, inspection coverage omits or duplicates raw evidence, any opened sheet panel is transition-corrupted or incomplete, or target/spec inspection began before every inspection sheet was opened, Phase 0 fails. If only `initial-source-capture.mjs` ran, Phase 0 fails. If validated runners ran concurrently or a source run used `60000` ms without a qualifying timer-only retry record, Phase 0 fails. If any target file outside `task-workflow/` changed, the executable gate fails and the run must be reset.
 
 ## Source Launch Contract
 
@@ -215,7 +266,7 @@ Every item must pass:
 
 - fresh reset/reseed is proved and no implementation changed early;
 - all five templates, ledgers, roots, spec, marker, and unchanged helper exist;
-- exact task inputs and target instructions are recorded;
+- exact task inputs and target architecture are recorded;
 - every reachable route, state, section, and interaction family has real-input discovery evidence;
 - desktop and mobile source evidence is complete and inspected;
 - source scroll/sidebar/drawer/theme behavior is measured when present;

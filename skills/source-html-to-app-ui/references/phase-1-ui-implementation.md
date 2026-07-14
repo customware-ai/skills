@@ -16,7 +16,32 @@ Do not weaken source fidelity to save time. Delivering a partial or generic UI c
 
 ## Pre-Implementation Gate
 
-Before any implementation write, prove:
+<phase_1_first_write_lock>
+
+The entire Phase 1 side-effect boundary is mechanically locked, not merely writes inside the target tree. Reading this reference or inspecting target files does not open the boundary.
+
+Until the first-packet gate passes and its receipt is read back, the only permitted tool actions are the ordered file reads below and the exact gate command itself. The gate command must be the first non-read tool action in Phase 1. Before it passes, do not run any other shell command and do not create, download, copy, move, remove, format, generate, install, start, or change anything anywhere—including `task-workflow/`, the target tree, `/tmp`, another external directory, or a remote service. Do not use `curl`, `wget`, a browser, Playwright, a server, a build, an asset fetch, a network probe, a planning tool, a todo tool, delegation, or a subagent. A side effect outside the target baseline is still an early Phase 1 side effect and invalidates the run.
+
+Execute this exact entry sequence:
+
+1. Read `task-workflow/phase-1-ui-implementation.md` and `task-workflow/progress.md` before choosing files.
+2. Inspect only the target token, typography, theme, shared-primitive, route-root, and styling owners needed to define the first ordered packet. Use file-read tools only. Do not invoke shell commands even for supposedly read-only inspection. Do not inspect or fetch external assets. Do not call a planning, todo, delegation, or subagent tool; the packet receipt is the required plan.
+3. Before any target write, run the supplied gate with concrete values from the accepted Phase 0 contract:
+
+   ```bash
+   node task-workflow/scripts/begin-phase-1-packet.mjs \
+     --contracts "rep:theme,<shared-primitive contract IDs>" \
+     --evidence "<exact Phase 0 source evidence paths>" \
+     --files "<comma-separated target files for packet 1>" \
+     --outcome "<exact UI-only acceptance outcome>"
+   ```
+
+4. The command must print `PHASE 1 FIRST-PACKET GATE: PASS`. Separately read `task-workflow/phase-1-first-packet-receipt.json`, then read back the updated Phase 1 artifact and `progress.md`.
+5. Only then write the permitted target files. Do not touch a target file absent from the receipt. After the packet, read back every changed file and inspect its focused diff before recording the packet result.
+
+The gate compares the complete target tree with the Phase 0 baseline. If any target file or even an empty target directory changed first, it fails and the run is contaminated. Any earlier out-of-tree or remote side effect is also contamination even when the baseline cannot detect it. Stop, clean-reset, and restart. Do not repair the evidence around an early side effect.
+
+Before any implementation write, the passing receipt must prove:
 
 - Phase 0 artifact says `Decision: Pass` and scores at least `48/50`;
 - `CURRENT_PHASE.txt` is already `phase-1-ui-implementation`;
@@ -26,6 +51,8 @@ Before any implementation write, prove:
 - no critical Phase 0 gap is open.
 
 If any condition fails, return to Phase 0. Implementation performed before this boundary is invalid.
+
+</phase_1_first_write_lock>
 
 ## Ordered Implementation Contract
 
@@ -70,6 +97,10 @@ After the packet:
 6. update `open-gaps.md` for unresolved implementation gaps.
 
 Do not complete multiple significant packets while leaving the execution table blank. Do not describe a failed write as completed. Repair and read back invalid edits before continuing.
+
+Packet 1 additionally requires `phase-1-first-packet-receipt.json`. An Agent-authored row without that passing mechanical permit is not entry evidence.
+
+Acquire or create an allowed source-referenced brand asset only in the later navigation/assets packet. Record that packet before acquisition, name the final repository asset path, keep the asset inside the repository, and inspect the acquired image before using it. Never stage a task asset in `/tmp` or another out-of-workflow directory.
 
 </work_packet_discipline>
 

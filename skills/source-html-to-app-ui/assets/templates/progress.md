@@ -4,7 +4,7 @@
 
 After compaction, resume, retry, reconnect, or a new coding session, read in this order before choosing work:
 
-1. target `AGENTS.md` and every recorded binding target instruction;
+1. exact task prompt and task inputs;
 2. exact task inputs, source HTML, and design JSON;
 3. `.agents/skills/source-html-to-app-ui/SKILL.md`;
 4. this `progress.md`;
@@ -35,7 +35,7 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 | Input | Exact path/value | Reloaded this session? |
 | --- | --- | --- |
 | Target repo and mode | Pending | No |
-| Target `AGENTS.md` and required instructions | Pending | No |
+| Task prompt and design contract | Pending | No |
 | Task instructions | Pending | No |
 | Source HTML | Pending | No |
 | Design JSON | Pending | No |

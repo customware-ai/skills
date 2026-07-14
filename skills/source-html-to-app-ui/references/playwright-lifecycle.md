@@ -120,7 +120,7 @@ Never use:
 - direct browser scripts after an undiagnosed helper failure;
 - edits to `playwright-lifecycle.mjs`.
 
-If a sandbox-owned stale process must be recovered and PID-scoped cleanup truly cannot work, record proof and the smallest explicit PID/port recovery before using any fallback. This is exceptional recovery, not normal operation.
+The supplied Phase 0 bootstrap and validated discovery runner allocate a fresh free loopback port for each lifecycle-owned run. Never respond to a source port failure with `lsof`, `ps`, `kill`, `pkill`, shell `sleep`, manual server startup, or port cleanup. The supplied runner owns port selection and lifecycle cleanup. If its fresh-port invocation still fails, preserve its logs, stop Phase 0, clean-reset, and diagnose the reusable runner outside the task run.
 
 ## Evidence Required For A Passing Lifecycle Gate
 

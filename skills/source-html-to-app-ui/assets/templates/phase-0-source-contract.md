@@ -15,10 +15,10 @@
 | Critical requirement | Pass/Fail | Concrete evidence |
 | --- | --- | --- |
 | Phase 0 and lifecycle references were the next reads after the main skill | Fail | Pending |
-| No planning, todo, task-list, delegation, or subagent tool ran before initial images were opened | Fail | Pending |
+| No planning, todo, task-list, delegation, subagent, or future-phase plan occurred anywhere in Phase 0 | Fail | Pending |
 | Supplied bootstrap was the next tool action after the two required reference reads | Fail | Pending |
 | No listing, stat, find, glob, search, or path pre-validation occurred before the bootstrap | Fail | Pending |
-| Target `AGENTS.md` and required docs read after the initial image gate and before target architecture inspection | Fail | Pending |
+| `task-workflow/spec.json` was the immediate next path read after every complete source inspection sheet was opened and `imagesOpened` was added | Fail | Pending |
 | Old `task-workflow/` removed | Fail | Pending |
 | Fresh reseed was first target-repo write | Fail | Pending |
 | All five phase templates and ledgers copied fresh | Fail | Pending |
@@ -29,10 +29,12 @@
 | Entry receipt read back with every copied row byte-identical | Fail | Pending |
 | Bootstrap-printed lifecycle command was the next action after receipt readback | Fail | Pending |
 | Target repository remained read-only for all of Phase 0; only `task-workflow/` changed | Fail | Pending |
+| Bootstrap target baseline still matches every target file hash, symlink, and directory; no empty/preparatory directory was created | Fail | Pending |
 | No task artifact was written outside `task-workflow/`; source logo/brand URLs were recorded but not fetched | Fail | Pending |
 | Empty approved script/evidence/runtime roots created | Fail | Pending |
 | No implementation/config/generated/build file changed early | Fail | Pending |
-| No target implementation file or bulk HTML content was read before initial source screenshots were opened | Fail | Pending |
+| No target implementation or design JSON was read before the complete inventory-derived source corpus was opened | Fail | Pending |
+| After source inspection, design JSON was read before target implementation/assets | Fail | Pending |
 | No old artifact/image/script/log/gap/score reused | Fail | Pending |
 | Generated task artifacts confined to `task-workflow/` | Fail | Pending |
 
@@ -40,10 +42,10 @@
 
 | Area | Exact files/paths inspected | Binding rules/patterns | Evidence |
 | --- | --- | --- | --- |
-| `AGENTS.md` and required docs | Pending | Pending | Pending |
+| Task prompt and design contract | Pending | Pending | Pending |
 | Routes and layouts | Pending | Pending | Pending |
 | Themes, tokens, typography, primitives | Pending | Pending | Pending |
-| Brand assets | Pending | Pending | Pending |
+| Existing target-repository brand assets (read-only; no source URL fetch) | Pending | Pending | Pending |
 | Start/check/lint/build commands | Pending | Pending | Pending |
 | UI-only architecture boundary | Pending | Pending | Pending |
 
@@ -57,16 +59,27 @@
 | Helper byte identity | Pending |
 | Source script paths and fixed-wait audit | Pending |
 | Timeout values and any triage | Pending |
-| Initial desktop, mobile, and section screenshots captured before target exploration | Pending |
+| Initial desktop, mobile, and section screenshots captured before the complete HTML audit | Pending |
 | Every initial screenshot opened and visible findings recorded | Pending |
 | All four initial required images opened in exact order with no intervening spec/source/target/reference read | Pending |
-| Second helper-owned interactive discovery run and non-empty `run-02.log` | Pending |
-| Custom discovery script contains real input actions and screenshot capture | Pending |
-| Custom discovery script pre-run validator passed at the executed script hash | Pending |
-| Custom discovery scripts contain no fixed waits; first-attempt timeouts are 15000-20000 ms | Pending |
-| Supplied validated runner owns every custom lifecycle invocation sequentially; exclusive lock held and a matching 15000/20000 ms receipt exists for every current script hash | Pending |
-| Discovery manifest accounts for every opened desktop/mobile discovery image | Pending |
-| Browser script did not prefill `imagesOpened`; field was added only after visual reads | Pending |
+| Four initial images treated only as default-view startup evidence, never as the page/state evidence limit | Pending |
+| Complete approved HTML/CSS/JavaScript read before inventory capture or target/spec inspection | Pending |
+| Inventory initializer was the next action after the complete HTML read | Pending |
+| Generated inventory was reconciled against source-only declarations and marked audited | Pending |
+| Inventory finalizer passed and its complete page/state identity receipt was read before supplied capture work | Pending |
+| Exact source page/state counts and identities recorded in `source/discovery/source-inventory.json` | Pending |
+| Every runtime surface/state candidate mapped exactly once and source-only declarations added | Pending |
+| Post-initial helper-owned discovery is proved by all five validated lifecycle receipts and a newer non-empty managed `run-01.log` | Pending |
+| Supplied byte-identical discovery script contains real input actions and screenshot capture | Pending |
+| Supplied script iterates every finalized inventory page/state; no hardcoded sample arrays or fixed evidence count | Pending |
+| One canonical manifest contains array coverage for every page/state and only discovery-root images | Pending |
+| Supplied discovery script pre-run validator passed at its unchanged bootstrap hash | Pending |
+| Supplied discovery script contains no fixed waits; first-attempt timeouts are 15000-20000 ms | Pending |
+| Supplied validated runner owns all five lifecycle modes sequentially; every inventory-derived execution batch passed under the exclusive lock and matching 15000/20000 ms receipts exist | Pending |
+| Every inventoried page has desktop/mobile full-page and visible-section evidence; every state has desktop/mobile evidence | Pending |
+| Every opened source image is fully settled and populated; no entrance-animation, transition, faded, blank, or partial capture | Pending |
+| Dynamic inspection sheets visibly cover every desktop/mobile evidence image exactly once without a page/state/evidence limit | Pending |
+| Every inspection sheet was opened in listed order; browser script did not prefill `imagesOpened`, and the field was added only after visual reads | Pending |
 
 ## Route, State, And Interaction Inventory
 
@@ -121,7 +134,7 @@ Required: at least `48/50`.
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
 | Ordered entry, first-write, reset, spec, helper, no-early-target-exploration, and no-early-implementation boundary passes | Fail | Pending |
-| Exact inputs and binding target instructions are recorded | Fail | Pending |
+| Exact inputs, design contract, and target architecture are recorded | Fail | Pending |
 | Every route/state/section/interaction family has real-input source evidence | Fail | Pending |
 | Desktop/mobile images are complete, readable, and opened | Fail | Pending |
 | Scroll/sidebar/drawer/theme discovery is complete when applicable | Fail | Pending |
