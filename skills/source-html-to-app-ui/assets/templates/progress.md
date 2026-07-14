@@ -2,23 +2,18 @@
 
 ## Mandatory Resume Sequence
 
-After compaction, resume, retry, reconnect, continuation, session restoration, or a new coding session, the literal first tool action is reading `.agents/skills/source-html-to-app-ui/SKILL.md`.
+After compaction, resume, retry, reconnect, or a new coding session, read:
 
-If the last completed result or phase lock identifies one mandatory next action, immediately perform it after the skill read. Continue chained mandatory actions without injecting the general reload. Use the general artifact reload only at a safe boundary with no explicit immediate next action.
+1. `.agents/skills/source-html-to-app-ui/SKILL.md`;
+2. this `progress.md`;
+3. `CURRENT_PHASE.txt`;
+4. `open-gaps.md`;
+5. earlier artifacts needed to identify the earliest failing phase;
+6. the current or earliest failing phase artifact;
+7. the references mapped to that phase;
+8. task inputs and active source/target files required by that phase.
 
-If bootstrap never completed, do not probe this file or any `task-workflow/` path. Restart the main skill's Immediate First-Action Lock from its two ordered reference reads and bootstrap.
-
-If bootstrap completed, read in this order before choosing work:
-
-1. this `progress.md`;
-2. `CURRENT_PHASE.txt`;
-3. `open-gaps.md`;
-4. earlier artifacts needed to identify the earliest failing phase;
-5. the current or earliest failing phase artifact;
-6. references mapped to that phase;
-7. task inputs, source HTML, or design only when the owning phase requires it.
-
-Do not act from conversation memory. If marker, ledger, gaps, and artifacts disagree, set the marker and this ledger back to the earliest failing phase before work.
+Do not act from conversation memory. If marker, ledger, gaps, and artifacts disagree, return to the earliest failing phase.
 
 ## Current Phase Pointers
 
@@ -38,9 +33,8 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 
 | Input | Exact path/value | Reloaded this session? |
 | --- | --- | --- |
-| Target repo and mode | Pending | No |
+| Target repo and UI-only mode | Pending | No |
 | Task prompt and design contract | Pending | No |
-| Task instructions | Pending | No |
 | Source HTML | Pending | No |
 | Design JSON | Pending | No |
 | Byte-identical `task-workflow/spec.json` | Pending | No |
@@ -48,9 +42,9 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 
 ## Current Work Packet
 
-| Owning phase | Contract/evidence scope | Active files | Last readback/result | Sole next action |
-| --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending |
+| Owning phase | Contract/evidence scope | Intended owners | Actual changed files | Last readback/review result | Sole next action |
+| --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending |
 
 ## Phase Artifact Index
 
@@ -66,7 +60,8 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 
 | Group | Path | Owning phase | Freshness/status |
 | --- | --- | --- | --- |
-| Source browser scripts | `task-workflow/source-playwright/` | 0/2 | Pending |
+| Source inventory/manifest | `task-workflow/source/` | 0 | Pending |
+| Source browser scripts | `task-workflow/source-playwright/` | 0/2/3 | Pending |
 | Source screenshots | `task-workflow/source/` | 0/2/3 | Pending |
 | Source runtime logs | `task-workflow/runtime/source/` | 0/2/3 | Pending |
 | Target browser scripts | `task-workflow/target-playwright/` | 2/3 | Pending |
@@ -83,7 +78,7 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 
 ## Final Completion State
 
-This section may be completed only in Phase 4.
+Complete only in Phase 4.
 
 | Requirement | Value |
 | --- | --- |

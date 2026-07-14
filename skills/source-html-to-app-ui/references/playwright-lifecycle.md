@@ -120,7 +120,7 @@ Never use:
 - direct browser scripts after an undiagnosed helper failure;
 - edits to `playwright-lifecycle.mjs`.
 
-The supplied Phase 0 bootstrap and validated discovery runner allocate a fresh free loopback port for each lifecycle-owned run. Never respond to a source port failure with `lsof`, `ps`, `kill`, `pkill`, shell `sleep`, manual server startup, or port cleanup. The supplied runner owns port selection and lifecycle cleanup. If its fresh-port invocation still fails, preserve its logs, stop Phase 0, clean-reset, and diagnose the reusable runner outside the task run.
+Choose a free source-only or target-only port before invoking the lifecycle helper and keep that port recorded in the phase artifact. The helper owns the server process and PID-scoped cleanup for the run. Never respond to a port failure with broad process inspection or cleanup, shell `sleep`, or manual background-server management. Preserve lifecycle logs, diagnose the specific invocation, choose another known-free task-owned port when necessary, and rerun through the helper.
 
 ## Evidence Required For A Passing Lifecycle Gate
 

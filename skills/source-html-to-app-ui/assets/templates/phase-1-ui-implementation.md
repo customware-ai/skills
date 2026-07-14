@@ -26,9 +26,17 @@
 
 ## Work Packet Ledger
 
-| Packet | Contract IDs and source evidence | Intended files | UI-only acceptance outcome | Actual files | Readback/diff/connected-owner proof | Result and sole next action |
-| --- | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+| Packet | Layer | Contract IDs and opened source evidence | Intended owners | UI-only outcome and explicit exclusions | Actual files | Readback/diff proof | Result and sole next action |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
+
+## Model-Owned Packet Reviews
+
+Complete one row after every packet. Every review item must pass before beginning the next packet. This is an Agent review recorded in this artifact, not a script result.
+
+| Packet | Contract coverage | Owner scope | Layer boundary | Source fidelity | Target-native/UI-only | Readback | Focused diff | Gap ledger | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
 
 ## Complete Contract Mapping
 
@@ -79,6 +87,8 @@ Required: at least `48/50`.
 | Every Phase 0 contract row has a real target owner | Fail | Pending |
 | Every route and section is authored and source-backed | Fail | Pending |
 | Every visible interaction family has real local behavior | Fail | Pending |
+| Every work packet passed the model-owned packet review | Fail | Pending |
+| No packet contains undeclared or later-layer behavior | Fail | Pending |
 | Sidebar/content overflow ownership is structurally correct when present | Fail | Pending |
 | Responsive/mobile implementation exists | Fail | Pending |
 | Navigation/assets requirements pass | Fail | Pending |
