@@ -46,7 +46,7 @@ Execute this exact entry sequence:
    node task-workflow/scripts/begin-phase-1-packet.mjs
    ```
 
-6. The command must print `PHASE 1 FIRST-PACKET GATE: PASS`. Separately read `task-workflow/phase-1-first-packet-receipt.json`, then read back the updated Phase 1 artifact and `progress.md`.
+6. The command must print `PHASE 1 FIRST-PACKET GATE: PASS` plus three mandatory readbacks. Separately read `task-workflow/phase-1-first-packet-receipt.json`, then read back the updated Phase 1 artifact, then `progress.md`. The gate's JSON stdout is not the receipt read. Do not write a target file between the gate and any of these three reads.
 7. Only then write the permitted target files. Do not touch a target file absent from the receipt. After the packet, read back every changed file and inspect its focused diff before recording the packet result.
 
 The Phase 0 promotion output starts this chain by requiring this Phase 1 reference read first. After that reference read, steps 1-5 above are atomic. Any `ls`, `find`, `rg`, `grep`, glob, search, status, path probe, alternate file read, or other command before the permit is an automatic contaminated-run failure. Stop and clean-reset; do not repair it in place.

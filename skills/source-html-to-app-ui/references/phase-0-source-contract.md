@@ -93,17 +93,27 @@ Read and record:
 - existing frontend architecture and file ownership;
 - constraints that affect UI-only implementation.
 
-Before scoring Phase 0, choose the exact existing target owners for the first tokens/themes/typography/primitives packet from this completed read-only inspection. Then run:
+After the complete design read, inspect target architecture and brand assets read-only as needed. Finish that optional inspection completely before the command below. Once owner inventory starts, the target-inspection window is permanently closed for Phase 0: do not list, find, read, or probe a target, public, brand, logo, directory, or repository path until Phase 1 promotion. Then run:
+
+```bash
+node task-workflow/scripts/inventory-phase-1-owners.mjs
+```
+
+Read `task-workflow/phase-1-owner-candidates.json` to EOF. This machine-generated inventory is the sole owner-path authority even if manual read-only inspection also revealed paths. Choose the smallest first tokens/themes/typography/primitives packet only from exact candidates categorized `styles-and-tokens`, `shared-primitives`, or `ui-config`, then read every selected file once, separately, and consecutively. Route/page/shell/layout/navigation candidates and outcomes belong to later packets. A path that was guessed, merely listed, absent from the inventory, not individually read after the inventory, or outside packet 1's allowed categories cannot enter packet 1.
+
+Then run:
 
 ```bash
 node task-workflow/scripts/prepare-phase-1-packet.mjs \
   --contracts "<comma-separated Phase 0 contract IDs including token/theme/typography/primitive ownership>" \
-  --evidence "<comma-separated existing Phase 0 source evidence paths>" \
+  --evidence "<comma-separated existing captured evidence paths beginning literally with task-workflow/source/>" \
   --files "<comma-separated exact existing target owner files>" \
   --outcome "<exact UI-only acceptance outcome>"
 ```
 
-This command is still Phase 0 work and writes only `task-workflow/phase-1-entry-plan.json`. Read that JSON back immediately. If an intended file is absent, select the existing target token/theme/typography/primitive owner instead; do not create a target path in Phase 0. Do not promote Phase 0 until the handoff, Phase 0 artifact, `open-gaps.md`, score, and promotion lock are all complete. Running the promotion gate to discover one missing checklist item at a time is a failed phase-close audit; inspect and finish the entire checklist first.
+This is an atomic handoff lock. The `prepare-phase-1-packet.mjs` command above must be the literal next tool action after the last selected owner read. Do not reopen the Phase 0 artifact, gaps, progress, another implementation file, public/brand assets, a directory, or another reference first. After the command passes, read `task-workflow/phase-1-entry-plan.json` completely to EOF as the literal next action. Any intervening read, brand check, repository probe, write, summary command, or skipped preparation is automatic run failure; clean-reset rather than repairing the order.
+
+For `--evidence`, use the discovery manifest and relevant inspection images only. Every value must exist and begin literally with `task-workflow/source/`. `task-workflow/spec.json` and `task-workflow/source-input/approved.html` are inputs, not evidence; target files are owners, not evidence. Every `--files` value must be copied exactly from `phase-1-owner-candidates.json` and must already have been individually read. Do not run the command with `--help` or read its source. This command is still Phase 0 work and writes only `task-workflow/phase-1-entry-plan.json`. It prints and embeds a literal ordered Phase 0 closeout sequence. Read the JSON back immediately, then execute every listed artifact, gaps, and progress read, write, and readback separately and in exact order. If an intended owner is absent, select a different exact candidate; do not create or guess a target path in Phase 0. Do not promote Phase 0 until the handoff, Phase 0 artifact, `open-gaps.md`, `progress.md`, score, decision, promotion lock, and all three final readbacks are complete. Running the promotion gate to discover even one missing checklist item is a failed phase-close audit; a rejected attempt does not authorize repair in place.
 
 Do not use Phase 0 to plan backend, persistence, auth, API, or business logic. If the source appears to imply these systems, reproduce only their visible UI state using local state and static data.
 
@@ -117,7 +127,7 @@ Before scoring Phase 0:
 2. Your next action after the complete source read must be `node task-workflow/scripts/initialize-source-inventory.mjs`. It writes a hash-bound skeleton from every runtime candidate. Do not hand-author a smaller inventory or skip this initializer.
 3. Read the generated inventory. Reconcile it against the complete HTML: add source-declared pages/states runtime heuristics missed, correct labels/selectors/ownership/disabled proof, and preserve every runtime mapping exactly once. Set `sourceOnlyDeclarationsReviewed` to `true`, `sourceAuditStatus` to `Pass`, and add concrete `sourceAuditNotes` naming the source declarations reviewed.
 4. Run `node task-workflow/scripts/finalize-source-inventory.mjs`. It rejects stale hashes, missing runtime mappings, duplicate mappings, invalid ownership, incomplete audit fields, and wrong counts. Separately read `source/discovery/source-inventory-audit-receipt.json` in full and confirm its page count plus page identities match the HTML audit. Any later inventory edit invalidates the receipt and requires finalization plus receipt read again.
-5. Do not author, copy, or modify source-capture code. Run exactly `node task-workflow/scripts/validate-source-discovery.mjs task-workflow/source-playwright/inventory-source-discovery.mjs`. Copy that literal command. Keep both paths repo-relative even if the tool accepts absolute paths; do not resolve, prefix, or rewrite either path. The validator intentionally rejects an absolute script argument. It also rejects any change from the byte-identical script installed by the bootstrap.
+5. Do not author, copy, or modify source-capture code. Run `node task-workflow/scripts/validate-source-discovery.mjs task-workflow/source-playwright/inventory-source-discovery.mjs`. Equivalent absolute paths are accepted only when they resolve to these exact supplied scripts. The validator still rejects any different path or any change from the byte-identical script installed by the bootstrap.
 6. Run every lifecycle command printed by the validator separately, sequentially, and without an intervening target/spec read. The runner verifies the supplied script hash, owns the source lifecycle, automatically divides an arbitrarily large finalized inventory into sequential bounded execution batches, uses `15000`/`20000` ms per lifecycle batch, and records one complete receipt for each required mode only after all of that mode's candidates pass. A batch size is process isolation, never an evidence limit. Never invoke the lifecycle helper directly for this capture.
 7. The supplied script consumes the finalized inventory rather than a page list. Across its lifecycle-owned batches, it iterates every `inventory.pages` entry at desktop and mobile, captures each full page plus its visible sections, iterates every `inventory.states` entry at desktop and mobile using real input, and captures desktop/mobile shell evidence. Before each screenshot it drives finite browser animations and transitions to their final state, then waits for stable frames, so evidence cannot freeze midway through motion. The HTML decides the counts. There is no fixed minimum, maximum, representative sample, first-page shortcut, or four-image cap.
 8. Separately read the completed canonical `source/discovery/manifest.json`. Confirm its page/state counts and identities exactly match the finalized inventory and that desktop/mobile evidence exists for each entry.
@@ -289,7 +299,7 @@ Every item must pass:
 
 ### Promotion Lock
 
-Before promotion:
+Before promotion, follow the generated `phase0CloseoutSequence` exactly. The sequence below defines its evidence requirements; it does not authorize a different order:
 
 1. Reopen `phase-0-source-contract.md`.
 2. Reopen every source image cited by the gate.
@@ -299,10 +309,11 @@ Before promotion:
 6. Write the promotion lock and `Decision: Pass`.
 7. Read the artifact back.
 8. Update `progress.md`.
-9. Run `node task-workflow/scripts/promote-phase-0.mjs`; it sets `CURRENT_PHASE.txt` to `phase-1-ui-implementation` only when every executable check passes.
-10. Read `references/phase-1-ui-implementation.md` before implementation.
+9. Read `phase-0-source-contract.md`, `open-gaps.md`, and `progress.md` back through the managed recorder in exact order. Do not use the file-read tool, `wc`, `sed`, `cat`, or another inspection command for these final readbacks. Run the generated `record-phase-0-readback.mjs <basename>` command. It emits one bounded numbered chunk and prints the sole next command. Rerun that exact command until it reports EOF, then follow its next-file command. The recorder binds every chunk cursor, exact order, line count, current hash, and entry-plan hash. A skipped chunk, different command, incomplete file, wrong order, or stale readback fails the gate and promotion rejects it.
+10. Run `node task-workflow/scripts/promote-phase-0.mjs` exactly once; it sets `CURRENT_PHASE.txt` to `phase-1-ui-implementation` only when every executable check passes.
+11. Read `references/phase-1-ui-implementation.md` before implementation.
 
-Steps 9-10 are executable: after the artifact and progress ledger are complete, run `node task-workflow/scripts/promote-phase-0.mjs`. It alone writes the Phase 1 marker and promotion receipt. Then read the Phase 1 reference as the next action.
+Steps 9-11 are ordered: after the artifact and both ledgers are complete, use only the recorder's chained commands to inspect all three completely to EOF, then run `node task-workflow/scripts/promote-phase-0.mjs` once. Every recorder result names the sole next action. Promotion verifies all chunk completion, the ordered receipt, and current hashes, then alone writes the Phase 1 marker and promotion receipt. Then read the Phase 1 reference as the next action. An early rejected invocation is automatic run failure, not a diagnostic loop.
 
 If any step fails, remain in Phase 0 and repair it. Do not implement anyway.
 

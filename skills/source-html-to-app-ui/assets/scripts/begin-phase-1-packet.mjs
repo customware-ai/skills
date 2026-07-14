@@ -150,7 +150,7 @@ const receipt = {
 	outcome: plan.outcome,
 	entryPlanSha256: sha256(planPath),
 	targetBaselineSha256: createHash('sha256').update(JSON.stringify(baseline)).digest('hex'),
-	nextAction: 'Implement only the permitted target files, then read back every changed file and inspect the packet diff before recording packet completion.'
+	nextAction: 'Separately read phase-1-first-packet-receipt.json, then phase-1-ui-implementation.md, then progress.md. Only after all three readbacks may implementation begin in the permitted target files.'
 };
 writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
 
@@ -215,4 +215,8 @@ writeFileSync(progressPath, progress);
 
 console.log(JSON.stringify(receipt, null, 2));
 console.log('\nPHASE 1 FIRST-PACKET GATE: PASS');
-console.log('MANDATORY NEXT ACTION: implement only the permitted target files, then read back each file and inspect the packet diff.');
+console.log('MANDATORY NEXT ACTIONS — perform separately and sequentially before any target write:');
+console.log('1. Read task-workflow/phase-1-first-packet-receipt.json.');
+console.log('2. Read task-workflow/phase-1-ui-implementation.md.');
+console.log('3. Read task-workflow/progress.md.');
+console.log('4. Only then implement only the permitted target files; afterward read back each changed file and inspect the packet diff.');

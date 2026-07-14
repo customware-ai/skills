@@ -11,7 +11,7 @@ function fail(message) {
 const root = process.cwd();
 const scriptArgs = process.argv.slice(2);
 const suppliedScriptPath = 'task-workflow/source-playwright/inventory-source-discovery.mjs';
-if (scriptArgs.length !== 1 || scriptArgs[0] !== suppliedScriptPath) {
+if (scriptArgs.length !== 1 || resolve(root, scriptArgs[0]) !== resolve(root, suppliedScriptPath)) {
 	fail(`Usage: node task-workflow/scripts/validate-source-discovery.mjs ${suppliedScriptPath}`);
 }
 

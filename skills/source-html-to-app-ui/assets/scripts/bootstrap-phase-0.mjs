@@ -180,6 +180,18 @@ copied.push(
 );
 copied.push(
 	copyAndProve(
+		resolve(skillRoot, 'assets/scripts/record-phase-0-readback.mjs'),
+		resolve(workflowRoot, 'scripts/record-phase-0-readback.mjs')
+	)
+);
+copied.push(
+	copyAndProve(
+		resolve(skillRoot, 'assets/scripts/inventory-phase-1-owners.mjs'),
+		resolve(workflowRoot, 'scripts/inventory-phase-1-owners.mjs')
+	)
+);
+copied.push(
+	copyAndProve(
 		resolve(skillRoot, 'assets/scripts/prepare-phase-1-packet.mjs'),
 		resolve(workflowRoot, 'scripts/prepare-phase-1-packet.mjs')
 	)
@@ -209,8 +221,9 @@ writeFileSync(resolve(workflowRoot, 'CURRENT_PHASE.txt'), 'phase-0-source-contra
 const baseline = targetSnapshot(targetRoot);
 writeFileSync(resolve(workflowRoot, 'phase-0-target-baseline.json'), `${JSON.stringify(baseline, null, 2)}\n`);
 const initialPort = await getFreeLoopbackPort();
+const lifecycleScript = resolve(workflowRoot, 'scripts/playwright-lifecycle.mjs');
 const initialLifecycleCommand =
-	`node task-workflow/scripts/playwright-lifecycle.mjs --server "python3 -m http.server ${initialPort} --bind 127.0.0.1 --directory task-workflow/source-input" ` +
+	`node ${lifecycleScript} --server "python3 -m http.server ${initialPort} --bind 127.0.0.1 --directory task-workflow/source-input" ` +
 	`--ready-url "http://127.0.0.1:${initialPort}/approved.html" --runtime-dir "task-workflow/runtime/source" ` +
 	`--env "SOURCE_URL=http://127.0.0.1:${initialPort}/approved.html" --run "node task-workflow/source-playwright/initial-source-capture.mjs" ` +
 	'--ready-timeout-ms 15000 --command-timeout-ms 20000';

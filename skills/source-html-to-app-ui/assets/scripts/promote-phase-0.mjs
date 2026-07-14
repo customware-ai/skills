@@ -111,6 +111,7 @@ const manifestPath = resolve(workflow, 'source/discovery/manifest.json');
 const validationPath = resolve(workflow, 'source/discovery/script-validation.json');
 const runReceiptPath = resolve(workflow, 'source/discovery/lifecycle-run-receipts.json');
 const phase1PlanPath = resolve(workflow, 'phase-1-entry-plan.json');
+const readbackReceiptPath = resolve(workflow, 'phase-0-readback-receipt.json');
 
 if (!existsSync(markerPath) || readFileSync(markerPath, 'utf8').trim() !== 'phase-0-source-contract') {
 	fail('CURRENT_PHASE.txt must remain phase-0-source-contract until this gate passes.');
@@ -128,10 +129,42 @@ for (const required of [
 	manifestPath,
 	validationPath,
 	runReceiptPath,
-	phase1PlanPath
+	phase1PlanPath,
+	readbackReceiptPath
 ]) {
 	if (!existsSync(required)) {
 		fail(`Missing required artifact: ${required}`);
+	}
+}
+
+let readbackReceipt;
+try {
+	readbackReceipt = JSON.parse(readFileSync(readbackReceiptPath, 'utf8'));
+} catch (error) {
+	fail(`Invalid Phase 0 readback receipt: ${error.message}`);
+}
+const readbackFiles = [artifactPath, gapsPath, progressPath];
+const readbackNames = ['phase-0-source-contract.md', 'open-gaps.md', 'progress.md'];
+if (
+	readbackReceipt.phase !== 'phase-0-source-contract' ||
+	readbackReceipt.planSha256 !== createHash('sha256').update(readFileSync(phase1PlanPath)).digest('hex') ||
+	!Array.isArray(readbackReceipt.reads) ||
+	readbackReceipt.reads.length !== readbackFiles.length ||
+	readbackReceipt.inProgress !== null
+) {
+	fail('Phase 0 promotion requires a complete readback receipt bound to the current entry plan.');
+}
+for (const [index, path] of readbackFiles.entries()) {
+	const entry = readbackReceipt.reads[index];
+	const contents = readFileSync(path, 'utf8');
+	const lines = contents.endsWith('\n') ? contents.slice(0, -1).split('\n').length : contents.split('\n').length;
+	if (
+		entry?.file !== readbackNames[index] ||
+		entry.sha256 !== createHash('sha256').update(contents).digest('hex') ||
+		entry.lineCount !== lines ||
+		entry.chunks !== Math.ceil(lines / 40)
+	) {
+		fail(`Phase 0 readback receipt is missing, out of order, or stale for ${readbackNames[index]}.`);
 	}
 }
 
@@ -531,9 +564,6 @@ const artifact = readFileSync(artifactPath, 'utf8');
 const normalizedArtifact = artifact.replaceAll('`', '').replaceAll('*', '').replaceAll('_', '');
 if (hasExactTableCell(artifact, new Set(['Pending', 'Fail']))) {
 	fail('Phase 0 artifact still contains Pending or Fail evidence rows.');
-}
-if (!/\|\s*Marker set before phase work\s*\|\s*`phase-0-source-contract`\s*\/\s*Pass\s*\|/.test(artifact)) {
-	fail('Phase 0 metadata must mark the phase-0-source-contract entry boundary Pass.');
 }
 if (!/- Score:\s*(48|49|50)\/50/.test(normalizedArtifact)) {
 	fail('Phase 0 artifact must record a score of at least 48/50.');
