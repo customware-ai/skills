@@ -15,6 +15,14 @@
 | ---: | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Pending | No | No | Pending | Pending | Pending | No | Fail |
 
+## Model-Owned Fidelity Packet Reviews
+
+Complete one row after every mismatch-repair packet. Every review item must pass before beginning another packet. This is an Agent review, not a script result.
+
+| Packet | Pair completeness | Mismatch specificity | Fix ownership | Readback/diff | Selective recapture | Post-fix comparison | Real input | Responsive/theme safety | Gap closure | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+
 ## Final Paired Route And Section Matrix
 
 | Route/state | Section/full view | Viewport/theme | Source evidence | Target evidence | Both opened after last capture? | Layout/style/content/behavior findings | Result |
@@ -104,6 +112,7 @@ Required: overall at least `49/50`; desktop at least `48/50`; mobile at least `4
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
 | Every paired route/state/section row passes | Fail | Pending |
+| Every fidelity packet passed the model-owned review | Fail | Pending |
 | Every final image pair was opened after the last capture | Fail | Pending |
 | Every independent fidelity gate passes without compensation | Fail | Pending |
 | Desktop/mobile and overall score thresholds pass independently | Fail | Pending |

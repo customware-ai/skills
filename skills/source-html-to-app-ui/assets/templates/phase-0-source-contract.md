@@ -43,6 +43,14 @@
 | Browser findings reconciled against source declarations | Pending | Fail |
 | No fixed page/state/section/screenshot limit used | Pending | Fail |
 
+## Model-Owned Discovery Packet Reviews
+
+Complete one row after every discovery packet. Every review item must pass before beginning the next packet. This is an Agent review, not a script result.
+
+| Packet | Declared coverage | Lifecycle ownership | Real-input reachability | Evidence completeness | Images opened | Source reconciliation | Fixed-wait audit | Scope boundary | Gap ledger | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+
 ## Route, State, And Interaction Inventory
 
 | ID | Page/state | Exact real-input reach steps | Interaction family | Visible sections | Themes | Desktop behavior | Mobile behavior | Status |
@@ -116,6 +124,7 @@ Required: at least `48/50`.
 | Initial managed source evidence was captured/opened before bulk HTML reading | Fail | Pending |
 | Complete HTML/CSS/JavaScript was read to EOF | Fail | Pending |
 | Every page/state/section/interaction family is inventoried | Fail | Pending |
+| Every discovery packet passed the model-owned review | Fail | Pending |
 | Every inventory item has desktop/mobile and readable section/state evidence | Fail | Pending |
 | Every cited image was opened and inspected | Fail | Pending |
 | Custom Playwright scripts have no fixed waits and use lifecycle ownership | Fail | Pending |

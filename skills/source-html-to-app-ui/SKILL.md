@@ -81,7 +81,7 @@ Every phase follows this model-owned loop:
 
 1. Set `task-workflow/CURRENT_PHASE.txt` to the phase marker before phase work begins.
 2. Re-read this `SKILL.md` and the mapped phase references.
-3. Perform the phase work.
+3. Perform the phase work through the phase reference's small model-owned packet loop.
 4. Update the phase artifact, `progress.md`, and `open-gaps.md` with concrete evidence.
 5. Open every cited screenshot or visual artifact used by the gate.
 6. Review every rubric row and calculate the score in the phase artifact.
@@ -280,7 +280,7 @@ The mapped references are mandatory execution instructions for their phases.
 
 ### Phase 0: Source Contract
 
-Create fresh artifacts, inspect the source first through managed Playwright, read the complete HTML, discover and capture every page/state/section at desktop and mobile, open all evidence, then inspect design and target architecture read-only and write the reproduction contract.
+Create fresh artifacts, then use model-reviewed discovery packets to inspect the source first through managed Playwright, read the complete HTML, discover and capture every page/state/section at desktop and mobile, open all evidence, inspect design and target architecture read-only, and write the reproduction contract.
 
 ### Phase 1: UI Implementation
 
@@ -288,15 +288,15 @@ Implement the reproduction contract in ordered model-reviewed packets: tokens/th
 
 ### Phase 2: Paired Responsive Proof
 
-Review code integrity, run required repo checks, and use managed Playwright to produce matching source-target images and geometry/state evidence across all routes, sections, themes, desktop, tablet, mobile, and short-height states.
+Use model-reviewed verification packets to review code integrity, run required repo checks, and produce matching source-target Playwright images and geometry/state evidence across all routes, sections, themes, desktop, tablet, mobile, and short-height states.
 
 ### Phase 3: Fidelity Repair And Signoff
 
-Open every paired image, compare section by section, record and repair mismatches, recapture invalidated evidence, exercise all interaction families, perform adversarial checks, and reach strict overall plus independent desktop/mobile visual gates.
+Use model-reviewed fidelity packets to open every paired image, compare section by section, record and repair mismatches, recapture invalidated evidence, exercise all interaction families, perform adversarial checks, and reach strict overall plus independent desktop/mobile visual gates.
 
 ### Phase 4: Final Audit And Completion
 
-Reopen every artifact and evidence set, verify all gates remain current, audit the final diff and UI-only scope, unlock the exact completion command, and run it as the literal final tool action.
+Use ordered model-reviewed audit packets to reopen every artifact and evidence set, verify all gates remain current, audit the final diff and UI-only scope, unlock the exact completion command, and run it as the literal final tool action.
 
 </multi_phase_protocol>
 

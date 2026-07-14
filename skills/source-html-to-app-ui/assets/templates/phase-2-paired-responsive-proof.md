@@ -35,6 +35,14 @@
 | Source | Pending | Pending | Pending | Pending | Pending | Fail |
 | Target | Pending | Pending | Pending | Pending | Pending | Fail |
 
+## Model-Owned Verification Packet Reviews
+
+Complete one row for every route/state family and viewport/theme packet. Every review item must pass before beginning the next packet. This is an Agent review, not a script result.
+
+| Packet | Pair identity | Coverage | Lifecycle ownership | Images opened | Geometry/safety | Real input | Code integrity | Freshness | Gap ledger | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+
 ## Paired Full-View Evidence
 
 | Route/state | Reach steps | Theme | Viewport | Source image | Target image | Both opened? | Findings | Result/repair |
@@ -111,6 +119,7 @@ Required: at least `48/50`.
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
 | Integrity, UI-only scope, and target checks/build pass | Fail | Pending |
+| Every verification packet passed the model-owned review | Fail | Pending |
 | Every route/state has paired full-view evidence | Fail | Pending |
 | Every section has readable paired section evidence | Fail | Pending |
 | Every gate-critical image was opened and compared | Fail | Pending |

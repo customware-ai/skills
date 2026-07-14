@@ -14,6 +14,18 @@ Phase 0 remains `Fail` until every source page, meaningful state, visible sectio
 
 </phase_authority>
 
+## Entry Conditions
+
+Before Phase 0 work:
+
+- `CURRENT_PHASE.txt` is missing or says `phase-0-source-contract`;
+- the Agent has reread `SKILL.md`, this reference, and the lifecycle reference;
+- the exact task inputs, source HTML path, design JSON path, target root, and completion command source are known;
+- no target implementation/config/package/generated/build/test file has changed for this run;
+- the first discovery packet is recorded immediately after fresh artifact setup.
+
+If stale workflow state or an early target change exists, reset to a clean Phase 0 boundary before discovery.
+
 ## Fresh Artifact Setup
 
 The first target-repository write must:
@@ -28,6 +40,44 @@ The first target-repository write must:
 Do not copy prior screenshots, scores, scripts, manifests, or decisions. Do not edit target source, config, package, asset, generated, build, or test files during Phase 0. Only `task-workflow/` may change.
 
 Record the reset and copied paths in the Phase 0 artifact and `progress.md`.
+
+## Model-Owned Discovery Packet Loop
+
+Treat each source-discovery group as a small auditable packet: initial orientation, complete source reading, page/state inventory, full-view capture, section/state capture, shell/sidebar/drawer/theme discovery, and design/target research.
+
+Before each packet, record:
+
+- the exact source scope and expected discoveries;
+- the custom Playwright script and lifecycle command when browser work is required;
+- the evidence paths the packet must produce;
+- explicit exclusions and work owned by later packets;
+- the one review action that determines whether the packet passes.
+
+Then:
+
+1. perform only the declared discovery packet;
+2. reopen every created/updated artifact and every captured image;
+3. reconcile findings against the complete HTML and existing inventory;
+4. record actual evidence, missing coverage, contradictions, and gaps;
+5. mark every packet-review row `Pass` or `Fail`;
+6. if any row fails, repair the same packet and repeat the review;
+7. begin the next packet only when every review row passes.
+
+### Discovery Packet Review Checklist
+
+| Required review | Pass condition |
+| --- | --- |
+| Declared coverage | every declared page/state/section/theme/viewport item was inspected |
+| Lifecycle ownership | every browser action ran through the unchanged lifecycle helper |
+| Real-input reachability | pages and states were reached through actual controls when available |
+| Evidence completeness | required desktop/mobile/full-view/section/state images exist |
+| Visual inspection | every gate-critical image was opened at a useful scale |
+| Source reconciliation | browser findings and complete HTML declarations agree |
+| Fixed-wait audit | custom Playwright scripts use deterministic waits |
+| Scope boundary | target implementation remained read-only and later work was not pulled forward |
+| Gap ledger | missing or contradictory evidence has an owner and next repair |
+
+This checklist is an Agent review recorded in the Phase 0 artifact, never a script result.
 
 ## Source-First Discovery Order
 
@@ -162,6 +212,7 @@ Every critical item must independently pass:
 - first source browser evidence was captured and opened through managed lifecycle before bulk HTML reading;
 - the complete HTML/CSS/JavaScript was read to EOF;
 - every source page, meaningful state, visible section, and interaction family is inventoried;
+- every discovery packet passed the model-owned review checklist;
 - every inventory item has desktop and mobile evidence plus readable section/state evidence where applicable;
 - every cited image was opened and inspected;
 - custom Playwright scripts contain no fixed waits and ran through lifecycle ownership;

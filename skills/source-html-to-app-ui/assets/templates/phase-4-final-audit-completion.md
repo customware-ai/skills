@@ -11,6 +11,14 @@
 | Phase 2 scores at least `48/50` and passes | Fail | Pending |
 | Phase 3 overall `49/50`, desktop/mobile `48/50`, and passes | Fail | Pending |
 
+## Model-Owned Audit Packet Reviews
+
+Complete the packets in order: artifact integrity; evidence freshness; final diff/scope/gaps; completion lock. Every review item must pass before beginning the next packet. This is an Agent review, not a script result.
+
+| Packet | Complete reopening | Score integrity | Critical integrity | Cross-artifact consistency | Evidence pairing | Freshness | UI-only scope | Gap reconciliation | Completion safety | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+
 ## Artifact Integrity Audit
 
 | Artifact | Exists | Decision/score valid | Required rows concrete | Cited paths exist | No contradiction/stale evidence | Audit evidence | Pass/Fail |
@@ -90,6 +98,7 @@ Required: exactly `50/50`.
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
 | Every prior artifact was reopened and audited row by row | Fail | Pending |
+| Every audit packet passed the model-owned review | Fail | Pending |
 | Every prior score, critical gate, and promotion lock remains valid | Fail | Pending |
 | Marker, progress, gaps, artifacts, images, and diff agree | Fail | Pending |
 | Every visual proof exists, is current, and was opened | Fail | Pending |
