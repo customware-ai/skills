@@ -110,6 +110,7 @@ const sourceInventoryReceiptPath = resolve(workflow, 'source/discovery/source-in
 const manifestPath = resolve(workflow, 'source/discovery/manifest.json');
 const validationPath = resolve(workflow, 'source/discovery/script-validation.json');
 const runReceiptPath = resolve(workflow, 'source/discovery/lifecycle-run-receipts.json');
+const phase1PlanPath = resolve(workflow, 'phase-1-entry-plan.json');
 
 if (!existsSync(markerPath) || readFileSync(markerPath, 'utf8').trim() !== 'phase-0-source-contract') {
 	fail('CURRENT_PHASE.txt must remain phase-0-source-contract until this gate passes.');
@@ -126,7 +127,8 @@ for (const required of [
 	sourceInventoryReceiptPath,
 	manifestPath,
 	validationPath,
-	runReceiptPath
+	runReceiptPath,
+	phase1PlanPath
 ]) {
 	if (!existsSync(required)) {
 		fail(`Missing required artifact: ${required}`);
@@ -547,6 +549,32 @@ if (hasExactTableCell(gaps, new Set(['Pending']))) {
 	fail('open-gaps.md still contains Pending placeholders.');
 }
 
+let phase1Plan;
+try {
+	phase1Plan = JSON.parse(readFileSync(phase1PlanPath, 'utf8'));
+} catch (error) {
+	fail(`Invalid Phase 1 entry plan: ${error.message}`);
+}
+if (
+	phase1Plan.phase !== 'phase-0-source-contract' ||
+	phase1Plan.packet !== 1 ||
+	phase1Plan.status !== 'Prepared' ||
+	!Array.isArray(phase1Plan.contracts) ||
+	!phase1Plan.contracts.some((value) => /(?:theme|token|typography|primitive)/i.test(value)) ||
+	!Array.isArray(phase1Plan.evidence) ||
+	phase1Plan.evidence.length === 0 ||
+	phase1Plan.evidence.some(
+		(path) => !path.startsWith('task-workflow/source/') || !existsSync(resolve(root, path))
+	) ||
+	!Array.isArray(phase1Plan.files) ||
+	phase1Plan.files.length === 0 ||
+	phase1Plan.files.some((path) => path.startsWith('/') || path.includes('..') || !existsSync(resolve(root, path))) ||
+	!phase1Plan.outcome?.trim() ||
+	phase1Plan.targetBaselineSha256 !== createHash('sha256').update(JSON.stringify(baselineSnapshot)).digest('hex')
+) {
+	fail('Phase 1 entry plan must be a complete packet-1 handoff bound to the unchanged Phase 0 target baseline.');
+}
+
 const receipt = {
 	phase: 'phase-0-source-contract',
 	decision: 'Pass',
@@ -558,7 +586,8 @@ const receipt = {
 	runtimeSurfaceCandidates: initialCapture.surfaceCandidates.length,
 	runtimeStateCandidates: initialCapture.stateCandidates.length,
 	inputActions: manifest.inputActions.length,
-	targetChangesOutsideWorkflow: []
+	targetChangesOutsideWorkflow: [],
+	phase1EntryPlanSha256: createHash('sha256').update(readFileSync(phase1PlanPath)).digest('hex')
 };
 writeFileSync(resolve(workflow, 'phase-0-promotion-receipt.json'), `${JSON.stringify(receipt, null, 2)}\n`);
 writeFileSync(resolve(workflow, 'phase-1-target-baseline.json'), `${JSON.stringify(currentSnapshot, null, 2)}\n`);
@@ -589,17 +618,17 @@ progress = replaceLabeledTableRow(
 progress = replaceLabeledTableRow(
 	progress,
 	'Sole next local action',
-	'| Sole next local action | Run `begin-phase-1-packet.mjs` before the first target implementation write |'
+	'| Sole next local action | Read the Phase 1 reference, entry plan, artifact, progress, and exact planned owners; then run `node task-workflow/scripts/begin-phase-1-packet.mjs` as Phase 1’s first non-read action |'
 );
 progress = replaceLabeledTableRow(
 	progress,
 	'Active files',
-	'| Active files | `task-workflow/phase-1-ui-implementation.md`; `task-workflow/progress.md` |'
+	`| Active files | ${phase1Plan.files.map((path) => `\`${path}\``).join('; ')} |`
 );
 progress = replaceLabeledTableRow(progress, 'Last updated', `| Last updated | ${receipt.promotedAt} |`);
 progress = replaceCurrentPacketRow(
 	progress,
-	'| Phase 1 entry | Ordered tokens/themes/primitives packet | Target inspection is read-only | None | Run `begin-phase-1-packet.mjs` before the first target implementation write |'
+	`| Phase 1 entry | ${phase1Plan.contracts.join(', ')}; ${phase1Plan.evidence.join(', ')} | ${phase1Plan.files.join(', ')} | Prepared: \`phase-1-entry-plan.json\` | Read exact owners, then run \`node task-workflow/scripts/begin-phase-1-packet.mjs\` |`
 );
 progress = replaceLabeledTableRow(
 	progress,
@@ -614,12 +643,16 @@ progress = replaceLabeledTableRow(
 progress = prependTableDataRow(
 	progress,
 	'## Gate And Invalidation Ledger',
-	'| Phase 0 promoted | Phase 0 | None | No | Read Phase 1 reference, inspect target read-only, then run the first-packet permit |'
+	'| Phase 0 promoted | Phase 0 | None | No | Read Phase 1 reference and prepared handoff, read exact planned owners, then run the first-packet permit |'
 );
 writeFileSync(progressPath, progress);
 console.log(JSON.stringify(receipt, null, 2));
 console.log('\nPHASE 0 GATE: PASS');
-console.log('MANDATORY NEXT ACTION: read references/phase-1-ui-implementation.md before any target implementation write.');
-console.log(
-	'After read-only target inspection, run task-workflow/scripts/begin-phase-1-packet.mjs with the required contract, evidence, file, and outcome arguments. Any target write before that gate passes contaminates the run.'
-);
+console.log('MANDATORY NEXT ACTIONS — perform separately and sequentially:');
+console.log('1. Read references/phase-1-ui-implementation.md.');
+console.log('2. Freshly reread task-workflow/phase-1-entry-plan.json. Its Phase 0 readback does not count.');
+console.log('3. Read task-workflow/phase-1-ui-implementation.md.');
+console.log('4. Read task-workflow/progress.md.');
+phase1Plan.files.forEach((path, index) => console.log(`${index + 5}. Read ${path} using the file-read tool.`));
+console.log(`${phase1Plan.files.length + 5}. Run node task-workflow/scripts/begin-phase-1-packet.mjs as Phase 1's first non-read action.`);
+console.log('Any other Phase 1 action before that gate passes contaminates the run.');

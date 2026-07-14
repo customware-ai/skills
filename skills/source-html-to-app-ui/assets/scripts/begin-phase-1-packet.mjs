@@ -8,26 +8,6 @@ function fail(message) {
 	process.exit(1);
 }
 
-function parseArgs(argv) {
-	const args = {};
-	for (let index = 0; index < argv.length; index += 2) {
-		const key = argv[index];
-		const value = argv[index + 1];
-		if (!['--contracts', '--evidence', '--files', '--outcome'].includes(key) || !value) {
-			fail(
-				'Usage: node task-workflow/scripts/begin-phase-1-packet.mjs --contracts "<comma-separated contract IDs>" --evidence "<source evidence paths>" --files "<comma-separated target files>" --outcome "<exact UI-only acceptance outcome>"'
-			);
-		}
-		args[key.slice(2)] = value;
-	}
-	for (const required of ['contracts', 'evidence', 'files', 'outcome']) {
-		if (!args[required]?.trim()) {
-			fail(`Missing --${required}.`);
-		}
-	}
-	return args;
-}
-
 function sha256(path) {
 	return createHash('sha256').update(readFileSync(path)).digest('hex');
 }
@@ -96,7 +76,9 @@ function replaceCurrentPacketRow(markdown, replacement) {
 	return lines.join('\n');
 }
 
-const args = parseArgs(process.argv.slice(2));
+if (process.argv.length !== 2) {
+	fail('Usage: node task-workflow/scripts/begin-phase-1-packet.mjs');
+}
 const root = process.cwd();
 const workflow = resolve(root, 'task-workflow');
 const markerPath = resolve(workflow, 'CURRENT_PHASE.txt');
@@ -104,9 +86,10 @@ const phase0ReceiptPath = resolve(workflow, 'phase-0-promotion-receipt.json');
 const baselinePath = resolve(workflow, 'phase-1-target-baseline.json');
 const phase1ArtifactPath = resolve(workflow, 'phase-1-ui-implementation.md');
 const progressPath = resolve(workflow, 'progress.md');
+const planPath = resolve(workflow, 'phase-1-entry-plan.json');
 const receiptPath = resolve(workflow, 'phase-1-first-packet-receipt.json');
 
-for (const path of [markerPath, phase0ReceiptPath, baselinePath, phase1ArtifactPath, progressPath]) {
+for (const path of [markerPath, phase0ReceiptPath, baselinePath, phase1ArtifactPath, progressPath, planPath]) {
 	if (!existsSync(path)) {
 		fail(`Missing required Phase 1 entry artifact: ${relative(root, path)}`);
 	}
@@ -127,9 +110,18 @@ const current = targetSnapshot(root);
 if (JSON.stringify(current) !== JSON.stringify(baseline)) {
 	fail('Target files or directories changed before the Phase 1 first-packet permit. Clean-reset the run.');
 }
-
-const contracts = args.contracts.split(',').map((value) => value.trim()).filter(Boolean);
-const files = args.files.split(',').map((value) => value.trim()).filter(Boolean);
+const plan = JSON.parse(readFileSync(planPath, 'utf8'));
+const contracts = plan.contracts;
+const files = plan.files;
+if (plan.phase !== 'phase-0-source-contract' || plan.packet !== 1 || plan.status !== 'Prepared') {
+	fail('phase-1-entry-plan.json is not a prepared Phase 0 packet-1 handoff.');
+}
+if (plan.targetBaselineSha256 !== createHash('sha256').update(JSON.stringify(baseline)).digest('hex')) {
+	fail('phase-1-entry-plan.json is not bound to the current unchanged target baseline.');
+}
+if (!Array.isArray(contracts) || !Array.isArray(plan.evidence) || !Array.isArray(files) || !plan.outcome?.trim()) {
+	fail('phase-1-entry-plan.json is incomplete.');
+}
 if (contracts.length === 0 || !contracts.some((value) => /(?:theme|token|typography|primitive)/i.test(value))) {
 	fail('The first packet must own the ordered token, typography, theme, or shared-primitive layer.');
 }
@@ -153,9 +145,10 @@ const receipt = {
 	status: 'Permitted',
 	permittedAt: new Date().toISOString(),
 	contracts,
-	evidence: args.evidence,
+	evidence: plan.evidence,
 	files,
-	outcome: args.outcome,
+	outcome: plan.outcome,
+	entryPlanSha256: sha256(planPath),
 	targetBaselineSha256: createHash('sha256').update(JSON.stringify(baseline)).digest('hex'),
 	nextAction: 'Implement only the permitted target files, then read back every changed file and inspect the packet diff before recording packet completion.'
 };
@@ -195,7 +188,7 @@ phase1 = replaceRequired(
 phase1 = replaceRequired(
 	phase1,
 	'| Pending | Pending | Pending | Pending | Pending | Pending | Pending |',
-	`| 1 | ${markdownCell(contracts.join(', '))}; ${markdownCell(args.evidence)} | ${markdownCell(files.join(', '))} | ${markdownCell(args.outcome)} | Not written yet | Pending mandatory readback and diff | Implement only permitted files; then read back and inspect diff |`,
+	`| 1 | ${markdownCell(contracts.join(', '))}; ${markdownCell(plan.evidence.join(', '))} | ${markdownCell(files.join(', '))} | ${markdownCell(plan.outcome)} | Not written yet | Pending mandatory readback and diff | Implement only permitted files; then read back and inspect diff |`,
 	'first work-packet ledger row'
 );
 writeFileSync(phase1ArtifactPath, phase1);

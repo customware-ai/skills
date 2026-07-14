@@ -57,7 +57,7 @@ Execute this exact entry sequence:
 7. Only after steps 1-6 have inspectable evidence, read `task-workflow/source-input/approved.html` directly and completely to EOF, including all embedded CSS and JavaScript. Do not precede the read with `wc`, `ls`, `stat`, `find`, glob, search, or another probe. If one read is truncated, continue reading from its reported next offset until every line has been inspected. Determine exactly how many pages exist and identify every page, destination, state, wizard step, tab, filter, drawer, dialog, and disabled control from the HTML itself. Your immediate next action after finishing that source read must be `node task-workflow/scripts/initialize-source-inventory.mjs`; insert no summary command or tool probe.
 8. Read the generated `task-workflow/source/discovery/source-inventory.json`. Compare it with the complete source audit, add anything runtime heuristics missed, correct every mapping and owner, set `sourceOnlyDeclarationsReviewed` to `true`, set `sourceAuditStatus` to `Pass`, and add concrete `sourceAuditNotes`. Then run `node task-workflow/scripts/finalize-source-inventory.mjs` and separately read its `source-inventory-audit-receipt.json` in full. Confirm that the receipt lists the exact count and identity of every page and state from the HTML.
 9. Without reading the design JSON or target files, run exactly `node task-workflow/scripts/validate-source-discovery.mjs task-workflow/source-playwright/inventory-source-discovery.mjs`. Both paths must remain literally repo-relative; do not resolve or rewrite either one as an absolute path because the validator rejects that invocation. Run every command printed by the validator separately and sequentially without rewriting their paths. The validated runner automatically shards large inventories into bounded lifecycle-owned execution batches, but the supplied script must still capture every finalized page at desktop and mobile, every visible section, every state at desktop and mobile, and desktop/mobile shell evidence after motion settles. Batch size is never an evidence limit; there is no page, state, section, or image limit. Read the completed manifest. Its dynamic `inspectionImages` contact sheets visibly cover every raw `images` evidence file exactly once, grouped only for readable inspection. Open every `inspectionImages` sheet in listed order—never a representative subset. A faded, blank, partially populated, moving, or transition-corrupted panel is invalid evidence and fails Phase 0. Only after every sheet has been inspected and found complete may you add `imagesOpened` as an exact ordered copy of `inspectionImages`.
-10. Immediately after that one manifest edit, read `task-workflow/spec.json` directly and completely as the next tool action. Do not insert `ls`, `find`, glob, search, `stat`, a target file read, or repository probe. Only after the design JSON read may you inspect target implementation and existing target brand assets read-only and finish the Phase 0 contract. Do not fetch, download, or open any externally referenced source brand asset in Phase 0; record its URL and intended Phase 1 destination only. Do not author or modify source capture code. Do not read another phase reference until its marker is set by the supplied promotion script.
+10. Immediately after that one manifest edit, read `task-workflow/spec.json` directly and completely as the next tool action. Do not insert `ls`, `find`, glob, search, `stat`, a target file read, or repository probe. Only after the design JSON read may you inspect target implementation and existing target brand assets read-only and finish the Phase 0 contract. From that completed read-only inspection, run `prepare-phase-1-packet.mjs` with exact first-packet contract IDs, existing source evidence, existing target owner files, and one UI-only outcome; then read `task-workflow/phase-1-entry-plan.json` back. Do not score or invoke promotion until the handoff, every Phase 0 artifact row, `open-gaps.md`, score, and promotion lock are complete. The promotion gate is a final audit, not a missing-item discovery loop. Do not fetch, download, or open any externally referenced source brand asset in Phase 0; record its URL and intended Phase 1 destination only. Do not author or modify source capture code. Do not read another phase reference until its marker is set by the supplied promotion script.
 
 After reading this skill and until step 3 completes, the Agent may read only the two required Phase 0 references. Use the task prompt's already-supplied input paths without reading or checking those files. Reading a Phase 1, 2, 3, or 4 reference before step 6 completes is an automatic run failure. Before step 6 completes, the Agent must not:
 
@@ -194,7 +194,11 @@ Required runtime artifacts:
 - byte-identical `task-workflow/scripts/promote-phase-0.mjs`
 - byte-identical `task-workflow/scripts/validate-source-discovery.mjs`
 - byte-identical `task-workflow/scripts/run-validated-source-discovery.mjs`
+- byte-identical `task-workflow/scripts/prepare-phase-1-packet.mjs`
+- `task-workflow/phase-1-entry-plan.json` prepared and read back before Phase 0 promotion
 - `task-workflow/phase-0-promotion-receipt.json` after the executable gate passes
+- `task-workflow/phase-1-target-baseline.json` after the executable gate passes
+- byte-identical `task-workflow/scripts/begin-phase-1-packet.mjs`
 - `task-workflow/source/`
 - `task-workflow/target-playwright/`
 - `task-workflow/verification/`
@@ -216,19 +220,51 @@ The templates under `assets/templates/` are enforcement artifacts. Copy their st
 
 <resume_contract>
 
-Re-read this `SKILL.md` after every compaction before doing any new work. Also use this reload sequence after resume, retry, reconnect, or a new coding session:
+After any compaction, resume, retry, reconnect, continuation message, restored OpenCode session, or new coding session, the literal next tool action must be one read of `.agents/skills/source-html-to-app-ui/SKILL.md`. Do not read `CURRENT_PHASE.txt`, `progress.md`, a task input, an artifact, or any other path first. Do not explain, summarize, inspect state, or choose work before that read. Reading the marker first is an automatic resume failure because it chooses state before reloading authority.
 
-1. the exact task prompt and task inputs;
-2. the source HTML and design JSON;
-3. this `SKILL.md`;
-4. `task-workflow/progress.md`;
-5. `task-workflow/CURRENT_PHASE.txt`;
-6. `task-workflow/open-gaps.md`;
-7. every earlier phase artifact needed to identify the earliest failing phase;
-8. the current or earliest failing phase artifact;
-9. the reference files mapped to that phase.
+After that first skill read completes, choose exactly one branch from already-known session state. Do not probe paths to choose the branch. Branch 0 has precedence over every other branch.
+
+### Branch 0: interrupted atomic sequence
+
+Use this branch whenever the interruption happened inside a hard ordered sequence or the last completed tool result/main phase lock already identifies one sole mandatory next action. Examples include:
+
+- after reading `source/initial-capture.json` and before all four initial images are opened;
+- between the four sequential initial image reads;
+- between sequential validator-printed source capture commands;
+- between sequential `inspectionImages` reads;
+- between a lifecycle command and its mandatory named result read;
+- between a gate command and its mandatory receipt/artifact readback.
+- anywhere inside the Immediate First-Action Lock's chained Phase 0 sequence.
+
+After the mandatory skill reread, perform the exact next unfinished mandatory action immediately. Do not inject task-input, progress, marker, gaps, artifact, reference, list, search, or probe reads before it. If that action's result identifies another mandatory next action, continue the chain. Use Branch B only when the chain reaches a safe boundary with no explicit immediate next action; never insert Branch B between chained Phase 0 actions.
+
+Do not use Branch 0 from conversational recollection alone. The preceding completed tool result or named receipt must make the sole next action explicit. If it does not, use Branch B.
+
+### Branch A: bootstrap never completed
+
+Use this branch when the interrupted session had not successfully run `bootstrap-phase-0.mjs` and therefore no Phase 0 entry receipt was produced. Restart the Immediate First-Action Lock from its first reference read:
+
+1. read `references/phase-0-source-contract.md`;
+2. read `references/playwright-lifecycle.md`;
+3. run the bootstrap as the immediate next action using task-prompt paths.
+
+Do not read or probe `task-workflow/`, the source HTML, design JSON, marker, progress, or gaps in this branch. Missing-artifact probes are violations, not resume evidence.
+
+### Branch B: bootstrap completed
+
+Use this branch only when the interrupted session had already produced `task-workflow/phase-0-entry-receipt.json`. Read in this exact order:
+
+1. `task-workflow/progress.md`;
+2. `task-workflow/CURRENT_PHASE.txt`;
+3. `task-workflow/open-gaps.md`;
+4. every earlier phase artifact needed to identify the earliest failing phase;
+5. the current or earliest failing phase artifact;
+6. the reference files mapped to that phase;
+7. task inputs, source HTML, or design only when the current phase's ordering contract requires that read.
 
 Do not choose the next action from conversational memory. If the marker, progress ledger, gap ledger, and phase artifacts disagree, artifact gates win. Reset the marker and progress ledger to the earliest failing phase before continuing.
+
+If any tool action occurred before the mandatory first skill read, the wrong branch was selected, a path was probed to select a branch, or the selected branch was reordered, stop immediately. Do not repair the resume evidence in place. Clean-reset and restart the task; a read-only ordering violation still contaminates the restored context.
 
 After a phase promotion, read the newly mapped reference files before any work in the new phase. Work performed before that read is invalid and must be repeated.
 
@@ -299,6 +335,7 @@ These automatically fail the current phase or the entire run:
 - batching or parallelizing the two mandatory Phase 0 reference reads instead of reading them sequentially in order;
 - calling a planning, todo, task-list, delegation, or subagent tool at any point in this workflow;
 - drafting or recording future-phase work before the owning marker is set and its mapped references are read, including a Phase 0 implementation/build/check/completion plan;
+- after compaction, resume, retry, reconnect, continuation, session restoration, or a new coding session, performing any tool action before rereading this `SKILL.md`, or reordering the mandatory reload sequence;
 - inspecting target implementation files or bulk-reading the approved HTML before the initial managed source screenshots are captured and opened;
 - implementing before the fresh Phase 0 scaffold exists and passes its first-write boundary;
 - writing any target implementation, asset, dependency, configuration, package, public, test, generated, or build file while the marker remains Phase 0;
@@ -337,6 +374,7 @@ These automatically fail the current phase or the entire run:
 - editing the lifecycle helper, using forbidden process commands, or bypassing managed lifecycle after an undiagnosed failure;
 - using `lsof`, `ps`, `kill`, `pkill`, shell `sleep`, or a manual server command to recover a Phase 0 source port; bootstrap and validated discovery must allocate fresh loopback ports and remain the only lifecycle owners;
 - running any non-read action in Phase 1 before `begin-phase-1-packet.mjs` passes against the unchanged Phase 0 target baseline and its receipt is read back; the gate command itself must be Phase 1's first non-read action;
+- after Phase 0 promotion, reading the Phase 1 artifact, progress ledger, target owner, or any other path before freshly rereading `phase-1-entry-plan.json` immediately after the Phase 1 reference; the plan read performed in Phase 0 never counts for Phase 1 entry;
 - creating, downloading, copying, moving, removing, formatting, generating, installing, starting, or changing anything anywhere before the Phase 1 first-packet permit, including under `task-workflow/`, the target tree, `/tmp`, another directory, or a remote service;
 - using shell inspection, `curl`, `wget`, a browser, Playwright, a server, a build, an asset fetch, or a network probe during Phase 1 entry before the first-packet permit;
 - calling a planning, todo, delegation, or subagent tool during Phase 1 entry before the first-packet permit; the packet receipt is the required entry plan;
@@ -399,6 +437,7 @@ The reference files are mandatory execution instructions for their phases. They 
 | `scripts/initialize-source-inventory.mjs` | [Source inventory initializer](assets/scripts/initialize-source-inventory.mjs) |
 | `scripts/finalize-source-inventory.mjs` | [Executable source inventory finalizer](assets/scripts/finalize-source-inventory.mjs) |
 | `scripts/promote-phase-0.mjs` | [Executable Phase 0 gate](assets/scripts/promote-phase-0.mjs) |
+| `scripts/prepare-phase-1-packet.mjs` | [Executable Phase 1 packet handoff prepared during Phase 0](assets/scripts/prepare-phase-1-packet.mjs) |
 | `scripts/begin-phase-1-packet.mjs` | [Executable Phase 1 first-write gate](assets/scripts/begin-phase-1-packet.mjs) |
 | `scripts/validate-source-discovery.mjs` | [Source discovery pre-run validator](assets/scripts/validate-source-discovery.mjs) |
 | `scripts/run-validated-source-discovery.mjs` | [Bounded validated source runner](assets/scripts/run-validated-source-discovery.mjs) |
@@ -409,11 +448,11 @@ The reference files are mandatory execution instructions for their phases. They 
 
 ### Phase 0: Source Contract
 
-Reset and seed artifacts, launch and inspect the source through managed Playwright, then read the design JSON and inspect the target repo read-only. Discover every route/state/section/interaction/theme/viewport, capture source full-view and section evidence, and write the reproduction contract.
+Reset and seed artifacts, launch and inspect the source through managed Playwright, then read the design JSON and inspect the target repo read-only. Discover every route/state/section/interaction/theme/viewport, capture source full-view and section evidence, write the reproduction contract, and mechanically prepare the exact Phase 1 packet-1 handoff before the final Phase 0 audit and promotion.
 
 ### Phase 1: UI Implementation
 
-After the required Phase 1 and target-owner reads, make the executable first-packet gate the first non-read Phase 1 action. Pass it against the unchanged Phase 0 target baseline and read its receipt before any local, external, or remote side effect. Then implement the reproduction contract in ordered, auditable frontend packets: tokens/themes, primitives, shell and scroll ownership, routes, sections, local interactions, responsive behavior, and supported navigation/assets.
+Follow the exact Phase 1 sequence printed by promotion: read the reference, prepared entry plan, Phase 1 artifact, progress ledger, and each exact planned target owner using file-read tools. Then run `node task-workflow/scripts/begin-phase-1-packet.mjs` with no arguments as Phase 1's first non-read action. Pass it against the unchanged baseline and prepared-plan hash, then read its receipt before any local, external, or remote side effect. Implement the reproduction contract in ordered, auditable frontend packets: tokens/themes, primitives, shell and scroll ownership, routes, sections, local interactions, responsive behavior, and supported navigation/assets.
 
 ### Phase 2: Paired Responsive Proof
 

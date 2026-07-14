@@ -116,6 +116,16 @@
 | Placeholder rows removed from `open-gaps.md` | Pending | Fail |
 | Discovery gaps recorded or explicit `None currently recorded` row present | Pending | Fail |
 
+## Phase 1 First-Packet Handoff
+
+| Requirement | Evidence | Pass/Fail |
+| --- | --- | --- |
+| Exact token/theme/typography/primitive contract IDs recorded | Pending | Fail |
+| Exact existing target owner files inspected read-only and recorded | Pending | Fail |
+| Exact Phase 0 source evidence paths recorded | Pending | Fail |
+| Exact UI-only acceptance outcome recorded | Pending | Fail |
+| `prepare-phase-1-packet.mjs` passed and `phase-1-entry-plan.json` was read back | Pending | Fail |
+
 ## Scorecard
 
 | Category | Passed | Total | Evidence |

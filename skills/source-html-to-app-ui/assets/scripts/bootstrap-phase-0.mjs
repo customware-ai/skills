@@ -180,6 +180,12 @@ copied.push(
 );
 copied.push(
 	copyAndProve(
+		resolve(skillRoot, 'assets/scripts/prepare-phase-1-packet.mjs'),
+		resolve(workflowRoot, 'scripts/prepare-phase-1-packet.mjs')
+	)
+);
+copied.push(
+	copyAndProve(
 		resolve(skillRoot, 'assets/scripts/begin-phase-1-packet.mjs'),
 		resolve(workflowRoot, 'scripts/begin-phase-1-packet.mjs')
 	)

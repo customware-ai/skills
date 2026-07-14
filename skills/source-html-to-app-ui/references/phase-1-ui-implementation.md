@@ -2,6 +2,18 @@
 
 This reference is mandatory whenever `CURRENT_PHASE.txt` equals `phase-1-ui-implementation`.
 
+<immediate_post_promotion_lock>
+
+If the passing Phase 0 promotion command sent the Agent to this reference, the literal next tool action after this read is:
+
+```text
+Read task-workflow/phase-1-entry-plan.json
+```
+
+The plan read performed while Phase 0 was active does not count for Phase 1. Read it again after this reference and after the marker changed. Do not read the Phase 1 artifact, `progress.md`, a target file, or any other path first. Reading `task-workflow/phase-1-ui-implementation.md` before the fresh post-marker plan read contaminates the run. Stop and clean-reset; do not repair this order in place.
+
+</immediate_post_promotion_lock>
+
 ## Phase Authority
 
 <phase_1_authority>
@@ -24,20 +36,20 @@ Until the first-packet gate passes and its receipt is read back, the only permit
 
 Execute this exact entry sequence:
 
-1. Read `task-workflow/phase-1-ui-implementation.md` and `task-workflow/progress.md` before choosing files.
-2. Inspect only the target token, typography, theme, shared-primitive, route-root, and styling owners needed to define the first ordered packet. Use file-read tools only. Do not invoke shell commands even for supposedly read-only inspection. Do not inspect or fetch external assets. Do not call a planning, todo, delegation, or subagent tool; the packet receipt is the required plan.
-3. Before any target write, run the supplied gate with concrete values from the accepted Phase 0 contract:
+1. Freshly reread `task-workflow/phase-1-entry-plan.json` exactly as printed by the passing Phase 0 promotion gate. Its earlier Phase 0 readback is not Phase 1 entry evidence.
+2. Read `task-workflow/phase-1-ui-implementation.md`.
+3. Read `task-workflow/progress.md`.
+4. Read every exact target owner in the entry plan separately and sequentially with the file-read tool. Do not choose, list, search, glob, probe, or substitute files in Phase 1 entry; Phase 0 already prepared the binding packet.
+5. Run the supplied gate with no arguments as Phase 1's first non-read action:
 
    ```bash
-   node task-workflow/scripts/begin-phase-1-packet.mjs \
-     --contracts "rep:theme,<shared-primitive contract IDs>" \
-     --evidence "<exact Phase 0 source evidence paths>" \
-     --files "<comma-separated target files for packet 1>" \
-     --outcome "<exact UI-only acceptance outcome>"
+   node task-workflow/scripts/begin-phase-1-packet.mjs
    ```
 
-4. The command must print `PHASE 1 FIRST-PACKET GATE: PASS`. Separately read `task-workflow/phase-1-first-packet-receipt.json`, then read back the updated Phase 1 artifact and `progress.md`.
-5. Only then write the permitted target files. Do not touch a target file absent from the receipt. After the packet, read back every changed file and inspect its focused diff before recording the packet result.
+6. The command must print `PHASE 1 FIRST-PACKET GATE: PASS`. Separately read `task-workflow/phase-1-first-packet-receipt.json`, then read back the updated Phase 1 artifact and `progress.md`.
+7. Only then write the permitted target files. Do not touch a target file absent from the receipt. After the packet, read back every changed file and inspect its focused diff before recording the packet result.
+
+The Phase 0 promotion output starts this chain by requiring this Phase 1 reference read first. After that reference read, steps 1-5 above are atomic. Any `ls`, `find`, `rg`, `grep`, glob, search, status, path probe, alternate file read, or other command before the permit is an automatic contaminated-run failure. Stop and clean-reset; do not repair it in place.
 
 The gate compares the complete target tree with the Phase 0 baseline. If any target file or even an empty target directory changed first, it fails and the run is contaminated. Any earlier out-of-tree or remote side effect is also contamination even when the baseline cannot detect it. Stop, clean-reset, and restart. Do not repair the evidence around an early side effect.
 
@@ -47,7 +59,7 @@ Before any implementation write, the passing receipt must prove:
 - `CURRENT_PHASE.txt` is already `phase-1-ui-implementation`;
 - this reference has been read after setting the marker;
 - the reproduction contract and source evidence paths are current;
-- `progress.md` identifies the first ordered work packet;
+- the prepared entry plan and `progress.md` identify the same exact first ordered work packet;
 - no critical Phase 0 gap is open.
 
 If any condition fails, return to Phase 0. Implementation performed before this boundary is invalid.

@@ -2,17 +2,21 @@
 
 ## Mandatory Resume Sequence
 
-After compaction, resume, retry, reconnect, or a new coding session, read in this order before choosing work:
+After compaction, resume, retry, reconnect, continuation, session restoration, or a new coding session, the literal first tool action is reading `.agents/skills/source-html-to-app-ui/SKILL.md`.
 
-1. exact task prompt and task inputs;
-2. exact task inputs, source HTML, and design JSON;
-3. `.agents/skills/source-html-to-app-ui/SKILL.md`;
-4. this `progress.md`;
-5. `CURRENT_PHASE.txt`;
-6. `open-gaps.md`;
-7. earlier artifacts needed to identify the earliest failing phase;
-8. the current or earliest failing phase artifact;
-9. references mapped to that phase.
+If the last completed result or phase lock identifies one mandatory next action, immediately perform it after the skill read. Continue chained mandatory actions without injecting the general reload. Use the general artifact reload only at a safe boundary with no explicit immediate next action.
+
+If bootstrap never completed, do not probe this file or any `task-workflow/` path. Restart the main skill's Immediate First-Action Lock from its two ordered reference reads and bootstrap.
+
+If bootstrap completed, read in this order before choosing work:
+
+1. this `progress.md`;
+2. `CURRENT_PHASE.txt`;
+3. `open-gaps.md`;
+4. earlier artifacts needed to identify the earliest failing phase;
+5. the current or earliest failing phase artifact;
+6. references mapped to that phase;
+7. task inputs, source HTML, or design only when the owning phase requires it.
 
 Do not act from conversation memory. If marker, ledger, gaps, and artifacts disagree, set the marker and this ledger back to the earliest failing phase before work.
 

@@ -33,7 +33,7 @@ The first Phase 0 actions are not discretionary:
 | 7 | As the next action, run `node task-workflow/scripts/initialize-source-inventory.mjs`; read its generated inventory, reconcile it against the complete HTML, mark the audit passed, run `scripts/finalize-source-inventory.mjs`, then separately read its complete receipt | complete, hash-bound page/state inventory and finalization receipt |
 | 8 | Validate the unchanged supplied inventory capture, run every printed lifecycle mode separately and sequentially, read its canonical manifest, and open every dynamic `inspectionImages` sheet in listed order | complete desktop/mobile page, section, state, and shell evidence visibly covered exactly once |
 | 9 | After adding `imagesOpened`, read `task-workflow/spec.json` directly and completely as the immediate next tool action | exact ordered design-read evidence |
-| 10 | Only then inspect target implementation and existing target-repository brand assets read-only | timestamped/order evidence |
+| 10 | Only then inspect target implementation and existing target-repository brand assets read-only; prepare and read back the exact Phase 1 packet-1 handoff before scoring or promotion | timestamped/order evidence plus `phase-1-entry-plan.json` |
 
 Calling a planning/todo/task-list/delegation/subagent tool anywhere in Phase 0; drafting future-phase implementation, build/check, verification, or completion steps; batching or parallelizing the two mandatory reference reads; inserting `ls`, `stat`, `find`, glob, search, `wc`, path validation, or any other probe anywhere between orders 2 and 7; reading another phase reference; listing or reading target implementation; batching or parallelizing the four initial image reads; reading spec/source text before all four required images; stopping either image sequence early; reading the design JSON or target implementation before every inventory-driven capture mode passes and every dynamic inspection sheet is opened; after source inspection, listing/searching target paths, inspecting target implementation/assets, or reasoning about implementation before completely reading `task-workflow/spec.json`; authoring or modifying source-capture code; using a manual server; or making any non-workflow write before order 5 completes is an automatic run failure. The failure cannot be repaired in place because the discovery context is contaminated. Restore a clean fixture and restart.
 
@@ -92,6 +92,18 @@ Read and record:
 - app start, check, lint, type, and build commands available in the target;
 - existing frontend architecture and file ownership;
 - constraints that affect UI-only implementation.
+
+Before scoring Phase 0, choose the exact existing target owners for the first tokens/themes/typography/primitives packet from this completed read-only inspection. Then run:
+
+```bash
+node task-workflow/scripts/prepare-phase-1-packet.mjs \
+  --contracts "<comma-separated Phase 0 contract IDs including token/theme/typography/primitive ownership>" \
+  --evidence "<comma-separated existing Phase 0 source evidence paths>" \
+  --files "<comma-separated exact existing target owner files>" \
+  --outcome "<exact UI-only acceptance outcome>"
+```
+
+This command is still Phase 0 work and writes only `task-workflow/phase-1-entry-plan.json`. Read that JSON back immediately. If an intended file is absent, select the existing target token/theme/typography/primitive owner instead; do not create a target path in Phase 0. Do not promote Phase 0 until the handoff, Phase 0 artifact, `open-gaps.md`, score, and promotion lock are all complete. Running the promotion gate to discover one missing checklist item at a time is a failed phase-close audit; inspect and finish the entire checklist first.
 
 Do not use Phase 0 to plan backend, persistence, auth, API, or business logic. If the source appears to imply these systems, reproduce only their visible UI state using local state and static data.
 
@@ -293,5 +305,7 @@ Before promotion:
 Steps 9-10 are executable: after the artifact and progress ledger are complete, run `node task-workflow/scripts/promote-phase-0.mjs`. It alone writes the Phase 1 marker and promotion receipt. Then read the Phase 1 reference as the next action.
 
 If any step fails, remain in Phase 0 and repair it. Do not implement anyway.
+
+The Phase 0 promotion gate also rejects a missing, stale, incomplete, or baseline-unbound `phase-1-entry-plan.json`. Its passing output prints the literal ordered Phase 1 reads and gate command. Follow that printed sequence exactly.
 
 </phase_0_gate>
