@@ -24,9 +24,20 @@ Run the one-key `{ "status": "ok" }` check from [structured-output.md](structure
 
 Exercise the generated app's Hono endpoint with at least two user turns so the second request includes prior messages. Confirm both responses stream and the assistant uses the prior turn.
 
+### Tool-backed or generative UI feature
+
+Trigger at least one prompt that causes the intended tool path to run.
+
+Confirm:
+
+- the tool is called through the app's Hono endpoint, not directly from the browser
+- the visible tool or card UI renders in the chat
+- the final assistant answer is grounded in the returned tool data
+- any loading state transitions to the final output state
+
 ### Browser UI feature
 
-When the task adds a chat or structured-output UI, run an interactive browser check from the target project (use Playwright or the template's existing browser workflow). Confirm the two panes render, chat can submit two turns, the Stop control is enabled during streaming, categorization renders the requested JSON fields, and the responsive layout remains usable. This is required in addition to direct endpoint checks.
+When the task adds a chat or structured-output UI, run an interactive browser check from the target project (use Playwright or the template's existing browser workflow). Confirm the two panes render, chat can submit two turns, the Stop control is enabled during streaming, categorization renders the requested JSON fields, any tool or custom card UI appears when triggered, and the responsive layout remains usable. This is required in addition to direct endpoint checks.
 
 ## How To Run Checks
 
@@ -120,4 +131,5 @@ If the sandbox already injects system environment values, omit `--env-file=.env`
 - [ ] User-named model passed the live `hi` check.
 - [ ] JSON feature passed the one-key structured-output check.
 - [ ] Multi-turn chat was exercised when chat was built.
+- [ ] Tool-backed or generative UI paths were exercised when those features were built.
 - [ ] App check/build completed.

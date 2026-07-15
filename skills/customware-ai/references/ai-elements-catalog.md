@@ -7,6 +7,7 @@ Read this catalog to choose components. Then read only the linked files under `c
 Common starting sets:
 
 - Chat: `conversation`, `message`, and `prompt-input`.
+- Tool-backed chat: `conversation`, `message`, `prompt-input`, and `tool`.
 - Code or artifact viewer: choose only from `artifact`, `code-block`, `file-tree`, `snippet`, and related developer-output components.
 - Workflow editor: start with `canvas`, `node`, and `edge`; add `connection`, `controls`, `panel`, or `toolbar` only when the design uses them.
 - Voice UI: choose only the input, playback, transcription, persona, or selector components the flow needs.

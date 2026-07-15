@@ -16,6 +16,8 @@ This is the single skill for the complete integration. Do not install or ask the
 - Always read [references/gateway-backend.md](references/gateway-backend.md).
 - Always read [references/models.md](references/models.md).
 - For chat or other conversational UI, read [references/ai-elements-ui.md](references/ai-elements-ui.md).
+- For server tools, tool-backed chat, or any AI action that fetches live app data, read [references/tool-usage.md](references/tool-usage.md).
+- For card-style AI UI, tool-rendered UI, typed message parts, or streamed custom UI state, read [references/generative-ui.md](references/generative-ui.md).
 - For AI UI, read [references/ai-elements-catalog.md](references/ai-elements-catalog.md), select the needed components, then read only those linked files under `references/components/`. Open a component's linked example files only while implementing it. Never load the entire components folder or all examples.
 - For JSON or other typed output, read [references/structured-output.md](references/structured-output.md).
 - When starting from bundled code, read [references/examples.md](references/examples.md).
@@ -39,6 +41,7 @@ This is the single skill for the complete integration. Do not install or ask the
 - If the feature generates JSON, run the one-key structured-output check before finishing.
 - Match the requested JSON field names and shape exactly. Define one shared Zod contract in a neutral shared module/package (for example `shared/contracts/`) that both app and server may import; the browser must never import from `server/`, and the schema/enums must never be duplicated. Product-requested limits, such as a 20,000-character input bound, are valid when documented by the feature.
 - Any upstream AI failure must become a generic, user-safe error at the app boundary; never render raw transport/provider errors.
+- Keep database access server-owned. Never execute arbitrary model-written SQL. If a feature needs database access, let the model choose a structured tool input and let the server build the read-only, parameterized query from allowlisted filters, tables, or query helpers.
 - AI Elements works in the React Router client-only SPA. Do not introduce Next.js or App Router route handlers. Generated `"use client"` directives are harmless React boundary markers and do not require Next.js.
 - Use pnpm only. Install AI Elements through the bundled installer, which runs non-interactive `pnpm dlx shadcn@latest add ... --yes` commands and isolates registry-matched primitives from the template's existing UI contracts.
 
@@ -52,9 +55,10 @@ This is the single skill for the complete integration. Do not install or ask the
 6. Keep the model and its reasoning configuration server-owned. If the UI offers model selection, validate it against the small allow-list in [references/models.md](references/models.md).
 7. For chat, install only the selected AI Elements with `scripts/install-ai-elements.mjs`, then connect `useChat` to the app's Hono endpoint.
 8. For structured output, use the current AI SDK `generateText` with `Output.object` and a Zod schema.
-9. For `PromptInputSubmit`, allow the Stop action while status is `submitted` or `streaming`; do not pass an input-empty disabled condition that disables Stop after the submitted input is cleared.
-10. Run the mandatory live checks and browser-level UI verification in [references/verification.md](references/verification.md) from the target project, then run the app's normal type/check/build command. If interactive verification fails, inspect the actual page/console from the project-local script before claiming the app is broken.
-11. Lazy-load client AI UI with `React.lazy`/dynamic import at the route or pane boundary. Keep server-only AI SDK calls (`streamText`, `generateText`, tools) and the gateway provider server-only; `DefaultChatTransport` is the supported client transport for `useChat`. Do not lazy-load server code into the browser. Treat a large AI UI bundle warning as a real performance issue and isolate heavy Streamdown/AI Elements code from the initial chunk.
+9. For tool calling, define the tool on the server with `tool({ inputSchema, execute })`, keep the action boundary server-owned, and use a bounded multi-step setting such as `stopWhen: stepCountIs(5)` when the model must answer after the tool result.
+10. For `PromptInputSubmit`, allow the Stop action while status is `submitted` or `streaming`; do not pass an input-empty disabled condition that disables Stop after the submitted input is cleared.
+11. Run the mandatory live checks and browser-level UI verification in [references/verification.md](references/verification.md) from the target project, then run the app's normal type/check/build command. If interactive verification fails, inspect the actual page/console from the project-local script before claiming the app is broken.
+12. Lazy-load client AI UI with `React.lazy`/dynamic import at the route or pane boundary. Keep server-only AI SDK calls (`streamText`, `generateText`, tools) and the gateway provider server-only; `DefaultChatTransport` is the supported client transport for `useChat`. Do not lazy-load server code into the browser. Treat a large AI UI bundle warning as a real performance issue and isolate heavy Streamdown/AI Elements code from the initial chunk.
 
 ## Version-aware API usage
 
@@ -66,8 +70,10 @@ Package APIs can change. When usage is uncertain, inspect the installed packages
 
 ## Copy-Ready Examples
 
-- Use `assets/ai-chat/` for a minimal AI Elements chat with a Hono streaming route.
-- Use `assets/email-parser/` for an internal server-only email parser returning typed JSON.
+- Use `assets/ai-chat/` for a minimal streaming chat.
+- Use `assets/sql-tool-chat/` for tool-backed chat with visible tool state and a safe read-only SQL pattern.
+- Use `assets/generative-ui-chat/` for tool-driven end-user card UI inside chat.
+- Use `assets/email-parser/` for internal server-only typed JSON generation.
 - Copy only the files needed by the target feature, adapt their import paths, and supply the real org/project ids where the route or service is mounted.
 - Treat assets as starting code, not files to execute inside the skill repository.
 

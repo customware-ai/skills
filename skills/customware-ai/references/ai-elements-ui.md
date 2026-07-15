@@ -40,11 +40,14 @@ Do not:
 
 Use `assets/ai-chat/` for the copy-ready frontend and Hono route. It connects browser `useChat` through `DefaultChatTransport({ api: "/api/chat" })`; the browser never receives the gateway key or URL.
 
+`assets/ai-chat/` is the text-only baseline. If the feature uses server tools, visible tool state, or end-user card UI from tool results, read [tool-usage.md](tool-usage.md) and [generative-ui.md](generative-ui.md), then start from `assets/sql-tool-chat/` or `assets/generative-ui-chat/`.
+
 For the component APIs, read only:
 
 - [components/conversation.md](components/conversation.md)
 - [components/message.md](components/message.md)
 - [components/prompt-input.md](components/prompt-input.md)
+- [components/tool.md](components/tool.md) when the chat exposes tool state or tool details
 
 Give the chat region a concrete height. In flex/grid layouts, include `min-h-0` so the conversation owns internal scrolling.
 
@@ -55,6 +58,7 @@ AI SDK UI messages are part-based. Render only the parts the feature supports:
 - `text` -> `MessageResponse`
 - `reasoning` -> one consolidated `Reasoning` block per assistant message
 - `tool-*` or dynamic tool parts -> `Tool`, `ToolHeader`, `ToolInput`, and `ToolOutput`
+- `data-*` -> custom React components rendered from a typed `UIMessage`; see [generative-ui.md](generative-ui.md)
 - `source-url` -> group under `Sources`, `SourcesTrigger`, `SourcesContent`, and `Source`
 
 Reasoning models can emit several reasoning parts. Join them into one block to avoid multiple “Thinking” sections:
