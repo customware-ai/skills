@@ -8,12 +8,14 @@
 | Main skill and Phase 1 reference reread after marker | Fail | Pending |
 | Phase 0 says `Pass` and scores at least `48/50` | Fail | Pending |
 | Reproduction contract and source evidence are current | Fail | Pending |
+| Target routes, layouts, assets, styling owners, and relevant commands researched after Phase 0 promotion | Fail | Pending |
 | First work packet recorded before write | Fail | Pending |
 
 ## Ordered Layer Checklist
 
 | Order | Required layer | Target owners | Contract/source evidence | Status | Readback/diff evidence |
 | ---: | --- | --- | --- | --- | --- |
+| 0 | Target repository research and exact owner mapping | Pending | Phase 0 source/design handoff | Not Started | Pending |
 | 1 | Tokens and typography | Pending | Pending | Not Started | Pending |
 | 2 | Source/required derived themes | Pending | Pending | Not Started | Pending |
 | 3 | Shared primitive inspection/adaptation | Pending | Pending | Not Started | Pending |

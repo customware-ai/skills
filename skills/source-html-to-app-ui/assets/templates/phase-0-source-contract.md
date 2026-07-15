@@ -42,6 +42,7 @@
 | Every visible section and source order identified | Pending | Fail |
 | Browser findings reconciled against source declarations | Pending | Fail |
 | No fixed page/state/section/screenshot limit used | Pending | Fail |
+| Complete manifest walk finished: every image opened and given a concrete finding | Pending | Fail |
 
 ## Model-Owned Discovery Packet Reviews
 
@@ -90,22 +91,26 @@ Keep every image identity traceable through rows here or a linked complete captu
 | Sidebar top/bottom | Pending | viewport-stable within `1px` | Pending | Fail |
 | Viewport-height shell | Pending | bounded to viewport and contains document overflow | Pending | Fail |
 
-## Design And Target Repository Contract
+## Source Design And Target Research Handoff
 
-| Area | Exact files/paths inspected | Binding rules/patterns | Evidence |
+This section is completed from the task prompt, copied design JSON, and source evidence only. Do not inspect target files, assets, build output, dependencies, or configuration during Phase 0. Record the target roles, shell adaptations, and Phase 1 research actions without inventing exact target file paths. Exact target research and owner mapping begin only after `CURRENT_PHASE.txt` moves to `phase-1-ui-implementation`.
+
+| Area | Source/design requirement | Phase 1 research action | Evidence |
 | --- | --- | --- | --- |
-| Task prompt and design JSON | Pending | Pending | Pending |
-| Routes and layouts | Pending | Pending | Pending |
-| Themes, tokens, typography, and primitives | Pending | Pending | Pending |
-| Existing target brand assets | Pending | Pending | Pending |
-| Relevant start/check/build commands | Pending | Pending | Pending |
-| UI-only architecture boundary | Pending | Pending | Pending |
+| Task prompt and design JSON | Pending | Read copied design and map requirements to target owners | Pending |
+| Routes and layouts | Pending | Inspect target route/layout owners | Pending |
+| Themes, tokens, typography, and primitives | Pending | Inspect target styling owners and shared primitives | Pending |
+| Existing target brand assets | Real logo required when available | Inspect target brand assets after Phase 0 | Pending |
+| Relevant start/check/build commands | Pending | Inspect target commands after Phase 0 | Pending |
+| UI-only architecture boundary | UI reproduction only; no backend/API/business logic | Confirm target-native UI boundary | Pending |
 
 ## Reproduction And Adaptation Contract
 
-| Contract ID | Source/design evidence | Required target route/state/section/interaction/theme behavior | Target owner | Omitted-size safety rule | Explicit exclusions | Status |
+| Contract ID | Source/design evidence | Required target route/state/section/interaction/theme behavior | Target role/owner to map in Phase 1 | Omitted-size safety rule | Explicit exclusions | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Fail |
+
+`Pass` requires concrete source evidence, required target outcome/role, responsive adaptation, and exclusions. Exact target file ownership is mapped in Phase 1; Phase 0 must not invent it.
 
 ## Open-Gap Reconciliation
 
@@ -122,7 +127,7 @@ Keep every image identity traceable through rows here or a linked complete captu
 | Complete HTML/browser inventory and real-input reachability | 0 | 10 | Pending |
 | Desktop/mobile/state/section source evidence | 0 | 12 | Pending |
 | Sidebar/drawer/scroll/theme discovery | 0 | 8 | Pending |
-| Design/target research and reproduction contract | 0 | 10 | Pending |
+| Source/design handoff and reproduction contract | 0 | 10 | Pending |
 | **Total** | **0** | **50** | Pending |
 
 Required: at least `48/50`.
@@ -132,18 +137,19 @@ Required: at least `48/50`.
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
 | Fresh artifacts exist and target implementation remained read-only | Fail | Pending |
+| Target files/build/runtime/dependencies were not inspected before the managed source evidence checkpoint | Fail | Pending |
 | Initial managed source evidence was captured/opened before bulk HTML reading | Fail | Pending |
 | Complete HTML/CSS/JavaScript was read to EOF | Fail | Pending |
 | Every page/state/section/interaction family is inventoried | Fail | Pending |
 | Every discovery packet passed the model-owned review | Fail | Pending |
 | Every inventory item has desktop/mobile and readable section/state evidence | Fail | Pending |
-| Every cited image was opened and inspected | Fail | Pending |
+| Every manifest image was opened and inspected with a per-image finding; no sampling was used | Fail | Pending |
 | Every image has one unique path, dimensions, capture/open times, and concrete findings | Fail | Pending |
 | Custom Playwright scripts have no fixed waits and use lifecycle ownership | Fail | Pending |
 | Sidebar/drawer/scroll/theme discovery is complete when applicable | Fail | Pending |
 | Source-observed and target-required scroll contracts are separate and name the target shell/content owners | Fail | Pending |
-| Design and target architecture research is complete | Fail | Pending |
-| Reproduction contract has complete evidence, owners, adaptation, and exclusions | Fail | Pending |
+| Source/design handoff is complete and exact target research is explicitly deferred to Phase 1 | Fail | Pending |
+| Reproduction contract has complete source evidence, target outcome/role, adaptation, and exclusions | Fail | Pending |
 | No required placeholder, unsupported assumption, or ordinary discovery gap remains | Fail | Pending |
 
 ## Promotion Lock
@@ -151,7 +157,7 @@ Required: at least `48/50`.
 | Lock item | Evidence |
 | --- | --- |
 | Artifact reopened after final evidence update | Pending |
-| Gate-critical source images reopened across all pages and viewports | Pending |
+| Complete source manifest reopened image-by-image across all pages and viewports; opened count equals manifest count | Pending |
 | Evidence IDs, paths, dimensions, capture/open times, and findings audited | Pending |
 | Inventory and contract coverage reconciled | Pending |
 | Score arithmetic and critical rows independently verified | Pending |

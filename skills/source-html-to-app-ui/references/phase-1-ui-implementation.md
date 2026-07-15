@@ -14,6 +14,12 @@ A packet fails when its code exceeds its declared contract, omits required work,
 
 </phase_authority>
 
+## Managed target verification lock
+
+All Phase 1 target verification remains lifecycle-owned. After implementation or a build, do not launch `pnpm run dev`, `npm run dev`, `vite`, or `react-router dev` in the shell, background a server, wait with shell `sleep`, probe with `curl`/`wget`, inspect a port, or clean up processes manually. Build and typecheck output confirms code integrity only; it is not browser evidence.
+
+Write the target packet under `task-workflow/target-playwright/`, read it, and run it only through `playwright-lifecycle.mjs` with explicit `--server`, `--ready-url`, `--runtime-dir`, and `--run` arguments. Use that helper for screenshots, DOM assertions, measurements, scroll tests, interaction checks, and runtime inspection. If it fails, repair and rerun the packet through the helper. Do not replace the lifecycle run with a manual smoke test. Any direct target server, shell wait, readiness probe, or browser check is a hard process failure and invalidates the run.
+
 ## Entry Conditions
 
 Before the first implementation edit:
@@ -21,6 +27,7 @@ Before the first implementation edit:
 - `CURRENT_PHASE.txt` says `phase-1-ui-implementation`;
 - Phase 0 says `Decision: Pass` and scores at least `48/50`;
 - the Phase 0 inventory, reproduction contract, source evidence, and target-owner research are current;
+- target-owner research is performed after the Phase 0 marker and before the first implementation packet; it is not required to pass the source-only Phase 0 gate;
 - the Agent has reread `SKILL.md`, this reference, Phase 0, Phase 1's artifact, `progress.md`, and `open-gaps.md`;
 - the first work packet is written in the Phase 1 artifact.
 
@@ -30,6 +37,7 @@ If any condition fails, return to Phase 0 or repair the Phase 1 entry artifact b
 
 Implement in this order unless the Phase 0 target architecture proves two adjacent layers must be combined:
 
+0. target repository research and exact owner mapping from the Phase 0 handoff;
 1. design tokens, typography, and source/required derived themes;
 2. shared visual primitives;
 3. viewport shell, sidebar, content scroll ownership, and mobile drawer structure;
