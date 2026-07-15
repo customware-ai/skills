@@ -17,6 +17,18 @@ Reproduce the approved source HTML as a real target application. The finished ex
 
 Use the source HTML for discovery and comparison. Author the target as a normal application with real routes, components, styles, assets, and local UI state. Keep the task UI-only: do not add backend, API, database, persistence, authentication, server, or business logic.
 
+## Strict execution contract
+
+<execution_contract>
+
+This is an end-to-end implementation workflow, not optional advice. A passing phase unlocks the next phase; it is not a successful stopping point. Do not stop after source discovery, Phase 0, target research, implementation, or a partial verification run. If the next phase is locally unblocked, continue into it automatically. The task is not complete until Phase 4 passes and the exact task-completion command has run successfully.
+
+The Agent owns every gate. Browser scripts collect evidence; the Agent reviews the evidence, scores the phase, repairs failures, and promotes the marker. A normal packet failure is a repair loop: inspect the helper-owned failure, fix the same packet, rerun it through the lifecycle helper, and refresh invalidated evidence. A process violation or an unproven gate is a failed run, not permission to continue or sign off.
+
+After compaction, resume, retry, reconnect, or a new session, reread this skill, the current phase reference, the current artifact, `progress.md`, `open-gaps.md`, and the task-owned evidence needed for the next action before doing any work. Never rely on conversation memory or an old `Pass` label as the next-step decision.
+
+</execution_contract>
+
 ## First-action lock
 
 <first_action_lock>
@@ -123,7 +135,7 @@ Promote only from the current artifacts, opened evidence, readbacks, and actual 
 | Phase | Marker | Owns | Gate | Outcome |
 | --- | --- | --- | ---: | --- |
 | 0 | `phase-0-source-contract` | fresh artifacts, managed source discovery, complete inventory, source/design handoff, reproduction contract | `48/50` | every source page/state/section/interaction is understood and evidenced |
-| 1 | `phase-1-ui-implementation` | target research, owner mapping, and ordered target-native implementation in reviewed packets | `48/50` | every contracted route/state/section/interaction has a real target owner |
+| 1 | `phase-1-ui-implementation` | target research, owner mapping, and ordered target-native implementation in reviewed packets | `48/50` | every contracted route/state/section/interaction has a real target owner and authored target UI |
 | 2 | `phase-2-paired-responsive-proof` | code integrity, checks/build, paired source-target Playwright proof | `48/50` | responsive, theme, scroll, sidebar, drawer, and paired evidence pass |
 | 3 | `phase-3-fidelity-repair-signoff` | section comparison, mismatch repair, adversarial checks, real-input proof | `49/50`; desktop/mobile `48/50` each | one-to-one visual and behavioral signoff |
 | 4 | `phase-4-final-audit-completion` | artifact integrity, current evidence, final diff, completion lock | exactly `50/50` | every gate remains valid and completion is unlocked |
@@ -149,6 +161,8 @@ Run this loop for every phase:
 
 The artifact trail must agree: marker, phase artifacts, `progress.md`, `open-gaps.md`, evidence ledgers, and actual files must describe the same current phase and next action. `CURRENT_PHASE.txt` is a resume pointer, not proof. `progress.md` is a compact resume ledger, not a substitute for detailed evidence.
 
+Keep browser work and visual review in bounded packets. A source or target packet should own one route/state family and a coherent viewport/theme set, with a reviewable number of outputs. Do not create one monolithic corpus packet that must be rerun after an unrelated selector or state failure. When a packet passes, preserve its manifest rows; repair and rerun only the failed or invalidated packet, using new revisioned paths when evidence changes.
+
 ## Fresh Task Workspace
 
 The first target-repository write creates a clean `task-workflow/` from the supplied assets. Remove stale `task-workflow/` state, then create:
@@ -171,17 +185,19 @@ During Phase 0, the opening operating-contract lock above is absolute: keep targ
 
 Follow this source-only order exactly: scaffold task-workflow; start the source through the lifecycle helper; capture exactly one desktop and one mobile orientation image and open both; then read the approved HTML, inline CSS, and JavaScript completely to EOF; then run the complete source inventory through the helper and perform the image-by-image manifest walk; then update and pass the Phase 0 source contract; only after that inspect target architecture and assets. The orientation pair is only a startup check. The later manifest walk means: read the complete manifest, process every image path in manifest order, open each image at a readable scale, and record a concrete observation against that image's identity. The walk is complete only when opened-image count equals manifest-image count. Do not score or promote from key images, one image per route, representative samples, a contact sheet alone, a manifest-only review, or one viewport. Do not inspect target files, build output, runtime logs, or dependencies during the earlier source-only steps. Inventory every page-like surface, route, hidden view, state, section, interaction family, theme, breakpoint, scroll owner, fixed/sticky region, and source-declared item not visible initially.
 
-Use Playwright's user-facing input APIs to reach pages and states: locator/page `click`, `fill`, `selectOption`, `press`, `wheel`, drag, or touch as appropriate. Do not use `evaluate(() => element.click())`, `dispatchEvent(...)`, synthetic routing, direct handler calls, or DOM mutation to stand in for a real interaction. This includes assigning `el.value`, `el.checked`, or classes and then dispatching `input`, `change`, or click events. A browser-evaluated function may observe or measure state, but it may not create the state being evidenced. If a normal action fails, diagnose and repair the page or interaction target; do not bypass the failure with a DOM-dispatched event. Let the inventory determine evidence volume: there is no fixed page, state, section, or screenshot limit. For every inventoried page and meaningful state, capture desktop and mobile full-view evidence plus readable section/state/theme evidence where applicable.
+Use Playwright's user-facing input APIs to reach pages and states: locator/page `click`, `fill`, `selectOption`, `press`, `wheel`, drag, or touch as appropriate. Do not use `evaluate(() => element.click())`, `dispatchEvent(...)`, synthetic routing, direct handler calls, or DOM mutation to stand in for a real interaction. This includes assigning `el.value`, `el.checked`, or classes and then dispatching `input`, `change`, or click events. A browser-evaluated function may observe or measure state, but it may not create the state being evidenced. If a normal action fails, diagnose and repair the page or interaction target; do not bypass the failure with a DOM-dispatched event. Scope selectors to the active route/state and assert the intended control or section is unique before using it. Required section/state captures must fail the packet when their locator, assertion, screenshot, or finding fails; do not catch, log, and continue with partial evidence. Let the inventory determine evidence volume: there is no fixed page, state, section, or screenshot limit. For every inventoried page and meaningful state, capture desktop and mobile full-view evidence plus readable section/state/theme evidence where applicable.
 
 ### Paired proof
 
 Capture source and target separately through lifecycle-owned runs. Pair images by route, state, theme, viewport, section, and framing. Give every image a unique stable ID/path, actual dimensions, capture time, lifecycle run, opened time, and concrete findings. Use a new revisioned path after recapture.
 
-Complete the image-by-image visual closure before scoring any phase. Read the complete manifest, then open every manifest image individually or in a small readable batch while preserving one review record per image. For each image, record its exact identity, opened status, and at least one concrete visual finding; continue until the opened count exactly matches the manifest count. “Key images,” one image per route, representative samples, a contact sheet without constituent-image review, a manifest-only review, or opening only one viewport is an automatic evidence failure. A screenshot path or manifest row becomes evidence only after that exact image has been opened and its finding is recorded. Compare content/order, geometry, spacing, typography, color, backgrounds, borders, radii, shadows, assets, controls, clipping, overlap, responsive transformation, interaction state, and scroll behavior.
+Complete the image-by-image visual closure before scoring any phase. Read the complete manifest, then open every manifest image individually or in small readable batches of no more than four related images at a time. This is a context-protection rule for each review batch, not a cap on total pages, states, sections, viewports, or screenshots. After each batch, immediately append the opened result and one concrete finding per image to the owning phase artifact, update `progress.md` and `open-gaps.md`, and read those updates back before opening the next batch. Continue until the opened count exactly matches the manifest count. “Key images,” one image per route, representative samples, a contact sheet without constituent-image review, a manifest-only review, or opening only one viewport is an automatic evidence failure. A screenshot path or manifest row becomes evidence only after that exact image has been opened and its finding is recorded. Compare content/order, geometry, spacing, typography, color, backgrounds, borders, radii, shadows, assets, controls, clipping, overlap, responsive transformation, interaction state, and scroll behavior.
 
 ### Responsive and theme safety
 
 Check desktop, tablet when relevant, mobile, omitted-size extrapolation, short-height overflow, source themes, target-required themes, and important interaction states. Derive missing target themes conservatively from the accepted source/design system. Repair objective defects such as overlap, clipping, cutoff, horizontal canvas overflow, unusable controls, accidental document scroll, or blank regions.
+
+When a source entrance animation interferes with a readable capture, reach the state with a real control and wait for the source's own settled DOM, geometry, opacity, or transition condition. Do not inject styles, set opacity/classes, disable animations, or otherwise mutate source DOM/CSS merely to make a screenshot readable. If the source has no stable settled state, record that behavior and its evidence instead of rewriting the source inside the packet.
 
 </evidence_contract>
 

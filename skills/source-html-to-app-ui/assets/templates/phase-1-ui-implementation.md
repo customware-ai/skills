@@ -10,6 +10,7 @@
 | Reproduction contract and source evidence are current | Fail | Pending |
 | Target routes, layouts, assets, styling owners, and relevant commands researched after Phase 0 promotion | Fail | Pending |
 | First work packet recorded before write | Fail | Pending |
+| Target research was followed by an authored implementation packet; the run did not stop at planning | Fail | Pending |
 
 ## Ordered Layer Checklist
 
@@ -88,6 +89,7 @@ Required: at least `48/50`.
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
 | Phase entry boundary and ordered implementation contract pass | Fail | Pending |
+| Target research was followed by authored implementation; research alone is not treated as Phase 1 completion | Fail | Pending |
 | Every Phase 0 contract row has a real target owner | Fail | Pending |
 | Every route and section is authored and source-backed | Fail | Pending |
 | Every visible interaction family has real local behavior | Fail | Pending |

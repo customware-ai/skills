@@ -162,11 +162,13 @@ For every inventoried page and meaningful state, capture through managed Playwri
 - relevant theme images;
 - geometry and pre/post-scroll evidence when layout ownership matters.
 
+Split capture into focused packets. Each packet owns one route/state family and a coherent viewport/theme set. Keep the packet small enough that its failure identifies one evidence group and its outputs can be opened and reviewed immediately. Do not build one monolithic script for the entire source corpus. When a packet fails, repair and rerun only that packet; do not rerun already-passed packets unless their evidence was invalidated. Keep the manifest append-only and use a new revisioned path when a prior image is recaptured.
+
 Use deterministic waits. Before every helper invocation, read the complete packet being run from line 1 through EOF and confirm it contains no `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, or arbitrary polling/timer settling. Repeat the complete readback after every packet write or edit before relying on the packet, making another edit, or invoking the helper; a targeted slice can confirm a local change but does not replace the complete audit. Record the readback and fixed-wait review as packet evidence. Do not run a packet with a fixed wait and plan to repair it afterward. Any fixed wait is a hard packet failure, not a harmless settling aid; remove it, record the repair, replace it with a visible-state, URL, DOM, response, geometry, or assertion condition, and rerun the packet through the lifecycle helper before scoring.
 
-Complete an image-by-image visual closure after every capture. Read the complete manifest, process every image path in manifest order, open each image individually or in a small readable batch, and record one opened result plus a concrete finding for each exact image identity. The walk is complete only when the opened-image count exactly equals the manifest-image count. Readable inspection sheets may supplement the walk, but they never replace opening and recording every constituent image. Do not open only “key images,” one image per route, representative samples, one viewport, one full-page image per route, or a manifest without image review; any such sampling is a failed visual-inspection gate. Do not score or promote until the complete walk is recorded.
+Complete an image-by-image visual closure after every capture. Read the complete manifest, process every image path in manifest order, and open images in small readable review batches of no more than four related images. This batch size protects context and visual attention; it does not limit the total evidence corpus. After each batch, immediately append one opened result and one concrete finding for every image to the Phase 0 artifact, update and read back `progress.md` and `open-gaps.md`, and only then begin the next batch. The walk is complete only when the opened-image count exactly equals the manifest-image count. Readable inspection sheets may supplement the walk, but they never replace opening and recording every constituent image. Do not open only “key images,” one image per route, representative samples, one viewport, one full-page image per route, or a manifest without image review; any such sampling is a failed visual-inspection gate. Do not score or promote until the complete walk is recorded.
 
-If an image is blank, unsettled, faded, clipped, stale, unreadable, or captures an entrance animation, fix the script/state and recapture it.
+If an image is blank, unsettled, faded, clipped, stale, unreadable, or captures an entrance animation, reach the state through real input and wait for its own visible DOM, geometry, opacity, or transition condition, then recapture it. Do not inject CSS, set opacity/classes, disable animations, or mutate source DOM to manufacture a settled screenshot. If a required locator or section capture fails, fail the packet loudly, repair its route-scoped selector or state reachability, and rerun only that packet through the lifecycle helper.
 
 ### Source Evidence Identity And Inspection
 
@@ -174,7 +176,7 @@ Give every image a stable evidence ID and a unique non-reused path containing so
 
 Never reuse one path for desktop and mobile or overwrite an earlier revision. If a recapture is required, create a new revision path and mark the prior row invalidated. Opening a contact sheet does not prove that unreadable constituent images were inspected.
 
-Inspect source evidence in small readable packets. Use one image at a time for very tall full views and compact related batches for smaller section/state images. Record findings in the Phase 0 artifact after each meaningful packet and keep `progress.md` current enough to resume. This protects visual attention and context without capping pages, states, sections, themes, viewports, or screenshots.
+Inspect source evidence in small readable packets. Use one image at a time for very tall full views and compact related batches of no more than four images for smaller section/state images. Record findings in the Phase 0 artifact after each batch, read back the artifact and ledgers, and keep `progress.md` current enough to resume from the next unreviewed manifest row. This protects visual attention and context without capping pages, states, sections, themes, viewports, or screenshots.
 
 ### 5. Sidebar, Drawer, Scroll, And Theme Discovery
 
@@ -267,7 +269,7 @@ The Agent must calculate the score from the artifact's evidence. Do not use a ch
 Before promoting:
 
 1. reopen the Phase 0 artifact;
-2. read the complete source manifest and reopen every manifest image across all pages and both desktop/mobile; verify the opened count equals the manifest count rather than reviewing a subset;
+2. read the complete source manifest and reopen every manifest image across all pages and both desktop/mobile in the recorded bounded batches; verify the opened count equals the manifest count rather than reviewing a subset or loading the entire corpus into one turn;
 3. verify every evidence row has a unique path, dimensions, lifecycle run, opened time, and concrete findings;
 4. verify the inventory and contract have identical coverage;
 5. verify score arithmetic and every critical row;

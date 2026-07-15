@@ -8,6 +8,8 @@ This reference is mandatory whenever `CURRENT_PHASE.txt` equals `phase-1-ui-impl
 
 Phase 1 authors the target-native UI from the accepted Phase 0 reproduction contract. It is not a verification-only phase and not permission to implement everything in one uncontrolled rewrite.
 
+Target research is an entry step, not a completion point. Once the target owners, reusable patterns, required commands, and first packet boundaries are known, write the first implementation packet and begin the ordered target-native edits. Do not end the run after target research, a route/asset inventory, a clean build, or a plan. Phase 1 remains failed until the contracted UI is authored, reviewed, and scored; if implementation is locally unblocked, continue automatically.
+
 The Agent plans, reviews, and scores Phase 1 directly from code, diffs, readbacks, the reproduction contract, and source evidence. Do not create or use scripts for packet permits, owner selection, forced reads, diff acknowledgement, packet closeout, phase scoring, or promotion.
 
 A packet fails when its code exceeds its declared contract, omits required work, changes an undeclared owner, or lacks readback/diff evidence. Repair the packet in Phase 1 and review it again. Do not advance on intent.
@@ -30,6 +32,8 @@ Before the first implementation edit:
 - target-owner research is performed after the Phase 0 marker and before the first implementation packet; it is not required to pass the source-only Phase 0 gate;
 - the Agent has reread `SKILL.md`, this reference, Phase 0, Phase 1's artifact, `progress.md`, and `open-gaps.md`;
 - the first work packet is written in the Phase 1 artifact.
+
+Target-owner research alone cannot satisfy the Phase 1 gate. Before scoring or promotion, the artifact must contain at least one reviewed implementation packet and current authored target files; a Phase 1 artifact that stops at “research complete” remains `Decision: Fail`.
 
 If any condition fails, return to Phase 0 or repair the Phase 1 entry artifact before editing.
 
@@ -151,6 +155,7 @@ Required score: at least `48/50`.
 Every critical item must independently pass:
 
 - every Phase 0 contract row maps to a real target owner and implementation;
+- target research was followed by authored implementation packets; the run did not stop at research or planning;
 - every route and visible section is authored and source-backed;
 - every visible interaction family has real local behavior;
 - all packets passed the model-owned review checklist;
