@@ -51,6 +51,21 @@ For the component APIs, read only:
 
 Give the chat region a concrete height. In flex/grid layouts, include `min-h-0` so the conversation owns internal scrolling.
 
+## Chat UI Quality Baseline
+
+Do not ship the raw `Conversation` + `PromptInput` stack as an unstyled box. Compose a complete chat surface with Tailwind around the AI Elements primitives:
+
+- Use a bounded panel (`min-h-0`, explicit/minimum height, `overflow-hidden`, rounded border) that fits the app's layout. A side pane must use `min-w-0` and should normally fill its available height rather than use a fixed 600px height.
+- Add a compact header with an assistant identity, one-line scope description, and a quiet availability/status indicator. Keep the header readable in narrow panes.
+- Give the scrollable conversation a subtle distinct background and a centered readable content width. Preserve the AI Elements message components for accessible message layout and streaming markdown.
+- Make the empty state useful: an icon, a clear capability statement, and one or two optional starter prompts. `ConversationEmptyState` uses `children` as a replacement for its built-in icon/title/description, so render prompt buttons as a sibling below it, not as its children. Starter prompts must be real buttons, keyboard-focusable, and disabled while a request is active.
+- Put the composer in its own padded footer with a top border. Use `PromptInputBody`, `PromptInputFooter`, `PromptInputTools`, and `PromptInputSubmit` to create a compact rounded composer, visible focus treatment, placeholder that describes scope, and a short Enter/Shift+Enter hint when space allows.
+- Keep the submit/Stop affordance visually obvious. `PromptInputSubmit` must remain enabled while `submitted` or `streaming` so it can stop generation.
+- Use app design tokens (`bg-background`, `bg-muted`, `border-border`, `text-muted-foreground`, `bg-primary`) instead of hard-coded product colors. Tool outputs and generated cards can use restrained semantic accents when they improve comprehension.
+- Design responsive first: no clipped header text, full-width cards in narrow panes, and controls that retain a comfortable tap target.
+
+The bundled chat assets show this baseline. Use their composition and Tailwind treatment as the starting point, then match the target app's visual language rather than copying an unrelated generic example from an AI Elements component reference.
+
 ## Message Parts
 
 AI SDK UI messages are part-based. Render only the parts the feature supports:

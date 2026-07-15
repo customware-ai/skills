@@ -31,7 +31,7 @@ app.route(
 );
 ```
 
-Replace both id markers. Render `<AIChat />` in the requested React Router route or layout. Keep the app's existing design and size the chat region explicitly.
+Replace both id markers. Render `<AIChat />` in the requested React Router route or layout. The asset is a complete Tailwind + AI Elements surface: preserve its header, conversation spacing, purposeful empty state, and dedicated composer footer, then align its tokens to the app's existing design. For a side panel, give the parent and chat pane `min-h-0 min-w-0` and let the panel fill the available height; do not reduce it to a raw fixed-height input box.
 
 Load the client chat pane lazily from the route boundary so AI Elements and Streamdown do not inflate the initial bundle:
 
@@ -80,6 +80,7 @@ This asset is the default reference for database-shaped tool chat:
 - bounded tool-followed-by-answer flow with `stopWhen: stepCountIs(5)`
 - read-only, parameterized SQL building on the server
 - visible tool UI in the chat transcript
+- a compact assistant header, safe starter prompts, and a dedicated composer footer
 
 The included rows are demo data so the example stays self-contained. Keep the server tool and query-builder shape, then replace the demo executor with the app's real read-only database boundary.
 
@@ -119,6 +120,7 @@ This asset is the default reference for generative UI in Customware apps:
 - the tool returns typed data
 - the client renders a custom React card from the tool part
 - the assistant can still add normal text around the card
+- cards stay full-width and visually distinct without breaking the chat's message rhythm
 
 ## Internal Email Parser
 

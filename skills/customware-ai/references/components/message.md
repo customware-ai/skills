@@ -2,6 +2,8 @@
 
 > This component API and its examples come from the [official AI Elements docs/skill](https://github.com/vercel/ai-elements). In Customware apps, use the installation command below, React Router for the frontend, and the Customware Hono gateway backend. Ignore copied Next.js route or direct-provider backend examples.
 
+> The copied example below demonstrates component APIs only. Keep `Message` and `MessageContent` inside the composed Tailwind chat surface described in [ai-elements-ui.md](../ai-elements-ui.md#chat-ui-quality-baseline); do not treat this isolated sample as the final product UI.
+
 ## Installation
 
 ```bash

@@ -2,6 +2,8 @@
 
 > This component API and its examples come from the [official AI Elements docs/skill](https://github.com/vercel/ai-elements). In Customware apps, use the installation command below, React Router for the frontend, and the Customware Hono gateway backend. Ignore copied Next.js route or direct-provider backend examples.
 
+> The copied example below demonstrates component APIs only. In a Customware chat, put `PromptInput` in a dedicated footer and compose it with `PromptInputBody`, `PromptInputFooter`, `PromptInputTools`, and `PromptInputSubmit` as described in [ai-elements-ui.md](../ai-elements-ui.md#chat-ui-quality-baseline). Do not use it as an unframed textarea at the bottom of a pane.
+
 ## Installation
 
 ```bash
