@@ -55,7 +55,7 @@ import { useChat } from "@ai-sdk/react";
 
 const ConversationDemo = () => {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status, stop } = useChat();
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (message.text.trim()) {
@@ -111,8 +111,9 @@ const ConversationDemo = () => {
             className="pr-12"
           />
           <PromptInputSubmit
-            status={status === "streaming" ? "streaming" : "ready"}
-            disabled={!input.trim()}
+            status={status}
+            onStop={stop}
+            disabled={status === "ready" && !input.trim()}
             className="absolute bottom-1 right-1"
           />
         </PromptInput>

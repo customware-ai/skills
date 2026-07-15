@@ -70,7 +70,7 @@ import { Fragment } from "react";
 
 const ActionsDemo = () => {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status, regenerate } = useChat();
+  const { messages, sendMessage, status, stop, regenerate } = useChat();
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (message.text.trim()) {
@@ -140,8 +140,9 @@ const ActionsDemo = () => {
             className="pr-12"
           />
           <PromptInputSubmit
-            status={status === "streaming" ? "streaming" : "ready"}
-            disabled={!input.trim()}
+            status={status}
+            onStop={stop}
+            disabled={status === "ready" && !input.trim()}
             className="absolute bottom-1 right-1"
           />
         </PromptInput>

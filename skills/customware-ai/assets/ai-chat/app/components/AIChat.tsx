@@ -18,7 +18,7 @@ import {
 
 export function AIChat(): ReactElement {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
@@ -59,7 +59,11 @@ export function AIChat(): ReactElement {
           onChange={(event) => setInput(event.currentTarget.value)}
           placeholder="Ask anything..."
         />
-        <PromptInputSubmit disabled={!input.trim()} status={status} />
+        <PromptInputSubmit
+          disabled={status === "ready" && !input.trim()}
+          onStop={stop}
+          status={status}
+        />
       </PromptInput>
     </section>
   );

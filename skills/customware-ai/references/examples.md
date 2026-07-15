@@ -10,11 +10,11 @@ Source files:
 - `assets/ai-chat/server/ai/customware-ai.ts`
 - `assets/ai-chat/server/ai/chat-routes.ts`
 
-Install the UI components and dependencies:
+Install dependencies first, then the UI components:
 
 ```bash
-pnpm exec node <customware-ai-skill>/scripts/install-ai-elements.mjs conversation message prompt-input --cwd .
 pnpm add ai @ai-sdk/react @openrouter/ai-sdk-provider zod
+pnpm exec node <customware-ai-skill>/scripts/install-ai-elements.mjs conversation message prompt-input --cwd .
 ```
 
 Copy the asset files to the matching `app/` and `server/` paths. Mount the Hono routes before static-file serving and the SPA fallback:
@@ -32,6 +32,16 @@ app.route(
 ```
 
 Replace both id markers. Render `<AIChat />` in the requested React Router route or layout. Keep the app's existing design and size the chat region explicitly.
+
+Load the client chat pane lazily from the route boundary so AI Elements and Streamdown do not inflate the initial bundle:
+
+```tsx
+import { lazy } from "react";
+
+const AIChat = lazy(() => import("~/components/AIChat").then((module) => ({ default: module.AIChat })));
+```
+
+If the feature has a schema used by both browser and server, place it in a neutral shared module such as `shared/contracts/`. Never import the browser contract from `server/` or duplicate it under `app/`.
 
 ## Internal Email Parser
 

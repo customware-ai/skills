@@ -103,7 +103,7 @@ const MessageParts = ({
 const ReasoningDemo = () => {
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status, stop } = useChat();
 
   const handleSubmit = (message: PromptInputMessage) => {
     sendMessage({ text: message.text });
@@ -144,8 +144,9 @@ const ReasoningDemo = () => {
             className="pr-12"
           />
           <PromptInputSubmit
-            status={isStreaming ? "streaming" : "ready"}
-            disabled={!input.trim()}
+            status={status}
+            onStop={stop}
+            disabled={status === "ready" && !input.trim()}
             className="absolute bottom-1 right-1"
           />
         </PromptInput>

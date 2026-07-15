@@ -57,7 +57,7 @@ import { DefaultChatTransport } from "ai";
 
 const SourceDemo = () => {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/sources",
     }),
@@ -137,8 +137,9 @@ const SourceDemo = () => {
             className="pr-12"
           />
           <PromptInputSubmit
-            status={status === "streaming" ? "streaming" : "ready"}
-            disabled={!input.trim()}
+            status={status}
+            onStop={stop}
+            disabled={status === "ready" && !input.trim()}
             className="absolute bottom-1 right-1"
           />
         </PromptInput>

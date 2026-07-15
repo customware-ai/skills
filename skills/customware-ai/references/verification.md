@@ -24,9 +24,13 @@ Run the one-key `{ "status": "ok" }` check from [structured-output.md](structure
 
 Exercise the generated app's Hono endpoint with at least two user turns so the second request includes prior messages. Confirm both responses stream and the assistant uses the prior turn.
 
+### Browser UI feature
+
+When the task adds a chat or structured-output UI, run an interactive browser check from the target project (use Playwright or the template's existing browser workflow). Confirm the two panes render, chat can submit two turns, the Stop control is enabled during streaming, categorization renders the requested JSON fields, and the responsive layout remains usable. This is required in addition to direct endpoint checks.
+
 ## How To Run Checks
 
-Create a temporary TypeScript script inside the target project's ignored `tmp/` directory so it resolves the project's installed packages. Use `createOpenRouter`, the fixed gateway URL, and the same model config as the implementation.
+Create a temporary TypeScript script inside the target project's ignored `tmp/` directory so it resolves the project's installed packages. Do not put the script under `/tmp`: Node module resolution there will not use the target project's dependencies. Use `createOpenRouter`, the fixed gateway URL, and the same model config as the implementation.
 
 Use this shape and replace the ids before running it:
 
@@ -86,7 +90,7 @@ if (process.argv.includes("--json")) {
 }
 ```
 
-Run TypeScript natively with the environment source used by the target app. For a local `.env`:
+Run TypeScript natively with the environment source used by the target app. Never run any file or shell inspection command against `.env`/`.env.*` (`cat`, `head`, `tail`, `sed`, `awk`, `rg`, `grep`, `ls`, `stat`, etc.). The only allowed reference is the execution form `node --env-file=.env ...`, and its output must not print environment variables. For a local `.env`:
 
 ```bash
 node --env-file=.env --experimental-strip-types tmp/customware-ai-smoke.ts google/gemini-3-flash-preview
@@ -99,6 +103,7 @@ If the sandbox already injects system environment values, omit `--env-file=.env`
 
 - Log the model id, check name, response text or parsed output, and pass/fail result.
 - Never log the gateway key, authorization header, provider configuration containing the key, or full sensitive prompts.
+- If an interactive browser check cannot find expected UI, capture the page title/body text and browser console/page errors from a project-local script before changing application code. Use selectors derived from the rendered DOM, not guessed selectors or labels.
 - Do not claim a model or JSON path was tested unless a live gateway call completed.
 - Do not silently retry through OpenRouter directly.
 - Do not silently switch models.

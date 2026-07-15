@@ -8,21 +8,21 @@ Use pnpm and the shadcn registry only. Do not use npm, npx, yarn, bun, or the in
 
 The current registry components require the shadcn primitive versions shipped with them. Overwriting the template's shared primitives breaks existing template component contracts, while keeping the older primitives breaks AI Elements. Use the bundled installer to isolate the registry-matched primitives under `app/components/ai-elements/ui/`.
 
-For the minimal chat:
+Install the runtime dependencies before the AI Elements installer or live checks:
+
+```bash
+pnpm add ai @ai-sdk/react @openrouter/ai-sdk-provider zod
+```
+
+For the minimal chat, then install only the selected components:
 
 ```bash
 pnpm exec node <customware-ai-skill>/scripts/install-ai-elements.mjs conversation message prompt-input --cwd .
 ```
 
-Resolve `<customware-ai-skill>` to this skill's real directory. The installer runs one pnpm/shadcn invocation with `--yes`, stages files under `.tmp/`, places selected AI Elements under `app/components/ai-elements/`, places their matching primitives under `app/components/ai-elements/ui/`, rewrites only their internal primitive imports, and removes the staging directory.
+Resolve `<customware-ai-skill>` to this skill's real directory. The installer runs one pnpm/shadcn invocation with `--yes`, stages files under `.tmp/`, places selected AI Elements under `app/components/ai-elements/`, places their matching primitives under `app/components/ai-elements/ui/`, rewrites only their internal primitive imports, and removes the staging directory. Do not run the installer first and discover missing AI SDK/provider packages during the smoke test.
 
 Do not bypass the installer with `--overwrite` against `app/components/ui/`. That changes shared template primitive APIs and can break unrelated existing UI.
-
-The shadcn registry installs `ai` and component dependencies, but the chat integration still requires the React hook and OpenRouter provider:
-
-```bash
-pnpm add ai @ai-sdk/react @openrouter/ai-sdk-provider zod
-```
 
 For every available component and its exact pnpm/shadcn command, use [ai-elements-catalog.md](ai-elements-catalog.md). After choosing components, read only their linked files under `components/`; do not load all component references.
 
@@ -79,4 +79,16 @@ Add a model selector only when the product requires end-user choice. Show friend
 - Follow the app's existing visual system and layout before customizing AI Elements source.
 - Preserve accessible labels, keyboard submission, focus behavior, and streaming status.
 - Disable duplicate submission while appropriate, but preserve the AI SDK stop behavior when the product exposes it.
+- When using `PromptInputSubmit`, disable it for an empty input only while idle. Keep it enabled during `submitted`/`streaming` so its Stop action can call `stop()`.
+- `MessageResponse` imports Streamdown plugins for code, math, Mermaid, and syntax highlighting. If the feature only renders ordinary text, isolate that renderer or use a lighter text path so the initial client chunk does not grow unnecessarily.
+- Lazy-load the chat pane or other client AI Elements with `React.lazy`/dynamic import at the route boundary. Keep server-only AI SDK calls (`streamText`, `generateText`, tools) and the gateway provider on the server. `DefaultChatTransport` is the supported client transport for `useChat`; do not import the gateway provider or server-only calls into client code.
 - Keep browser code unaware of the Customware gateway URL and secret.
+
+## Version-aware component usage
+
+If a component prop or behavior is unclear, inspect the installed AI Elements source under `node_modules/`:
+
+- `.d.ts` files show the supported props and types.
+- `.js`/`.mjs` files show the actual defaults and event behavior.
+
+Use the installed version's implementation rather than guessing from an older example. In particular, inspect `PromptInputSubmit` before wiring `status`, `onStop`, and `disabled`.

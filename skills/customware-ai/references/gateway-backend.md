@@ -20,6 +20,10 @@ pnpm add ai @ai-sdk/react @openrouter/ai-sdk-provider zod
 
 Do not add provider-specific AI SDK packages for models routed through this gateway.
 
+## Version-aware AI SDK usage
+
+When an AI SDK or provider API is unclear, inspect the installed package in the target project's `node_modules/` before implementing it. Read `.d.ts` files for the type contract, then the actual `.js`/`.mjs` source for runtime behavior and defaults. Use this for `ai`, `@ai-sdk/react`, and `@openrouter/ai-sdk-provider`; installed source takes precedence over stale examples.
+
 ## Provider Helper
 
 Create a server-only helper such as `server/ai/provider.ts`:
@@ -106,3 +110,4 @@ Normal AI SDK request controls such as messages, system prompt, tools, tool choi
 - Never log request headers, the provider configuration, or the key.
 - Never fall back to a direct OpenRouter URL or key when the gateway fails.
 - Use the generated app's existing server error/logging boundary. Do not return raw upstream errors or request details to the browser.
+- Keep any browser/server shared schema in a neutral shared module/package (for example `shared/contracts/`). Never import a module from `server/` into `app/`, and never copy the schema into a second client file.

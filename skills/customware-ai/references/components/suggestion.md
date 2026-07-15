@@ -47,7 +47,7 @@ const suggestions = [
 
 const SuggestionDemo = () => {
   const [input, setInput] = useState("");
-  const { sendMessage, status } = useChat();
+  const { sendMessage, status, stop } = useChat();
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (message.text.trim()) {
@@ -84,8 +84,9 @@ const SuggestionDemo = () => {
               className="pr-12"
             />
             <PromptInputSubmit
-              status={status === "streaming" ? "streaming" : "ready"}
-              disabled={!input.trim()}
+              status={status}
+              onStop={stop}
+              disabled={status === "ready" && !input.trim()}
               className="absolute bottom-1 right-1"
             />
           </PromptInput>

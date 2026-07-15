@@ -30,6 +30,8 @@ app.post("/api/generate-summary", async (c) => {
 
 Use the feature's real schema. The one-key shape above demonstrates the boundary; it is not a reason to flatten structured product data.
 
+The feature schema is a product contract, not a place to add model preferences. Preserve the names and types requested by the user (for example `contentType`, `genre`, `tone`, `themes`, `audience`, and `summary`). Define it once in a neutral shared contract module/package (for example `shared/contracts/`) and derive all TypeScript types from that schema; the client must not import from `server/`, and it must not maintain a mirror with copied enums or fields. Product-requested limits such as 20,000 characters are valid when documented by the feature.
+
 ## Mandatory One-Key Check
 
 Whenever the user requests JSON or structured output, test the exact chosen model with this minimal schema before finishing:
