@@ -1,13 +1,13 @@
 ---
-name: customer-email
-description: Implement customer email in a Customware-generated React Router and Hono app, including durable Postmark inbound receipt and direct Postmark outbound sending. Use when a Builder task names the customer-email skill, provides a Postmark virtual inbound address, or asks to add customer-facing email to an existing Customware app.
+name: customware-email
+description: Implement customer email in a Customware-generated React Router and Hono app, including durable Postmark inbound receipt and direct Postmark outbound sending. Use when a Builder task names the customware-email skill, provides a Postmark virtual inbound address, or asks to add customer-facing email to an existing Customware app.
 ---
 
 # Customer Email
 
 <purpose>
 
-Implement one coherent customer-email capability for a Customware-generated app. The capability receives customer replies through the provisioned Postmark inbound webhook and sends customer-facing messages through the same development Postmark server's HTTPS API.
+Implement one coherent Customware email capability for a Customware-generated app. The capability receives customer replies through the provisioned Postmark inbound webhook and sends customer-facing messages through the same development Postmark server's HTTPS API.
 
 The task provides the project-specific addresses. The two managed server ENV values provide the credentials. This skill provides the implementation method, durable behavior, and verification contract.
 
@@ -76,7 +76,7 @@ The task description is the source of truth for the virtual inbound address and 
 
 1. Read the task completely.
 2. Extract the exact virtual inbound address and outbound From address.
-3. Confirm the task names `customer-email` and that the Postmark server has already been provisioned.
+3. Confirm the task names `customware-email` and that the Postmark server has already been provisioned.
 4. Stop with a clear `action_required` result if either address or either managed credential contract is unavailable. Do not invent values.
 
 ### 2. Inspect the generated app
@@ -112,6 +112,6 @@ Search the final diff for credential names, hardcoded secrets, SMTP usage, `POST
 
 ## Boundaries
 
-Use this skill for the generated app's customer-email implementation. The Customware control plane owns Postmark server provisioning, encryption, hidden ENV materialization, webhook URL reconciliation on sandbox restart, cleanup, and publish protection. Do not duplicate those responsibilities in the generated app.
+Use this skill for the generated app's Customware email implementation. The Customware control plane owns Postmark server provisioning, encryption, hidden ENV materialization, webhook URL reconciliation on sandbox restart, cleanup, and publish protection. Do not duplicate those responsibilities in the generated app.
 
 Use `customware-ai` for AI gateway or AI Elements work, `customware-support-widget` for the support widget, and `task-workflow` when the Builder task requires its full gated execution protocol. Those skills complement this one; they do not replace the email contracts here.
