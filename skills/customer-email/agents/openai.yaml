@@ -1,0 +1,4 @@
+interface:
+  display_name: "Customer Email"
+  short_description: "Build inbound and outbound Postmark email"
+  default_prompt: "Use $customer-email to implement customer email in this Customware app."
