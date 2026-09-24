@@ -354,7 +354,7 @@ try {
 	for (const command of args.setups) {
 		setupIndex += 1;
 		const logPath = resolve(runtimeDir, `setup-${String(setupIndex).padStart(2, '0')}.log`);
-		console.log(`[lifecycle] Running setup ${String(setupIndex)}: ${command}`);
+		console.log(`[lifecycle] Running setup ${String(setupIndex)}: ${String(command)}`);
 		await runCommand(command, { cwd, env, logPath, timeoutMs: args.setupTimeoutMs });
 	}
 	startedPid = await startServer({ ...args, cwd }, env, runtimeDir);
@@ -362,7 +362,7 @@ try {
 	for (const command of args.runs) {
 		index += 1;
 		const logPath = resolve(runtimeDir, `run-${String(index).padStart(2, '0')}.log`);
-		console.log(`[lifecycle] Running command ${String(index)}: ${command}`);
+		console.log(`[lifecycle] Running command ${String(index)}: ${String(command)}`);
 		await runCommand(command, { cwd, env, logPath, timeoutMs: args.commandTimeoutMs });
 	}
 	console.log('[lifecycle] Completed successfully');
