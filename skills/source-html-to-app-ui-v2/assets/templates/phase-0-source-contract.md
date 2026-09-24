@@ -1,0 +1,174 @@
+# Phase 0: Source Contract
+
+For a state unreachable because of a documented approved-source runtime defect, record its failed real-input action and exact source declarations in evidence rows. Require all desktop/mobile/section screenshots for reachable source states; do not fabricate a screenshot or fail the gate solely because the approved source cannot render that state.
+
+## Phase Metadata
+
+| Field | Value |
+| --- | --- |
+| Marker set before phase work | `phase-0-source-contract` / Pending |
+| Main skill reread | Pending |
+| Phase references read | Pending |
+| Started | Pending |
+| Last gate attempt | Pending |
+
+## Fresh Scaffold And Read-Only Boundary
+
+| Critical requirement | Pass/Fail | Concrete evidence |
+| --- | --- | --- |
+| Old `task-workflow/` removed and fresh artifacts created | Fail | Pending |
+| All five templates, ledgers, spec, and lifecycle helper copied | Fail | Pending |
+| Generated task artifacts remain under `task-workflow/` | Fail | Pending |
+| Target implementation/config/package/generated/build/test files remained unchanged | Fail | Pending |
+| No prior screenshots, scores, scripts, manifests, or decisions were reused | Fail | Pending |
+
+## Initial Managed Source Inspection
+
+| Requirement | Evidence | Pass/Fail |
+| --- | --- | --- |
+| Initial custom Playwright script path | Pending | Fail |
+| Exact lifecycle command and runtime directory | Pending | Fail |
+| Desktop startup image captured and opened | Pending | Fail |
+| Mobile startup image captured and opened | Pending | Fail |
+| Initial readable section evidence captured and opened where needed | Pending | Fail |
+| Visible findings, dimensions, navigation, and controls recorded | Pending | Fail |
+| Initial images treated as orientation, not a coverage limit | Pending | Fail |
+
+## Complete Source Reading And Inventory
+
+| Requirement | Evidence | Pass/Fail |
+| --- | --- | --- |
+| Approved HTML/CSS/JavaScript read completely to EOF | Pending | Fail |
+| Every page/route-like surface identified | Pending | Fail |
+| Every meaningful state and interaction family identified | Pending | Fail |
+| Every visible section and source order identified | Pending | Fail |
+| Browser findings reconciled against source declarations | Pending | Fail |
+| No fixed page/state/section/screenshot limit used | Pending | Fail |
+| Complete manifest walk finished: every image opened and given a concrete finding | Pending | Fail |
+
+## Model-Owned Discovery Packet Reviews
+
+Complete one row after every discovery packet. Every review item must pass before beginning the next packet. This is an Agent review, not a script result.
+
+| Packet | Declared coverage | Lifecycle ownership | Real-input reachability | Evidence completeness | Images opened | Source reconciliation | Fixed-wait audit | Scope boundary | Artifact sync | Gap ledger | Decision/repair |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Fail | Pending |
+
+## Route, State, And Interaction Inventory
+
+| ID | Page/state | Exact real-input reach steps | Interaction family | Visible sections | Themes | Desktop behavior | Mobile behavior | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Fail |
+
+## Complete Source Evidence Matrix
+
+Keep every image identity traceable through rows here or a linked complete capture manifest. Paths are unique and revisioned; desktop/mobile and distinct sections keep separate image identities.
+
+| Evidence ID | Page/state | Theme/viewport | Full-view or section identity | Unique revisioned path | Dimensions | Capture time/lifecycle run | Opened time | Concrete visible findings | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Fail |
+
+## Section Evidence
+
+| Section ID | Page/state | Source order/role | Desktop evidence ID | Mobile evidence ID | Each image opened separately? | Structure/style/content contract | Behavior/theme contract | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | No | Pending | Pending | Fail |
+
+## Shell, Sidebar, Drawer, Scroll, And Theme Discovery
+
+| Requirement when applicable | Real input and measurements | Source evidence | Observed contract | Pass/Fail/N/A with proof |
+| --- | --- | --- | --- | --- |
+| Document/content scroll ownership | Pending | Pending | Pending | Fail |
+| Sidebar bounds and viewport-height coverage | Pending | Pending | Pending | Fail |
+| Short-height pre/post-scroll blank-region inspection | Pending | Pending | Pending | Fail |
+| Mobile drawer open/close/overlay/body lock/restoration | Pending | Pending | Pending | Fail |
+| Source themes and target-required derivation rule | Pending | Pending | Pending | Fail |
+
+### Source Observation Versus Required Target Ownership
+
+| Item | Source observed value/owner | Required target value/owner | Planned target element/component | Status |
+| --- | --- | --- | --- | --- |
+| Document vertical scroll | Pending | unchanged during content scroll | Pending | Fail |
+| Content-pane vertical scroll | Pending | named pane increases `scrollTop` | Pending | Fail |
+| Sidebar top/bottom | Pending | viewport-stable within `1px` | Pending | Fail |
+| Viewport-height shell | Pending | bounded to viewport and contains document overflow | Pending | Fail |
+
+## Source Design And Target Research Handoff
+
+This section is completed from the task prompt, copied design JSON, and source evidence only. Do not inspect target files, assets, build output, dependencies, or configuration during Phase 0. Record the target roles, shell adaptations, and Phase 1 research actions without inventing exact target file paths. Exact target research and owner mapping begin only after `CURRENT_PHASE.txt` moves to `phase-1-ui-implementation`.
+
+| Area | Source/design requirement | Phase 1 research action | Evidence |
+| --- | --- | --- | --- |
+| Task prompt and design JSON | Pending | Read copied design and map requirements to target owners | Pending |
+| Routes and layouts | Pending | Inspect target route/layout owners | Pending |
+| Themes, tokens, typography, and primitives | Pending | Inspect target styling owners and shared primitives | Pending |
+| Existing target brand assets | Real logo required when available | Inspect target brand assets after Phase 0 | Pending |
+| Relevant start/check/build commands | Pending | Inspect target commands after Phase 0 | Pending |
+| UI-only architecture boundary | UI reproduction only; no backend/API/business logic | Confirm target-native UI boundary | Pending |
+
+## Reproduction And Adaptation Contract
+
+| Contract ID | Source/design evidence | Required target route/state/section/interaction/theme behavior | Target role/owner to map in Phase 1 | Omitted-size safety rule | Explicit exclusions | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| Pending | Pending | Pending | Pending | Pending | Pending | Fail |
+
+`Pass` requires concrete source evidence, required target outcome/role, responsive adaptation, and exclusions. Exact target file ownership is mapped in Phase 1; Phase 0 must not invent it.
+
+## Open-Gap Reconciliation
+
+| Check | Evidence | Pass/Fail |
+| --- | --- | --- |
+| Placeholder rows removed from `open-gaps.md` | Pending | Fail |
+| Discovery gaps recorded or explicit `None currently recorded` row present | Pending | Fail |
+
+## Scorecard
+
+| Category | Passed | Total | Evidence |
+| --- | ---: | ---: | --- |
+| Fresh scaffold and target-read-only integrity | 0 | 10 | Pending |
+| Complete HTML/browser inventory and real-input reachability | 0 | 10 | Pending |
+| Desktop/mobile/state/section source evidence | 0 | 12 | Pending |
+| Sidebar/drawer/scroll/theme discovery | 0 | 8 | Pending |
+| Source/design handoff and reproduction contract | 0 | 10 | Pending |
+| **Total** | **0** | **50** | Pending |
+
+Required: at least `48/50`.
+
+## Non-Compensating Critical Gate
+
+| Critical item | Pass/Fail | Evidence or repair |
+| --- | --- | --- |
+| Fresh artifacts exist and target implementation remained read-only | Fail | Pending |
+| Target files/build/runtime/dependencies were not inspected before the managed source evidence checkpoint | Fail | Pending |
+| Initial managed source evidence was captured/opened before bulk HTML reading | Fail | Pending |
+| Complete HTML/CSS/JavaScript was read to EOF | Fail | Pending |
+| Every page/state/section/interaction family is inventoried | Fail | Pending |
+| Every discovery packet passed the model-owned review | Fail | Pending |
+| Every inventory item has desktop/mobile and readable section/state evidence | Fail | Pending |
+| Every manifest image was opened and inspected with a per-image finding; no sampling was used | Fail | Pending |
+| Every image has one unique path, dimensions, capture/open times, and concrete findings | Fail | Pending |
+| Custom Playwright scripts have no fixed waits and use lifecycle ownership | Fail | Pending |
+| Sidebar/drawer/scroll/theme discovery is complete when applicable | Fail | Pending |
+| Source-observed and target-required scroll contracts are separate and name the target shell/content owners | Fail | Pending |
+| Source/design handoff is complete and exact target research is explicitly deferred to Phase 1 | Fail | Pending |
+| Reproduction contract has complete source evidence, target outcome/role, adaptation, and exclusions | Fail | Pending |
+| No required placeholder, unsupported assumption, or ordinary discovery gap remains | Fail | Pending |
+
+## Promotion Lock
+
+| Lock item | Evidence |
+| --- | --- |
+| Artifact reopened after final evidence update | Pending |
+| Complete source manifest reopened image-by-image across all pages and viewports; opened count equals manifest count | Pending |
+| Evidence IDs, paths, dimensions, capture/open times, and findings audited | Pending |
+| Inventory and contract coverage reconciled | Pending |
+| Score arithmetic and critical rows independently verified | Pending |
+| `open-gaps.md` reconciled | Pending |
+| `progress.md` updated and reopened | Pending |
+| Marker, phase artifact, progress, and gaps agree on the sole next action | Pending |
+| Next marker/reference identified | Pending |
+
+- Score: `0/50`
+- Critical items: Fail
+- Promotion lock: Fail
+- Decision: Fail
