@@ -90,7 +90,7 @@ Required: at least `48/50`.
 | --- | --- | --- |
 | Phase entry boundary and ordered implementation contract pass | Fail | Pending |
 | Target research was followed by authored implementation; research alone is not treated as Phase 1 completion | Fail | Pending |
-| Every Phase 0 contract row has a real target owner | Fail | Pending |
+| Every declared source requirement and target-specific handoff decision has a real target owner | Fail | Pending |
 | Every route and section is authored and source-backed | Fail | Pending |
 | Every visible interaction family has real local behavior | Fail | Pending |
 | Every work packet passed the model-owned packet review | Fail | Pending |

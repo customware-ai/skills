@@ -82,7 +82,7 @@ Review the screenshot corpus in small, readable packets. For tall full-page imag
 3. open the target image;
 4. compare content presence/order, geometry/layout, spacing, typography, color, borders/radii/shadows, backgrounds, controls/assets, clipping/overlap, state, scroll, and responsive behavior;
 5. write the findings, open proof, decision, gaps, and next action to the phase artifact before leaving the packet;
-6. update `progress.md` and `open-gaps.md` when findings change; review their current state before scoring or resuming work.
+6. update the checkpoint when the next action changes and open gaps for actual unresolved findings; review their current state before scoring or resuming work.
 
 For very tall pages, use readable same-framed section pairs plus a full-page overview. Packet discipline protects useful visual attention and resumability without reducing required routes, states, sections, themes, viewports, or screenshots.
 
@@ -116,10 +116,10 @@ If any condition fails, repair the earliest owning phase before continuing.
 
 Use small packets grouped by one route/state family and viewport/theme set. Before each packet, record:
 
-- contract IDs and opened source evidence;
+- relevant HTML declarations, accepted source evidence, and target-specific handoff;
 - exact source and target reach steps;
 - matching viewport, theme, state, scroll, and section framing;
-- custom source/target Playwright scripts and lifecycle commands;
+- custom source/target Playwright script paths; runtime logs retain commands;
 - checks, images, and measurements the packet must produce;
 - the one expected review decision after evidence capture.
 
@@ -132,7 +132,7 @@ Then:
 5. review each pair through the bounded visual-review sequence above;
 6. inspect every measurement/result and record concrete comparison findings;
 7. record mismatches in the Phase 2 artifact and `open-gaps.md`;
-8. update the Phase 2 artifact, `progress.md`, and `open-gaps.md` as findings change; review their current state before scoring, promotion, or resuming work;
+8. update the Phase 2 artifact for evidence, open gaps for unresolved findings, and the checkpoint only when the next action or phase changes; review current state before scoring, promotion, or resume;
 9. mark every packet-review row `Pass` or `Fail`;
 10. route implementation defects to Phase 1 and verification-script/evidence defects to Phase 2;
 11. repair, recapture invalidated evidence under new revision paths, and repeat the same packet review;
@@ -152,7 +152,7 @@ Then:
 | Real input | visible interactions use actual controls on desktop/mobile |
 | Code integrity | target-native UI and UI-only scope remain intact |
 | Freshness | evidence is newer than every invalidating change |
-| Artifact synchronization | Phase 2, progress, gaps, and evidence rows record the same latest packet and next action |
+| Artifact synchronization | Phase 2 evidence, checkpoint, and open gaps agree on the current phase, unresolved failures, and next action |
 | Gap ledger | each mismatch has the correct owner and next repair |
 
 This checklist is an Agent review recorded in the Phase 2 artifact, never a script result.
@@ -307,7 +307,7 @@ Use one packet per route/state/viewport/theme mismatch group:
 9. mark invalidated evidence rows stale before recapture;
 10. recapture every invalidated target image through managed Playwright under new revisioned paths;
 11. verify viewport/framing, dimensions, and freshness, then reopen each new target against its matching source in readable packets;
-12. update Phase 3, `progress.md`, and `open-gaps.md` as findings change; review their current state before scoring, promotion, or resuming work;
+12. update Phase 3 for evidence, open gaps for unresolved findings, and the checkpoint only when the next action or phase changes; review current state before scoring, promotion, or resume;
 13. complete every packet-review row;
 14. if any row fails, repair and repeat the same packet;
 15. begin another packet only when the current one passes.
@@ -327,7 +327,7 @@ Do not mark a packet `Pass` while the last action was capture. Comparison must h
 | Post-fix comparison | new target images were opened against matching source images |
 | Interaction proof | relevant visible states pass through real controls |
 | Responsive/theme safety | the fix did not break another viewport/theme/scroll state |
-| Artifact synchronization | Phase 3, progress, gaps, and evidence rows record the same latest repair and next action |
+| Artifact synchronization | Phase 3 evidence, checkpoint, and open gaps agree on the current phase, unresolved failures, and next action |
 | Gap closure | resolved rows contain current source and target proof |
 
 This checklist is an Agent review recorded in the Phase 3 artifact, never a script result.

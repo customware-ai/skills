@@ -9,14 +9,14 @@ This reference is mandatory whenever `CURRENT_PHASE.txt` is missing or equals `p
 Phase 0 builds the visual reference and declaration-backed contract that controls implementation. It is not a quick screenshot pass or a source-side functional test suite. Source interactions that reveal no distinct appearance are implemented and tested in the target phases, not proved again in Phase 0.
 
 <source_boundary>
-Keep target implementation and assets unchanged until Phase 0 passes. Use the managed lifecycle helper for browser evidence and deterministic waits in packets. Source HTML, design metadata, skill resources, and task-workflow artifacts may be inspected in any useful order; none may substitute for required screenshots or the complete source inventory. Correct a procedural mistake in place and recapture only invalid evidence.
+Keep target implementation and assets unchanged until Phase 0 passes. Use the managed lifecycle helper for browser evidence and deterministic waits in packets. Source HTML, design metadata, skill resources, and task-workflow artifacts may be inspected in any useful order; none may substitute for required screenshots or complete declared-surface coverage. Correct a procedural mistake in place and recapture only invalid evidence.
 </source_boundary>
 
 Read the skill and relevant references before phase work. Inspecting source inputs or task-workflow files before the first browser packet is permitted; target implementation remains Phase 1 work.
 
 The Agent evaluates this phase itself against the rubric below. Do not create or use a script to validate, score, close, or promote Phase 0. Playwright scripts may discover and capture the source, but they must run through `playwright-lifecycle.mjs` and cannot decide whether the phase passes.
 
-Phase 0 remains unpassed until every source page, distinct visual state, visible section, declared interaction family, represented theme, and required viewport has been inventoried; capture and open every reachable visual state. Decide the capture plan from the HTML and initial browser view before full capture. One readable image may prove multiple sections, but each section must cite its covering image and finding. A declared interaction whose resulting appearance is already covered needs a target requirement, not another source-browser packet. For a visual state unreachable solely because of a documented source runtime defect, record one failed real-input action and the HTML/CSS/design/handler declarations that define its intended result. One proven initialization failure may explain several later unbound handlers when their order is explicit; do not repeat equivalent no-op probes. Do not fabricate or require a source screenshot of an unreachable state; require the corresponding target evidence later.
+Phase 0 remains unpassed until every source page, distinct visual state, visible section, declared interaction family, represented theme, and required viewport has been identified and covered; capture and open every reachable visual state. Decide the capture plan from the HTML and initial browser view before full capture. One readable image may prove multiple sections, but each section must cite its covering image and finding. A declared interaction whose resulting appearance is already covered needs a target requirement, not another source-browser packet. For a visual state unreachable solely because of a documented source runtime defect, record one failed real-input action and the HTML/CSS/design/handler declarations that define its intended result. One proven initialization failure may explain several later unbound handlers when their order is explicit; do not repeat equivalent no-op probes. Do not fabricate or require a source screenshot of an unreachable state; require the corresponding target evidence later.
 
 </phase_authority>
 
@@ -28,7 +28,7 @@ Before Phase 0 work:
 - the Agent has reread `SKILL.md`, this reference, and the lifecycle reference;
 - the exact task inputs, source HTML path, design JSON path, target root, and completion command source are known;
 - no target implementation/config/package/generated/build/test file has changed for this run;
-- the first discovery packet is recorded before its browser run.
+- the first discovery packet script and expected proof are defined before its browser run.
 
 If stale workflow state or an early target change exists, reset to a clean Phase 0 boundary before discovery.
 
@@ -45,103 +45,41 @@ Before Phase 0 scoring, create a fresh task-workflow scaffold that:
 
 Do not copy prior screenshots, scores, scripts, manifests, or decisions. Do not edit target source, config, package, asset, generated, build, or test files during Phase 0. Only `task-workflow/` may change.
 
-Record the reset and copied paths in the Phase 0 artifact and `progress.md`.
+Record scaffold completion in the Phase 0 artifact; the checkpoint needs only its current phase and next action.
 
 The fresh scaffold must preserve byte-identical approved inputs and copied helper. Check the files when useful; no immediate next-tool-call sequence is required.
 
-## Model-Owned Discovery Packet Loop
+## Bounded Source Capture
 
-Treat each source-discovery group as a small auditable packet: initial orientation, complete source reading, visual-state inventory and capture plan, full-view capture, distinct section/state capture, applicable shell/sidebar/drawer/theme discovery, and source/design handoff. Do not create a packet just to exercise an interaction already represented by the HTML declaration and an opened image of its resulting appearance.
+Inspect the HTML and initial browser view to select route/state families and readable viewport/section framing. Let the actual application determine the number of packets and screenshots; no fixed screenshot cap applies. A packet is a lifecycle-owned script plus its generated images, metadata, and runtime log—not a separate Markdown dossier. Keep each capture run focused enough that a failure identifies the affected group. Do not write a command table, predeclare every image in a ledger, or copy HTML headings, values, or handler bodies into workflow files.
 
-Before each packet, record:
+After a packet, inspect its result and each accepted/current image. Record one concrete finding per accepted/current image in a concise evidence index. Keep objective capture fields in the packet output or machine-readable manifest and the execution trail in the runtime log. Update `progress.md` only when a group completes or fails, the next action changes, or the phase changes. Record only actual unresolved gaps in `open-gaps.md`. On failure, diagnose the packet and recapture only invalidated evidence under new paths. Preserve failed outputs and invalidation reasons for forensic review; they are not part of the passing image count.
 
-- the exact source scope and expected discoveries;
-- the custom Playwright script and lifecycle command when browser work is required;
-- the visual evidence paths and inventory items the packet must prove, including sections sharing a readable image;
-- explicit exclusions and work owned by later packets;
-- the one review action that determines whether the packet passes.
-
-Then:
-
-1. perform only the declared discovery packet;
-2. open every captured image and inspect changed artifacts when needed for review;
-3. reconcile findings against the complete HTML and existing inventory;
-4. record actual evidence, missing coverage, contradictions, and gaps;
-5. update the single canonical source inventory/evidence record; update `progress.md` only when the next action changes and `open-gaps.md` only for an actual unresolved gap, then review current state before scoring, promotion, or resuming work;
-6. record the packet review decision and evidence IDs once;
-7. if any row fails, repair the same packet and repeat the review;
-8. begin the next packet only when every review row passes.
-
-### Discovery Packet Review Checklist
-
-| Required review | Pass condition |
-| --- | --- |
-| Declared coverage | every declared page/state/section/theme/viewport item was inspected |
-| Lifecycle ownership | every browser action ran through the unchanged lifecycle helper |
-| Visual-state reachability | states captured through interaction were reached through Playwright user-facing input APIs; unreachable visual states cite the source defect and declarations, not evaluated DOM mutation or dispatched events; declared interactions without a new appearance are deferred to target proof |
-| Evidence completeness | required desktop/mobile/full-view/section/state images exist |
-| Visual inspection | every gate-critical image was opened at a useful scale |
-| Source reconciliation | browser findings and complete HTML declarations agree |
-| Fixed-wait audit | custom Playwright scripts use deterministic waits |
-| Scope boundary | target implementation remained read-only and later work was not pulled forward |
-| Artifact synchronization | source record, phase marker, progress, and actual open gaps agree on the current state |
-| Gap ledger | missing or contradictory evidence has an owner and next repair |
-
-This checklist is an Agent review recorded in the Phase 0 artifact, never a script result.
+Before the Phase 0 gate, verify declared coverage, lifecycle ownership, real-input reachability, readable desktop/mobile/section evidence, deterministic waits, source/target boundary, and absence of unresolved gaps. Record the decision once in the Phase 0 artifact with links to evidence; no per-packet checklist or repeated readback is required.
 
 ## Source Discovery Requirements
 
-Before Phase 0 passes, read the approved HTML/CSS/JavaScript completely, capture and open the initial desktop/mobile orientation, complete and inspect the source inventory, and score the source contract. These source tasks may occur in any useful tool order. Keep target implementation and assets unchanged until the Phase 0 gate passes. Source browser packets must confirm the exact approved HTML URL, useful content, and proper lifecycle ownership.
+Before Phase 0 passes, inspect all relevant approved HTML/CSS/JavaScript declarations, capture and open the initial desktop/mobile orientation, verify full declared and browser-discovered coverage, and score the source contract. These source tasks may occur in any useful tool order. Keep target implementation and assets unchanged until the Phase 0 gate passes. Source browser packets must confirm the exact approved HTML URL, useful content, and proper lifecycle ownership.
 
 ### 1. First Managed Browser Inspection
 
 Create a small custom Playwright orientation script under `task-workflow/source-playwright/` that:
 
 - opens the supplied HTML through its real source launch method;
-- receives the exact served HTML URL through `SOURCE_URL` (or an equivalent explicit packet input), navigates to that URL rather than the server directory root, and asserts response success, exact final URL identity, and non-directory content so a directory listing, blank page, or wrong route cannot count as orientation evidence. Assert task-supplied identity when available; otherwise record the title and reconcile it after the complete HTML read;
+- receives the exact served HTML URL through `SOURCE_URL` (or an equivalent explicit packet input), navigates to that URL rather than the server directory root, and asserts response success, exact final URL identity, and non-directory content so a directory listing, blank page, or wrong route cannot count as orientation evidence. Assert task-supplied identity when available; otherwise record the title and reconcile it against the relevant HTML declaration;
 - waits deterministically for the visible UI;
 - captures exactly one initial desktop image;
 - captures exactly one initial mobile image;
 - records page title, visible navigation, viewport, document dimensions, and obvious interactive controls;
-- leaves all full-page, section, state, theme, and per-page capture work to the complete inventory packet;
+- leaves all full-page, section, state, theme, and per-page capture work to later focused capture packets;
 
 Run it through `task-workflow/scripts/playwright-lifecycle.mjs`. Open both orientation images and record one concrete finding for each before Phase 0 scoring. These images are startup orientation only; they are never the final inventory and never establish a screenshot limit. Open any additional images the packet produces before scoring.
 
-### 2. Complete HTML/CSS/JavaScript Reading
+### 2. Source Inspection And Capture Plan
 
-Read the approved source HTML completely to EOF, including inline CSS and JavaScript. Continue bounded reads until no unread lines remain.
+Inspect the approved HTML, CSS, and JavaScript sufficiently to identify every declared page or route-like surface, hidden panel, tab, modal, drawer, menu, section, visual state, navigation/interaction family, theme, breakpoint, scroll owner, and content not initially visible. Use targeted reads or parsing and revisit relevant excerpts when implementing; do not mechanically read to EOF, repeatedly reread the entire document, or reproduce its facts in a large table. The HTML is authoritative for declarations, and the browser is authoritative for actual rendered states and runtime failures.
 
-Identify:
-
-- every page, route-like surface, hidden panel, tab, modal, drawer, menu, and view;
-- every navigation trigger and JavaScript/CSS state transition as a target requirement, without treating each transition as a separate source-browser test;
-- every meaningful visual state and interaction family;
-- every visible section and its source order;
-- themes, responsive rules, breakpoint behavior, scroll containers, and fixed/sticky regions;
-- content or state declared in source but not visible in the initial browser view.
-
-Do not assume one HTML file means one page. Source pages may be switched through JavaScript, classes, attributes, anchors, query values, or CSS visibility.
-
-### 3. Visual Inventory And Capture Plan
-
-Create or update custom Playwright discovery scripts under `task-workflow/source-playwright/` for visual states that need browser evidence. Use real input to reach each candidate page and distinct visual state found in the source. Do not run separate source proof for every declared action, navigation edge, or input combination if it returns to an already evidenced appearance. Record those declarations as target requirements and test them after implementation.
-
-Run all browser work through the lifecycle helper. Draft an inventory under `task-workflow/source/` after reading the HTML and initial orientation, before the complete capture. It guides packet framing and the source-to-target contract rather than becoming a post-capture backlog. Record:
-
-| Required field | Meaning |
-| --- | --- |
-| Stable ID | unique page/state identity |
-| Page or state name | visible identity |
-| Reach steps or declaration | real controls and inputs needed for a visual capture, or handler/CSS declaration for a target-only interaction |
-| Interaction family | navigation, tab, drawer, modal, form, filter, selection, etc.; name the required target behavior even without separate source proof |
-| Visible sections | complete ordered section list |
-| Themes | represented or required variants |
-| Desktop/mobile behavior | observed transformation and scroll ownership |
-| Evidence paths | planned desktop/mobile images and the sections or states each will cover; for an interaction with no new appearance, cite the already covering image and source declaration |
-
-Reconcile browser findings against the complete HTML reading. Every runtime surface/state and every source-declared surface/state must appear exactly once or have an explicit evidence-backed exclusion. Draft source-to-target requirement rows from those declarations now, without inspecting target files; finalize the handoff after evidence review. Revise planned images for a distinct newly discovered state, unreadable content, or contradiction—not merely because another DOM element or input value exists.
-
-There is no fixed inventory size and no fixed screenshot count.
+After orientation and source inspection, choose the smallest set of desktop/mobile full views and readable section/state/theme images that covers the declared surfaces and observed differences. One image may cover several readable sections; a changed local state needs the changed region with enough context, not a duplicate full page. A declaration whose resulting appearance is already evidenced needs a target requirement, not another source-browser test. Keep a concise evidence index of accepted image IDs/paths, what each proves, and one finding per image; record only source defects, non-obvious reachability decisions, adaptations, and exclusions that cannot be recovered by opening the HTML or images. Revise the capture plan for newly discovered states, unreadable content, or contradictions. There is no fixed inventory or screenshot count.
 
 ### 4. Complete Source Evidence Capture
 
@@ -154,21 +92,19 @@ For every reachable inventoried page-like surface and layout-distinct state, cap
 - relevant theme images;
 - geometry and pre/post-scroll evidence when layout ownership matters.
 
-Choose the smallest evidence set that makes every inventoried section and meaningful state independently inspectable; this is a coverage rule, not a screenshot cap. A full-view image covers a section only when its text and details are readable there. Capture a separate image for unreadable content, a distinct visual change not shown, or framing needed for source-target comparison. For a changed state, capture its changed area with enough context; do not automatically duplicate the unchanged full page and every unchanged section. Map every section to its covering image, even when several rows cite the same image. Split capture into focused packets. Each packet owns one route/state family and a coherent viewport/theme set. Keep the packet small enough that its failure identifies one evidence group and its outputs can be opened and reviewed immediately. Do not build one monolithic script for the entire source corpus. When a packet fails, repair and rerun only that packet; do not rerun already-passed packets unless their evidence was invalidated. Keep the manifest append-only and use a new revisioned path when a prior image is recaptured. Reject duplicate image IDs or paths before writing captures, and isolate or reset source state between viewport baselines.
+Choose the smallest evidence set that makes every inventoried section and meaningful state independently inspectable; this is a coverage rule, not a screenshot cap. A full-view image covers a section only when its text and details are readable there. Capture a separate image for unreadable content, a distinct visual change not shown, or framing needed for source-target comparison. For a changed state, capture its changed area with enough context; do not automatically duplicate the unchanged full page and every unchanged section. Keep a concise pointer from each section or section group to an accepted readable image; do not copy its content. Split capture into focused packets. Each packet owns one route/state family and a coherent viewport/theme set. Keep the packet small enough that its failure identifies one evidence group and its outputs can be opened and reviewed immediately. Do not build one monolithic script for the entire source corpus. When a packet fails, repair and rerun only that packet; do not rerun already-passed packets unless their evidence was invalidated. Keep prior captures in runtime evidence and use a new revisioned path when a prior image is recaptured. Reject duplicate image IDs or paths before writing captures, and isolate or reset source state between viewport baselines.
 
-Use deterministic waits. Before every helper invocation, review the current packet and confirm it contains no `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, or arbitrary polling/timer settling. Review the current packet before invoking the helper; a focused diff or targeted read may cover a small edit, while a new or substantially rewritten packet merits a complete read. Record the fixed-wait review as packet evidence. No particular tool-call order is required. Do not run a packet with a fixed wait and plan to repair it afterward. Any fixed wait is a hard packet failure, not a harmless settling aid; remove it, record the repair, replace it with a visible-state, URL, DOM, response, geometry, or assertion condition, and rerun the packet through the lifecycle helper before scoring.
+Use deterministic waits, including visible asset readiness when an image is needed for a valid screenshot. Before every helper invocation, review the current packet and confirm it contains no `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, or arbitrary polling/timer settling. Review the current packet before invoking the helper; a focused diff or targeted read may cover a small edit, while a new or substantially rewritten packet merits a complete read. A focused code review before invocation suffices; no duplicate review log is required. No particular tool-call order is required. Do not run a packet with a fixed wait and plan to repair it afterward. Any fixed wait is a hard packet failure, not a harmless settling aid; remove it, record the repair, replace it with a visible-state, URL, DOM, response, geometry, or assertion condition, and rerun the packet through the lifecycle helper before scoring.
 
-Complete an image-by-image visual closure after every capture. Read the complete manifest, process every image path in manifest order, and open images in small readable review batches of no more than four related images. This batch size protects context and visual attention; it does not limit the total evidence corpus. Record one opened result, one concrete finding, and covered inventory IDs for every image in the canonical source evidence record. Keep `progress.md` current as the next action changes and `open-gaps.md` current for observed missing or contradictory proof; review them before scoring, promotion, or resuming work rather than after each batch. The walk is complete only when the opened-image count exactly equals the manifest-image count. Readable inspection sheets may supplement the walk, but they never replace opening and recording every constituent image. Do not open only “key images,” one image per route, representative samples, one viewport, one full-page image per route, or a manifest without image review; any such sampling is a failed visual-inspection gate. Do not score or promote until the complete walk is recorded.
+After each successful capture, open every accepted/current image at readable scale in batches of at most four related images. Record one concrete finding per image in the concise evidence index. The opened count must equal the accepted/current image count before scoring; a contact sheet, representative sample, or one viewport is insufficient. Invalidated images remain in runtime evidence with reasons but do not require another passing visual review.
 
 If an image is blank, unsettled, faded, clipped, stale, unreadable, or captures an entrance animation, reach the state through real input and wait for its own visible DOM, geometry, opacity, or transition condition, then recapture it. Do not inject CSS, set opacity/classes, disable animations, or mutate source DOM to manufacture a settled screenshot. If a required locator or section capture fails, fail the packet loudly and diagnose it. Repair and rerun a bad selector or packet; if the approved source itself makes the state unreachable, record the defect and intended design from source declarations instead of changing or repeatedly retrying the source. Assert semantic control/DOM state rather than rendered letter case when CSS text transformation changes capitalization.
 
 ### Source Evidence Identity And Inspection
 
-Give every image a stable evidence ID and a unique non-reused path. Put page/state, theme, viewport, framing or covered-section group, revision, dimensions, capture time, lifecycle run, opened time, concrete visible findings, and covered inventory IDs in its canonical manifest row. A path must unambiguously identify the image, but need not repeat every manifest field. Do not rename an already reviewed image solely to change descriptive wording; recapture uses a new revisioned path.
+Give every image a stable ID and unique path. Store objective capture metadata—state, theme, viewport, framing, dimensions, capture time, and lifecycle run—in packet output or a machine-readable manifest. Do not duplicate these fields in Markdown. Never overwrite an image; use a new revisioned path after recapture and keep the invalidation reason with the runtime evidence. The passing corpus consists only of accepted/current images.
 
-Never reuse one path for desktop and mobile or overwrite an earlier revision. If a recapture is required, create a new revision path and mark the prior row invalidated. Opening a contact sheet does not prove that unreadable constituent images were inspected.
-
-Inspect source evidence in small readable packets. Use one image at a time for very tall full views and compact related batches of no more than four images for smaller section/state images. Record findings in the source evidence record after each batch and keep `progress.md` current enough to resume from the next unreviewed manifest row. Review the current artifacts before scoring or resuming, not after every update. This protects visual attention and context without capping pages, states, sections, themes, viewports, or screenshots.
+Open each accepted/current image at readable scale, singly for tall images or in batches of up to four related images. Record one concrete visible finding per accepted/current image in the concise evidence index, with coverage pointers where needed. The opened accepted/current count must equal the accepted/current image count. A contact sheet or representative sample cannot replace this review. Keep the next unreviewed group in the checkpoint only when work stops or the next action changes.
 
 ### 5. Sidebar, Drawer, Scroll, And Theme Discovery
 
@@ -198,7 +134,7 @@ Record every represented theme. If the source omits a target-required theme, rec
 After complete source evidence has been captured and opened, and the Phase 0 artifact links that evidence:
 
 1. read `task-workflow/spec.json` completely;
-2. finalize the drafted source/design requirements, target roles, required shell adaptations, and Phase 1 research actions;
+2. record only target-specific roles, shell adaptations, exclusions, and Phase 1 research actions not already recoverable from source/design or accepted images;
 3. keep exact target file paths and target-owner mapping deferred until `CURRENT_PHASE.txt` is `phase-1-ui-implementation`;
 4. record UI-only boundaries and explicit exclusions.
 
@@ -206,21 +142,9 @@ Do not inspect target routes, layouts, components, styling owners, tokens, theme
 
 ## Reproduction Contract
 
-Write one contract row for every required source-backed item:
+The HTML and design JSON remain the source of declared content, styles, sections, and handlers; accepted browser images supply visual and runtime evidence. Do not transcribe them into one row per source item. In the Phase 0 artifact, link the accepted evidence index and record only target-specific decisions: intended interaction families, source defects and unreachable states, shell/sidebar/content-scroll roles, responsive or theme adaptations, unsupported navigation exclusions, UI-only scope, and Phase 1 research actions. Phase 1 maps these requirements to exact target files while inspecting the source declarations as needed. Coverage must still include all pages, states, sections, interaction families, themes, assets, and responsive behavior.
 
-| Contract field | Required content |
-| --- | --- |
-| Contract ID | stable unique ID |
-| Source evidence | opened page/state/section image paths and observations |
-| Required target outcome | exact route/state/section/interaction/theme behavior |
-| Target role/owner | target responsibility to map to an exact file/module in Phase 1 |
-| Responsive adaptation | behavior at represented and omitted sizes |
-| Exclusions | behavior/content that must not be invented |
-| Status | `Pass` when source evidence, required outcome, target role, adaptation, and exclusions are concrete; exact file ownership is mapped in Phase 1 |
-
-The contract must cover all pages, states, sections, interaction families, themes, assets, navigation, shell/sidebar/drawer behavior, and responsive safety.
-
-For a sidebar contract, name the required shell role, sidebar role, and content-scroll role; map each to exact target files in Phase 1. The target outcome must state that document scroll remains unchanged while content scroll increases; a contract that merely says `sticky 100vh` is incomplete.
+For a sidebar, name the target viewport shell, sidebar, and content-scroller roles. Require unchanged document scroll, increasing content scroll, and stable viewport-bounded sidebar; `sticky 100vh` alone is insufficient.
 
 ## Phase 0 Model Gate
 
@@ -242,28 +166,28 @@ Every critical item must independently pass:
 - old workflow state was removed and fresh artifacts were created;
 - no target implementation/config/package/generated/build/test file changed;
 - initial desktop/mobile source evidence was captured and opened through managed lifecycle;
-- the complete HTML/CSS/JavaScript was read to EOF;
-- every source page, distinct visual state, visible section, and declared interaction family is inventoried, with interactions that add no new appearance handed to target verification;
-- every discovery packet passed the model-owned review checklist;
+- all declared pages, states, sections, styles, and handlers were inspected in the HTML/CSS/JavaScript;
+- every source page, distinct visual state, visible section, and declared interaction family is covered or specifically excluded, with interactions that add no new appearance handed to target verification;
+- every accepted capture packet has lifecycle/runtime proof and reviewed evidence;
 - every reachable distinct visual item has desktop and mobile evidence plus readable section/state evidence where applicable; interactions with no new appearance have a source declaration and target-proof owner; source-defect-unreachable visual states have the failed action and intended source declarations recorded;
-- every manifest image was opened and inspected individually or in a readable batch with a per-image finding, and the opened count exactly equals the manifest count;
+- every accepted/current image was opened and inspected individually or in a readable batch with a per-image finding, and the opened count exactly equals the accepted/current count;
 - custom Playwright scripts contain no fixed waits and ran through lifecycle ownership; any fixed wait is a critical failure;
 - sidebar/drawer/scroll/theme behavior is proved when applicable;
 - observed source scroll behavior and required target scroll behavior are recorded separately, with a named viewport shell and content scroller in the target contract;
 - the copied design JSON and source/design handoff were inspected after source discovery; exact target architecture research is explicitly deferred to Phase 1;
-- every contract row has source evidence, a required target outcome/role, responsive behavior, and explicit exclusions; exact target file ownership is mapped in Phase 1;
+- the HTML, design JSON, accepted images, and concise target-specific handoff together cover every required source item; exact target file ownership is mapped in Phase 1;
 - no required placeholder, unsupported assumption, or ordinary discovery gap remains.
 
-The Agent must calculate the score from the artifact's evidence once planned capture coverage, source/design handoff, and applicable scroll/theme work are reconciled. A new discovery packet after this point needs a specific uncovered inventory item, unreadable image, or contradiction. An unattempted planned item belongs in the inventory/next-action plan, not `open-gaps.md`; that ledger records observed missing, failed, or contradictory proof. Do not use a checker or promotion script. If any critical item fails or the score is below `48/50`, keep `CURRENT_PHASE.txt` on Phase 0, record the earliest failure and next repair, perform the repair, refresh evidence, and rescore.
+The Agent must calculate the score from the artifact's evidence once planned capture coverage, source/design handoff, and applicable scroll/theme work are reconciled. A new discovery packet after this point needs a specific uncovered inventory item, unreadable image, or contradiction. An unattempted planned item belongs in the checkpoint next action, not `open-gaps.md`; that ledger records observed missing, failed, or contradictory proof. Do not use a checker or promotion script. If any critical item fails or the score is below `48/50`, keep `CURRENT_PHASE.txt` on Phase 0, record the earliest failure and next repair, perform the repair, refresh evidence, and rescore.
 
 ## Promotion Lock
 
 Before promoting:
 
 1. reopen the Phase 0 artifact;
-2. review the complete source manifest and per-image findings; verify the opened count equals the manifest count, reopening only stale or unclear images;
-3. verify every evidence row has a unique path, dimensions, lifecycle run, opened time, and concrete findings;
-4. verify the inventory and contract have identical coverage;
+2. review accepted/current image pointers and findings; verify the opened count equals the accepted/current count, reopening only stale or unclear images;
+3. verify unique image paths, capture metadata in packet output, and concrete findings in the evidence index;
+4. verify HTML declarations, accepted evidence, and target-specific handoff cover the same required surfaces and behaviors;
 5. verify score arithmetic and every critical row;
 6. reconcile and reopen `open-gaps.md`;
 7. update and reopen `progress.md` and confirm it names Phase 0's promotion as the next planned task;

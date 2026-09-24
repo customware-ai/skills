@@ -57,7 +57,7 @@ Do not hide later-layer behavior inside an earlier packet. For example, a token 
 
 Use small, auditable packets. Before each packet, record:
 
-- contract IDs and opened source evidence;
+- relevant HTML declarations, accepted source evidence, and target-specific handoff;
 - intended target owners;
 - exact UI-only outcome;
 - exclusions and later-layer work that this packet must not include;
@@ -71,7 +71,7 @@ Then:
 4. inspect the focused diff and connected callers/consumers;
 5. compare the result against the packet's source evidence and exclusions;
 6. record actual files, readback/diff findings, and remaining gaps;
-7. update the Phase 1 artifact, `progress.md`, and `open-gaps.md` as findings change; review their current state before scoring, promotion, or resuming work;
+7. update the Phase 1 artifact for packet results, `open-gaps.md` for unresolved gaps, and the compact checkpoint only when the next action or phase changes; review current state before scoring, promotion, or resume;
 8. mark every packet-review row `Pass` or `Fail`;
 9. if any row fails, repair the same packet and repeat the review;
 10. begin the next packet only when all packet rows pass.
@@ -154,7 +154,7 @@ Required score: at least `48/50`.
 
 Every critical item must independently pass:
 
-- every Phase 0 contract row maps to a real target owner and implementation;
+- every declared source requirement and target-specific handoff decision maps to a real target owner and implementation;
 - target research was followed by authored implementation packets; the run did not stop at research or planning;
 - every route and visible section is authored and source-backed;
 - every visible interaction family has real local behavior;
@@ -175,7 +175,7 @@ The Agent must calculate the score from evidence in the artifact. Do not use a c
 
 Before promotion:
 
-1. remap every Phase 0 contract row to final target ownership;
+1. verify every declared source requirement and target-specific handoff decision has final target ownership;
 2. reopen the Phase 1 artifact and complete target diff;
 3. reopen high-risk shell/sidebar/responsive owners;
 4. independently verify score arithmetic and every critical item;

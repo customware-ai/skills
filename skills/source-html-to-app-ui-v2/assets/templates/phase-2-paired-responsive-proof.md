@@ -18,7 +18,7 @@ Pair every reachable source state and section with readable target evidence at m
 | Real target routes/components; no source runtime dependency | Fail | Pending |
 | No wrapper, viewer, raw injection, or forbidden embedding | Fail | Pending |
 | No backend/API/database/persistence/auth/business changes | Fail | Pending |
-| Every contract row has a real target owner | Fail | Pending |
+| Every declared source requirement and target-specific handoff decision has a real target owner | Fail | Pending |
 | Local interactions and route boundaries are real | Fail | Pending |
 | Shell/sidebar/content overflow ownership is structural | Fail | Pending |
 | Lifecycle helper remains byte-identical | Fail | Pending |
@@ -120,7 +120,7 @@ Copy each number verbatim from the side-specific manifest before scoring. Calcul
 
 | Requirement | Evidence | Pass/Fail |
 | --- | --- | --- |
-| Phase 0 fresh `None` row replaced by actual comparison rows or explicit comparison evidence | Pending | Fail |
+| Actual source-target comparison evidence reviewed; unresolved mismatches are in open gaps | Pending | Fail |
 | Every Phase 2 mismatch is recorded with owner/next fix and paired evidence | Pending | Fail |
 | No ordinary responsive/integrity gap remains open | Pending | Fail |
 

@@ -1,38 +1,12 @@
-# Progress Ledger
+# Resume Checkpoint
 
-After compaction, resume, retry, or reconnect, reread the skill, this file, `CURRENT_PHASE.txt`, `open-gaps.md`, the current or earliest failing phase artifact and reference, and the task inputs needed for the next action. Do not act from conversation memory. If records disagree, return to the earliest failing phase.
+This is a pointer, not a history or evidence ledger. Update it after a meaningful capture/work group completes or fails, the next action changes, or a phase changes—not after each tool call. On resume, read the skill, this checkpoint, current phase reference/artifact, open gaps, and only the linked evidence and input excerpts needed next.
 
-## Current State
+- Phase and earliest failing gate: `phase-0-source-contract`; none
+- Last completed group and accepted evidence index: none
+- Open blocker or gap: none; see `open-gaps.md`
+- Next action: create the fresh task-workflow scaffold and managed source orientation packet
+- Completion command source: task instructions; copy the exact command here before Phase 4 completion
+- Task inputs: approved HTML, design JSON, and task prompt paths from the task instructions
 
-| Field | Value |
-| --- | --- |
-| Current phase marker and artifact | Pending |
-| Earliest failing phase | Pending |
-| Last completed gate or meaningful event | Pending |
-| Sole next local action | Pending |
-| Current packet or evidence record | Pending |
-| External blocker | None |
-| Last updated | Pending |
-
-Update this resume pointer when the next action changes, evidence is invalidated, a gate is scored, or work resumes. Keep detailed inventory, image findings, and packet decisions in the owning phase's canonical evidence record, not here.
-
-## Binding Inputs
-
-| Input | Exact path/value |
-| --- | --- |
-| Target repository and UI-only boundary | Pending |
-| Task prompt and approved source HTML | Pending |
-| Approved design JSON and copied `spec.json` | Pending |
-| Exact task completion command | Pending |
-
-## Phase Decisions
-
-| Phase | Artifact | Score/critical decision | Evidence record |
-| --- | --- | --- | --- |
-| 0 | `phase-0-source-contract.md` | Pending | `source/coverage.md` |
-| 1 | `phase-1-ui-implementation.md` | Pending | Pending |
-| 2 | `phase-2-paired-responsive-proof.md` | Pending | Pending |
-| 3 | `phase-3-fidelity-repair-signoff.md` | Pending | Pending |
-| 4 | `phase-4-final-audit-completion.md` | Pending | Pending |
-
-Completion requires the exact task command only after every phase gate passes.
+The phase artifacts own scores and decisions. The HTML/design files own declared content and styles. Packet output and runtime logs own capture metadata and command history. Do not copy those facts here.

@@ -50,7 +50,7 @@ Then:
 1. review every declared input and its current findings; reopen only stale, changed, or unclear evidence;
 2. inspect evidence rows, cited paths, images, and current state—not only `Pass` labels;
 3. record contradictions, stale evidence, missing proof, and affected owning phase;
-4. update Phase 4, `progress.md`, and `open-gaps.md` as findings change; review their current state before final scoring;
+4. update Phase 4 for audit evidence, open gaps for unresolved findings, and the checkpoint only when the next action changes; review current state before final scoring;
 5. mark every packet-review row `Pass` or `Fail`;
 6. if any row fails, return to the earliest owning phase, repair and repass forward through every invalidated phase;
 7. re-enter Phase 4 and repeat the failed audit packet;
@@ -92,7 +92,7 @@ For every artifact verify existence, decision, score arithmetic, concrete rows, 
 
 Searching for the word `Pass` is not an audit. Read the evidence rows.
 
-The marker, `progress.md`, `open-gaps.md`, every phase artifact, and the evidence ledger must describe the same latest event and earliest failing phase. A stale ledger is a failed artifact-integrity packet even when every scorecard says `Pass`.
+The marker, checkpoint, open gaps, phase artifacts, and evidence must agree on the current phase, earliest failing gate, unresolved gaps, and next action. They need not repeat the same latest event. Stale or contradictory pointers fail artifact integrity even when scorecards say `Pass`.
 
 ## Evidence Freshness Packet
 
