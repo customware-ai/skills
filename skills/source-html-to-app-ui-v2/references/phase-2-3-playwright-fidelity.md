@@ -71,7 +71,7 @@ Every source-target comparison row must have a stable evidence ID and record:
 
 File existence, a screenshot count, a manifest path, or a blanket statement that all images were opened does not satisfy this contract. One path represents exactly one image identity; several section rows may cite it when each section is readable in that image. An overwrite or conflicting identity mapping invalidates every affected row and requires new uniquely named captures. An unchanged source image may be cited by a later target-repair comparison only when its identity/framing remains exact and that reuse is explicit in the ledger.
 
-Use names that encode side, route/state, theme, viewport, section/full-view identity, and revision. Before opening a pair, verify both files exist, paths are distinct, browser viewports/framing intent match, actual image dimensions are recorded, and target freshness is valid. Continue the comparison when full-page heights differ; record that difference as layout evidence.
+Use stable unique paths and record side, route/state, theme, viewport, section/full-view identity, and revision in the evidence manifest. A filename need not repeat every identity field; do not rename an already opened source image merely to expand its name. Before opening a pair, verify both files exist, paths are distinct, browser viewports/framing intent match, actual image dimensions are recorded, and target freshness is valid. Continue the comparison when full-page heights differ; record that difference as layout evidence.
 
 ### Bounded Visual Review
 
@@ -189,7 +189,7 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
 
 Use discovered commands; never copy placeholders literally.
 
-Run these sequentially. The source helper owns and stops the source server; the target helper owns and stops the target server. Compare saved images afterward. Do not manually keep both servers alive, use `lsof` to hunt processes, or replace this sequence with a dual-background-server command. When interaction parity needs equivalent live proof, execute the same focused interaction manifest in two separate helper-owned runs and compare their recorded results.
+Run these sequentially. The source helper owns and stops the source server; the target helper owns and stops the target server. Compare saved images afterward. Do not manually keep both servers alive, use `lsof` to hunt processes, or replace this sequence with a dual-background-server command. Run equivalent focused source and target interaction packets only when the source interaction produces a distinct visual result needed for comparison. For interactions whose source appearance is already covered or is unreachable due to the recorded defect, use the Phase 0 declaration and require real-input target proof; do not recreate Phase 0's exhaustive source-behavior testing here.
 
 ### Responsive, Sidebar, And Drawer Proof
 

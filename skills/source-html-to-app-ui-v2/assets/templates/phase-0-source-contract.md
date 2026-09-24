@@ -14,25 +14,25 @@ The approved HTML and design JSON are immutable. Keep target files read-only unt
 
 ## Canonical Source Coverage And Evidence
 
-Create `task-workflow/source/coverage.md` as the single source inventory and image-review record. Give every page/state, visible section, interaction family, theme, and relevant viewport a stable ID. For each, record source order, real-input reach steps or proven defect, planned desktop/mobile framing, captured image IDs, concrete findings, and target behavior. One opened readable image may cover several sections; list every section it proves. An overview does not cover text that is unreadable at review scale. Add an image only for a distinct state, uncovered content, unreadable area, or needed comparison framing; there is no fixed count.
+Create `task-workflow/source/coverage.md` as the single source inventory, packet-review, and image-review record. Give every page, distinct visual state, visible section, declared interaction family, theme, and relevant viewport a stable ID. For visual items record source order, real-input reach steps or proven defect, planned desktop/mobile framing, captured image IDs, concrete findings, and target behavior. For an interaction that produces no new appearance, record its HTML/CSS/handler declaration, required target behavior, and already covering image; do not add a source-browser packet solely to prove that transition. One opened readable image may cover several sections; list every section it proves. An overview does not cover text that is unreadable at review scale. Add an image only for a distinct state, uncovered content, unreadable area, or needed comparison framing; there is no fixed count.
 
-For every captured image, record its unique ID/path/revision, dimensions, capture time/lifecycle run, opened time, concrete finding, and covered inventory IDs. The opened-image count must equal the manifest-image count. Do not duplicate these rows here, in `progress.md`, or in `open-gaps.md`.
+For every captured image, record its unique ID/path/revision, theme, viewport, framing, dimensions, capture time/lifecycle run, opened time, concrete finding, and covered inventory IDs. The opened-image count must equal the manifest-image count. A stable unique path need not encode all those fields; do not rename an opened image merely to repeat manifest metadata in its filename. Do not duplicate inventory, packet, or image rows here, in `progress.md`, or in `open-gaps.md`.
 
 | Coverage audit | Canonical record and concrete result | Pass/Fail |
 | --- | --- | --- |
-| Every HTML-declared and browser-discovered page/state/section/interaction/theme is inventoried once or has an explicit exclusion | Pending | Pending |
-| Every reachable item has readable desktop/mobile full-view and section/state evidence where applicable | Pending | Pending |
+| Every HTML-declared and browser-discovered page/visual-state/section/theme and declared interaction is inventoried once or has an explicit exclusion | Pending | Pending |
+| Every reachable distinct visual item has readable desktop/mobile full-view and section/state evidence where applicable; interactions without a new appearance cite declarations and target proof ownership | Pending | Pending |
 | Every captured image was opened with a finding; identities and paths are unique and revisioned | Pending | Pending |
 | Missing source states cite the exact defect, failed real-input proof, declarations, and required target outcome | Pending | Pending |
 | Source/browser findings and copied design JSON agree or name a concrete gap | Pending | Pending |
 
 ## Discovery Packet Decisions
 
-Record one row per packet. Its manifest and the canonical coverage record hold the detailed images and findings. A failed packet is repaired and rerun only where evidence was invalidated.
+Record each packet's scope, lifecycle run, review decision, and any repair once in `source/coverage.md`; link the complete packet record here. A failed packet is repaired and rerun only where evidence was invalidated. Do not copy its rows into this artifact.
 
-| Packet/scope | Lifecycle run and evidence IDs | Reachability, fixed-wait, and evidence review | Decision/repair |
-| --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending |
+| Canonical packet record | Reviewed scope and result | Pass/Fail |
+| --- | --- | --- |
+| `source/coverage.md` | Pending | Pending |
 
 ## Source Defects And Target Requirements
 
@@ -69,7 +69,7 @@ A row passes only when source evidence, required target behavior/role, responsiv
 | Category | Passed | Total | Evidence |
 | --- | ---: | ---: | --- |
 | Fresh scaffold and target-read-only integrity | Pending | 10 | Pending |
-| Complete HTML/browser inventory and real-input reachability | Pending | 10 | Pending |
+| Complete HTML inventory and visual-state reachability | Pending | 10 | Pending |
 | Desktop/mobile/state/section source evidence | Pending | 12 | Pending |
 | Sidebar/drawer/scroll/theme discovery | Pending | 8 | Pending |
 | Source/design handoff and reproduction contract | Pending | 10 | Pending |
@@ -83,8 +83,8 @@ Required: at least `48/50`. `Unscored` is not a pass or an assessed zero. Score 
 | --- | --- | --- |
 | Fresh artifacts exist, prior evidence was not reused, and target remained unread and unchanged | Pending | Pending |
 | Initial managed desktop/mobile source evidence was captured and opened; full HTML/CSS/JavaScript read to EOF | Pending | Pending |
-| Every source page/state/section/interaction family is inventoried; every discovery packet passed review | Pending | Pending |
-| Every reachable inventory item has desktop/mobile and readable section/state evidence; unreachable items have defect/declaration proof | Pending | Pending |
+| Every source page/distinct visual state/section and declared interaction family is inventoried; every visual discovery packet passed review | Pending | Pending |
+| Every reachable visual item has desktop/mobile and readable section/state evidence; interactions without new appearance have declaration/target-proof ownership; unreachable visual states have defect/declaration proof | Pending | Pending |
 | Every manifest image was opened with a concrete finding, unique path, dimensions, and capture/open times | Pending | Pending |
 | Browser packets used lifecycle ownership, real input, and no fixed waits | Pending | Pending |
 | Applicable sidebar/drawer/scroll/theme discovery is complete and source versus target scroll contracts are distinct | Pending | Pending |
