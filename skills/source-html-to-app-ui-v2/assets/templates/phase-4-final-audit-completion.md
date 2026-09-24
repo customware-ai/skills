@@ -48,7 +48,7 @@ Complete the packets in order: artifact integrity; evidence freshness; final dif
 
 ## Final Evidence Integrity Audit
 
-Audit in small readable packets: one pair for tall full views or compact related batches for smaller sections. Write/read back each packet before moving to unrelated work.
+Audit in small readable packets: one pair for tall full views or compact related batches for smaller sections. Record each packet and review the current audit before scoring; no per-update readback is required.
 
 | Evidence ID | Distinct identity-safe source/target paths | Browser viewport/framing and image-dimension review | Capture ownership/time | Target freshness | Source opened/result | Target opened/result | Concrete category findings | No overwrite/conflicting mapping | Pass/Fail |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -89,7 +89,7 @@ Audit in small readable packets: one pair for tall full views or compact related
 | Exact literal command | Pending |
 | Proof command has not run early | Pending |
 | Every previous gate remains valid | Pending |
-| `progress.md` names exact command as sole next action | Pending |
+| `progress.md` names exact command as next planned task | Pending |
 | No later tool action is planned | Pending |
 
 ## Scorecard
@@ -121,8 +121,8 @@ Required: exactly `50/50`.
 | No open/stale gap or placeholder remains | Fail | Pending |
 | Final diff is UI-only and contains no shortcut/helper modification | Fail | Pending |
 | Required checks/build evidence remains current | Fail | Pending |
-| Exact completion command is copied, unrun, and sole remaining action | Fail | Pending |
-| No tool action is planned after completion | Fail | Pending |
+| Exact completion command is copied and remains unrun until all gates pass | Fail | Pending |
+| Completion result will be confirmed before reporting | Fail | Pending |
 
 ## Completion Lock
 
@@ -133,11 +133,11 @@ Required: exactly `50/50`.
 | Marker, all phase artifacts, progress, gaps, and evidence rows agree | Pending |
 | Score verified at exactly `50/50` | Pending |
 | Every critical item verified `Pass` | Pending |
-| Exact completion command ready as literal final tool action | Pending |
+| Exact completion command ready after all gates pass | Pending |
 
 - Score: `0/50`
 - Critical items: Fail
 - Completion lock: Fail
 - Decision: Fail
 
-After changing every gate to `Pass`, reaching `50/50`, and reading back this file plus `progress.md`, run the exact completion command as the literal final tool action. Do not run any tool afterward.
+After every gate passes and the audit reaches `50/50`, run the exact completion command and confirm its result before reporting completion.

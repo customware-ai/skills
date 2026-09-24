@@ -47,10 +47,10 @@ Before each packet, record:
 
 Then:
 
-1. reopen every declared input completely;
+1. review every declared input and its current findings; reopen only stale, changed, or unclear evidence;
 2. inspect evidence rows, cited paths, images, and current state—not only `Pass` labels;
 3. record contradictions, stale evidence, missing proof, and affected owning phase;
-4. update and read back Phase 4, `progress.md`, and `open-gaps.md`;
+4. update Phase 4, `progress.md`, and `open-gaps.md` as findings change; review their current state before final scoring;
 5. mark every packet-review row `Pass` or `Fail`;
 6. if any row fails, return to the earliest owning phase, repair and repass forward through every invalidated phase;
 7. re-enter Phase 4 and repeat the failed audit packet;
@@ -178,7 +178,7 @@ Every critical item must independently pass:
 - final diff is UI-only and contains no forbidden shortcut;
 - required checks/build evidence is current;
 - exact completion command was copied and has not run early;
-- completion is the sole remaining action and no later tool action is planned.
+- completion is not called until all required work and checks pass.
 
 The Agent calculates the score from audit evidence. Do not use a checker or unlock script. If any packet review or critical item fails, or the score is not exactly `50/50`, return to the earliest owning phase, repair, repass forward, and rerun the affected Phase 4 packet.
 
@@ -189,10 +189,9 @@ Before completion:
 1. reopen Phase 4 and `progress.md`;
 2. reopen `open-gaps.md`, `CURRENT_PHASE.txt`, and the final evidence-ledger rows and confirm all artifacts agree;
 3. independently verify audit packet reviews, `50/50` arithmetic, and every critical row;
-4. update and read back `progress.md` with the exact command as the sole remaining action;
-5. write and read back `Decision: Pass` and the completion lock;
-6. run the exact completion command as the literal final tool action;
-7. do not run any tool afterward;
-8. respond directly from the command result.
+4. update `progress.md` with the exact command after all required work passes;
+5. record `Decision: Pass` and the completion lock;
+6. run the exact completion command after the gates pass;
+7. confirm its result before reporting completion.
 
 If any check before command execution fails, continue the repair loop. Do not call completion or produce a completion-style response.

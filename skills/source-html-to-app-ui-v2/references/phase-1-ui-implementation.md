@@ -20,7 +20,7 @@ A packet fails when its code exceeds its declared contract, omits required work,
 
 All Phase 1 target verification remains lifecycle-owned. After implementation or a build, do not launch `pnpm run dev`, `npm run dev`, `vite`, or `react-router dev` in the shell, background a server, wait with shell `sleep`, probe with `curl`/`wget`, inspect a port, or clean up processes manually. Build and typecheck output confirms code integrity only; it is not browser evidence.
 
-Write the target packet under `task-workflow/target-playwright/`, read it, and run it only through `playwright-lifecycle.mjs` with explicit `--server`, `--ready-url`, `--runtime-dir`, and `--run` arguments. Use that helper for screenshots, DOM assertions, measurements, scroll tests, interaction checks, and runtime inspection. If it fails, repair and rerun the packet through the helper. Do not replace the lifecycle run with a manual smoke test. Any direct target server, shell wait, readiness probe, or browser check is a hard process failure and invalidates the run.
+Write the target packet under `task-workflow/target-playwright/`, read it, and run it only through `playwright-lifecycle.mjs` with explicit `--server`, `--ready-url`, `--runtime-dir`, and `--run` arguments. Use that helper for screenshots, DOM assertions, measurements, scroll tests, interaction checks, and runtime inspection. If it fails, repair and rerun the packet through the helper. Do not replace the lifecycle run with a manual smoke test. A direct target server, shell wait, readiness probe, or browser check does not count as managed evidence; rerun the affected check through the helper.
 
 ## Entry Conditions
 
@@ -71,7 +71,7 @@ Then:
 4. inspect the focused diff and connected callers/consumers;
 5. compare the result against the packet's source evidence and exclusions;
 6. record actual files, readback/diff findings, and remaining gaps;
-7. update and read back the Phase 1 artifact, `progress.md`, and `open-gaps.md`;
+7. update the Phase 1 artifact, `progress.md`, and `open-gaps.md` as findings change; review their current state before scoring, promotion, or resuming work;
 8. mark every packet-review row `Pass` or `Fail`;
 9. if any row fails, repair the same packet and repeat the review;
 10. begin the next packet only when all packet rows pass.
@@ -88,7 +88,7 @@ Then:
 | UI-only scope | no backend/API/database/auth/business behavior |
 | Readback | every changed file was reopened after the edit |
 | Focused diff | additions and removals were inspected for accidental scope |
-| Artifact synchronization | Phase 1, progress, and gaps record this packet and the same sole next action |
+| Artifact synchronization | Phase 1, progress, and gaps record this packet and the same next planned task |
 | Gap ledger | new or unresolved issues are recorded with an owner and next fix |
 
 This checklist is a model condition recorded in the Phase 1 artifact. It is never executed as a script.
@@ -181,9 +181,9 @@ Before promotion:
 4. independently verify score arithmetic and every critical item;
 5. reopen Phase 0 and verify no Phase 1 change invalidated its contract or source evidence;
 6. reconcile and reopen `open-gaps.md`;
-7. update and reopen `progress.md` and confirm promotion is the sole next action;
-8. write and read back `Decision: Pass` and the promotion lock;
+7. update and reopen `progress.md` and confirm promotion is the next planned task;
+8. record `Decision: Pass` and the promotion lock;
 9. set `CURRENT_PHASE.txt` to `phase-2-paired-responsive-proof`;
-10. immediately update `progress.md`, then read the paired-fidelity and lifecycle references before Phase 2 work.
+10. update `progress.md` and read the paired-fidelity and lifecycle references before Phase 2 work.
 
 If any check fails, remain in Phase 1 and continue the repair loop.

@@ -8,15 +8,11 @@ This reference is mandatory whenever `CURRENT_PHASE.txt` is missing or equals `p
 
 Phase 0 builds the complete evidence-backed contract that controls implementation. It is not a quick screenshot pass and not a planning shortcut.
 
-<hard_stop>
+<source_boundary>
+Keep target implementation and assets unchanged until Phase 0 passes. Use the managed lifecycle helper for browser evidence and deterministic waits in packets. Source HTML, design metadata, skill resources, and task-workflow artifacts may be inspected in any useful order; none may substitute for required screenshots or the complete source inventory. Correct a procedural mistake in place and recapture only invalid evidence.
+</source_boundary>
 
-During Phase 0, do not inspect browser caches, executable paths, browser revisions, `browsers.json`, package browser directories, or process/port state before invoking the real lifecycle packet. Do not probe a server/runtime with `which`, `command -v`, `--version`, `--help`, or similar availability commands. Do not inspect the target root at all: `ls`, `find`, `tree`, `rg --files`, `git status`, `test -d`, `test -e`, `test -f`, `stat`, `file`, `wc`, `du`, `head`, `tail`, `sed`, `grep`, or an equivalent directory listing/metadata check that merely reveals target or source state is already target inspection. Do not inspect target `app/`, `public/`, `server/`, packages, config, package files, `node_modules`, build/dist, tests, runtime logs, or target assets until source orientation has been captured and opened, HTML/CSS/JavaScript has been read to EOF, the complete source inventory has been captured and opened, and the Phase 0 artifact has been updated. Do not run a packet containing fixed waits, even once. These are run-invalidating process failures, not optional cleanup items; stop, record the failure, reset the fixture, and restart Phase 0.
-
-The task message may call a brand-logo path the “one and only exception.” It is not an exception to this source lock. It means the real logo must be used when Phase 1 asset research becomes legal. Do not inspect `public/`, `build/`, or any target asset path to find that logo before the source checkpoint. If the checkpoint has not been explicitly passed in the artifact and the marker has not moved to `phase-1-ui-implementation`, target inspection is forbidden; when uncertain, remain source-only.
-
-</hard_stop>
-
-Before the first successful lifecycle orientation, the only files the Agent may read are the exact `SKILL.md`, this Phase 0 reference, and `references/playwright-lifecycle.md`. This is a closed allowlist. Do not read `assets/scripts/playwright-lifecycle.mjs`, any template, copied helper, copied artifact, source HTML/CSS/JavaScript, design JSON, target file, or runtime file. Blind byte-for-byte copying is allowed; opening a copied helper or template to learn its flags or contents is not. Breaking this allowlist invalidates the run: stop, reset the fixture, and restart Phase 0.
+Read the skill and relevant references before phase work. Inspecting source inputs or task-workflow files before the first browser packet is permitted; target implementation remains Phase 1 work.
 
 The Agent evaluates this phase itself against the rubric below. Do not create or use a script to validate, score, close, or promote Phase 0. Playwright scripts may discover and capture the source, but they must run through `playwright-lifecycle.mjs` and cannot decide whether the phase passes.
 
@@ -32,13 +28,13 @@ Before Phase 0 work:
 - the Agent has reread `SKILL.md`, this reference, and the lifecycle reference;
 - the exact task inputs, source HTML path, design JSON path, target root, and completion command source are known;
 - no target implementation/config/package/generated/build/test file has changed for this run;
-- the first discovery packet is recorded immediately after fresh artifact setup.
+- the first discovery packet is recorded before its browser run.
 
 If stale workflow state or an early target change exists, reset to a clean Phase 0 boundary before discovery.
 
 ## Fresh Artifact Setup
 
-The first target-repository write must:
+Before Phase 0 scoring, create a fresh task-workflow scaffold that:
 
 1. remove the old `task-workflow/` directory;
 2. recreate the runtime structure listed in `SKILL.md`;
@@ -51,7 +47,7 @@ Do not copy prior screenshots, scores, scripts, manifests, or decisions. Do not 
 
 Record the reset and copied paths in the Phase 0 artifact and `progress.md`.
 
-After these scaffold and copy writes, the write command must end. Setup is write-only: `cp ... && ls ...`, `mkdir ... && cp ... && ls ...`, a separate `ls`, a trailing `echo`/`printf`, or appended `cat`, `test`, `stat`, `git status`, `find`, `rg`, or any other verification is a hard process failure. Do not use a second shell command to verify or announce setup. Do not list `task-workflow/`, reopen the copied helper, reopen a template, inspect a ledger, or run an existence or metadata check. The only allowed pre-orientation artifact sequence is exactly: write the orientation packet, read that packet once for the fixed-wait and exact-URL audit, then invoke the first lifecycle orientation at the exact approved HTML URL with `SOURCE_URL` supplied to the packet. After the packet write, the next tool action must be its complete file-read; only that read may precede the helper. Setup write success is not a separate checkpoint; the lifecycle run is the first permitted source readback and availability test.
+The fresh scaffold must preserve byte-identical approved inputs and copied helper. Check the files when useful; no immediate next-tool-call sequence is required.
 
 ## Model-Owned Discovery Packet Loop
 
@@ -68,10 +64,10 @@ Before each packet, record:
 Then:
 
 1. perform only the declared discovery packet;
-2. reopen every created/updated artifact and every captured image;
+2. open every captured image and inspect changed artifacts when needed for review;
 3. reconcile findings against the complete HTML and existing inventory;
 4. record actual evidence, missing coverage, contradictions, and gaps;
-5. update and read back the Phase 0 artifact, `progress.md`, and `open-gaps.md` before another packet;
+5. update the Phase 0 artifact, `progress.md`, and `open-gaps.md` as findings change; review their current state before scoring, promotion, or resuming work;
 6. mark every packet-review row `Pass` or `Fail`;
 7. if any row fails, repair the same packet and repeat the review;
 8. begin the next packet only when every review row passes.
@@ -88,22 +84,18 @@ Then:
 | Source reconciliation | browser findings and complete HTML declarations agree |
 | Fixed-wait audit | custom Playwright scripts use deterministic waits |
 | Scope boundary | target implementation remained read-only and later work was not pulled forward |
-| Artifact synchronization | Phase 0, progress, and gaps record this packet and the same sole next action |
+| Artifact synchronization | Phase 0, progress, and gaps record this packet and the same next planned task |
 | Gap ledger | missing or contradictory evidence has an owner and next repair |
 
 This checklist is an Agent review recorded in the Phase 0 artifact, never a script result.
 
-## Source-First Discovery Order
+## Source Discovery Requirements
 
-Follow this order exactly. Until step 6 begins, target implementation, build output, runtime logs, assets, dependencies, and configuration are source-locked and must not be opened, listed, searched, or inspected. Do not treat a target-research need, a stale build, a missing logo, or an asset requirement from the task message as permission to break this order. The first target read occurs only in step 6, after the managed source orientation and complete source inventory evidence have been captured and opened, the HTML/CSS/JavaScript has been read to EOF, the Phase 0 artifact has been written, reopened, scored at least `48/50`, and all critical rows have passed. The marker must then be moved to `phase-1-ui-implementation` before any target command is run. If any one of those conditions is absent, step 6 has not begun.
-
-Before the first managed orientation, copy the approved source file into `task-workflow/` without opening it. Do not read or search the source HTML, inline CSS, or JavaScript to design the orientation packet. The only source content that may be read before orientation is the task/design metadata needed to locate and serve the copied file. First run the orientation packet through the lifecycle helper at desktop and mobile. After a successful helper result, the next two tool calls must be exactly the desktop orientation-image read followed immediately by the mobile orientation-image read; no source/design read, packet write, search, shell command, or other tool call may occur between them. Record a concrete finding for each image. Only after both image-read events may the complete source read begin. If either image is not opened before source/design inspection, the run is invalid and Phase 0 must be reset. If the helper fails, the source remains locked and Phase 0 is paused: the only legal next action is to inspect the helper-owned failure, repair the bounded invocation, read the repaired packet, and rerun the helper. Do not read source HTML/CSS/JavaScript or design JSON, write the handoff, or treat logs/partial screenshots as orientation evidence until a helper-owned rerun succeeds and every successful orientation image has been opened.
-
-Until that first helper run begins, use no target-repository read or environment probe at all—not even a root listing, `task-workflow` existence check, `git status`, `which`, `command -v`, `python --version`, `node --version`, or `--help`. Do not enumerate the skill root or any skill `references/` or `assets/` directory; do not inspect source-file metadata or content with `wc`, `stat`, `file`, `du`, `head`, `tail`, `sed`, `grep`, `rg`, or equivalent. Read only this reference, the exact lifecycle reference path, and the exact task/design input paths needed for setup. Use only the exact asset paths named in the skill's Asset Map when copying; never list, glob, search, or read the asset directories to discover them. Do not read the copied helper or templates after setup; reading `task-workflow/scripts/playwright-lifecycle.mjs` to learn its flags or parameters is explicitly forbidden because the helper command contract in the reference is sufficient. Write the task-owned orientation packet, read that packet for audit, and invoke the helper with the known server command directly. The helper is the availability test.
+Before Phase 0 passes, read the approved HTML/CSS/JavaScript completely, capture and open the initial desktop/mobile orientation, complete and inspect the source inventory, and score the source contract. These source tasks may occur in any useful tool order. Keep target implementation and assets unchanged until the Phase 0 gate passes. Source browser packets must confirm the exact approved HTML URL, useful content, and proper lifecycle ownership.
 
 ### 1. First Managed Browser Inspection
 
-Before bulk-reading the source HTML, create a small custom Playwright script under `task-workflow/source-playwright/` that:
+Create a small custom Playwright orientation script under `task-workflow/source-playwright/` that:
 
 - opens the supplied HTML through its real source launch method;
 - receives the exact served HTML URL through `SOURCE_URL` (or an equivalent explicit packet input), navigates to that URL rather than the server directory root, and asserts response success, exact final URL identity, and non-directory content so a directory listing, blank page, or wrong route cannot count as orientation evidence. Assert task-supplied identity when available; otherwise record the title and reconcile it after the complete HTML read;
@@ -113,7 +105,7 @@ Before bulk-reading the source HTML, create a small custom Playwright script und
 - records page title, visible navigation, viewport, document dimensions, and obvious interactive controls;
 - leaves all full-page, section, state, theme, and per-page capture work to the complete inventory packet;
 
-Run it through `task-workflow/scripts/playwright-lifecycle.mjs`. Open both orientation images immediately and record one concrete finding for each before reading the source. These images are startup orientation only; they are never the final inventory and never establish a screenshot limit. If the packet produces any additional image, open that image before continuing.
+Run it through `task-workflow/scripts/playwright-lifecycle.mjs`. Open both orientation images and record one concrete finding for each before Phase 0 scoring. These images are startup orientation only; they are never the final inventory and never establish a screenshot limit. Open any additional images the packet produces before scoring.
 
 ### 2. Complete HTML/CSS/JavaScript Reading
 
@@ -164,9 +156,9 @@ For every reachable inventoried page and meaningful state, capture through manag
 
 Split capture into focused packets. Each packet owns one route/state family and a coherent viewport/theme set. Keep the packet small enough that its failure identifies one evidence group and its outputs can be opened and reviewed immediately. Do not build one monolithic script for the entire source corpus. When a packet fails, repair and rerun only that packet; do not rerun already-passed packets unless their evidence was invalidated. Keep the manifest append-only and use a new revisioned path when a prior image is recaptured.
 
-Use deterministic waits. Before every helper invocation, read the complete packet being run from line 1 through EOF and confirm it contains no `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, or arbitrary polling/timer settling. Repeat the complete readback after every packet write or edit before relying on the packet, making another edit, or invoking the helper; a targeted slice can confirm a local change but does not replace the complete audit. Record the readback and fixed-wait review as packet evidence. Do not run a packet with a fixed wait and plan to repair it afterward. Any fixed wait is a hard packet failure, not a harmless settling aid; remove it, record the repair, replace it with a visible-state, URL, DOM, response, geometry, or assertion condition, and rerun the packet through the lifecycle helper before scoring.
+Use deterministic waits. Before every helper invocation, review the current packet and confirm it contains no `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, or arbitrary polling/timer settling. Review the current packet before invoking the helper; a focused diff or targeted read may cover a small edit, while a new or substantially rewritten packet merits a complete read. Record the fixed-wait review as packet evidence. No particular tool-call order is required. Do not run a packet with a fixed wait and plan to repair it afterward. Any fixed wait is a hard packet failure, not a harmless settling aid; remove it, record the repair, replace it with a visible-state, URL, DOM, response, geometry, or assertion condition, and rerun the packet through the lifecycle helper before scoring.
 
-Complete an image-by-image visual closure after every capture. Read the complete manifest, process every image path in manifest order, and open images in small readable review batches of no more than four related images. This batch size protects context and visual attention; it does not limit the total evidence corpus. After each batch, immediately append one opened result and one concrete finding for every image to the Phase 0 artifact, update and read back `progress.md` and `open-gaps.md`, and only then begin the next batch. The walk is complete only when the opened-image count exactly equals the manifest-image count. Readable inspection sheets may supplement the walk, but they never replace opening and recording every constituent image. Do not open only “key images,” one image per route, representative samples, one viewport, one full-page image per route, or a manifest without image review; any such sampling is a failed visual-inspection gate. Do not score or promote until the complete walk is recorded.
+Complete an image-by-image visual closure after every capture. Read the complete manifest, process every image path in manifest order, and open images in small readable review batches of no more than four related images. This batch size protects context and visual attention; it does not limit the total evidence corpus. Record one opened result and one concrete finding for every image in the Phase 0 artifact. Keep `progress.md` and `open-gaps.md` current as meaningful findings change; review them before scoring, promotion, or resuming work rather than after each batch. The walk is complete only when the opened-image count exactly equals the manifest-image count. Readable inspection sheets may supplement the walk, but they never replace opening and recording every constituent image. Do not open only “key images,” one image per route, representative samples, one viewport, one full-page image per route, or a manifest without image review; any such sampling is a failed visual-inspection gate. Do not score or promote until the complete walk is recorded.
 
 If an image is blank, unsettled, faded, clipped, stale, unreadable, or captures an entrance animation, reach the state through real input and wait for its own visible DOM, geometry, opacity, or transition condition, then recapture it. Do not inject CSS, set opacity/classes, disable animations, or mutate source DOM to manufacture a settled screenshot. If a required locator or section capture fails, fail the packet loudly and diagnose it. Repair and rerun a bad selector or packet; if the approved source itself makes the state unreachable, record the defect and intended design from source declarations instead of changing or repeatedly retrying the source.
 
@@ -176,7 +168,7 @@ Give every image a stable evidence ID and a unique non-reused path containing so
 
 Never reuse one path for desktop and mobile or overwrite an earlier revision. If a recapture is required, create a new revision path and mark the prior row invalidated. Opening a contact sheet does not prove that unreadable constituent images were inspected.
 
-Inspect source evidence in small readable packets. Use one image at a time for very tall full views and compact related batches of no more than four images for smaller section/state images. Record findings in the Phase 0 artifact after each batch, read back the artifact and ledgers, and keep `progress.md` current enough to resume from the next unreviewed manifest row. This protects visual attention and context without capping pages, states, sections, themes, viewports, or screenshots.
+Inspect source evidence in small readable packets. Use one image at a time for very tall full views and compact related batches of no more than four images for smaller section/state images. Record findings in the Phase 0 artifact after each batch and keep `progress.md` current enough to resume from the next unreviewed manifest row. Review the current artifacts before scoring or resuming, not after every update. This protects visual attention and context without capping pages, states, sections, themes, viewports, or screenshots.
 
 ### 5. Sidebar, Drawer, Scroll, And Theme Discovery
 
@@ -249,7 +241,7 @@ Every critical item must independently pass:
 
 - old workflow state was removed and fresh artifacts were created;
 - no target implementation/config/package/generated/build/test file changed;
-- first source browser evidence was captured and opened through managed lifecycle before bulk HTML reading;
+- initial desktop/mobile source evidence was captured and opened through managed lifecycle;
 - the complete HTML/CSS/JavaScript was read to EOF;
 - every source page, meaningful state, visible section, and interaction family is inventoried;
 - every discovery packet passed the model-owned review checklist;
@@ -269,14 +261,14 @@ The Agent must calculate the score from the artifact's evidence. Do not use a ch
 Before promoting:
 
 1. reopen the Phase 0 artifact;
-2. read the complete source manifest and reopen every manifest image across all pages and both desktop/mobile in the recorded bounded batches; verify the opened count equals the manifest count rather than reviewing a subset or loading the entire corpus into one turn;
+2. review the complete source manifest and per-image findings; verify the opened count equals the manifest count, reopening only stale or unclear images;
 3. verify every evidence row has a unique path, dimensions, lifecycle run, opened time, and concrete findings;
 4. verify the inventory and contract have identical coverage;
 5. verify score arithmetic and every critical row;
 6. reconcile and reopen `open-gaps.md`;
-7. update and reopen `progress.md` and confirm it names Phase 0's promotion as the sole next action;
-8. write and read back `Decision: Pass` and the promotion lock;
+7. update and reopen `progress.md` and confirm it names Phase 0's promotion as the next planned task;
+8. record `Decision: Pass` and the promotion lock;
 9. set `CURRENT_PHASE.txt` to `phase-1-ui-implementation`;
-10. immediately update `progress.md`, then read `references/phase-1-ui-implementation.md` before implementation.
+10. update `progress.md` and read `references/phase-1-ui-implementation.md` before Phase 1 work.
 
 If any check fails, remain in Phase 0 and continue the loop.

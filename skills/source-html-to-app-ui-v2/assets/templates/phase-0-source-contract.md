@@ -140,7 +140,7 @@ Required: at least `48/50`.
 | --- | --- | --- |
 | Fresh artifacts exist and target implementation remained read-only | Fail | Pending |
 | Target files/build/runtime/dependencies were not inspected before the managed source evidence checkpoint | Fail | Pending |
-| Initial managed source evidence was captured/opened before bulk HTML reading | Fail | Pending |
+| Initial managed desktop/mobile source evidence was captured and opened | Fail | Pending |
 | Complete HTML/CSS/JavaScript was read to EOF | Fail | Pending |
 | Every page/state/section/interaction family is inventoried | Fail | Pending |
 | Every discovery packet passed the model-owned review | Fail | Pending |
@@ -165,7 +165,7 @@ Required: at least `48/50`.
 | Score arithmetic and critical rows independently verified | Pending |
 | `open-gaps.md` reconciled | Pending |
 | `progress.md` updated and reopened | Pending |
-| Marker, phase artifact, progress, and gaps agree on the sole next action | Pending |
+| Marker, phase artifact, progress, and gaps agree on the next planned task | Pending |
 | Next marker/reference identified | Pending |
 
 - Score: `0/50`

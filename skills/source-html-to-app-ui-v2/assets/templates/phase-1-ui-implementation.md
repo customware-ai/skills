@@ -29,7 +29,7 @@
 
 ## Work Packet Ledger
 
-| Packet | Layer | Contract IDs and opened source evidence | Intended owners | UI-only outcome and explicit exclusions | Actual files | Readback/diff proof | Phase/progress/gaps sync proof | Result and sole next action |
+| Packet | Layer | Contract IDs and opened source evidence | Intended owners | UI-only outcome and explicit exclusions | Actual files | Readback/diff proof | Phase/progress/gaps sync proof | Result and next planned task |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
@@ -101,7 +101,7 @@ Required: at least `48/50`.
 | Navigation/assets requirements pass | Fail | Pending |
 | UI-only scope and all shortcut bans pass | Fail | Pending |
 | Every significant packet has readback/diff evidence | Fail | Pending |
-| Phase artifact, progress, and gaps were updated/read back after every packet | Fail | Pending |
+| Phase artifact, progress, and gaps are current and were reviewed before scoring | Fail | Pending |
 | No required placeholder or ordinary implementation gap remains | Fail | Pending |
 
 ## Promotion Lock
@@ -113,7 +113,7 @@ Required: at least `48/50`.
 | Score and critical rows independently verified | Pending |
 | `open-gaps.md` reconciled | Pending |
 | `progress.md` updated | Pending |
-| Marker, Phase 0-1 artifacts, progress, and gaps agree on the sole next action | Pending |
+| Marker, Phase 0-1 artifacts, progress, and gaps agree on the next planned task | Pending |
 | Next marker and references identified | Pending |
 
 - Score: `0/50`

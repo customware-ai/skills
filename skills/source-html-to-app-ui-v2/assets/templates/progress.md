@@ -44,7 +44,7 @@ Do not act from conversation memory. If marker, ledger, gaps, and artifacts disa
 
 ## Current Work Packet
 
-| Owning phase | Contract/evidence scope | Intended owners | Actual changed files | Current evidence IDs | Last readback/review result | Sole next action |
+| Owning phase | Contract/evidence scope | Intended owners | Actual changed files | Current evidence IDs | Last review result | Sole next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
@@ -82,7 +82,7 @@ Record the current small source-target comparison packet. Use one pair for tall 
 
 ## Gate And Invalidation Ledger
 
-| Event | Phase | Evidence invalidated | Marker correction required? | Phase/progress/gaps read back? | Repair/next action |
+| Event | Phase | Evidence invalidated | Marker correction required? | Current artifacts reviewed? | Repair/next action |
 | --- | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | No | Pending |
 

@@ -82,7 +82,7 @@ Review the screenshot corpus in small, readable packets. For tall full-page imag
 3. open the target image;
 4. compare content presence/order, geometry/layout, spacing, typography, color, borders/radii/shadows, backgrounds, controls/assets, clipping/overlap, state, scroll, and responsive behavior;
 5. write the findings, open proof, decision, gaps, and next action to the phase artifact before leaving the packet;
-6. update `progress.md` and `open-gaps.md` after the meaningful comparison packet, then read back the gate-relevant updates.
+6. update `progress.md` and `open-gaps.md` when findings change; review their current state before scoring or resuming work.
 
 For very tall pages, use readable same-framed section pairs plus a full-page overview. Packet discipline protects useful visual attention and resumability without reducing required routes, states, sections, themes, viewports, or screenshots.
 
@@ -132,7 +132,7 @@ Then:
 5. review each pair through the bounded visual-review sequence above;
 6. inspect every measurement/result and record concrete comparison findings;
 7. record mismatches in the Phase 2 artifact and `open-gaps.md`;
-8. update and read back the Phase 2 artifact, `progress.md`, and `open-gaps.md`;
+8. update the Phase 2 artifact, `progress.md`, and `open-gaps.md` as findings change; review their current state before scoring, promotion, or resuming work;
 9. mark every packet-review row `Pass` or `Fail`;
 10. route implementation defects to Phase 1 and verification-script/evidence defects to Phase 2;
 11. repair, recapture invalidated evidence under new revision paths, and repeat the same packet review;
@@ -257,14 +257,14 @@ The Agent calculates the score from artifact evidence. Do not use a checker or p
 
 Before promotion:
 
-1. reopen Phases 0-2, `progress.md`, `open-gaps.md`, and every Phase 2 evidence-ledger row;
-2. reopen every gate-critical pair through bounded pair review, not one bulk image load;
+1. review current Phases 0-2, `progress.md`, `open-gaps.md`, and the Phase 2 evidence-ledger status;
+2. confirm every gate-critical pair has opened findings and current evidence; reopen stale or unclear pairs only;
 3. verify packet reviews, score arithmetic, critical rows, path identity, viewport/framing, reviewed dimensions, freshness, and open findings;
 4. reconcile evidence invalidation and `open-gaps.md`;
-5. update and reopen `progress.md` and confirm promotion is the sole next action;
-6. write and read back `Decision: Pass` and the promotion lock;
+5. update and reopen `progress.md` and confirm promotion is the next planned task;
+6. record `Decision: Pass` and the promotion lock;
 7. set `CURRENT_PHASE.txt` to `phase-3-fidelity-repair-signoff`;
-8. immediately update `progress.md`, then reread this reference and the lifecycle reference.
+8. update `progress.md` and review this reference and the lifecycle reference before Phase 3 work.
 
 If any check fails, remain in Phase 2 and continue the repair loop.
 
@@ -307,7 +307,7 @@ Use one packet per route/state/viewport/theme mismatch group:
 9. mark invalidated evidence rows stale before recapture;
 10. recapture every invalidated target image through managed Playwright under new revisioned paths;
 11. verify viewport/framing, dimensions, and freshness, then reopen each new target against its matching source in readable packets;
-12. update and read back Phase 3, `progress.md`, and `open-gaps.md`;
+12. update Phase 3, `progress.md`, and `open-gaps.md` as findings change; review their current state before scoring, promotion, or resuming work;
 13. complete every packet-review row;
 14. if any row fails, repair and repeat the same packet;
 15. begin another packet only when the current one passes.
@@ -382,14 +382,14 @@ The Agent calculates all three scores from evidence. Do not use a checker or pro
 
 Before promotion:
 
-1. reopen Phases 0-3 and identify invalidated earlier evidence;
-2. reopen all final score-critical pairs and final desktop/mobile evidence through bounded pair review;
+1. review Phases 0-3 and identify invalidated earlier evidence;
+2. confirm final score-critical pairs and desktop/mobile evidence were opened after their latest capture; reopen stale or unclear pairs only;
 3. verify packet reviews, overall/desktop/mobile arithmetic, independent gates, and critical rows;
 4. reconcile `open-gaps.md`;
-5. update and reopen `progress.md` and `open-gaps.md` and confirm promotion is the sole next action;
-6. write and read back `Decision: Pass` and the promotion lock;
+5. update and reopen `progress.md` and `open-gaps.md` and confirm promotion is the next planned task;
+6. record `Decision: Pass` and the promotion lock;
 7. set `CURRENT_PHASE.txt` to `phase-4-final-audit-completion`;
-8. immediately update `progress.md`, then read the Phase 4 reference before final audit work.
+8. update `progress.md` and read the Phase 4 reference before final audit work.
 
 If any check fails, remain in or return to the earliest failing phase. Do not call task completion.
 
