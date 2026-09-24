@@ -1,6 +1,6 @@
 # Phase 0: Source Contract
 
-The approved HTML and design JSON are immutable. Keep target files read-only until this gate passes. A documented source defect may make a source state unreachable; record its failed real-input proof and declarations, then implement and verify the intended state in the target. Every reachable source surface still needs readable desktop/mobile coverage.
+The approved HTML and design JSON are immutable. Keep target files read-only until this gate passes. If source JavaScript or normal input leaves a state unavailable, note that fact and its intended declarations without debugging the source; implement and verify the state in the target. Every reachable source surface still needs readable desktop/mobile coverage.
 
 ## Phase Metadata And Source Boundary
 
@@ -9,7 +9,7 @@ The approved HTML and design JSON are immutable. Keep target files read-only unt
 | Fresh task-workflow scaffold; all five templates, ledgers, spec, and lifecycle helper copied without reusing prior evidence | Pending | Pending |
 | Target implementation, assets, config, packages, build, and tests stayed unchanged and unread | Pending | Pending |
 | Initial managed source URL, desktop/mobile orientation images, and concrete opened findings | Pending | Pending |
-| All declared HTML/CSS/JavaScript surfaces, styles, and handlers inspected | Pending | Pending |
+| UI-relevant HTML/CSS/JavaScript declarations identified for source visuals and intended interactions | Pending | Pending |
 | Source input and design JSON remain byte-identical | Pending | Pending |
 
 ## Source Evidence And Coverage
@@ -23,7 +23,7 @@ Link the concise accepted-image evidence index here. For each accepted/current i
 
 ## Source Defects And Target Requirements
 
-- Proven source defect, failed real-input action, affected declarations, and intended target behavior (or `None`): Pending
+- Source JavaScript error or unavailable UI state and intended target behavior (or `None`): Pending
 - Declared interaction families requiring target verification, including those without a new source appearance: Pending
 - Unreachable visual states requiring complete target screenshots and interaction proof (or `None`): Pending
 
@@ -60,7 +60,7 @@ Required: at least `48/50`. `Unscored` is not a pass or an assessed zero. Score 
 | Fresh artifacts exist, prior evidence was not reused, and target remained unread and unchanged | Pending | Pending |
 | Initial managed desktop/mobile source evidence was captured and opened; all relevant HTML/CSS/JavaScript declarations inspected | Pending | Pending |
 | Every source page/distinct visual state/section and declared interaction family is covered or specifically excluded; lifecycle capture evidence reviewed | Pending | Pending |
-| Every reachable visual item has desktop/mobile and readable section/state evidence; interactions without new appearance have declaration/target-proof ownership; unreachable visual states have defect/declaration proof | Pending | Pending |
+| Every reachable visual item has desktop/mobile and readable section/state evidence; interactions without new appearance have declaration/target-proof ownership; unavailable source states have observed-error-or-state/declaration proof | Pending | Pending |
 | Every accepted/current image was opened with a concrete finding and unique path; capture metadata exists in packet output | Pending | Pending |
 | Browser packets used lifecycle ownership, real input, and no fixed waits | Pending | Pending |
 | Applicable sidebar/drawer/scroll/theme discovery is complete and source versus target scroll contracts are distinct | Pending | Pending |

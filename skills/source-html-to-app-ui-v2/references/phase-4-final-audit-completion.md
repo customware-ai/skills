@@ -18,7 +18,7 @@ Verify once, with evidence pointers in the Phase 4 artifact:
 4. **Code and checks:** inspect the complete target diff and connected owners. It must be source-backed, UI-only, free of source-runtime embedding/wrappers, backend/API/database/persistence/auth/business logic, invented destinations, debug/process workarounds, or weakened checks. Confirm the lifecycle helper is unchanged and the required build/check output is current after final code changes.
 5. **Completion safety:** copy the exact command from the task instructions, without inventing identifiers. Verify that it has not run early and that no implementation, check, browser, comparison, repair, or audit work remains. Put the exact command as the checkpoint's next action only after the final gate passes.
 
-A documented source-defect-unreachable state uses its failed source action and declarations against current, opened target evidence; every reachable source state retains full paired visual proof. Missing/stale proof returns to Phase 2 or 3; implementation defects return to Phase 1. Repass only affected gates and evidence, then audit again.
+A documented source-unavailable state uses its recorded error or unavailable UI and intended declarations against current, opened target evidence; every reachable source state retains full paired visual proof. Missing/stale proof returns to Phase 2 or 3; implementation defects return to Phase 1. Repass only affected gates and evidence, then audit again.
 
 ## Gate
 

@@ -4,7 +4,7 @@ Read this reference when `CURRENT_PHASE.txt` is `phase-2-paired-responsive-proof
 
 ## Shared evidence contract
 
-Build/check, code review, real-input interaction checks, measurements, and opened screenshots prove different claims; none substitutes for another. Capture source and target in separate lifecycle-owned runs. For each reachable source state, pair the same route/state, theme, browser viewport, scroll/section framing, and real-input reach steps. A documented source-defect-unreachable state uses its failed source action and HTML/CSS/handler declarations instead of a fabricated source image; its target state still needs complete screenshots and real-input proof.
+Build/check, code review, real-input interaction checks, measurements, and opened screenshots prove different claims; none substitutes for another. Capture source and target in separate lifecycle-owned runs. For each reachable source state, pair the same route/state, theme, browser viewport, scroll/section framing, and real-input reach steps. A source-unavailable state uses the recorded error or unavailable UI and its HTML/CSS/design declarations instead of a fabricated source image; its target state still needs complete screenshots and real-input proof. Do not reopen source JavaScript diagnostics during target comparison.
 
 Cover every page-like surface, layout-distinct state, readable section, represented theme, desktop/mobile size, relevant tablet and short-height size, and important interaction state. A readable image may cover multiple adjacent sections. Local state changes need the changed area plus context, not duplicate full-page images of unchanged content. Let actual source structure determine evidence volume; no fixed screenshot cap applies.
 

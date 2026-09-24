@@ -16,7 +16,7 @@ Read the skill and relevant references before phase work. Inspecting source inpu
 
 The Agent evaluates this phase itself against the rubric below. Do not create or use a script to validate, score, close, or promote Phase 0. Playwright scripts may discover and capture the source, but they must run through `playwright-lifecycle.mjs` and cannot decide whether the phase passes.
 
-Phase 0 remains unpassed until every source page, distinct visual state, visible section, declared interaction family, represented theme, and required viewport has been identified and covered; capture and open every reachable visual state. Decide the capture plan from the HTML and initial browser view before full capture. One readable image may prove multiple sections, but each section must cite its covering image and finding. A declared interaction whose resulting appearance is already covered needs a target requirement, not another source-browser packet. For a visual state unreachable solely because of a documented source runtime defect, record one failed real-input action and the HTML/CSS/design/handler declarations that define its intended result. One proven initialization failure may explain several later unbound handlers when their order is explicit; do not repeat equivalent no-op probes. Do not fabricate or require a source screenshot of an unreachable state; require the corresponding target evidence later.
+Phase 0 remains unpassed until every source page, distinct visual state, visible section, declared interaction family, represented theme, and required viewport has been identified and covered; capture and open every reachable visual state. Decide the capture plan from the HTML and initial browser view before full capture. One readable image may prove multiple sections, but each section must cite its covering image and finding. A declared interaction whose resulting appearance is already covered needs a target requirement, not another source-browser packet. If source JavaScript fails or normal input does not reveal an intended UI state, note the observed error or unavailable state and its intended HTML/CSS/design declarations, then move on. Do not create a source-error diagnostic packet, trace the exception or handler order, or repeat failed actions. Do not fabricate or require a source screenshot of an unavailable state; require its complete target evidence later.
 
 </phase_authority>
 
@@ -59,7 +59,7 @@ Before the Phase 0 gate, verify declared coverage, lifecycle ownership, real-inp
 
 ## Source Discovery Requirements
 
-Before Phase 0 passes, inspect all relevant approved HTML/CSS/JavaScript declarations, capture and open the initial desktop/mobile orientation, verify full declared and browser-discovered coverage, and score the source contract. These source tasks may occur in any useful tool order. Keep target implementation and assets unchanged until the Phase 0 gate passes. Source browser packets must confirm the exact approved HTML URL, useful content, and proper lifecycle ownership.
+Before Phase 0 passes, inspect approved HTML/CSS and UI-relevant JavaScript declarations for intended visuals and interactions, capture and open the initial desktop/mobile orientation, verify full declared and browser-discovered UI coverage, and score the source contract. These source tasks may occur in any useful tool order. Keep target implementation and assets unchanged until the Phase 0 gate passes. Source browser packets must confirm the exact approved HTML URL, useful content, and proper lifecycle ownership.
 
 ### 1. First Managed Browser Inspection
 
@@ -98,7 +98,7 @@ Use deterministic waits, including visible asset readiness when an image is need
 
 After each successful capture, open every accepted/current image at readable scale in batches of at most four related images. Record one concrete finding per image in the concise evidence index. The opened count must equal the accepted/current image count before scoring; a contact sheet, representative sample, or one viewport is insufficient. Invalidated images remain in runtime evidence with reasons but do not require another passing visual review.
 
-If an image is blank, unsettled, faded, clipped, stale, unreadable, or captures an entrance animation, reach the state through real input and wait for its own visible DOM, geometry, opacity, or transition condition, then recapture it. Do not inject CSS, set opacity/classes, disable animations, or mutate source DOM to manufacture a settled screenshot. If a required locator or section capture fails, fail the packet loudly and diagnose it. Repair and rerun a bad selector or packet; if the approved source itself makes the state unreachable, record the defect and intended design from source declarations instead of changing or repeatedly retrying the source. Assert semantic control/DOM state rather than rendered letter case when CSS text transformation changes capitalization.
+If an image is blank, unsettled, faded, clipped, stale, unreadable, or captures an entrance animation, reach the state through real input and wait for its own visible DOM, geometry, opacity, or transition condition, then recapture it. Do not inject CSS, set opacity/classes, disable animations, or mutate source DOM to manufacture a settled screenshot. If a required locator or section capture fails because of the packet or selector, fail, repair, and rerun that packet. If source JavaScript or its normal UI action fails, record the error or unavailable state and intended design from source declarations; do not debug or repeatedly retry the source. Assert semantic control/DOM state rather than rendered letter case when CSS text transformation changes capitalization.
 
 ### Source Evidence Identity And Inspection
 
@@ -166,10 +166,10 @@ Every critical item must independently pass:
 - old workflow state was removed and fresh artifacts were created;
 - no target implementation/config/package/generated/build/test file changed;
 - initial desktop/mobile source evidence was captured and opened through managed lifecycle;
-- all declared pages, states, sections, styles, and handlers were inspected in the HTML/CSS/JavaScript;
+- all declared pages, states, sections, styles, and intended interaction families were identified from UI-relevant HTML/CSS/JavaScript declarations;
 - every source page, distinct visual state, visible section, and declared interaction family is covered or specifically excluded, with interactions that add no new appearance handed to target verification;
 - every accepted capture packet has lifecycle/runtime proof and reviewed evidence;
-- every reachable distinct visual item has desktop and mobile evidence plus readable section/state evidence where applicable; interactions with no new appearance have a source declaration and target-proof owner; source-defect-unreachable visual states have the failed action and intended source declarations recorded;
+- every reachable distinct visual item has desktop and mobile evidence plus readable section/state evidence where applicable; interactions with no new appearance have a source declaration and target-proof owner; source-unavailable visual states have the observed error or unavailable state and intended source declarations recorded;
 - every accepted/current image was opened and inspected individually or in a readable batch with a per-image finding, and the opened count exactly equals the accepted/current count;
 - custom Playwright scripts contain no fixed waits and ran through lifecycle ownership; any fixed wait is a critical failure;
 - sidebar/drawer/scroll/theme behavior is proved when applicable;
