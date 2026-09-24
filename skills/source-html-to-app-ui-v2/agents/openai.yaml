@@ -1,0 +1,4 @@
+interface:
+  display_name: "Source HTML to App UI V2"
+  short_description: "Reference-driven UI reconstruction workflow"
+  default_prompt: "Use $source-html-to-app-ui to rebuild the approved source HTML design as a real target application, treating source runtime defects as non-blocking reference findings."
