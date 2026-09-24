@@ -1,6 +1,6 @@
 # Phase 3: Fidelity Repair And Signoff
 
-Keep full paired screenshot coverage for reachable source states. A documented source-defect-unreachable state uses its source declarations and failed action in place of an unavailable source image; its target visual and interaction evidence remains mandatory.
+Keep full readable paired screenshot coverage for reachable source states and sections. A pair may cover several sections when each is legible at matching useful framing; cite one image identity rather than duplicating captures. A documented source-defect-unreachable state uses its source declarations and failed action in place of an unavailable source image; its target visual and interaction evidence remains mandatory.
 
 ## Phase Metadata And Entry Gate
 

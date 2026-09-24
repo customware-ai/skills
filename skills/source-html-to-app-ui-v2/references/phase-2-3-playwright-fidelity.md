@@ -37,9 +37,9 @@ Required coverage:
 
 | Coverage | Source evidence | Target evidence |
 | --- | --- | --- |
-| Every route/state | full-page or full-view | matching full-page or full-view |
-| Every visible section | readable section image | matching readable section image |
-| Every visible interaction state | state image when appearance changes | matching state image |
+| Every page-like surface and layout-distinct state | full-page or full-view | matching full-page or full-view |
+| Every visible section | readable evidence covering the section, shared with adjacent sections when all are legible | matching readable evidence with the same useful framing |
+| Every local interaction state | changed area with enough context when appearance changes | matching changed area and context |
 | Desktop | represented and standard desktop | matching target pair |
 | Tablet | represented or conservative adaptation authority | matching target pair |
 | Mobile | represented and target-safe mobile | matching target pair |
@@ -69,7 +69,7 @@ Every source-target comparison row must have a stable evidence ID and record:
 | Visual findings | concrete findings for every required comparison category |
 | Decision | `Pass`, or a mismatch ID with owner and next repair |
 
-File existence, a screenshot count, a manifest path, or a blanket statement that all images were opened does not satisfy this contract. One path may represent exactly one image identity. An overwrite or conflicting identity mapping invalidates every affected row and requires new uniquely named captures. An unchanged source image may be cited by a later target-repair comparison only when its identity/framing remains exact and that reuse is explicit in the ledger.
+File existence, a screenshot count, a manifest path, or a blanket statement that all images were opened does not satisfy this contract. One path represents exactly one image identity; several section rows may cite it when each section is readable in that image. An overwrite or conflicting identity mapping invalidates every affected row and requires new uniquely named captures. An unchanged source image may be cited by a later target-repair comparison only when its identity/framing remains exact and that reuse is explicit in the ledger.
 
 Use names that encode side, route/state, theme, viewport, section/full-view identity, and revision. Before opening a pair, verify both files exist, paths are distinct, browser viewports/framing intent match, actual image dimensions are recorded, and target freshness is valid. Continue the comparison when full-page heights differ; record that difference as layout evidence.
 
@@ -239,7 +239,7 @@ Every critical item must independently pass:
 
 - every verification packet passed the model-owned review checklist;
 - integrity, UI-only scope, and required checks/build pass;
-- every contracted reachable source route/state has matching opened full-view evidence, while source-defect-unreachable states have opened target evidence and a documented source declaration;
+- every contracted reachable page-like surface and layout-distinct state has matching opened full-view evidence, every local visual state has matching focused evidence with context, and source-defect-unreachable states have opened target evidence and a documented source declaration;
 - every reachable source section has matching opened readable section evidence, while unavailable source sections are documented and verified in the target;
 - every evidence row has distinct source/target paths mapped to the correct image identities, matching browser viewport/framing, reviewed image-dimension differences, current capture times, and separate source/target open findings;
 - no objective blank/black block, omission, clipping, collision, unreadable content, or gross layout/style mismatch remains;

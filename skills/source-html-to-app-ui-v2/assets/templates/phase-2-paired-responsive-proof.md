@@ -1,6 +1,6 @@
 # Phase 2: Paired Responsive Proof
 
-Pair every reachable source state and section with target screenshots. For a documented source-defect-unreachable state, use its failed action and source declarations in the source-evidence cells, with complete opened target screenshots and real-input proof. This is the only exception to paired-source-image rows.
+Pair every reachable source state and section with readable target evidence at matching useful framing. A single opened source-target pair may cover several listed sections when each is legible; list each covered section without inventing another image identity. For a documented source-defect-unreachable state, use its failed action and source declarations in the source-evidence cells, with complete opened target screenshots and real-input proof. This is the only exception to paired-source-image rows.
 
 ## Phase Metadata And Entry Gate
 
@@ -39,7 +39,7 @@ Pair every reachable source state and section with target screenshots. For a doc
 
 ## Evidence Identity And Integrity Ledger
 
-Keep every source-target full-view and same-framed section pair traceable through rows here or a linked complete manifest. Every path maps to one side, identity, and revision. Record the evidence packet before visual scoring.
+Keep every source-target full-view and same-framed section pair traceable through rows here or a linked complete manifest. Every path maps to one side, identity, and revision; several covered sections may cite that same image identity. Record the evidence packet before visual scoring.
 
 | Evidence ID | Route/state/theme | Browser viewport width x height | Scroll/section framing | Source unique path/revision | Target unique path/revision | Actual source/target image dimensions and difference review | Source/target capture time and lifecycle run | Target newer than invalidating change? | Source opened/result | Target opened/result | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
