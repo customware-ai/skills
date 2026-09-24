@@ -27,6 +27,8 @@ This is an end-to-end implementation workflow, not optional advice. A passing ph
 
 The Agent owns every gate. Browser scripts collect evidence; the Agent reviews the evidence, scores the phase, repairs failures, and promotes the marker. A failed packet requires inspection and repair; rerun through the managed lifecycle only when the image, browser result, or provenance remains invalid or missing. A procedural mistake does not erase valid work, but an unproven gate cannot pass until its missing evidence is completed.
 
+Complete the required coverage promptly: thoroughness means proving each distinct requirement, not capturing every transition or repeating a valid check. Use the existing evidence, runtime logs, and compact checkpoint before repeating work; beyond required boundary/resume reads and the focused packet review, do not add workflow reads or checks that answer no unresolved question.
+
 After compaction, resume, retry, reconnect, or a new session, read this skill, the compact `progress.md` checkpoint, current marker and phase reference/artifact, open gaps, and only the linked evidence and input excerpts needed for the next action. Never rely on conversation memory or an old `Pass` label as proof.
 
 </execution_contract>
