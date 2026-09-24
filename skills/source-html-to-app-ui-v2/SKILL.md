@@ -25,7 +25,7 @@ The approved HTML and design JSON are immutable reference inputs. Never patch ei
 
 This is an end-to-end implementation workflow, not optional advice. A passing phase unlocks the next phase; it is not a successful stopping point. Do not stop after source discovery, Phase 0, target research, implementation, or a partial verification run. If the next phase is locally unblocked, continue into it automatically. The task is not complete until Phase 4 passes and the exact task-completion command has run successfully.
 
-The Agent owns every gate. Browser scripts collect evidence; the Agent reviews the evidence, scores the phase, repairs failures, and promotes the marker. A failed packet requires inspection, repair, and a managed rerun of the affected evidence. A procedural mistake does not erase valid work, but an unproven gate cannot pass until its missing evidence is completed.
+The Agent owns every gate. Browser scripts collect evidence; the Agent reviews the evidence, scores the phase, repairs failures, and promotes the marker. A failed packet requires inspection and repair; rerun through the managed lifecycle only when the image, browser result, or provenance remains invalid or missing. A procedural mistake does not erase valid work, but an unproven gate cannot pass until its missing evidence is completed.
 
 After compaction, resume, retry, reconnect, or a new session, read this skill, the compact `progress.md` checkpoint, current marker and phase reference/artifact, open gaps, and only the linked evidence and input excerpts needed for the next action. Never rely on conversation memory or an old `Pass` label as proof.
 
@@ -77,7 +77,7 @@ There is no exploratory-browser exception. A selector check, animation diagnosis
 
 The first lifecycle packet is also the only browser-availability check. Never inspect `/ms-playwright`, `~/Library/Caches/ms-playwright`, `node_modules/playwright-core`, `browsers.json`, executable paths, browser revisions, `.runtime.logs`, or process/port state to decide whether Playwright works. Never use `ls`, `find`, `cat`, `ps`, `lsof`, or a package/runtime probe for that purpose. Invoke the real helper packet; if it fails, inspect only the helper-owned runtime output and repair the packet or bounded invocation. These inspections cannot substitute for a managed browser packet.
 
-Before invoking the helper, review the current custom packet for the exact URL, required assertions, and prohibited fixed waits. A focused diff or targeted read is sufficient after an edit when it covers the changed behavior; a full read is useful when the packet is new or substantially rewritten. Record the review in the packet or phase artifact. No particular tool-call order is required. A packet is invalid and must not be run if it contains `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, arbitrary polling/timer code used to settle the UI, or a catch/fallback that suppresses a browser wait, navigation, screenshot, console, page-error, or assertion failure. Browser packets must fail loudly: never use `.catch(() => ...)`, broad `try/catch`, ignored promises, or optional fall-through to continue after required browser work fails. Replace timer settling with a visible-state, URL, DOM, response, or geometry condition such as `locator.waitFor`, `waitForSelector`, `waitForURL`, `waitForResponse`, or an assertion. This is a model-owned packet check, not a scoring script; a packet with a prohibited construct cannot supply passing evidence; correct and rerun that packet before scoring.
+Before invoking the helper, review the current custom packet for the exact URL, required assertions, and prohibited fixed waits. A focused diff or targeted read is sufficient after an edit when it covers the changed behavior; a full read is useful when the packet is new or substantially rewritten. The code review itself suffices; record a failure or repair, not a duplicate review row. No particular tool-call order is required. A packet is invalid and must not be run if it contains `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, arbitrary polling/timer code used to settle the UI, or a catch/fallback that suppresses a browser wait, navigation, screenshot, console, page-error, or assertion failure. Browser packets must fail loudly: never use `.catch(() => ...)`, broad `try/catch`, ignored promises, or optional fall-through to continue after required browser work fails. Replace timer settling with a visible-state, URL, DOM, response, or geometry condition such as `locator.waitFor`, `waitForSelector`, `waitForURL`, `waitForResponse`, or an assertion. This is a model-owned packet check, not a scoring script; a packet with a prohibited construct cannot supply passing evidence; correct and rerun that packet before scoring.
 
 The Agent owns each gate. A phase gate is an evidence-backed self-review: inspect the work, calculate the score honestly, identify weak rows, repair them, refresh invalidated evidence, and rescore. A failed gate is a repair loop, not a report to the user. Process details may vary with the task when coverage, evidence quality, and the required outcome remain intact.
 
@@ -96,7 +96,7 @@ Promote only from the current artifacts, opened evidence, readbacks, and actual 
 | Phase | Marker | Owns | Gate | Outcome |
 | --- | --- | --- | ---: | --- |
 | 0 | `phase-0-source-contract` | fresh artifacts, managed visual discovery, declared-interaction inventory, source/design handoff, reproduction contract | `48/50` | every distinct source visual state is evidenced and every declared interaction is handed to target work |
-| 1 | `phase-1-ui-implementation` | target research, owner mapping, and ordered target-native implementation in reviewed packets | `48/50` | every contracted route/state/section/interaction has a real target owner and authored target UI |
+| 1 | `phase-1-ui-implementation` | target research and cohesive target-native implementation, with code/diff and current checks as proof | `48/50` | every declared route/state/section/interaction has a real target owner and authored target UI |
 | 2 | `phase-2-paired-responsive-proof` | code integrity, checks/build, paired source-target Playwright proof | `48/50` | responsive, theme, scroll, sidebar, drawer, and paired evidence pass |
 | 3 | `phase-3-fidelity-repair-signoff` | section comparison, mismatch repair, adversarial checks, real-input proof | `49/50`; desktop/mobile `48/50` each | one-to-one visual and behavioral signoff |
 | 4 | `phase-4-final-audit-completion` | artifact integrity, current evidence, final diff, completion lock | exactly `50/50` | every gate remains valid and completion is unlocked |
@@ -107,18 +107,13 @@ Keep work in the phase that owns it. Each phase has different work; do not use a
 
 ## Phase Gate Loop
 
-Run this loop for every phase:
+For each phase:
 
-1. Set `task-workflow/CURRENT_PHASE.txt` to the phase marker before phase work begins.
-2. Read this file and the mapped reference at phase boundaries or on resume; use the current artifact, checkpoint, and open gaps to select the next packet.
-3. Define a bounded work or evidence packet by its script or changed files and expected proof. Do not create a separate packet dossier or command table.
-4. Perform only that packet, using the required real inputs and managed Playwright lifecycle.
-5. Inspect changed files and generated artifacts; open each accepted/current packet image at readable scale and record one concrete finding per image before scoring it.
-6. Reconcile browser findings, source declarations, target code, evidence identity, and gap ownership.
-7. Record phase evidence and actual unresolved gaps. Update `progress.md` only after a meaningful packet completes or fails, the next action changes, or a phase changes; never after each tool call. Review current state before scoring, promotion, or resume.
-8. Score every rubric row from concrete evidence and evaluate every critical item independently.
-9. On failure, keep the marker on the phase, record the earliest repair, fix it, refresh only invalidated evidence, and resume from the checkpoint.
-10. On pass, review the current artifact trail, verify arithmetic and evidence, record promotion, and load the next reference before that phase's work.
+1. Set `task-workflow/CURRENT_PHASE.txt` before phase work; read this skill and that phase's reference at the boundary or on resume.
+2. Work in cohesive code slices and bounded lifecycle-owned browser capture groups. The script/code and its output/diff define the work; do not maintain a separate packet dossier, command table, or per-action review row.
+3. Inspect changed code and focused diffs. Open every accepted/current browser image at readable scale and record its concrete finding once in the owning evidence index. Keep objective metadata in packet output or a machine-readable manifest.
+4. Record actual unresolved gaps. Update `progress.md` only when a meaningful group completes or fails, the next action changes, or a phase changes—not after each tool call.
+5. At the phase gate, score each weighted rubric row once from current evidence and evaluate every critical item independently. On failure, repair the earliest owning defect and refresh only invalidated evidence. On pass, record the decision and promote to the next phase.
 
 The marker, phase artifact, checkpoint, open gaps, evidence, and actual files must agree on the current phase, unresolved failures, and next action; they need not repeat the same event or facts. `CURRENT_PHASE.txt` and `progress.md` are resume pointers, not proof.
 
@@ -249,7 +244,7 @@ Before completion, verify that:
 
 1. `CURRENT_PHASE.txt` is `phase-4-final-audit-completion`;
 2. every phase artifact says `Decision: Pass` at its required threshold;
-3. every critical row, packet review, promotion lock, and gap row has concrete current evidence;
+3. every critical item, promotion lock, and actual unresolved gap has concrete current evidence;
 4. every cited image exists and was opened, with a matching source-target comparison for reachable source states or a documented source-defect/declaration-to-target comparison for unreachable source states;
 5. final desktop/mobile/section/sidebar/drawer evidence represents final target code;
 6. the final diff is UI-only and all required checks/build evidence remains current;

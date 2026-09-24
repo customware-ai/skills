@@ -1,227 +1,36 @@
-# Phases 2-3: Paired Playwright Fidelity
+# Phases 2–3: Paired Playwright Fidelity
 
-This reference is mandatory whenever `CURRENT_PHASE.txt` equals `phase-2-paired-responsive-proof` or `phase-3-fidelity-repair-signoff`.
+Read this reference when `CURRENT_PHASE.txt` is `phase-2-paired-responsive-proof` or `phase-3-fidelity-repair-signoff`. Read `references/playwright-lifecycle.md` for all browser/server work.
 
-## Shared Verification Authority
+## Shared evidence contract
 
-<shared_verification_authority>
+Build/check, code review, real-input interaction checks, measurements, and opened screenshots prove different claims; none substitutes for another. Capture source and target in separate lifecycle-owned runs. For each reachable source state, pair the same route/state, theme, browser viewport, scroll/section framing, and real-input reach steps. A documented source-defect-unreachable state uses its failed source action and HTML/CSS/handler declarations instead of a fabricated source image; its target state still needs complete screenshots and real-input proof.
 
-Playwright is the primary proof system for Phases 2 and 3. Build, check, code review, DOM inspection, geometry measurements, and screenshots support different claims; none substitutes for another.
+Cover every page-like surface, layout-distinct state, readable section, represented theme, desktop/mobile size, relevant tablet and short-height size, and important interaction state. A readable image may cover multiple adjacent sections. Local state changes need the changed area plus context, not duplicate full-page images of unchanged content. Let actual source structure determine evidence volume; no fixed screenshot cap applies.
 
-The required proof is paired and visual:
+Give each image a unique ID/path; never overwrite a prior revision. Keep objective identity, viewport, actual dimensions, capture time, lifecycle run, freshness, and invalidation status in packet output or one machine-readable manifest. Keep one concise comparison index keyed by accepted/current pair ID with source/target paths, separate opened findings, concrete visual comparison, and mismatch or pass decision. Do not duplicate the same pair in full-view, section, packet-review, and final matrices. Failed/invalidated images remain in runtime evidence with reasons, but are not counted as the passing corpus.
 
-```text
-same route + same state + same theme + same viewport + same scroll/section framing
-source evidence  <->  target evidence
-```
+Open every accepted/current source and target image separately at readable scale, one very tall pair or up to four related smaller images per review. Verify pair identity, dimensions/framing, lifecycle ownership, and target freshness. Compare content/order, geometry, spacing, typography, colors, borders/radii/shadows, backgrounds, controls/assets, clipping/overlap, state, scroll, theme, and responsive behavior. Record one concrete finding per image and a pair conclusion. A manifest, contact sheet, or representative sample alone is not visual proof. Capture scripts collect evidence; the Agent judges scores and gaps. Do not write scoring, packet-permit, or promotion scripts.
 
-The Agent plans, reviews, and scores these phases directly from opened source-target images, browser measurements, real-input results, code/diff evidence, lifecycle logs, and phase artifacts. Do not create or use scripts for packet review, phase scoring, closeout, or promotion. Custom Playwright scripts collect evidence; they never decide whether a phase passes.
+After a meaningful capture group, update only its accepted pair findings and actual unresolved gaps. Update the compact checkpoint only when the next action or phase changes. Repair the affected script/code and recapture only evidence invalidated by that change, then reopen the replacement images. Do not copy runtime commands or metadata into Markdown tables. If an image is visually valid but a recoverable metadata field is missing, reconstruct it from the actual image/runtime record; recapture only if image validity or provenance cannot be established.
 
-Base visual signoff on opened source-target pairs and concrete findings. The sole exception is a state that the approved source cannot render because of a documented source runtime defect: its row must cite the failed real-input action, source declarations, and complete opened target evidence instead of a nonexistent source screenshot. This exception applies to the paired-evidence tables, packet checks, scores, and promotion locks below; it does not reduce coverage for reachable source states. Otherwise, target-only screenshots or an unsupported "looks correct" claim leave the gate incomplete and send the work back through the comparison-and-repair loop.
+## Phase 2: Responsive proof
 
-</shared_verification_authority>
+Enter Phase 2 only when Phases 0–1 pass at `48/50` or higher and target code is current. Inspect the complete target diff for real routes/components/local state, UI-only scope, source-backed assets, structural shell, and unchanged lifecycle helper. Use the task's exact target checks/build; reuse Phase 1 output only if no later code changed, otherwise rerun and retain complete output. A green build cannot compensate for missing visual evidence.
 
-## Shared Paired-Evidence Contract
+Run focused, lifecycle-owned source and target capture scripts sequentially; do not keep both servers alive manually. Use real controls, not evaluated DOM mutation, to reach states. For every accepted pair, review images and record findings in the one comparison index. Record mismatches with owner and next repair in `open-gaps.md`; implementation defects return to Phase 1, evidence-script defects remain in Phase 2.
 
-<paired_evidence_contract>
+Prove desktop, tablet when relevant, mobile, and short-height overflow. Inspect overlap, clipping/cutoff, horizontal canvas overflow, control usability, theme and visible interaction states. When a sidebar exists, use real scrolling with pre/post screenshots and current target metrics. Compute and record once:
 
-Every reachable source-target pair must use identical:
+- target document scroll delta `= 0`;
+- target named content-scroller delta `> 0`;
+- absolute sidebar top and bottom deltas `<= 1px`;
+- sidebar height and bottom within `1px` of viewport height;
+- no blank lower-sidebar region in the opened post-scroll image.
 
-- route/state identity and real-input reach steps;
-- viewport width and height;
-- theme;
-- scroll position or interaction state;
-- section boundary and framing intent.
+Source metrics describe the reference, not a substitute for target predicates. If a target predicate fails, return to Phase 1 for shell repair and recapture affected target proof. When a mobile drawer exists, prove real-input open/close, full-height geometry, overlay interception, body/document scroll lock and restoration, with opened images and measurements.
 
-Required coverage:
-
-| Coverage | Source evidence | Target evidence |
-| --- | --- | --- |
-| Every page-like surface and layout-distinct state | full-page or full-view | matching full-page or full-view |
-| Every visible section | readable evidence covering the section, shared with adjacent sections when all are legible | matching readable evidence with the same useful framing |
-| Every local interaction state | changed area with enough context when appearance changes | matching changed area and context |
-| Desktop | represented and standard desktop | matching target pair |
-| Tablet | represented or conservative adaptation authority | matching target pair |
-| Mobile | represented and target-safe mobile | matching target pair |
-| Short-height desktop | pre/post-scroll when sidebar exists | matching images plus geometry |
-| Themes | every source theme | matching and required derived target theme |
-
-Open every gate-critical image after capture. A filename or manifest row is inventory, not proof.
-
-For every section compare presence/order, geometry, spacing, typography, colors, borders, radii, shadows, backgrounds, copy, labels, controls, icons, logos, imagery, state, overflow, responsive transformation, and theme behavior. Record specific mismatches, not "minor differences."
-
-</paired_evidence_contract>
-
-## Evidence Identity, Freshness, And Inspection Contract
-
-<evidence_integrity_contract>
-
-Every source-target comparison row must have a stable evidence ID and record:
-
-| Required field | Passing evidence |
-| --- | --- |
-| Identity | route, state, theme, viewport width/height, scroll/section framing, side, and revision |
-| Unique paths | distinct source and target paths; neither path is used by another identity or revision |
-| Dimensions | matching browser viewport plus actual source/target image dimensions; explain and repair material full-page or section-size differences |
-| Capture ownership | exact lifecycle run and capture time for each side |
-| Freshness | target capture occurred after the latest code change affecting that row |
-| Open proof | separate source-opened and target-opened entries after the latest capture |
-| Visual findings | concrete findings for every required comparison category |
-| Decision | `Pass`, or a mismatch ID with owner and next repair |
-
-File existence, a screenshot count, a manifest path, or a blanket statement that all images were opened does not satisfy this contract. One path represents exactly one image identity; several section rows may cite it when each section is readable in that image. An overwrite or conflicting identity mapping invalidates every affected row and requires new uniquely named captures. An unchanged source image may be cited by a later target-repair comparison only when its identity/framing remains exact and that reuse is explicit in the ledger.
-
-Use stable unique paths and record side, route/state, theme, viewport, section/full-view identity, and revision in the evidence manifest. A filename need not repeat every identity field; do not rename an already opened source image merely to expand its name. Before opening a pair, verify both files exist, paths are distinct, browser viewports/framing intent match, actual image dimensions are recorded, and target freshness is valid. Continue the comparison when full-page heights differ; record that difference as layout evidence.
-
-### Bounded Visual Review
-
-Review the screenshot corpus in small, readable packets. For tall full-page images, use one source-target pair at a time; for smaller section images, a compact related batch is acceptable:
-
-1. verify identity, viewport/framing, actual dimensions, lifecycle ownership, and freshness;
-2. open the source image;
-3. open the target image;
-4. compare content presence/order, geometry/layout, spacing, typography, color, borders/radii/shadows, backgrounds, controls/assets, clipping/overlap, state, scroll, and responsive behavior;
-5. write the findings, open proof, decision, gaps, and next action to the phase artifact before leaving the packet;
-6. update the checkpoint when the next action changes and open gaps for actual unresolved findings; review their current state before scoring or resuming work.
-
-For very tall pages, use readable same-framed section pairs plus a full-page overview. Packet discipline protects useful visual attention and resumability without reducing required routes, states, sections, themes, viewports, or screenshots.
-
-Blank or black blocks, omitted branding/content, clipped actions, wrong colors, text collisions, unreadable text, incorrect section order, or visibly wrong shell/sidebar/drawer geometry are automatic mismatches. A row containing one of these cannot receive visual-fidelity points until repaired, recaptured, and reopened.
-
-</evidence_integrity_contract>
-
-## Phase 2: Paired Responsive Proof
-
-<phase_2_protocol>
-
-### Phase 2 Authority
-
-Phase 2 proves the implementation is structurally legitimate, passes required repo checks, and behaves safely across matching source-target viewport/state pairs. It is not a shallow build/check phase.
-
-Missing implementation belongs to Phase 1. If Phase 2 finds a Phase 1 contract failure, move the marker and artifacts back to Phase 1, repair and repass Phase 1, then re-enter Phase 2. Do not hide implementation repair inside a later gate.
-
-### Entry Conditions
-
-Before Phase 2 work:
-
-- `CURRENT_PHASE.txt` says `phase-2-paired-responsive-proof`;
-- Phases 0 and 1 say `Decision: Pass` and score at least `48/50`;
-- the source corpus, reproduction contract, implementation mapping, and target diff are current;
-- the Agent has reread `SKILL.md`, this reference, the lifecycle reference, Phase 2's artifact, `progress.md`, and `open-gaps.md`;
-- the first verification packet is recorded before capture or checks.
-
-If any condition fails, repair the earliest owning phase before continuing.
-
-### Model-Owned Verification Packet Loop
-
-Use small packets grouped by one route/state family and viewport/theme set. Before each packet, record:
-
-- relevant HTML declarations, accepted source evidence, and target-specific handoff;
-- exact source and target reach steps;
-- matching viewport, theme, state, scroll, and section framing;
-- custom source/target Playwright script paths; runtime logs retain commands;
-- checks, images, and measurements the packet must produce;
-- the one expected review decision after evidence capture.
-
-Then:
-
-1. inspect relevant code and focused diff;
-2. run only required checks owned by the packet or Phase 2 checkpoint;
-3. capture matching source and target evidence through separate lifecycle-owned runs using unique revisioned paths;
-4. verify every pair's path identity, matching browser viewport/framing, recorded actual dimensions, lifecycle ownership, and freshness;
-5. review each pair through the bounded visual-review sequence above;
-6. inspect every measurement/result and record concrete comparison findings;
-7. record mismatches in the Phase 2 artifact and `open-gaps.md`;
-8. update the Phase 2 artifact for evidence, open gaps for unresolved findings, and the checkpoint only when the next action or phase changes; review current state before scoring, promotion, or resume;
-9. mark every packet-review row `Pass` or `Fail`;
-10. route implementation defects to Phase 1 and verification-script/evidence defects to Phase 2;
-11. repair, recapture invalidated evidence under new revision paths, and repeat the same packet review;
-12. begin the next packet only when every row passes.
-
-### Verification Packet Review Checklist
-
-| Required review | Pass condition |
-| --- | --- |
-| Pair identity | route/state/theme/viewport/scroll/section framing matches |
-| Coverage | every contracted full view, section, and visible state is included |
-| Lifecycle ownership | separate unchanged-helper source/target runs passed |
-| Visual inspection | every cited image was opened after its latest capture |
-| Evidence integrity | identity-safe paths, matching browser viewport/framing, reviewed dimensions, capture times, freshness, and separate open proof pass |
-| Objective fidelity | no blank/black block, omission, clipping, collision, unreadable content, or gross style/layout mismatch remains |
-| Geometry/safety | overlap, clipping, overflow, scroll ownership, and usability were measured |
-| Real input | visible interactions use actual controls on desktop/mobile |
-| Code integrity | target-native UI and UI-only scope remain intact |
-| Freshness | evidence is newer than every invalidating change |
-| Artifact synchronization | Phase 2 evidence, checkpoint, and open gaps agree on the current phase, unresolved failures, and next action |
-| Gap ledger | each mismatch has the correct owner and next repair |
-
-This checklist is an Agent review recorded in the Phase 2 artifact, never a script result.
-
-### Integrity And Repo Checkpoint
-
-Inspect code and the complete target diff for authored target-native routes/components/local state, full contract ownership, correct shell/sidebar/content overflow structure, no source runtime dependency, no forbidden wrapper/raw injection, no backend/API/database/auth/business changes, and no warning/config suppression.
-
-Run task-required checks and relevant package scripts in their required order. Capture complete output. On failure, inspect all issue groups, repair locally owned failures, and rerun only after evidence can change. A green build cannot raise visual scores.
-
-### Managed Paired Browser Runs
-
-Use separate helper-owned source and target commands:
-
-```bash
-node task-workflow/scripts/playwright-lifecycle.mjs \
-  --server "<source server command>" \
-  --ready-url "<source ready URL>" \
-  --runtime-dir task-workflow/runtime/source \
-  --run "node task-workflow/source-playwright/<script>.mjs" \
-  --ready-timeout-ms 15000 \
-  --command-timeout-ms 20000
-```
-
-```bash
-node task-workflow/scripts/playwright-lifecycle.mjs \
-  --server "<target server command>" \
-  --ready-url "<target ready URL>" \
-  --runtime-dir task-workflow/runtime/target \
-  --run "node task-workflow/target-playwright/<script>.mjs" \
-  --ready-timeout-ms 15000 \
-  --command-timeout-ms 20000
-```
-
-Use discovered commands; never copy placeholders literally.
-
-Run these sequentially. The source helper owns and stops the source server; the target helper owns and stops the target server. Compare saved images afterward. Do not manually keep both servers alive, use `lsof` to hunt processes, or replace this sequence with a dual-background-server command. Run equivalent focused source and target interaction packets only when the source interaction produces a distinct visual result needed for comparison. For interactions whose source appearance is already covered or is unreachable due to the recorded defect, use the Phase 0 declaration and require real-input target proof; do not recreate Phase 0's exhaustive source-behavior testing here.
-
-### Responsive, Sidebar, And Drawer Proof
-
-At minimum prove desktop, tablet, mobile, and relevant short-height desktop. Record overlap, clipping/cutoff, horizontal canvas overflow, document/content scroll ownership, control usability, and paired images for each.
-
-When a sidebar exists, force overflow at a short desktop height and prove:
-
-| Proof | Pass condition |
-| --- | --- |
-| Document ownership | document scroll position remains unchanged |
-| Content ownership | content scroll position increases |
-| Sidebar stability | sidebar top/bottom bounds remain stable |
-| Viewport coverage | shell and sidebar cover viewport height |
-| Visual continuity | post-scroll target has no blank lower-sidebar region |
-
-Sticky positioning or a normal-height screenshot alone is not proof.
-
-Record the raw measurements from each side in separate columns, then calculate the target predicates explicitly:
-
-| Target calculation | Pass predicate |
-| --- | --- |
-| Document delta | `targetDocAfter - targetDocBefore = 0` |
-| Content delta | `targetContentAfter - targetContentBefore > 0` |
-| Sidebar top delta | absolute delta `<= 1px` |
-| Sidebar bottom delta | absolute delta `<= 1px` |
-| Viewport coverage | sidebar height and bottom equal viewport height within `1px` |
-
-Read target values from the target manifest and source values from the source manifest. Copy the numbers verbatim before scoring. If a field is missing, an image contradicts the numbers, or any target predicate fails, mark the sidebar proof `Fail`, add the mismatch to `open-gaps.md`, return to Phase 1 for the shell repair, and recapture both target screenshots and measurements. Source behavior is comparison context and cannot satisfy a target predicate.
-
-When a mobile drawer exists, prove real-input open/close, full-height geometry, overlay/background interception, body/document lock, restored scrolling, and opened open/closed screenshots.
-
-### Phase 2 Model Gate
+### Phase 2 gate
 
 | Category | Points |
 | --- | ---: |
@@ -233,124 +42,21 @@ When a mobile drawer exists, prove real-input open/close, full-height geometry, 
 | Theme and interaction-state proof | 6 |
 | **Total** | **50** |
 
-Required score: at least `48/50`.
+Required: at least `48/50`. Every critical item independently passes: current checks/build and UI-only code integrity; managed lifecycle and deterministic waits; all reachable full views, distinct states and readable sections have current opened pairs; source-defect-unreachable states have declaration-to-target proof; every accepted pair has unique paths, matching viewport/framing, reviewed dimensions, separate opened findings and current target capture; no blank, omitted, clipped, colliding, unreadable, or grossly mismatched UI remains; responsive/theme and real-input states pass; applicable sidebar/drawer predicates pass; no unresolved Phase 2 gap remains. Score once from the current evidence and critical rows, not per-capture paperwork.
 
-Every critical item must independently pass:
+On pass, record `Decision: Pass` with evidence pointers, promote the marker to `phase-3-fidelity-repair-signoff`, and update the checkpoint. On failure, repair the owning phase and refresh only invalidated evidence.
 
-- every verification packet passed the model-owned review checklist;
-- integrity, UI-only scope, and required checks/build pass;
-- every contracted reachable page-like surface and layout-distinct state has matching opened full-view evidence, every local visual state has matching focused evidence with context, and source-defect-unreachable states have opened target evidence and a documented source declaration;
-- every reachable source section has matching opened readable section evidence, while unavailable source sections are documented and verified in the target;
-- every evidence row has distinct source/target paths mapped to the correct image identities, matching browser viewport/framing, reviewed image-dimension differences, current capture times, and separate source/target open findings;
-- no objective blank/black block, omission, clipping, collision, unreadable content, or gross layout/style mismatch remains;
-- desktop, tablet, mobile, and relevant short-height rows pass;
-- sidebar and drawer proof passes when applicable;
-- sidebar proof contains verbatim target before/after metrics, explicit deltas, and all target predicates pass;
-- themes and important real-input states pass;
-- lifecycle and fixed-wait audits pass;
-- evidence is current after the last invalidating change;
-- comparison gaps are concrete and no ordinary Phase 2 gap remains open.
+## Phase 3: Fidelity repair and signoff
 
-The Agent calculates the score from artifact evidence. Do not use a checker or promotion script. If any critical item fails or the score is below `48/50`, keep the marker on Phase 2, repair the earliest failure, refresh invalidated evidence, and rescore.
+Enter only when Phases 0–2 pass and the Phase 2 pair corpus and checks remain current. Phase 3 compares and repairs the actual visual and behavioral differences. Review each current pair and section at readable scale, name concrete mismatches, prioritize affected groups, inspect the owning code/diff, repair, and recapture only invalidated target images under new paths. Reopen the new target against its matching source before closing a mismatch; a capture alone does not establish a pass. Keep only unresolved gaps in `open-gaps.md`, with resolution evidence in the existing comparison index/runtime history.
 
-### Promotion Lock
+Actively challenge shell/sidebar height, section presence/order, typography, spacing/grid, theme, mobile overflow/drawer, controls, route/state content, and other actual risks. Record genuine suspected mismatches and their fix or source-backed defense; do not invent a fixed number to fill a table. Recompute current sidebar predicates from target metrics when applicable; a prior `Pass` label is not proof. Exercise every visible interaction family through real desktop/mobile controls when present and record expected/actual state with current evidence.
 
-Before promotion:
+Before signoff, ensure a current, opened desktop and mobile pair for every route and meaningful state, plus readable section/state evidence. Reuse a Phase 2 pair if it is still current after all relevant code changes; do not recapture or duplicate it merely to label it “final.” Do not overwrite generic final filenames. Inspect the final target diff and current build/check result; rerun invalidated checks. Independently pass layout, style, route, state, section, interaction, desktop, mobile, responsive, scroll/sidebar, drawer, and theme fidelity.
 
-1. review current Phases 0-2, `progress.md`, `open-gaps.md`, and the Phase 2 evidence-ledger status;
-2. confirm every gate-critical pair has opened findings and current evidence; reopen stale or unclear pairs only;
-3. verify packet reviews, score arithmetic, critical rows, path identity, viewport/framing, reviewed dimensions, freshness, and open findings;
-4. reconcile evidence invalidation and `open-gaps.md`;
-5. update and reopen `progress.md` and confirm promotion is the next planned task;
-6. record `Decision: Pass` and the promotion lock;
-7. set `CURRENT_PHASE.txt` to `phase-3-fidelity-repair-signoff`;
-8. update `progress.md` and review this reference and the lifecycle reference before Phase 3 work.
+### Phase 3 gate
 
-If any check fails, remain in Phase 2 and continue the repair loop.
-
-</phase_2_protocol>
-
-## Phase 3: Fidelity Repair And Signoff
-
-<phase_3_protocol>
-
-### Phase 3 Authority
-
-Phase 3 turns Phase 2's valid paired corpus into one-to-one fidelity. It owns detailed comparison, prioritized repair, selective recapture, adversarial inspection, real-input interaction proof, and final visual scoring.
-
-The Agent reviews every fidelity packet directly from opened images and current evidence. Do not create scripts that score similarity, close a packet, or promote the phase. Browser scripts capture and measure; the Agent compares and decides.
-
-### Entry Conditions
-
-Before Phase 3 work:
-
-- `CURRENT_PHASE.txt` says `phase-3-fidelity-repair-signoff`;
-- Phases 0-2 remain passing at their thresholds;
-- Phase 2's paired corpus and target checks are current;
-- the Agent has reread `SKILL.md`, this reference, the lifecycle reference, Phase 3's artifact, `progress.md`, and `open-gaps.md`;
-- the first fidelity-repair packet is recorded before a fix or recapture.
-
-If any condition fails, return to the earliest owning phase.
-
-### Model-Owned Fidelity Packet Loop
-
-Use one packet per route/state/viewport/theme mismatch group:
-
-1. record the pair identity and exact source/target evidence;
-2. verify the pair's identity-safe paths, matching browser viewport/framing, recorded actual dimensions, lifecycle ownership, and freshness;
-3. review the full view through the bounded visual-review sequence;
-4. review every matching source-target section pair in small readable batches and record findings within the packet;
-5. record specific mismatches and severity in Phase 3 and `open-gaps.md`;
-6. choose the highest-severity related mismatch group;
-7. record intended fix owners and every evidence ID the fix will invalidate;
-8. implement the fix, reopen changed code, and inspect the focused diff;
-9. mark invalidated evidence rows stale before recapture;
-10. recapture every invalidated target image through managed Playwright under new revisioned paths;
-11. verify viewport/framing, dimensions, and freshness, then reopen each new target against its matching source in readable packets;
-12. update Phase 3 for evidence, open gaps for unresolved findings, and the checkpoint only when the next action or phase changes; review current state before scoring, promotion, or resume;
-13. complete every packet-review row;
-14. if any row fails, repair and repeat the same packet;
-15. begin another packet only when the current one passes.
-
-Do not mark a packet `Pass` while the last action was capture. Comparison must happen after capture.
-
-### Fidelity Packet Review Checklist
-
-| Required review | Pass condition |
-| --- | --- |
-| Pair completeness | full-view and every section pair are present and opened |
-| Evidence integrity | paths are identity-safe, browser viewport/framing matches, dimension differences were reviewed, target is fresh, and source/target open proof is separate |
-| Mismatch specificity | findings name concrete layout/style/content/state differences |
-| Fix ownership | code changes address only the declared mismatch group |
-| Readback/diff | every changed owner and focused diff were inspected |
-| Selective recapture | every invalidated target image was recaptured; valid evidence was not churned |
-| Post-fix comparison | new target images were opened against matching source images |
-| Interaction proof | relevant visible states pass through real controls |
-| Responsive/theme safety | the fix did not break another viewport/theme/scroll state |
-| Artifact synchronization | Phase 3 evidence, checkpoint, and open gaps agree on the current phase, unresolved failures, and next action |
-| Gap closure | resolved rows contain current source and target proof |
-
-This checklist is an Agent review recorded in the Phase 3 artifact, never a script result.
-
-### Independent Fidelity Gates
-
-Independently pass layout, style, route, state, section, interaction, desktop, mobile, responsive, scroll/sidebar, drawer, and theme fidelity. One category cannot compensate for another.
-
-### Adversarial Mismatch Search
-
-Actively investigate at least five serious suspected mismatches from different categories: shell/sidebar height, section omission/order, typography, spacing/grid, theme, mobile overflow/drawer, control state, or route/state content. Cite and open source/target evidence for each; fix it or provide a source-backed non-blocking defense.
-
-When a sidebar exists, one adversarial row must recompute the target document delta, content delta, sidebar top delta, sidebar bottom delta, and viewport coverage from the current target manifest. A prior `Pass` label is not evidence for this row.
-
-### Real-Input And Final Image Proof
-
-Exercise every visible interaction family on desktop and mobile when present. Record trigger, expected state, actual state, screenshots/geometry, and result. Programmatic state mutation does not count when a real control exists.
-
-Save and open a current, uniquely named final desktop and mobile pair for every route and meaningful state. Use revisioned paths recorded in the Phase 3 evidence ledger; do not overwrite a generic `final-desktop.png` or `final-mobile.png` across routes, viewports, states, or repairs.
-
-### Phase 3 Model Gate
-
-Apply this rubric overall and independently to desktop and mobile:
+Apply these weights overall and independently to desktop and mobile:
 
 | Category | Points |
 | --- | ---: |
@@ -362,35 +68,6 @@ Apply this rubric overall and independently to desktop and mobile:
 | Evidence, lifecycle, and artifact integrity | 4 |
 | **Total** | **50** |
 
-Required:
+Required: overall at least `49/50`; desktop and mobile each at least `48/50`. Every independent and critical fidelity category passes. Every reachable route/state/section has a current opened pair, every source-defect-unreachable state has declaration-to-target proof, every interaction family has real-input proof, final desktop/mobile evidence is current and opened, applicable sidebar/drawer/theme safety passes, and no ordinary gap remains. A visual deduction can be re-reviewed only under the skill's bounded scoring-adjustment rule; missing evidence or objective failures cannot be offset.
 
-- overall at least `49/50`;
-- desktop at least `48/50`;
-- mobile at least `48/50`;
-- every fidelity packet passed its model-owned review;
-- every independent and critical gate passes;
-- every reachable route/state/section pair passes, and every documented source-defect-unreachable state passes its declaration-to-target comparison;
-- at least five adversarial checks complete;
-- every interaction family has real-input proof;
-- final desktop/mobile images are current and opened;
-- every final pair has identity-safe paths, matching browser viewport/framing, reviewed image dimensions, current capture times, and separate source/target open findings;
-- no ordinary open gap remains.
-
-The Agent calculates all three scores from evidence. Do not use a checker or promotion script. If any threshold, packet review, independent gate, or critical item fails, keep the marker on Phase 3 or return to the earliest owning phase, repair, refresh evidence, and rescore.
-
-### Promotion Lock
-
-Before promotion:
-
-1. review Phases 0-3 and identify invalidated earlier evidence;
-2. confirm final score-critical pairs and desktop/mobile evidence were opened after their latest capture; reopen stale or unclear pairs only;
-3. verify packet reviews, overall/desktop/mobile arithmetic, independent gates, and critical rows;
-4. reconcile `open-gaps.md`;
-5. update and reopen `progress.md` and `open-gaps.md` and confirm promotion is the next planned task;
-6. record `Decision: Pass` and the promotion lock;
-7. set `CURRENT_PHASE.txt` to `phase-4-final-audit-completion`;
-8. update `progress.md` and read the Phase 4 reference before final audit work.
-
-If any check fails, remain in or return to the earliest failing phase. Do not call task completion.
-
-</phase_3_protocol>
+On pass, record the three scores, critical results, and evidence pointers once; promote to `phase-4-final-audit-completion` and update the checkpoint. On failure, return to the earliest owning phase, repair, and repass only invalidated evidence. Do not call task completion from Phase 3.
