@@ -4,7 +4,7 @@ Read this reference when `CURRENT_PHASE.txt` is `phase-4-final-audit-completion`
 
 ## Authority and entry
 
-Phase 4 independently verifies that the finished target and current evidence still satisfy earlier gates; it does not reproduce their inventories or create a second comparison corpus. Enter only after Phases 0–2 pass at `48/50` or higher, Phase 3 passes at `49/50` overall and `48/50` each for desktop/mobile, all critical items pass, and no unresolved gap remains. If a prerequisite fails, return to its owning phase and repass invalidated evidence before re-entering Phase 4.
+Phase 4 is a check gate: verify that Phases 0–3 and their current evidence have no skipped requirement. It does not reproduce their inventories, create a second comparison corpus, or add a new polish pass. Enter only after Phases 0–2 pass at `48/50` or higher, Phase 3 passes at `49/50` overall and `48/50` each for desktop/mobile, all critical items pass, and no unresolved gap remains. If the audit finds a missing item, repair only that item in its owning phase, refresh only evidence or later claims it invalidates, then re-enter Phase 4; do not replay valid work.
 
 The Agent audits actual artifacts, accepted/current pair paths and opened findings, source declarations where necessary, current code/diff, check/build output, lifecycle results, and the exact task completion command. Do not create audit-packet, score, unlock, or promotion scripts. Do not copy all prior rows into another table. An earlier `Pass` label without current evidence is not proof.
 
@@ -18,7 +18,7 @@ Verify once, with evidence pointers in the Phase 4 artifact:
 4. **Code and checks:** inspect the complete target diff and connected owners. It must be source-backed, UI-only, free of source-runtime embedding/wrappers, backend/API/database/persistence/auth/business logic, invented destinations, debug/process workarounds, or weakened checks. Confirm the lifecycle helper is unchanged and the required build/check output is current after final code changes.
 5. **Completion safety:** copy the exact command from the task instructions, without inventing identifiers. Verify that it has not run early and that no implementation, check, browser, comparison, repair, or audit work remains. Put the exact command as the checkpoint's next action only after the final gate passes.
 
-A documented source-unavailable state uses its recorded error or unavailable UI and intended declarations against current, opened target evidence; every reachable source state retains full paired visual proof. Missing/stale proof returns to Phase 2 or 3; implementation defects return to Phase 1. Repass only affected gates and evidence, then audit again.
+A documented source-unavailable state uses its recorded error or unavailable UI and intended declarations against current, opened target evidence; every reachable source state retains full paired visual proof. A missed source requirement returns only to the relevant Phase 0 item; a missed implementation requirement to the relevant Phase 1 item; visual or target-browser defects to Phase 2 or 3. Refresh only affected claims and evidence, then audit again. Do not repeat intact inventories or pairs, and do not send a routine visual correction back to Phase 1.
 
 ## Gate
 

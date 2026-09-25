@@ -89,7 +89,7 @@ Keep the weighted rubrics and stated thresholds. If a subjective visual deductio
 
 Browser scripts collect evidence; they do not score or promote phases. Do not create phase-check, scoring, closeout, receipt, forced-read, or promotion scripts. The only supplied runtime script is `playwright-lifecycle.mjs`, which owns browser/server lifecycle. Custom Playwright scripts are expected for discovery, interaction, capture, measurement, and comparison, and they run through that helper.
 
-Promote only from the current artifacts, opened evidence, readbacks, and actual target files. A summary claim, green build, screenshot path, or prior `Pass` label is not proof by itself. If later work invalidates a gate, return to the earliest affected phase and repass forward.
+Promote only from the current artifacts, opened evidence, readbacks, and actual target files. A summary claim, green build, screenshot path, or prior `Pass` label is not proof by itself. When later target work invalidates an earlier claim, refresh only that claim's evidence before the next promotion. Routine visual and target-code corrections remain in Phase 2 or 3 rather than rolling the phase marker back to Phase 1.
 
 </operating_contract>
 
@@ -100,10 +100,10 @@ Promote only from the current artifacts, opened evidence, readbacks, and actual 
 | Phase | Marker | Owns | Gate | Outcome |
 | --- | --- | --- | ---: | --- |
 | 0 | `phase-0-source-contract` | fresh artifacts, managed visual discovery, declared-interaction inventory, source/design handoff, reproduction contract | `48/50` | every distinct source visual state is evidenced and every declared interaction is handed to target work |
-| 1 | `phase-1-ui-implementation` | target research and cohesive target-native implementation, with code/diff and current checks as proof | `48/50` | every declared route/state/section/interaction has a real target owner and authored target UI |
-| 2 | `phase-2-paired-responsive-proof` | code integrity, checks/build, paired source-target Playwright proof | `48/50` | responsive, theme, scroll, sidebar, drawer, and paired evidence pass |
-| 3 | `phase-3-fidelity-repair-signoff` | section comparison, mismatch repair, adversarial checks, real-input proof | `49/50`; desktop/mobile `48/50` each | one-to-one visual and behavioral signoff |
-| 4 | `phase-4-final-audit-completion` | artifact integrity, current evidence, final diff, completion lock | exactly `50/50` | every gate remains valid and completion is unlocked |
+| 1 | `phase-1-ui-implementation` | target design system first, then shell and complete app implementation, with code/diff and current checks as proof | `48/50` | every declared route/state/section/interaction has a real target owner and authored target UI |
+| 2 | `phase-2-paired-responsive-proof` | broad paired source-target comparison, material visual correction, code integrity, checks/build, and responsive proof | `48/50` | paired visual, interaction, theme, scroll, sidebar, and drawer evidence pass |
+| 3 | `phase-3-fidelity-repair-signoff` | focused small-detail visual parity and independent signoff from current evidence | `49/50`; desktop/mobile `48/50` each | close visual and behavioral fidelity without demanding pixel perfection |
+| 4 | `phase-4-final-audit-completion` | check that Phases 0–3, evidence, final diff, and completion lock remain valid | exactly `50/50` | only missing or invalidated work is repaired before completion |
 
 </phase_map>
 
@@ -114,10 +114,10 @@ Keep work in the phase that owns it. Each phase has different work; do not use a
 For each phase:
 
 1. Set `task-workflow/CURRENT_PHASE.txt` before phase work; read this skill and that phase's reference at the boundary or on resume.
-2. Work in cohesive code slices and bounded lifecycle-owned browser capture groups. The script/code and its output/diff define the work; do not maintain a separate packet dossier, command table, or per-action review row.
+2. Work in cohesive code slices and, in phases that require browser evidence, bounded lifecycle-owned capture groups. The script/code and its output/diff define the work; do not maintain a separate packet dossier, command table, or per-action review row.
 3. Inspect changed code and focused diffs. Open every newly accepted or changed browser image at readable scale and record its concrete finding once in the owning evidence index; reuse findings for unchanged images. Use the image, capture script, and lifecycle log for its viewport, dimensions, state, and provenance; a separate manifest is optional.
 4. Record actual unresolved gaps. Update `progress.md` only when a meaningful group completes or fails, the next action changes, or a phase changes—not after each tool call.
-5. At the phase gate, score each weighted rubric row once from current evidence and evaluate every critical item independently. On failure, repair the earliest owning defect and refresh only invalidated evidence. On pass, record the decision and promote to the next phase.
+5. At the phase gate, score each weighted rubric row once from current evidence and evaluate every critical item independently. On failure, repair in the current phase and refresh only invalidated evidence and affected earlier claims. On pass, record the decision and promote to the next phase.
 
 The marker, phase artifact, checkpoint, open gaps, evidence, and actual files must agree on the current phase, unresolved failures, and next action; they need not repeat the same event or facts. `CURRENT_PHASE.txt` and `progress.md` are resume pointers, not proof.
 
@@ -184,7 +184,7 @@ The target proof must record the measured values from the browser packet output 
 - sidebar height and bottom cover the viewport within `1px`;
 - the post-scroll image has no blank lower-sidebar region.
 
-Source values describe the reference; they cannot satisfy or relax target predicates. A target that relies on document scrolling, sticky positioning alone, a fixed-height strip, or an unnamed overflow owner returns to Phase 1 for shell repair.
+Source values describe the reference; they cannot satisfy or relax target predicates. A target that relies on document scrolling, sticky positioning alone, a fixed-height strip, or an unnamed overflow owner fails the current visual gate; repair the shell there and refresh affected earlier code/check evidence.
 
 When a mobile drawer exists, prove real-input open/close, overlay interception, full-viewport geometry, body/document scroll lock, and scroll restoration with screenshots and measurements.
 
