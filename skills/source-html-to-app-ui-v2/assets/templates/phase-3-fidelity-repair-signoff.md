@@ -7,9 +7,9 @@ Reuse the Phase 2 comparison index and already-opened findings. Add only changed
 - Phase 0–2 current decisions and accepted pair index: Pending
 - Genuine visual mismatches found, owning fixes, and replacement pair IDs (or `None`): Pending
 - Adversarial review of layout, style, route, state, sections, desktop/mobile, responsive/scroll/drawer, and themes: Pending
-- Every visible interaction family tested with real desktop/mobile controls and current outcomes: Pending
-- Current final desktop/mobile pair for every route/state and readable section/state evidence: Pending
-- Sidebar metrics recomputed from current target proof; drawer/theme safety (or `N/A`): Pending
+- Every visible interaction family tested with real controls on applicable desktop/mobile surfaces and current outcomes: Pending
+- Current final desktop/mobile pair for every route and materially distinct visual state, plus readable section evidence: Pending
+- Current recorded sidebar metrics and post-scroll image; drawer/theme safety (or `N/A`): Pending
 - Complete target diff and current required checks/build: Pending
 - Actual unresolved gaps: see `open-gaps.md`
 
@@ -53,17 +53,17 @@ Required: overall `49/50`; desktop and mobile `48/50` each. `Unscored` is not a 
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
 | Every independent fidelity gate above passes and source-backed mismatches are repaired | Pending | Pending |
-| Every reachable route/state/section has current opened source-target proof; unreachable source states have declaration-to-target proof | Pending | Pending |
+| Every route, materially distinct visual state, and readable section has current opened source-target proof; unreachable source states have declaration-to-target proof | Pending | Pending |
 | Final desktop/mobile images and pair identities/framing/dimensions/freshness/opened findings are current | Pending | Pending |
 | Every interaction family has real-input target proof on applicable desktop/mobile surfaces | Pending | Pending |
 | Responsive/sidebar/drawer/theme safety and target sidebar predicates pass | Pending | Pending |
 | Current target diff and required checks/build pass; no UI-only boundary violation remains | Pending | Pending |
-| No material mismatch, stale evidence, or placeholder remains | Pending | Pending |
+| `open-gaps.md` has no unresolved item; no material mismatch, stale evidence, or placeholder remains | Pending | Pending |
 
 ## Promotion Lock
 
-- Overall/desktop/mobile arithmetic, independent and critical gates, current evidence, and open gaps reviewed: Pending
-- Marker and checkpoint updated to Phase 4 only after `Decision: Pass`: Pending
+- Overall/desktop/mobile arithmetic, independent and critical gates, current evidence, and empty open gaps reviewed: Pending
+- After recording `Decision: Pass`, promote the marker and checkpoint to Phase 4; do not claim promotion before it happens.
 
 - Overall score: Unscored
 - Desktop score: Unscored

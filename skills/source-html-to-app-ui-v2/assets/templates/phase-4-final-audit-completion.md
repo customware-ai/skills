@@ -7,7 +7,7 @@ Link existing phase artifacts, accepted evidence, code/diff, and check/build out
 - Current marker/checkpoint, design JSON identity, open gaps, prior decisions/scores/critical gates: Pending
 - Accepted/current pair index, identity/framing/dimensions/lifecycle/freshness/opened findings, final desktop/mobile proof: Pending
 - Source-defect-unreachable declaration-to-target proof (or `None`): Pending
-- Recomputed responsive/sidebar/drawer/theme and real-input results (or `N/A`): Pending
+- Current recorded responsive/sidebar/drawer/theme and real-input results (or `N/A`; rerun only invalidated proof): Pending
 - Complete target diff, UI-only scope, unchanged lifecycle helper, current required checks/build: Pending
 - Exact completion command source and literal command, confirmed unrun: Pending
 
@@ -32,7 +32,7 @@ Required: exactly `50/50`. `Unscored` is not a pass.
 | Every required reachable source-target pair and source-defect exception has complete current opened proof | Pending | Pending |
 | Accepted image identity, viewport/framing, dimensions, lifecycle, freshness, and findings are valid | Pending | Pending |
 | Final desktop/mobile and responsive/sidebar/drawer/theme/interaction proof represents final code | Pending | Pending |
-| No open material, critical, stale, or placeholder gap remains | Pending | Pending |
+| `open-gaps.md` has no unresolved item; no material, critical, stale, or placeholder gap remains | Pending | Pending |
 | Complete target diff is source-backed/UI-only, lifecycle helper unchanged, checks/build current | Pending | Pending |
 | Exact supplied completion command is copied, unrun, and all other work is complete | Pending | Pending |
 
@@ -40,7 +40,7 @@ Required: exactly `50/50`. `Unscored` is not a pass.
 
 - Score arithmetic and every critical item independently verified: Pending
 - `Decision: Pass` recorded before the exact command runs: Pending
-- Exact command result confirmed before reporting completion: Pending
+- After `Decision: Pass`, run the exact command and confirm its result before reporting completion; this is not a pre-command gate item.
 
 - Score: Unscored
 - Critical items: Pending
