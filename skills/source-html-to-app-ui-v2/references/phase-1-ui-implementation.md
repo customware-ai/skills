@@ -14,11 +14,11 @@ The target must have real route modules, source-ordered sections, source-backed 
 
 When a sidebar exists, name the outer viewport-bounded shell, full-height sidebar, main column, and content scroller in the target code. The document must not be the normal vertical scroll owner; the content pane must scroll while sidebar bounds stay viewport-stable. A sticky sidebar or fixed decorative strip is insufficient. A mobile drawer, when present, needs full-height geometry, overlay interception, body scroll lock, and restoration. Phase 1 checks code structure; Phases 2–3 measure actual behavior and inspect screenshots.
 
-Implement the source-represented breakpoints and adapt omitted sizes conservatively. Avoid overlap, clipping, horizontal canvas overflow, inaccessible controls, accidental document scroll, blank lower-sidebar space, or unreadable theme combinations. Do not add a theme switch unless required.
+Implement the source-represented breakpoints and adapt omitted sizes conservatively. Avoid overlap, clipping, horizontal canvas overflow, inaccessible controls, accidental document scroll, blank lower-sidebar space, or unreadable theme combinations. Do not add a theme switch unless required. Once the main shell is browser-ready, use a focused lifecycle-owned desktop/mobile comparison of the main view and highest-risk responsive state to catch broad layout or design-system defects before Phase 2's full pair corpus. This is an early repair check, not a second inventory or an extra scorecard.
 
 ## Gate
 
-At the end of implementation, inspect the complete target diff and connected owners. Run the task's required target checks/build once; retain full output under `task-workflow/` and rerun if later changes invalidate it. Phase 2 independently requires current checks/build but may reuse these results if no code changed. Fix failures before scoring. Score the Phase 1 artifact once from actual code, diff, source evidence, and checks—not from packet paperwork. Browser claims still require later managed evidence.
+At the end of implementation, inspect the complete target diff and connected owners. Run the task's required target checks/build once after a coherent implementation batch; retain full output under `task-workflow/` and rerun only after related changes invalidate it. Do not run check/build after each visual tweak. Phase 2 independently requires current checks/build but may reuse these results if no code changed. Fix failures before scoring. Score the Phase 1 artifact once from actual code, diff, source evidence, and checks—not from packet paperwork. Browser claims still require later managed evidence.
 
 | Category | Points |
 | --- | ---: |

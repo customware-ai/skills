@@ -32,7 +32,7 @@ Required: exactly `50/50`. `Unscored` is not a pass.
 | Every required reachable source-target pair and source-defect exception has complete current opened proof | Pending | Pending |
 | Accepted image identity, viewport/framing, dimensions, lifecycle, freshness, and findings are valid | Pending | Pending |
 | Final desktop/mobile and responsive/sidebar/drawer/theme/interaction proof represents final code | Pending | Pending |
-| No open, critical, ordinary, stale, or placeholder gap remains | Pending | Pending |
+| No open material, critical, stale, or placeholder gap remains | Pending | Pending |
 | Complete target diff is source-backed/UI-only, lifecycle helper unchanged, checks/build current | Pending | Pending |
 | Exact supplied completion command is copied, unrun, and all other work is complete | Pending | Pending |
 

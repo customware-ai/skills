@@ -9,4 +9,4 @@ This is a pointer, not a history or evidence ledger. Update it after a meaningfu
 - Completion command source: task instructions; copy the exact command here before Phase 4 completion
 - Task inputs: approved HTML, design JSON, and task prompt paths from the task instructions
 
-The phase artifacts own scores and decisions. The HTML/design files own declared content and styles. Packet output and runtime logs own capture metadata and command history. Do not copy those facts here.
+The phase artifacts own scores and decisions. The HTML/design files own declared content and styles. PNGs, capture scripts, and lifecycle logs prove image identity and command history. Do not copy those facts here.

@@ -64,7 +64,7 @@ Source and target are sequential helper-owned lifecycles, not two manually manag
 
 For the first source orientation, open both desktop and mobile images and record a concrete finding for each before scoring Phase 0. No immediate next-tool-call ordering is required.
 
-For equivalent interaction proof, use the same focused manifest in separate source and target helper runs. Do not keep both servers alive, create a dual-background-server command, or use process inspection to imitate lifecycle ownership.
+For equivalent interaction proof, use the same focused state and viewport plan in separate source and target helper runs. Do not keep both servers alive, create a dual-background-server command, or use process inspection to imitate lifecycle ownership.
 
 ## Browser Script Rules
 
@@ -75,7 +75,7 @@ For equivalent interaction proof, use the same focused manifest in separate sour
 - Before the helper invocation, review the current packet and remove every fixed-wait construct. After a small edit, a focused diff or targeted read may be enough; review a new or substantially rewritten packet completely. The code review itself suffices; record a failure or repair, not a duplicate review row. No immediate next-tool-call ordering is required. `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, arbitrary polling/timer settling, and catch/fallback code that suppresses a browser wait, navigation, screenshot, console, page-error, or assertion failure are forbidden. Browser packets must fail loudly: never use `.catch(() => ...)`, broad `try/catch`, ignored promises, or optional fall-through to continue after required browser work fails. Do not run a packet containing one and plan to repair it afterward. Finding one is a hard packet failure: do not score it; record the failure, replace it with a visible-state, URL, DOM, response, geometry, or assertion condition, and rerun through the helper.
 - Treat visual/debug diagnostics as ordinary browser packets: edit the task-owned packet and rerun the full helper invocation. Do not create `/tmp` scripts, use shell-generated browser files, run `node <packet>.mjs` directly, or launch `chromium` from any process the helper did not start.
 - Use explicit viewport dimensions.
-- Record route/state/theme/viewport identity in output or evidence metadata.
+- Make route/state/theme/viewport identity clear from the image path and capture script; use the lifecycle log for run ownership.
 - Fail loudly on wrong routes, missing selectors for reachable required views, invalid geometry, and target console/page errors. Record source console/page errors without filtering them or failing an otherwise useful source capture.
 - Capture full-view and section images to the correct evidence root.
 - Measure scroll and geometry in the browser when layout ownership matters.

@@ -1,6 +1,6 @@
 # Phase 2: Paired Responsive Proof
 
-Use packet output or one machine-readable manifest for objective capture metadata, and one concise comparison index for accepted/current pair paths, separate opened findings, concrete comparisons, and mismatch/pass decisions. Link them here; do not copy every pair into multiple tables. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
+Use the PNG, capture script, and lifecycle log for capture identity. Keep one concise comparison index for accepted/current pair paths, separate opened findings, concrete comparisons, and mismatch/pass decisions. Link it here; do not copy every pair into multiple tables or require a separate manifest. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
 
 ## Evidence Pointers
 
@@ -8,7 +8,7 @@ Use packet output or one machine-readable manifest for objective capture metadat
 - Complete target diff and UI-only integrity review: Pending
 - Required checks/build commands, full output paths, current result: Pending
 - Source and target lifecycle run/packet output paths: Pending
-- Accepted/current pair manifest and comparison index: Pending
+- Accepted/current pair comparison index: Pending
 - Accepted source images opened / accepted target images opened / accepted pairs: Pending
 - Source-defect-unreachable states and complete target proof (or `None`): Pending
 - Desktop/tablet/mobile/short-height, theme, section, and real-input coverage: Pending

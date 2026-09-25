@@ -1,6 +1,6 @@
 # Phase 3: Fidelity Repair And Signoff
 
-Reuse the Phase 2 pair manifest and comparison index. Add only changed/replacement pair findings and actual mismatch resolutions there; do not rebuild a second full-view/section/final matrix. Runtime history retains invalidated revisions. The HTML/design, code/diff, and accepted images remain the authorities for their respective facts.
+Reuse the Phase 2 comparison index and already-opened findings. Add only changed/replacement pair findings and actual mismatch resolutions there; do not reopen unchanged pairs or rebuild a second full-view/section/final matrix. Runtime history retains invalidated revisions. The HTML/design, code/diff, and accepted images remain the authorities for their respective facts.
 
 ## Fidelity Evidence
 
@@ -58,7 +58,7 @@ Required: overall `49/50`; desktop and mobile `48/50` each. `Unscored` is not a 
 | Every interaction family has real-input target proof on applicable desktop/mobile surfaces | Pending | Pending |
 | Responsive/sidebar/drawer/theme safety and target sidebar predicates pass | Pending | Pending |
 | Current target diff and required checks/build pass; no UI-only boundary violation remains | Pending | Pending |
-| No ordinary mismatch, stale evidence, or placeholder remains | Pending | Pending |
+| No material mismatch, stale evidence, or placeholder remains | Pending | Pending |
 
 ## Promotion Lock
 

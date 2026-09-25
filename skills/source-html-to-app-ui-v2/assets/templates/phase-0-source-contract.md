@@ -14,7 +14,7 @@ The approved HTML and design JSON are immutable. Keep target files read-only unt
 
 ## Source Evidence And Coverage
 
-Link the concise accepted-image evidence index here. For each accepted/current image, record its ID/path, the page/state/sections it proves, and one concrete finding. Keep capture dimensions, times, run identity, and invalidation history in packet output or a machine-readable manifest, not another Markdown table. Review every accepted/current image; its opened count must equal the accepted/current count. The HTML and design JSON remain authoritative for declared content, sections, styles, and handlers—do not transcribe them into a coverage or contract table. Record only non-obvious reachability decisions, source defects, adaptations, exclusions, and target-specific handoff decisions below.
+Link the concise accepted-image evidence index here. For each accepted/current image, record its ID/path, the page/state/sections it proves, and one concrete finding. Use the PNG, capture script, and lifecycle log for dimensions and run identity; no separate manifest or metadata table is required. Review every accepted/current image; its opened count must equal the accepted/current count. The HTML and design JSON remain authoritative for declared content, sections, styles, and handlers—do not transcribe them into a coverage or contract table. Record only non-obvious reachability decisions, source defects, adaptations, exclusions, and target-specific handoff decisions below.
 
 - Accepted image index: Pending
 - Accepted/current images opened and reviewed: Pending / Pending
@@ -61,7 +61,7 @@ Required: at least `48/50`. `Unscored` is not a pass or an assessed zero. Score 
 | Initial managed desktop/mobile source evidence was captured and opened; all relevant HTML/CSS/JavaScript declarations inspected | Pending | Pending |
 | Every source page/distinct visual state/section and declared interaction family is covered or specifically excluded; lifecycle capture evidence reviewed | Pending | Pending |
 | Every reachable visual item has desktop/mobile and readable section/state evidence; interactions without new appearance have declaration/target-proof ownership; unavailable source states have observed-error-or-state/declaration proof | Pending | Pending |
-| Every accepted/current image was opened with a concrete finding and unique path; capture metadata exists in packet output | Pending | Pending |
+| Every accepted/current image was opened with a concrete finding and unique path; its PNG, script, and lifecycle log prove capture identity | Pending | Pending |
 | Browser packets used lifecycle ownership, real input, and no fixed waits | Pending | Pending |
 | Applicable sidebar/drawer/scroll/theme discovery is complete and source versus target scroll contracts are distinct | Pending | Pending |
 | Design JSON, accepted evidence, and concise handoff cover requirements with roles, adaptations, and exclusions | Pending | Pending |
