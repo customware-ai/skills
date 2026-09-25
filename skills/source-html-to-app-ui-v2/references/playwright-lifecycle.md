@@ -46,6 +46,8 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
   --command-timeout-ms 20000
 ```
 
+This is a short-probe example, not a fixed timeout for every script. Choose bounded values from the actual server startup and script work before running.
+
 The first source browser command and first target browser command must establish helper ownership. Do not run browser scripts against an assumed or manually started server first.
 
 For browser, server, readiness, runtime, or evidence commands, the helper is the only process owner. Do not manually start or background a server, use `nohup`, shell `sleep`, `curl`/`wget` probes, `pkill`, `lsof`, or broad process hunting. A manual process/probe/cleanup command is a hard lifecycle failure; stop the packet, record it, and rerun through the helper before scoring. The only `curl` exception is downloading an approved brand asset after Phase 0; it is never readiness or UI evidence.
@@ -65,6 +67,8 @@ Source and target are sequential helper-owned lifecycles, not two manually manag
 For the first source orientation, open both desktop and mobile images and record a concrete finding for each before scoring Phase 0. No immediate next-tool-call ordering is required.
 
 For equivalent interaction proof, use the same focused state and viewport plan in separate source and target helper runs. Do not keep both servers alive, create a dual-background-server command, or use process inspection to imitate lifecycle ownership.
+
+The helper accepts multiple `--run` commands under one server start and writes a separate result log for each. Batch independent focused scripts that use the same source or target build; do not restart the server between them merely to create separate packets. Use a distinct runtime directory for each later lifecycle because the helper otherwise overwrites `run-01.log` and related names. A later failed command stops the helper, but earlier screenshots with proven identity, state, framing, and lifecycle stay valid. Never combine source and target under one helper run or replace the helper with a manual server.
 
 ## Browser Script Rules
 
@@ -88,24 +92,9 @@ A script that silently catches or suppresses any state, navigation, screenshot, 
 
 ## Timeout And Retry Rules
 
-Start with:
+Choose the command timeout before the first run from the focused script's navigation, real-input steps, asset readiness, and screenshots. Use `15000`–`20000` ms for a short probe; a multi-state packet may start at a justified value up to `60000` ms. The timeout bounds the command, not each screenshot. Keep readiness bounded to the selected server's actual startup behavior. If one script would need more than `120000` ms, split it into focused scripts and, when they share a build, pass them as separate `--run` commands in one lifecycle.
 
-- readiness timeout: `15000`-`20000` ms;
-- targeted browser command timeout: `15000`-`20000` ms.
-
-If a run fails with useful evidence, diagnose that evidence. Do not increase the timeout.
-
-One `60000` ms retry is permitted only when all are true:
-
-1. the first run ended only because its timer expired;
-2. no useful error or state explanation was produced;
-3. helper logs were inspected;
-4. readiness and URL were confirmed;
-5. page state, browser console, network, inputs, and selectors were triaged;
-6. the artifact records why more time can change the result;
-7. the rerun remains helper-owned.
-
-Never exceed `120000` ms for one targeted script. Split or diagnose work that cannot complete within that bound.
+If a run fails with useful evidence, diagnose that evidence and repair the cause rather than increasing the timeout. A longer rerun is justified only after a timer-only failure with no useful error, helper logs and readiness/URL inspected, and page state, browser console, network, inputs, and selectors triaged. Record why more time changes the result and keep the rerun helper-owned and within `120000` ms. Never retry blindly or use a fixed sleep to consume a larger timeout.
 
 ## Failure Triage
 

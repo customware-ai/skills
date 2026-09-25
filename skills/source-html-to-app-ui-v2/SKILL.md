@@ -61,6 +61,8 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
 
 If this flow fails, repair the task-owned packet or the bounded helper invocation and rerun it through the helper. Never substitute a manual smoke test. A direct target server, shell wait, readiness probe, or browser check does not count as managed evidence; rerun the affected check through the lifecycle helper.
 
+The helper accepts repeatable `--run` arguments. When several independent focused scripts use the same source or target build, run them under one helper-owned server lifecycle instead of restarting the server for each script. Each command gets its own result/log within that lifecycle; use a distinct runtime directory for each later lifecycle so logs are not overwritten. If a later command fails, earlier valid screenshots remain usable under the evidence contract. Keep source and target in separate lifecycles, and never use a manually started server to save startup time.
+
 </managed_verification_lock>
 
 ## Operating Contract
@@ -207,7 +209,7 @@ The helper must own startup, readiness, browser environment, runtime logs, and P
 
 Start the source through the helper, capture and stop it; start the target through the helper, capture and stop it; then compare saved evidence. Keep ports, scripts, screenshots, and runtime logs separate.
 
-Use deterministic readiness and state conditions rather than fixed sleeps. `page.waitForTimeout`, shell `sleep`, arbitrary polling delays, and timer-only settling are hard packet failures; remove them, record the gate failure, and rerun through the helper before scoring. Start readiness and focused script timeouts at `15,000`–`20,000` ms. If a run ends only from a timer with no useful diagnostic, record clean triage before one `60,000` ms retry; keep one targeted script within `120,000` ms by splitting the work. A useful failure is a repair ticket: inspect its logs, DOM/state, console, network, and server output before rerunning.
+Use deterministic readiness and state conditions rather than fixed sleeps. `page.waitForTimeout`, shell `sleep`, arbitrary polling delays, and timer-only settling are hard packet failures; remove them, record the gate failure, and rerun through the helper before scoring. Set the command timeout before the first run from that script's real navigation, interaction, asset-readiness, and capture steps: `15,000`–`20,000` ms for a short probe, up to `60,000` ms for a focused multi-state packet, and never above `120,000` ms. Split work that cannot fit within that bound. A timeout is not permission to retry blindly or increase the bound after a useful failure; inspect logs, DOM/state, console, network, and server output, then repair the cause. A timer-only failure may receive one justified longer bounded retry after clean triage.
 
 Keep lifecycle ownership with the helper and its PID-scoped cleanup. Prefer explicit task-owned ports, bounded scripts, and focused reruns. Preserve the helper byte-for-byte; keep process hunting, background-server loops, arbitrary port sweeping, browser downloads, and manual lifecycle outside the normal workflow.
 
