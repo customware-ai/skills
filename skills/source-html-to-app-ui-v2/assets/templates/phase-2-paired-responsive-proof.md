@@ -1,6 +1,6 @@
 # Phase 2: Paired Responsive Proof
 
-Use the PNG, capture script, and lifecycle log for capture identity. Keep one concise comparison index for accepted/current pair paths, separate opened findings, concrete comparisons, and mismatch/pass decisions. Link it here; do not copy every pair into multiple tables or require a separate manifest. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
+Use the PNG, capture script, and lifecycle log for capture identity. Keep one concise comparison index with accepted/current pair paths, opened findings, concrete comparisons, and mismatch/pass decisions. Link it here; do not copy every pair into multiple tables or require a separate manifest. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
 
 ## Evidence Pointers
 
@@ -8,7 +8,7 @@ Use the PNG, capture script, and lifecycle log for capture identity. Keep one co
 - Current UI-only code/diff and required check/build results (reuse Phase 1 proof until invalidated): Pending
 - Source and target lifecycle run/packet output paths: Pending
 - Accepted/current pair comparison index: Pending
-- Accepted source/target images opened and broad route/major-state/section pairs: Pending
+- Broad route/major-state/section coverage and opened findings: see the accepted/current pair comparison index above
 - Source-defect-unreachable states relevant to broad comparison (or `None`; final target proof belongs to Phase 3): Pending
 - Desktop/mobile, represented theme, readable section, and materially different tablet/short-height coverage: Pending
 - Actual unresolved mismatches: see `open-gaps.md`

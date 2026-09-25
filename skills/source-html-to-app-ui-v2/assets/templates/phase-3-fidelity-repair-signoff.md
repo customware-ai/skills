@@ -10,7 +10,7 @@ Reuse the Phase 2 comparison index and already-opened findings. Add only changed
 - Every visible interaction family tested with real controls on applicable desktop/mobile surfaces and current outcomes: Pending
 - Current final desktop/mobile pair for every route and materially distinct visual state, plus readable section evidence: Pending
 - Current recorded sidebar metrics and post-scroll image; drawer/theme safety (or `N/A`): Pending
-- Complete target diff and current required checks/build: Pending
+- Target changes since the last current diff review and current required checks/build (reuse unchanged results): Pending
 - Actual unresolved gaps: see `open-gaps.md`
 
 ## Independent Fidelity Gates
@@ -57,13 +57,14 @@ Required: overall `49/50`; desktop and mobile `48/50` each. `Unscored` is not a 
 | Final desktop/mobile images and pair identities/framing/dimensions/freshness/opened findings are current | Pending | Pending |
 | Every interaction family has real-input target proof on applicable desktop/mobile surfaces | Pending | Pending |
 | Responsive/sidebar/drawer/theme safety and target sidebar predicates pass | Pending | Pending |
-| Current target diff and required checks/build pass; no UI-only boundary violation remains | Pending | Pending |
+| Target changes since the last current diff review and required checks/build pass; no UI-only boundary violation remains | Pending | Pending |
 | `open-gaps.md` has no unresolved item; no material mismatch, stale evidence, or placeholder remains | Pending | Pending |
 
 ## Promotion Lock
 
-- Overall/desktop/mobile arithmetic, independent and critical gates, current evidence, and empty open gaps reviewed: Pending
+- After all Phase 3 capture, interactions, and repairs, review overall/desktop/mobile arithmetic, independent and critical gates, current evidence, and empty open gaps: Pending
 - After recording `Decision: Pass`, promote the marker and checkpoint to Phase 4; do not claim promotion before it happens.
+- Any later Phase 3 browser packet or target-code change resets `Decision` to Pending until the affected gate is reviewed again.
 
 - Overall score: Unscored
 - Desktop score: Unscored

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawn, spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { createWriteStream, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
@@ -15,6 +15,8 @@ function printUsage() {
 Common options:
   --setup "command"              Run bounded setup before server startup; repeatable.
   --run "command"                Run bounded verification command after readiness; repeatable.
+  --runtime-dir "path"           Base folder for unique server and command logs.
+  --evidence-dir "path"          Base folder for unique screenshot output; required with --run.
   --env NAME=value               Add an environment variable; repeatable. Database path variables are rejected.
   --ready-text "text"            Require response body text during readiness polling.
   --ready-timeout-ms 30000       Startup readiness timeout.
@@ -68,6 +70,8 @@ function parseArgs(argv) {
 			args.env.push(next());
 		} else if (arg === '--runtime-dir') {
 			args.runtimeDir = next();
+		} else if (arg === '--evidence-dir') {
+			args.evidenceDir = next();
 		} else if (arg === '--setup-timeout-ms') {
 			args.setupTimeoutMs = Number(next());
 		} else if (arg === '--ready-timeout-ms') {
@@ -341,10 +345,25 @@ if (args.help) {
 	printUsage();
 	process.exit(0);
 }
+if (args.runs.length > 0 && !args.evidenceDir) {
+	throw new Error('--evidence-dir is required with --run');
+}
 const cwd = resolve(args.cwd);
-const runtimeDir = resolve(cwd, args.runtimeDir);
-mkdirSync(runtimeDir, { recursive: true });
+const runtimeBase = resolve(cwd, args.runtimeDir);
+mkdirSync(runtimeBase, { recursive: true });
+const runtimeDir = mkdtempSync(join(runtimeBase, 'run-'));
 const env = buildEnv(args);
+env.CW_LIFECYCLE_RUN_DIR = runtimeDir;
+if (args.evidenceDir) {
+	const evidenceBase = resolve(cwd, args.evidenceDir);
+	mkdirSync(evidenceBase, { recursive: true });
+	env.CW_EVIDENCE_DIR = mkdtempSync(join(evidenceBase, 'run-'));
+}
+
+console.log(`[lifecycle] Runtime evidence: ${runtimeDir}`);
+if (env.CW_EVIDENCE_DIR) {
+	console.log(`[lifecycle] Screenshot evidence: ${env.CW_EVIDENCE_DIR}`);
+}
 
 preflightPlaywrightBrowsers(cwd, env, args.runs);
 

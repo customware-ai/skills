@@ -17,7 +17,7 @@ Reproduce the approved source HTML as a real target application. The finished ex
 
 Use the source HTML for discovery and comparison. Author the target as a normal application with real routes, components, styles, assets, and local UI state. Keep the task UI-only: do not add backend, API, database, persistence, authentication, server, or business logic.
 
-The approved HTML and design JSON are immutable reference inputs. Never patch either file or alter the source DOM/scripts to make its runtime pass. Record source page/console errors and failed source interactions without filtering them. If source JavaScript errors or a normal input cannot reveal an intended UI state, note the error or unavailable state and move on: do not debug the source exception, trace handler registration, create a diagnostic source packet, or retry the same no-op. Use the HTML/CSS and design JSON for that state's intended appearance and behavior, then implement and verify it in the target. Continue capturing every reachable distinct source surface with desktop/mobile/section evidence and paired visual review. Unavailable source states need complete target screenshots and real-input verification, not fabricated source screenshots. Target errors remain failures.
+The approved HTML and design JSON are immutable reference inputs. Never patch either file or alter the source DOM/scripts to make its runtime pass. Record source page/console errors and failed source interactions without filtering them. If source JavaScript errors or a normal input cannot reveal an intended UI state, note the error or unavailable state and move on: do not debug the source exception, trace handler registration, create a diagnostic source packet, or retry the same no-op. Use the HTML/CSS and design JSON for that state's intended appearance and behavior, then implement and verify it in the target. Continue capturing every reachable distinct source surface with desktop/mobile/section evidence and paired visual review. Unavailable source states need complete target screenshots and real-input verification by Phase 3 signoff, not fabricated source screenshots. Target errors remain failures.
 
 ## Strict execution contract
 
@@ -56,12 +56,13 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
   --server "<target-start-command>" \
   --ready-url "<target-readiness-url>" \
   --runtime-dir "task-workflow/runtime/target" \
+  --evidence-dir "task-workflow/verification" \
   --run "node task-workflow/target-playwright/<packet>.mjs"
 ```
 
 If this flow fails, repair the task-owned packet or the bounded helper invocation and rerun it through the helper. Never substitute a manual smoke test. A direct target server, shell wait, readiness probe, or browser check does not count as managed evidence; rerun the affected check through the lifecycle helper.
 
-The helper accepts repeatable `--run` arguments. When several independent focused scripts use the same source or target build, run them under one helper-owned server lifecycle instead of restarting the server for each script. Each command gets its own result/log within that lifecycle; use a distinct runtime directory for each later lifecycle so logs are not overwritten. If a later command fails, earlier valid screenshots remain usable under the evidence contract. Keep source and target in separate lifecycles, and never use a manually started server to save startup time.
+The helper accepts repeatable `--run` arguments. When several independent focused scripts use the same source or target build, run them under one helper-owned server lifecycle instead of restarting the server for each script. Each command gets its own result/log within that lifecycle. The helper creates a fresh runtime and screenshot subdirectory for every invocation; packets must write images under `process.env.CW_EVIDENCE_DIR` so retries cannot overwrite prior captures. If a later command fails, earlier valid screenshots remain usable under the evidence contract. Keep source and target in separate lifecycles, and never use a manually started server to save startup time.
 
 </managed_verification_lock>
 
@@ -81,7 +82,7 @@ There is no exploratory-browser exception. A selector check, animation diagnosis
 
 The first lifecycle packet is also the only browser-availability check. Never inspect `/ms-playwright`, `~/Library/Caches/ms-playwright`, `node_modules/playwright-core`, `browsers.json`, executable paths, browser revisions, `.runtime.logs`, or process/port state to decide whether Playwright works. Never use `ls`, `find`, `cat`, `ps`, `lsof`, or a package/runtime probe for that purpose. Invoke the real helper packet; if it fails, inspect only the helper-owned runtime output and repair the packet or bounded invocation. These inspections cannot substitute for a managed browser packet.
 
-Before invoking the helper, review the current custom packet for the exact URL, required assertions, and prohibited fixed waits. A focused diff or targeted read is sufficient after an edit when it covers the changed behavior; a full read is useful when the packet is new or substantially rewritten. The code review itself suffices; record a failure or repair, not a duplicate review row. No particular tool-call order is required. A packet is invalid and must not be run if it contains `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, arbitrary polling/timer code used to settle the UI, or a catch/fallback that suppresses a browser wait, navigation, screenshot, console, page-error, or assertion failure. Browser packets must fail loudly: never use `.catch(() => ...)`, broad `try/catch`, ignored promises, or optional fall-through to continue after required browser work fails. Replace timer settling with a visible-state, URL, DOM, response, or geometry condition such as `locator.waitFor`, `waitForSelector`, `waitForURL`, `waitForResponse`, or an assertion. This is a model-owned packet check, not a scoring script; a packet with a prohibited construct cannot supply passing evidence; correct and rerun that packet before scoring.
+Before invoking the helper, review the current custom packet for the exact URL, required assertions, `CW_EVIDENCE_DIR` screenshot paths, and prohibited fixed waits. The authored patch or focused diff can be this review; do not reread the same unchanged script solely to prove it was reviewed. A packet is invalid and must not be run if it contains `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, arbitrary polling/timer code used to settle the UI, or a catch/fallback that suppresses a browser wait, navigation, screenshot, console, page-error, or assertion failure. Browser packets must fail loudly: never use `.catch(() => ...)`, broad `try/catch`, ignored promises, or optional fall-through to continue after required browser work fails. Replace timer settling with a visible-state, URL, DOM, response, or geometry condition such as `locator.waitFor`, `waitForSelector`, `waitForURL`, `waitForResponse`, or an assertion. This is a model-owned packet check, not a scoring script; a packet with a prohibited construct cannot supply passing evidence; correct and rerun that packet before scoring.
 
 The Agent owns each gate. A phase gate is an evidence-backed self-review: inspect the work, calculate the score honestly, identify weak rows, repair them, refresh invalidated evidence, and rescore. A failed gate is a repair loop, not a report to the user. Process details may vary with the task when coverage, evidence quality, and the required outcome remain intact. Passing the stated threshold with every critical item satisfied is enough; do not chase `50/50` in Phases 0–3 by repeatedly tuning harmless visual differences.
 
@@ -117,11 +118,11 @@ For each phase:
 
 1. Set `task-workflow/CURRENT_PHASE.txt` before phase work; read this skill and that phase's reference at the boundary or on resume.
 2. Work in cohesive code slices and, in phases that require browser evidence, bounded lifecycle-owned capture groups. The script/code and its output/diff define the work; do not maintain a separate packet dossier, command table, or per-action review row.
-3. Inspect changed code and focused diffs. Open every newly accepted or changed browser image at readable scale. Phase 0 records its source finding per image; paired target review records a concise pass/fail comparison per UI area when first reviewed, with image paths and any material mismatch. Repair a failed area and update that entry before moving to the next area. Reuse passing findings for unchanged images. The image, capture script, and lifecycle log hold dimensions, state, and provenance; do not copy those facts into another manifest.
+3. Inspect changed code and focused diffs. Open every newly accepted or changed browser image at readable scale. Phase 0 records its source finding per image; paired target review records a concise pass/fail comparison per UI area when first reviewed, with image paths and any material mismatch. Repair a failed area and add a brief correction to its finding before moving to the next area; do not rewrite a long evidence entry. Reuse passing findings for unchanged images. The image, capture script, and lifecycle log hold dimensions, state, and provenance; do not copy those facts into another manifest.
 4. Record actual unresolved gaps. Update `progress.md` only when a meaningful group completes or fails, the next action changes, or a phase changes—not after each tool call.
 5. At the phase gate, score each weighted rubric row once from current evidence and evaluate every critical item independently. On failure, repair in the current phase and refresh only invalidated evidence and affected earlier claims. On pass, record the decision and promote to the next phase.
 
-The marker, phase artifact, checkpoint, open gaps, evidence, and actual files must agree on the current phase, unresolved failures, and next action; they need not repeat the same event or facts. `CURRENT_PHASE.txt` and `progress.md` are resume pointers, not proof.
+The marker, phase artifact, checkpoint, open gaps, evidence, and actual files must agree on the current phase, unresolved failures, and next action; they need not repeat the same event or facts. `CURRENT_PHASE.txt` and `progress.md` are resume pointers, not proof. A successful check/build remains current until a target code, asset, dependency, or configuration change invalidates it; writing `task-workflow/` evidence does not. An accepted screenshot/finding remains current until a change affects the UI it proves. Reuse current proof instead of renaming or rerunning it.
 
 Keep browser work and visual review in bounded packets. A source or target packet should own one route/state family and a coherent viewport/theme set, with a reviewable number of outputs. Do not create one monolithic corpus packet that must be rerun after an unrelated selector or state failure. On failure, retain earlier images whose identity, state, framing, and lifecycle are still provable; repair and recapture only failed or invalidated states. A missing optional manifest or later packet failure does not invalidate an earlier valid screenshot. Use new paths for changed images and retain actual invalidation reasons in runtime evidence.
 
@@ -159,7 +160,7 @@ Repair source-backed design-system errors, missing or wrong content/states, brok
 
 ### Responsive and theme safety
 
-Check desktop, tablet when relevant, mobile, omitted-size extrapolation, short-height overflow, source themes, target-required themes, and important interaction states. Derive missing target themes conservatively from the accepted source/design system. Repair objective defects such as overlap, clipping, cutoff, horizontal canvas overflow, unusable controls, accidental document scroll, or blank regions.
+By Phase 3 signoff, check desktop, tablet when relevant, mobile, omitted-size extrapolation, short-height overflow, source themes, target-required themes, and important interaction states. Derive missing target themes conservatively from the accepted source/design system. Repair objective defects such as overlap, clipping, cutoff, horizontal canvas overflow, unusable controls, accidental document scroll, or blank regions.
 
 When a source entrance animation interferes with a readable capture, reach the state with a real control and wait for the source's own settled DOM, geometry, opacity, or transition condition. Do not inject styles, set opacity/classes, disable animations, or otherwise mutate source DOM/CSS merely to make a screenshot readable. If the source has no stable settled state, record that behavior and its evidence instead of rewriting the source inside the packet.
 
@@ -188,7 +189,7 @@ The target proof must record the measured values from the browser packet output 
 
 Source values describe the reference; they cannot satisfy or relax target predicates. A target that relies on document scrolling, sticky positioning alone, a fixed-height strip, or an unnamed overflow owner fails the current visual gate; repair the shell there and refresh affected earlier code/check evidence.
 
-When a mobile drawer exists, prove real-input open/close, overlay interception, full-viewport geometry, body/document scroll lock, and scroll restoration with screenshots and measurements.
+When a mobile drawer exists, prove real-input open/close, overlay interception, full-viewport geometry, body/document scroll lock, and scroll restoration with screenshots and measurements by Phase 3 signoff.
 
 </sidebar_contract>
 
@@ -198,12 +199,14 @@ When a mobile drawer exists, prove real-input open/close, overlay interception, 
 
 Every browser or runtime UI check is lifecycle-owned. A custom Playwright file is a payload for the helper, never a standalone command. Do not run `node task-workflow/source-playwright/<script>.mjs`, `node task-workflow/target-playwright/<script>.mjs`, `node -e`/`node --eval` with Playwright, an inline heredoc browser program, or any equivalent direct browser command. Debug browser behavior by editing a task-owned `.mjs` packet and rerunning that packet through the helper; never write a diagnostic to `/tmp` or another temporary location and never use a shell heredoc or redirection to manufacture a browser script. Do not start a background server for a smoke test, readiness test, or browser run; do not attach Playwright to a manually started server; do not use shell `sleep`, `curl`, or another manual request as a substitute for the helper’s ready URL. After a build, validate the running target by invoking the lifecycle helper with the bounded server command, ready URL, runtime directory, and custom Playwright payload. Do not invoke `playwright install`, `playwright install --dry-run`, or any equivalent browser-install or browser-availability command; use the existing browser cache through the lifecycle helper.
 
-Use this shape for every source and target packet, changing only the owned server, readiness check, and payload:
+Use this shape for every source and target packet, selecting the corresponding runtime and image base:
 
 ```bash
 node task-workflow/scripts/playwright-lifecycle.mjs \
   --server "<bounded server command>" \
   --ready-url "http://127.0.0.1:<port>/<ready-path>" \
+  --runtime-dir "task-workflow/runtime/<source-or-target>" \
+  --evidence-dir "task-workflow/<source-or-verification>" \
   --run "node task-workflow/<source-or-target-playwright>/<packet>.mjs"
 ```
 

@@ -31,6 +31,7 @@ Do not edit the copied helper. Do not replace it with an Agent-authored approxim
 | Ready URL | exact source URL | exact target URL |
 
 Do not reuse one runtime directory or port for both sides. Do not infer source success from target success or vice versa.
+The helper creates a unique subdirectory under each side's runtime and image base on every invocation. Capture scripts write images only under `process.env.CW_EVIDENCE_DIR`; the helper prints both generated paths and exposes its runtime path as `process.env.CW_LIFECYCLE_RUN_DIR`. Re-running the same packet cannot overwrite earlier logs or images.
 
 ## Helper Command Contract
 
@@ -41,6 +42,7 @@ node task-workflow/scripts/playwright-lifecycle.mjs \
   --server "<bounded server command>" \
   --ready-url "<exact URL expected to return successfully>" \
   --runtime-dir "task-workflow/runtime/<source-or-target>" \
+  --evidence-dir "task-workflow/<source-or-verification>" \
   --run "node task-workflow/<source-playwright-or-target-playwright>/<script>.mjs" \
   --ready-timeout-ms 15000 \
   --command-timeout-ms 20000
@@ -68,7 +70,7 @@ For the first source orientation, open both desktop and mobile images and record
 
 For equivalent interaction proof, use the same focused state and viewport plan in separate source and target helper runs. Do not keep both servers alive, create a dual-background-server command, or use process inspection to imitate lifecycle ownership.
 
-The helper accepts multiple `--run` commands under one server start and writes a separate result log for each. Batch independent focused scripts that use the same source or target build; do not restart the server between them merely to create separate packets. Use a distinct runtime directory for each later lifecycle because the helper otherwise overwrites `run-01.log` and related names. A later failed command stops the helper, but earlier screenshots with proven identity, state, framing, and lifecycle stay valid. Never combine source and target under one helper run or replace the helper with a manual server.
+The helper accepts multiple `--run` commands under one server start and writes a separate result log for each. Batch independent focused scripts that use the same source or target build; do not restart the server between them merely to create separate packets. The helper creates unique runtime and screenshot directories for each invocation. A later failed command stops the helper, but earlier screenshots with proven identity, state, framing, and lifecycle stay valid. Never combine source and target under one helper run or replace the helper with a manual server.
 
 ## Browser Script Rules
 
@@ -76,10 +78,10 @@ The helper accepts multiple `--run` commands under one server start and writes a
 
 - Use Playwright's user-facing input APIs: locator/page `click`, `fill`, `selectOption`, `press`, `wheel`, drag, or touch as appropriate. Do not use `evaluate(() => element.click())`, `dispatchEvent(...)`, synthetic routing, direct handler calls, or DOM mutation to stand in for a real interaction. This includes assigning `el.value`, `el.checked`, or classes and then dispatching `input`, `change`, or click events. A browser-evaluated function may observe or measure state, but it may not create the state being evidenced. If a source action fails because of a source defect, record it without repairing or bypassing the approved source; implement and verify the intended behavior in the target. Diagnose and repair target action failures.
 - Use deterministic waits tied to visible state, URL, DOM, response, or geometry.
-- Before the helper invocation, review the current packet and remove every fixed-wait construct. After a small edit, a focused diff or targeted read may be enough; review a new or substantially rewritten packet completely. The code review itself suffices; record a failure or repair, not a duplicate review row. No immediate next-tool-call ordering is required. `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, arbitrary polling/timer settling, and catch/fallback code that suppresses a browser wait, navigation, screenshot, console, page-error, or assertion failure are forbidden. Browser packets must fail loudly: never use `.catch(() => ...)`, broad `try/catch`, ignored promises, or optional fall-through to continue after required browser work fails. Do not run a packet containing one and plan to repair it afterward. Finding one is a hard packet failure: do not score it; record the failure, replace it with a visible-state, URL, DOM, response, geometry, or assertion condition, and rerun through the helper.
+- Before the helper invocation, review the current packet and remove every fixed-wait construct. The authored patch or focused diff can be this review; do not reread the same unchanged script solely for a second review. `page.waitForTimeout(`, `waitForTimeout(`, `setTimeout(`, `setInterval(`, shell `sleep`, arbitrary polling/timer settling, and catch/fallback code that suppresses a browser wait, navigation, screenshot, console, page-error, or assertion failure are forbidden. Browser packets must fail loudly: never use `.catch(() => ...)`, broad `try/catch`, ignored promises, or optional fall-through to continue after required browser work fails. Do not run a packet containing one and plan to repair it afterward. Finding one is a hard packet failure: do not score it; record the failure, replace it with a visible-state, URL, DOM, response, geometry, or assertion condition, and rerun through the helper.
 - Treat visual/debug diagnostics as ordinary browser packets: edit the task-owned packet and rerun the full helper invocation. Do not create `/tmp` scripts, use shell-generated browser files, run `node <packet>.mjs` directly, or launch `chromium` from any process the helper did not start.
 - Use explicit viewport dimensions.
-- Make route/state/theme/viewport identity clear from the image path and capture script; use the lifecycle log for run ownership.
+- Make route/state/theme/viewport identity clear from the image name and capture script; use the generated image directory and lifecycle log for run ownership.
 - Fail loudly on wrong routes, missing selectors for reachable required views, invalid geometry, and target console/page errors. Record source console/page errors without filtering them or failing an otherwise useful source capture.
 - Capture full-view and section images to the correct evidence root.
 - Measure scroll and geometry in the browser when layout ownership matters.
@@ -135,21 +137,6 @@ Prefer the helper-owned lifecycle and avoid:
 - direct browser scripts after an undiagnosed helper failure;
 - edits to `playwright-lifecycle.mjs`.
 
-Choose explicit, distinct task-owned source and target ports before invoking the lifecycle helper and record them in the phase artifact. If the ready URL already responds before helper ownership begins, do not inspect or kill the unknown process; select another explicit task-owned port. The helper owns the server process and PID-scoped cleanup for the run. Never respond to a port failure with broad process inspection or cleanup, shell `sleep`, or manual background-server management. Preserve lifecycle logs, diagnose the specific invocation, choose another task-owned port when necessary, and rerun through the helper.
+Choose explicit, distinct task-owned source and target ports before invoking the lifecycle helper. If the ready URL already responds before helper ownership begins, do not inspect or kill the unknown process; select another explicit task-owned port. The helper owns the server process and PID-scoped cleanup for the run. Never respond to a port failure with broad process inspection or cleanup, shell `sleep`, or manual background-server management. Preserve lifecycle logs, diagnose the specific invocation, choose another task-owned port when necessary, and rerun through the helper.
 
-## Evidence Required For A Passing Lifecycle Gate
-
-| Item | Required evidence |
-| --- | --- |
-| Helper identity | byte comparison to skill asset |
-| Command | exact helper invocation |
-| Ownership | source/target port, runtime dir, and ready URL |
-| Readiness | successful readiness evidence |
-| Browser run | exit result and relevant output |
-| Cleanup | helper-owned PID cleanup result |
-| Fixed-wait audit | inspected script paths and deterministic waits used |
-| Timeout record | values plus triage for any timeout/retry |
-| Screenshot ownership | files written only to the correct source/target root |
-| Sequential ownership | source helper finished/cleaned up before target helper began |
-
-Missing lifecycle evidence blocks the owning phase. "Screenshots were captured successfully" is not enough.
+The unchanged helper and its generated runtime log are the lifecycle evidence: they show the command, URL, readiness, browser result, and cleanup. Cite the relevant log and image directory in the phase artifact. Do not copy those facts into a lifecycle table. A failed or missing helper run cannot support a passing visual gate.
