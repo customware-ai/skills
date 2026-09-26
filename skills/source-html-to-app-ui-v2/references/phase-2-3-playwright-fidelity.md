@@ -1,28 +1,63 @@
-# Phases 2–3: Paired Playwright Fidelity
+# Phases 2–3: Paired Fidelity
 
-Read this reference when `CURRENT_PHASE.txt` is `phase-2-paired-responsive-proof` or `phase-3-fidelity-repair-signoff`. Read `references/playwright-lifecycle.md` for all browser/server work.
+Use for broad comparison and focused signoff. The entrypoint owns phase order, scoring adjustments and recovery; the managed-lifecycle reference owns browser/server commands and script repair. Load once while context remains intact.
 
-## Shared evidence contract
+## 1. Shared Comparison Rules
 
-Build/check, code review, real-input interaction checks, measurements, and opened screenshots prove different claims; none substitutes for another. Capture source and target in separate lifecycle-owned runs. Pair a reachable source appearance with the target at matching route/state, theme, viewport, and section framing. A source-unavailable state uses the recorded error or unavailable UI and its HTML/CSS/design declarations instead of a fabricated source image; Phase 3 still verifies its target appearance and interaction. Do not reopen source JavaScript diagnostics during target comparison.
+### Evidence And Source Reuse
 
-Across Phases 2–3, cover every page-like surface, materially distinct visual state, readable section, represented theme, desktop/mobile size, relevant tablet and short-height size, and interaction family. A readable image may cover multiple adjacent sections. An interaction without a new appearance needs real-input proof, not another screenshot. Local state changes need the changed area plus context, not duplicate full-page images of unchanged content. Let actual source structure determine evidence volume; no fixed screenshot cap applies.
+<paired_evidence>
 
-Give each image a unique ID/path; never overwrite a prior revision. The helper supplies a fresh capture directory on each invocation; packets write images there. The PNG, capture script, and lifecycle log establish dimensions, viewport/state, and run ownership. Keep one concise comparison index: one pass/fail entry per compared UI area with its accepted source/target paths, the actual visual finding, and any material mismatch or fix. Several images may support one entry; do not make a separate finding row for each image, command, or metadata field. A short later correction may supersede an earlier area finding; do not rewrite a long entry merely to record fail → fix → pass. Failed/invalidated images remain in runtime evidence with reasons, but are not counted as passing.
+**IMPORTANT — No duplicate HTML capture:** source screenshots are complete in Phase 0. Use their accepted paths and capture target views at the same route/state, theme, viewport and section framing. A preference for taller images or a fresh script does not justify another source run. Repair an indispensable absent/unreadable/invalid/wrong-state source item only in Phase 0, then return without resetting the task or replaying accepted captures.
 
-Open every newly accepted source and target image at readable scale, one tall pair or a small related batch; reuse Phase 0 source findings when current. Verify pair identity, framing, lifecycle ownership, and target freshness from the existing evidence. Compare content/order, geometry, spacing, typography, colors, borders/radii/shadows, backgrounds, controls/assets, clipping/overlap, state, scroll, theme, and responsive behavior. Write the area's pass/fail note at the first comparison, not after collecting an entire corpus. A contact sheet or representative sample alone is not visual proof. Capture scripts collect evidence; the Agent judges scores and gaps. Do not write scoring, packet-permit, or promotion scripts.
+- A source-unavailable state uses its defect record and HTML/CSS/design declarations against complete target visual and real-input proof. Do not reopen source JavaScript diagnostics.
+- Across both phases, cover every page-like surface, materially distinct state, readable section, represented theme, desktop/mobile size, relevant tablet/short-height condition and interaction family.
+- A readable image may cover adjacent sections. Local state changes need the changed area plus context; an interaction without a new appearance needs real-input proof, not another screenshot. No fixed screenshot cap or default exhaustive matrix.
+- Open every newly accepted target image at readable scale against current source proof. Use an existing source image for an actual comparison question; do not reopen its entire accepted set. Already-reviewed pairs need a specific unresolved question or relevant change to reopen.
+- Verify identity/framing/lifecycle/freshness from the PNG, packet and log. Give images unique paths and retain failed revisions with reasons; no per-image metadata table or mandatory manifest. A sample/contact sheet alone is not visual proof.
 
-If the first comparison of an area fails materially, record the gap and owner, fix it, review its replacement evidence, and record a brief fail → fix → pass correction before moving to the next area. Batch related fixes when they share a token or component rule; do not continue gathering unrelated comparisons while a known material mismatch remains. Update the compact checkpoint only when the next action or phase changes. A later packet failure does not invalidate earlier proven images; recapture only missing, invalid, or changed evidence.
+Build/check, code review, interactions, measurements and opened screenshots prove different claims; none substitutes for another. The Agent judges scores/gaps; do not create scoring, packet-permit or promotion scripts.
 
-## Phase 2: Broad paired comparison and correction
+</paired_evidence>
 
-Enter Phase 2 only when Phases 0–1 pass at `48/50` or higher and target code is current. Reuse Phase 1 code, check, and build evidence until a relevant change invalidates it; do not repeat a complete diff audit or build merely to enter this phase. A green build cannot compensate for missing visual evidence.
+### Compare → Note → Fix → Recheck
 
-Phase 2 is the broad one-to-one visual pass: compare source and target page shells, section hierarchy, card/grid placement, content, design-system consistency, and overall layout across routes, represented themes, desktop, and mobile. Open each accepted paired image. Choose images that make these broad areas readable; an overview can cover several sections, while an obscured section needs a focused image. Include a representative major dialog or other structural state when its layout is part of the page design, but do not build an interaction-state or top/middle/bottom screenshot matrix by default. For each UI area, immediately record a concise pass/fail comparison, repair a material broad-layout failure, recheck only that area, and then move on. If the broad layout passes, record smaller differences for Phase 3 instead of adjusting a few pixels and recapturing the area. Fix obvious broken controls encountered while reaching a view, but leave exhaustive interaction-family, distinct-state, and small-detail checks for Phase 3. Revalidate only code/check claims invalidated by a repair; do not roll the marker back to Phase 1 for visual correction.
+<comparison_loop>
 
-Inspect desktop/mobile layout, responsive transformation, represented themes, visible scroll regions, overlap, clipping, cutoff, and horizontal overflow. Use a tablet or short-height view in Phase 2 when it reveals a materially different layout or suspected defect. Repair broad layout and visual problems here. Phase 3 owns the final focused tablet/short-height, sidebar metric, drawer, and interaction checks; a visible Phase 2 failure must still be fixed immediately, not deferred.
+1. Compare the area's relevant content/order, geometry/spacing, typography/colors, borders/radii/shadows/backgrounds, controls/assets, clipping/overlap, state/scroll/theme and responsive behavior.
+2. Immediately write one concise area **pass/fail** in the existing comparison index, with accepted paths and what matched or materially differed. Several images may support the same entry. Do not move to an unrelated batch with the current finding unwritten, or reopen images later to reconstruct notes.
+3. For a material failure, note the owning gap and fix its cause—prefer shared tokens/components. Batch shared-cause or independent repairs where dependencies permit, but do not collect unrelated comparisons while a known material mismatch remains.
+4. Review only affected replacement proof and append a short **fail → fix → recheck → pass** correction. Retain accepted unchanged images and findings; a later packet failure does not erase them.
 
-### Phase 2 gate
+Use the entrypoint's evidence homes: findings in the index, unresolved pointers in gaps, gate decisions in phase artifacts, phase/next action in the checkpoint. No repeated findings, CSS transcription, command table or detail ledger.
+
+Reuse working navigation/readiness/capture steps; narrow repairs and batching follow the lifecycle reference. Browser replacement proof must include any relevant target repair in the served build.
+
+</comparison_loop>
+
+## 2. Phase 2 — Broad Layout And Shared Styling
+
+### Entry And Scope
+
+<phase_2_work>
+
+Enter after Phases 0–1 pass at `48/50` or higher with current target code. Reuse Phase 1 diff/check/build proof; do not repeat a complete audit/build merely to enter. A green build cannot compensate for missing visual proof.
+
+Aim for **about 15 minutes**, as a soft guide—not a hard limit. Spend effort on unresolved broad mismatches or missing required proof; necessary quality work may take longer.
+
+- Compare page shells, section hierarchy, card/grid placement, content, shared design-system styling and overall layout across routes, represented themes, desktop and mobile.
+- Choose readable views covering multiple sections where possible; add a focused view only for obscured coverage. Include representative major dialogs/structural states when their layout is part of the design. No default top/middle/bottom or interaction-state matrix.
+- Inspect responsive transformation, visible scroll regions, overlap/clipping/cutoff and horizontal overflow. Add tablet/short-height proof here only for materially different layout or a suspected defect.
+- Fix material broad layout/style/content failures and obvious broken controls encountered while reaching views. Once broad layout passes, hand off small differences; isolated disabled-button opacity belongs to Phase 3 unless it causes a material layout/usability failure.
+- Revalidate only claims invalidated by repairs. Keep visual corrections here, not a marker rollback to Phase 1. Final interaction-family/distinct-state/fine-detail/sidebar/drawer proof belongs to Phase 3, not this gate; do not defer a visible broad failure.
+
+Use the shared compare/note/fix/recheck loop. Test intended behavior rather than every input combination.
+
+</phase_2_work>
+
+### Gate And Transition
+
+<phase_2_gate>
 
 | Category | Points |
 | --- | ---: |
@@ -33,21 +68,72 @@ Inspect desktop/mobile layout, responsive transformation, represented themes, vi
 | Desktop/mobile responsive and visible scroll safety | 8 |
 | **Total** | **50** |
 
-Required: at least `48/50`. Every critical item independently passes: current required checks/build and UI-only code; managed lifecycle; opened broad source-target images for every page's overall layout and readable section hierarchy at desktop/mobile sizes and represented themes, plus representative structural states where needed; a concise first-comparison pass/fail entry for each area with material broad-layout failures repaired and rechecked before moving on; no missing content, unusable layout, or material style/placement mismatch; no unresolved Phase 2 broad visual gap. Final focused images for every distinct state and section, interaction-family proof, small-detail correction, and sidebar/drawer measurements belong to Phase 3, not this gate. Score once from current evidence, not per-capture paperwork.
+Required: **at least `48/50`**, with every critical requirement independently passing:
 
-On pass, record `Decision: Pass` with evidence pointers, promote the marker to `phase-3-fidelity-repair-signoff`, and update the checkpoint. The stated passing threshold is sufficient when all critical items pass; do not pursue `50/50` through harmless micro-adjustments. On failure, repair within Phase 2 and refresh only invalidated evidence, including affected Phase 1 claims.
+- [ ] Current required checks/build, UI-only code and managed lifecycle.
+- [ ] Opened current broad comparisons for every page's overall layout/readable section hierarchy at desktop/mobile sizes and represented themes; needed representative structural states included, source-unavailable states declaration-backed.
+- [ ] Immediate area pass/fail notes; material broad failures repaired and affected proof rechecked before unrelated comparisons.
+- [ ] No missing content, unusable layout, material style/placement mismatch or unresolved Phase 2 broad gap.
 
-## Phase 3: Fine-detail fidelity and signoff
+Score once from existing proof. Final distinct-state/section, interaction, small-detail and sidebar/drawer checks are Phase 3 requirements, not per-capture promotion paperwork. Record the score, critical results, pointers and `Decision: Pass`, then promote to Phase 3 and update the checkpoint. The threshold suffices; do not chase `50/50`. A failure stays here for repair and refresh of only affected claims, including earlier code/check proof.
 
-Enter only when Phases 0–2 pass and Phase 2's broad visual comparisons and checks remain current. Phase 3 completes the final checks: verify each interaction family with real input and focused assertions, capture only materially distinct resulting appearances, check tablet/short-height and shell safety, then review smaller differences in typography, spacing, color, borders, radii, assets, controls, and state details. Aim for the closest practical visual match, not literal pixel identity. Reuse unchanged Phase 2 pass entries and repair remaining material visual or behavioral mismatches; recapture only affected target images under new paths and update their comparison entry. Keep only unresolved material gaps in `open-gaps.md`.
+</phase_2_gate>
 
-Check smaller details against the accepted pairs while confirming Phase 2's broad layout, section, theme, and responsive proof still represents current code. Record genuine mismatches and their fix or source-backed defense without another table. Complete real-input interaction checks and, when applicable, the sidebar's document/content scroll deltas, stable bounds, viewport coverage, and post-scroll image plus the mobile drawer's open/close, overlay, body lock, and restoration. Reuse any current proof already produced in Phase 2; do not run a second check for the same claim. If a larger defect escaped Phase 2, repair it and refresh only affected visual evidence rather than replaying the whole comparison.
+## 3. Phase 3 — Focused Fidelity And Signoff
 
-Before signoff, ensure a current, opened desktop and mobile pair for every route and materially distinct visual state, plus readable section evidence; a documented source-unavailable state has target visual and real-input proof. Reuse a Phase 2 pair if it is still current after relevant code changes; do not reopen, recapture, or duplicate it merely to label it “final.” Do not require a screenshot for an interaction whose resulting appearance is already evidenced. Inspect target changes since the last current diff review and the current build/check result; rerun only invalidated checks. Independently pass layout, style, route, state, section, interaction, desktop, mobile, responsive, scroll/sidebar, drawer, and theme fidelity.
+### Entry And Priorities
 
-### Phase 3 gate
+<phase_3_work>
 
-Apply these weights overall and independently to desktop and mobile:
+Enter with passing Phases 0–2 and current broad comparisons/checks. Start from accepted evidence and actual deferred findings. Use visual/engineering judgment to find genuine omissions, material differences or missing proof—not another reproduction pass or a newly enumerated tiny-difference checklist.
+
+Aim for **about 15 minutes**, as a soft guide—not a hard limit. Complete required proof/repairs even when longer. Once an area's current proof passes, it is done; expanding review without a new defect or missing requirement means finish the gate, not start another round.
+
+1. Prioritize missing content/states, wrong shared rules, visibly incorrect styling and broken behavior. Review smaller typography/spacing/color/border/radius/asset/control/state differences against accepted images.
+2. Complete only missing/affected interaction-family, distinct-state, tablet/short-height, shell, drawer and theme proof. Use meaningful inputs and applicable failure behavior—not every field-value permutation or repeated transition. Every required interaction family still needs real-input proof.
+3. Use focused captures/measurements to answer actual unresolved questions. Reuse Phase 0 source images and unchanged Phase 2 findings; no new source run, redundant route × state × viewport matrix or screenshot of an already-evidenced appearance.
+4. For genuine mismatches, use the shared finding/fix/recheck loop. A larger escaped defect needs its owning repair and affected evidence, not a replay of Phase 2. Aim for the closest practical match, not literal pixel identity.
+5. Keep an honest minor deduction for harmless isolated pixel/line-wrap variance. Repeated deviations from an incorrect shared token/component rule are material and must be repaired. Never skip a required check or accept a real failure for speed.
+
+Before signoff, reuse or finish current opened desktop/mobile pairs for every route and materially distinct state plus readable sections; source-unavailable states require declaration-to-target visual/interaction proof. Do not recapture/reopen/rename passing pairs merely to label them final. Inspect target changes since the last current diff review and rerun only invalidated checks/build.
+
+Independently pass layout, style, route, state, section, interaction, desktop, mobile, responsive, scroll/sidebar, drawer and theme fidelity. Current Phase 2 proof can satisfy an unchanged claim; one cannot compensate for another.
+
+</phase_3_work>
+
+### Sidebar, Content Scroll And Drawer
+
+
+<sidebar_contract>
+
+When a sidebar exists, treat its scroll architecture as a target requirement, not a cosmetic detail. Complete its numeric proof by Phase 3 signoff at a forced-overflow short desktop height with real scroll input and before/after screenshots. Fix an obvious Phase 2 scroll defect when first seen; do not defer a known failure.
+
+Record two separate contracts:
+
+| Contract | What to record |
+| --- | --- |
+| Source observation | source document/content scroll values, sidebar bounds, sticky/fixed behavior, and visible result |
+| Target requirement | viewport-bounded shell, named sidebar, named content scroller, document scroll unchanged, content scroll increasing, sidebar fixed to the viewport |
+
+The target proof must record the measured values from the browser packet output and calculate:
+
+- document scroll delta = `0`;
+- content-pane scroll delta `> 0`;
+- sidebar top and bottom deltas within `1px`;
+- sidebar height and bottom cover the viewport within `1px`;
+- the post-scroll image has no blank lower-sidebar region.
+
+Source values describe the reference; they cannot satisfy or relax target predicates. A target that relies on document scrolling, sticky positioning alone, a fixed-height strip, or an unnamed overflow owner fails the current visual gate; repair the shell there and refresh affected earlier code/check evidence.
+
+When a mobile drawer exists, prove real-input open/close, overlay interception, full-viewport geometry, body/document scroll lock, and scroll restoration with screenshots and measurements by Phase 3 signoff.
+
+</sidebar_contract>
+
+### Gate And Transition
+
+<phase_3_gate>
+
+Apply the same weights overall and separately for desktop and mobile:
 
 | Category | Points |
 | --- | ---: |
@@ -59,6 +145,13 @@ Apply these weights overall and independently to desktop and mobile:
 | Evidence, lifecycle, and artifact integrity | 4 |
 | **Total** | **50** |
 
-Required: overall at least `49/50`; desktop and mobile each at least `48/50`. Every independent and critical fidelity category passes. Every route, readable section, and materially distinct visual state has a current opened pair; every source-defect-unreachable state has declaration-to-target proof; every interaction family has real-input proof; final desktop/mobile evidence is current and opened; applicable sidebar/drawer/theme safety passes; and `open-gaps.md` has no unresolved item. A harmless isolated pixel/line-wrap variance can receive an honest minor deduction without another capture or repair; repeated small deviations from one wrong token/component rule are material. A visual deduction can be re-reviewed only under the skill's bounded scoring-adjustment rule; missing evidence or objective failures cannot be offset.
+Required: **overall `49/50` or higher; desktop and mobile `48/50` or higher each**, with every independent/critical requirement passing:
 
-After all Phase 3 capture, interaction, and repair work is done, confirm no unresolved gap, then record the three scores, critical results, evidence pointers, and `Decision: Pass` as the final Phase 3 review. Promote to `phase-4-final-audit-completion` and update the checkpoint. Any later Phase 3 browser packet or target-code change resets the Phase 3 decision to Pending until the affected gate is reviewed again; a new screenshot may change prior proof even when the packet succeeds. On failure, repair within Phase 3 and refresh only invalidated evidence and affected earlier gate claims. Do not call task completion from Phase 3.
+- [ ] Current opened route/section/materially distinct-state pairs; declaration-to-target proof for source-unavailable states.
+- [ ] Real-input proof for every interaction family; current final desktop/mobile evidence.
+- [ ] Applicable responsive/sidebar/drawer/theme safety and all independent fidelity categories pass.
+- [ ] Current diff/check/build proof and no unresolved item in open gaps.
+
+Use the entrypoint's bounded subjective-score adjustment rule; missing proof/objective failures cannot be offset. Harmless variance may retain a deduction without another capture. After required repairs/proof, record all three scores, critical results, pointers and `Decision: Pass` together, then promote to Phase 4 and update the checkpoint. No extra pursuit of `50/50` or completion command here. Reopen only claims invalidated by a relevant change, contradictory result or missing proof; a later successful packet alone does not reset the decision. On failure, repair here and review only affected proof/score.
+
+</phase_3_gate>

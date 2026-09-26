@@ -4,6 +4,8 @@ The approved HTML and design JSON are immutable. Keep target files read-only unt
 
 ## Phase Metadata And Source Boundary
 
+<phase_metadata_and_source_boundary>
+
 | Requirement | Evidence | Pass/Fail |
 | --- | --- | --- |
 | Fresh task-workflow scaffold; all five templates, ledgers, spec, and lifecycle helper copied without reusing prior evidence | Pending | Pending |
@@ -12,7 +14,11 @@ The approved HTML and design JSON are immutable. Keep target files read-only unt
 | UI-relevant HTML/CSS/JavaScript declarations identified for source visuals and intended interactions | Pending | Pending |
 | Source input and design JSON remain byte-identical | Pending | Pending |
 
+</phase_metadata_and_source_boundary>
+
 ## Source Evidence And Coverage
+
+<source_evidence_and_coverage>
 
 Link the concise accepted-image evidence index here. For each accepted/current image, record its ID/path, the page/state/sections it proves, and one concrete finding. Use the PNG, capture script, and lifecycle log for dimensions and run identity; no separate manifest or metadata table is required. Review every accepted/current image; its opened count must equal the accepted/current count. The HTML and design JSON remain authoritative for declared content, sections, styles, and handlers—do not transcribe them into a coverage or contract table. Record only non-obvious reachability decisions, source defects, adaptations, exclusions, and target-specific handoff decisions below.
 
@@ -21,26 +27,42 @@ Link the concise accepted-image evidence index here. For each accepted/current i
 - Declared pages, distinct states, sections, interaction families, themes, and viewports covered or specifically excluded: Pending
 - Lifecycle-owned packet/runtime evidence: Pending
 
+</source_evidence_and_coverage>
+
 ## Source Defects And Target Requirements
+
+<source_defects_and_target_requirements>
 
 - Source JavaScript error or unavailable UI state and intended target behavior (or `None`): Pending
 - Declared interaction families requiring target verification, including those without a new source appearance: Pending
 - Unreachable visual states requiring complete target screenshots and interaction proof (or `None`): Pending
 
+</source_defects_and_target_requirements>
+
 ## Shell, Scroll, Drawer, And Theme
+
+<shell_scroll_drawer_and_theme>
 
 - Source short-height scroll/sidebar observation and pre/post image pointers (or `N/A`): Pending
 - Target viewport shell, sidebar, and named content-scroller roles; document-scroll delta `0`, content-scroll delta `> 0`, stable sidebar (or `N/A`): Pending
 - Mobile drawer, overlay, body lock/restoration, and theme adaptations (or `N/A`): Pending
 
+</shell_scroll_drawer_and_theme>
+
 ## Source Design Handoff
+
+<source_design_handoff>
 
 - Design JSON and accepted visual evidence pointers: Pending
 - Target-specific responsive/theme adaptations and explicit exclusions: Pending
 - UI-only boundary, real brand asset, unsupported destinations: Pending
 - Phase 1 target-owner research actions; exact target files deferred until promotion: Pending
 
+</source_design_handoff>
+
 ## Scorecard
+
+<scorecard>
 
 | Category | Passed | Total | Evidence |
 | --- | ---: | ---: | --- |
@@ -53,7 +75,11 @@ Link the concise accepted-image evidence index here. For each accepted/current i
 
 Required: at least `48/50`. `Unscored` is not a pass or an assessed zero. Score from current evidence after coverage, applicable scroll/theme proof, and handoff are reconciled.
 
+</scorecard>
+
 ## Non-Compensating Critical Gate
+
+<non_compensating_critical_gate>
 
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
@@ -67,13 +93,18 @@ Required: at least `48/50`. `Unscored` is not a pass or an assessed zero. Score 
 | Design JSON, accepted evidence, and concise handoff cover requirements with roles, adaptations, and exclusions | Pending | Pending |
 | No required placeholder, unsupported assumption, or observed unresolved discovery gap remains | Pending | Pending |
 
-## Promotion Lock
+</non_compensating_critical_gate>
 
-- Accepted/current images and findings reviewed; opened count matches accepted/current count: Pending
-- HTML declarations, accepted evidence, target-specific handoff, and actual open gaps reconciled: Pending
-- Score arithmetic and every critical row verified; marker and checkpoint updated for Phase 1: Pending
+## Decision And Transition
+
+<decision_and_transition>
+
+The Phase 0 accepted/current image count and reviewed findings must agree; use the existing evidence index, not a second count table.
+
+Evaluate the scorecard and critical requirements once from their cited evidence. Record `Decision: Pass` before updating the marker and compact checkpoint to Phase 1. Updating those pointers is not a second review or separate promotion scorecard.
 
 - Score: Unscored
 - Critical items: Pending
-- Promotion lock: Pending
 - Decision: Pending
+
+</decision_and_transition>

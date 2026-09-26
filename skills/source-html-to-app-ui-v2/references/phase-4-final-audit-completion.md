@@ -2,25 +2,41 @@
 
 Read this reference when `CURRENT_PHASE.txt` is `phase-4-final-audit-completion`.
 
-## Authority and entry
+## 1. Entry And Purpose
 
-Phase 4 is a time-bounded check gate: verify that Phases 0–3 and their current evidence have no skipped requirement. It does not reproduce inventories, create a second comparison corpus, rerun current browser/check/build work, or add a polish pass. Enter only after Phases 0–2 pass at `48/50` or higher, Phase 3 passes at `49/50` overall and `48/50` each for desktop/mobile, all critical items pass, and no unresolved gap remains. If the audit finds missing, stale, or contradictory evidence, repair only that item in its owning phase, refresh only claims it invalidates, then re-enter Phase 4; do not replay valid work.
+<authority_and_entry>
+
+- Phase 4 is a time-bounded check gate: verify that Phases 0–3 and their current evidence have no skipped requirement.
+- It does not reproduce inventories, create a second comparison corpus, rerun current browser/check/build work, or add a polish pass.
+- Enter only after Phases 0–2 pass at `48/50` or higher, Phase 3 passes at `49/50` overall and `48/50` each for desktop/mobile, all critical items pass, and no unresolved gap remains.
+- If the audit finds missing, stale, or contradictory evidence, repair only that item in its owning phase, refresh only claims it invalidates, then re-enter Phase 4; do not replay valid work.
 
 The Agent audits actual artifacts, accepted/current pair paths and opened findings, source declarations where necessary, current code/diff, check/build output, lifecycle results, and the exact task completion command. Do not create audit-packet, score, unlock, or promotion scripts. Do not copy all prior rows into another table. An earlier `Pass` label without current evidence is not proof.
 
-## Final audit
+</authority_and_entry>
+
+## 2. Audit Existing Proof
+
+<final_audit>
 
 Verify once, with evidence pointers in the Phase 4 artifact:
 
-1. **Artifact and score integrity:** marker, compact checkpoint, open gaps, design JSON identity, all prior phase decisions/thresholds, critical items and promotion locks agree on the current state. Their records need not repeat the same event. Resolve contradictions rather than rewriting valid history.
-2. **Evidence integrity and freshness:** every required route/state/section/theme/viewport and applicable source-defect-unreachable state has the accepted proof required by Phases 2–3; source and target paths are identity-safe, matching viewport/framing and dimensions were reviewed, lifecycle capture and target freshness are provable from the image, script, and run log, and each compared area has an opened pass/fail finding with cited images. Reopen only changed, stale, or unclear images, not the entire corpus merely to duplicate a prior review. Final desktop/mobile evidence must represent final target code.
-3. **Objective UI safety:** current Phase 3 target metrics and opened images still prove responsive, sidebar/content-scroll, drawer, and theme requirements. Verify the recorded sidebar predicates—document delta `0`, content delta `> 0`, top/bottom deltas `<= 1px`, viewport coverage within `1px`, and no blank lower-sidebar region—without rerunning the browser or measurements when that proof is current. A source value or earlier `Pass` without the actual record cannot substitute.
-4. **Code and checks:** inspect the complete target diff and connected owners. It must be source-backed, UI-only, free of source-runtime embedding/wrappers, backend/API/database/persistence/auth/business logic, invented destinations, debug/process workarounds, or weakened checks. Confirm the lifecycle helper is unchanged and the required build/check output is current after final code changes.
-5. **Completion safety:** copy the exact command from the task instructions, without inventing identifiers. Verify that it has not run early and that no implementation, check, browser, comparison, repair, or audit work remains. Put the exact command as the checkpoint's next action only after the final gate passes.
+- [ ] **Artifact and score integrity:** marker, compact checkpoint, open gaps, design JSON identity, all prior phase decisions/thresholds, critical items and phase transitions agree on the current state. Their records need not repeat the same event. Resolve contradictions rather than rewriting valid history.
+- [ ] **Evidence integrity and freshness:** every required route/state/section/theme/viewport and applicable source-defect-unreachable state has the accepted proof required by Phases 2–3; source and target paths are identity-safe, matching viewport/framing and dimensions were reviewed, lifecycle capture and target freshness are provable from the image, script, and run log, and each compared area has an opened pass/fail finding with cited images. Reopen only changed, stale, or unclear images, not the entire corpus merely to duplicate a prior review. Final desktop/mobile evidence must represent final target code.
+- [ ] **Objective UI safety:** current Phase 3 target metrics and opened images still prove responsive, sidebar/content-scroll, drawer, and theme requirements. Verify the recorded sidebar predicates—document delta `0`, content delta `> 0`, top/bottom deltas `<= 1px`, viewport coverage within `1px`, and no blank lower-sidebar region—without rerunning the browser or measurements when that proof is current. A source value or earlier `Pass` without the actual record cannot substitute.
+- [ ] **Code and checks:** inspect the complete target diff and connected owners. It must be source-backed, UI-only, free of source-runtime embedding/wrappers, backend/API/database/persistence/auth/business logic, invented destinations, debug/process workarounds, or weakened checks. Confirm the lifecycle helper is unchanged and the required build/check output is current after final code changes.
+- [ ] **Completion safety:** copy the exact command from the task instructions, without inventing identifiers. Verify that it has not run early and that no implementation, check, browser, comparison, repair, or audit work remains. Put the exact command as the checkpoint's next action only after the final gate passes.
 
-A documented source-unavailable state uses its recorded error or unavailable UI and intended declarations against current, opened target evidence; every reachable source state retains full paired visual proof. A missed source requirement returns only to the relevant Phase 0 item; a missed implementation requirement to the relevant Phase 1 item; visual or target-browser defects to Phase 2 or 3. Refresh only affected claims and evidence, then audit again. Do not repeat intact inventories or pairs, and do not send a routine visual correction back to Phase 1.
+- A documented source-unavailable state uses its recorded error or unavailable UI and intended declarations against current, opened target evidence; every reachable source state retains full paired visual proof.
+- A missed source requirement returns only to the relevant Phase 0 item; a missed implementation requirement to the relevant Phase 1 item; visual or target-browser defects to Phase 2 or 3.
+- Refresh only affected claims and evidence, then audit again.
+- Do not repeat intact inventories or pairs, and do not send a routine visual correction back to Phase 1.
 
-## Gate
+</final_audit>
+
+## 3. Gate And Completion
+
+<gate>
 
 | Category | Points |
 | --- | ---: |
@@ -31,6 +47,10 @@ A documented source-unavailable state uses its recorded error or unavailable UI 
 | Exact completion command lock and final-response readiness | 10 |
 | **Total** | **50** |
 
-Required: exactly `50/50` for this audit of evidence integrity and completion readiness; it does not require earlier visual phases to score `50/50` or justify new micro-adjustments. Every critical item independently passes: prior thresholds/critical gates/promotion locks remain valid; accepted/current paired evidence is complete, opened, identity-safe, and fresh; source-defect exceptions have complete target proof; final desktop/mobile, responsive/sidebar/drawer/theme/interaction evidence passes; no open material or stale gap remains; final diff and current checks/build pass UI-only scope; the exact completion command is copied and unrun. Missing evidence, objective failure, or a near-threshold score cannot be waived.
+- Required: exactly `50/50` for this audit of evidence integrity and completion readiness; it does not require earlier visual phases to score `50/50` or justify new micro-adjustments.
+- Every critical item independently passes: prior thresholds/critical gates/transitions remain valid; accepted/current paired evidence is complete, opened, identity-safe, and fresh; source-defect exceptions have complete target proof; final desktop/mobile, responsive/sidebar/drawer/theme/interaction evidence passes; no open material or stale gap remains; final diff and current checks/build pass UI-only scope; the exact completion command is copied and unrun.
+- Missing evidence, objective failure, or a near-threshold score cannot be waived.
 
 Record score arithmetic, critical outcomes, evidence pointers, and `Decision: Pass` once. Then run the exact supplied completion command and confirm its result before reporting task completion. If any condition fails, repair it instead of calling completion.
+
+</gate>

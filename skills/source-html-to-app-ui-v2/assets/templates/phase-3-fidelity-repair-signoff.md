@@ -1,19 +1,27 @@
 # Phase 3: Fidelity Repair And Signoff
 
-Reuse the Phase 2 comparison index and already-opened findings. Add only changed/replacement pair findings and actual mismatch resolutions there; do not reopen unchanged pairs or rebuild a second full-view/section/final matrix. Runtime history retains invalidated revisions. The HTML/design, code/diff, and accepted images remain the authorities for their respective facts.
+Reuse accepted Phase 0 source images/framing, the Phase 2 comparison index, and already-opened findings. Do not capture the HTML again here. Add only changed/replacement pair findings and actual mismatch resolutions there; do not reopen unchanged pairs or rebuild a second full-view/section/final matrix. Runtime history retains invalidated revisions. The HTML/design, code/diff, and accepted images remain the authorities for their respective facts.
+
+Use judgment to find actual omissions/material differences and complete missing checks. At each first comparison, record its concise pass/fail in the existing comparison index before reviewing unrelated images. For a failure, append one short finding → fix → affected recheck, not a new detail ledger. Reuse an accepted area's proof and move on when it passes; harmless isolated pixel/line-wrap differences do not need another tuning/capture round. All required checks and score thresholds below still apply.
 
 ## Fidelity Evidence
 
+<fidelity_evidence>
+
 - Phase 0–2 current decisions and accepted pair index: Pending
 - Genuine visual mismatches found, owning fixes, and replacement pair IDs (or `None`): Pending
-- Adversarial review of layout, style, route, state, sections, desktop/mobile, responsive/scroll/drawer, and themes: Pending
+- Focused review of actual missing/affected layout, style, route, state, section, desktop/mobile, responsive/scroll/drawer and theme claims, reusing current passing proof: Pending
 - Every visible interaction family tested with real controls on applicable desktop/mobile surfaces and current outcomes: Pending
 - Current final desktop/mobile pair for every route and materially distinct visual state, plus readable section evidence: Pending
 - Current recorded sidebar metrics and post-scroll image; drawer/theme safety (or `N/A`): Pending
 - Target changes since the last current diff review and current required checks/build (reuse unchanged results): Pending
 - Actual unresolved gaps: see `open-gaps.md`
 
+</fidelity_evidence>
+
 ## Independent Fidelity Gates
+
+<independent_fidelity_gates>
 
 Each category passes separately; one cannot compensate for another. Fill this once at final signoff, not after each image or fix.
 
@@ -32,7 +40,11 @@ Each category passes separately; one cannot compensate for another. Fill this on
 | Drawer safety | Pending | Pending |
 | Theme safety | Pending | Pending |
 
+</independent_fidelity_gates>
+
 ## Overall And Viewport Scorecards
+
+<overall_and_viewport_scorecards>
 
 Apply the same weights three times, with separate current evidence for overall, desktop, and mobile.
 
@@ -48,7 +60,11 @@ Apply the same weights three times, with separate current evidence for overall, 
 
 Required: overall `49/50`; desktop and mobile `48/50` each. `Unscored` is not a pass.
 
+</overall_and_viewport_scorecards>
+
 ## Non-Compensating Critical Gate
+
+<non_compensating_critical_gate>
 
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
@@ -60,15 +76,20 @@ Required: overall `49/50`; desktop and mobile `48/50` each. `Unscored` is not a 
 | Target changes since the last current diff review and required checks/build pass; no UI-only boundary violation remains | Pending | Pending |
 | `open-gaps.md` has no unresolved item; no material mismatch, stale evidence, or placeholder remains | Pending | Pending |
 
-## Promotion Lock
+</non_compensating_critical_gate>
 
-- After all Phase 3 capture, interactions, and repairs, review overall/desktop/mobile arithmetic, independent and critical gates, current evidence, and empty open gaps: Pending
-- After recording `Decision: Pass`, promote the marker and checkpoint to Phase 4; do not claim promotion before it happens.
-- Any later Phase 3 browser packet or target-code change resets `Decision` to Pending until the affected gate is reviewed again.
+## Decision And Transition
+
+<decision_and_transition>
+
+Reopen only claims invalidated by a relevant change, contradictory result, or missing proof. A later successful packet alone does not reset the decision.
+
+Evaluate the scorecard and critical requirements once from their cited evidence. Record `Decision: Pass` before updating the marker and compact checkpoint to Phase 4. Updating those pointers is not a second review or separate promotion scorecard.
 
 - Overall score: Unscored
 - Desktop score: Unscored
 - Mobile score: Unscored
 - Critical items: Pending
-- Promotion lock: Pending
 - Decision: Pending
+
+</decision_and_transition>

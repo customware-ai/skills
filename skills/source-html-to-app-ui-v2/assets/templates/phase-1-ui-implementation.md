@@ -4,6 +4,8 @@ The HTML/design files, accepted source images, target code, diff, and build/chec
 
 ## Implementation Evidence
 
+<implementation_evidence>
+
 - Phase 0 decision and accepted source evidence: Pending
 - Target owner research and relevant code/diff paths: Pending
 - Routes, source-ordered sections, and state/interaction owners: Pending
@@ -14,7 +16,11 @@ The HTML/design files, accepted source images, target code, diff, and build/chec
 - UI-only scope and complete-diff review: Pending
 - Actual unresolved gaps: see `open-gaps.md`
 
+</implementation_evidence>
+
 ## Scorecard
+
+<scorecard>
 
 | Category | Passed | Total | Evidence |
 | --- | ---: | ---: | --- |
@@ -27,7 +33,11 @@ The HTML/design files, accepted source images, target code, diff, and build/chec
 
 Required: at least `48/50`. `Unscored` is not a pass.
 
+</scorecard>
+
 ## Non-Compensating Critical Gate
+
+<non_compensating_critical_gate>
 
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
@@ -40,12 +50,16 @@ Required: at least `48/50`. `Unscored` is not a pass.
 | Changed code, connected callers/tests, complete diff, and current required build/check output were inspected | Pending | Pending |
 | No unresolved Phase 1 gap or placeholder remains | Pending | Pending |
 
-## Promotion Lock
+</non_compensating_critical_gate>
 
-- Final score arithmetic, all critical items, current code/diff/check evidence, and open gaps reviewed: Pending
-- Marker and checkpoint updated to Phase 2 only after `Decision: Pass`: Pending
+## Decision And Transition
+
+<decision_and_transition>
+
+Evaluate the scorecard and critical requirements once from their cited evidence. Record `Decision: Pass` before updating the marker and compact checkpoint to Phase 2. Updating those pointers is not a second review or separate promotion scorecard.
 
 - Score: Unscored
 - Critical items: Pending
-- Promotion lock: Pending
 - Decision: Pending
+
+</decision_and_transition>

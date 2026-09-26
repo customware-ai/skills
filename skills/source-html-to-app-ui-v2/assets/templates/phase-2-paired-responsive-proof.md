@@ -1,8 +1,10 @@
 # Phase 2: Paired Responsive Proof
 
-Use the PNG, capture script, and lifecycle log for capture identity. Keep one concise comparison index with accepted/current pair paths, opened findings, concrete comparisons, and mismatch/pass decisions. Link it here; do not copy every pair into multiple tables or require a separate manifest. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
+Reuse accepted Phase 0 source images and their framing; capture only the target in this phase. Use the PNG, capture script, and lifecycle log for capture identity. Keep one concise comparison index with accepted/current pair paths, opened findings, concrete comparisons, and mismatch/pass decisions. Link it here; do not copy every pair into multiple tables or require a separate manifest. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
 
 ## Evidence Pointers
+
+<evidence_pointers>
 
 - Phase 0 and 1 decisions/current source and target code: Pending
 - Current UI-only code/diff and required check/build results (reuse Phase 1 proof until invalidated): Pending
@@ -13,12 +15,20 @@ Use the PNG, capture script, and lifecycle log for capture identity. Keep one co
 - Desktop/mobile, represented theme, readable section, and materially different tablet/short-height coverage: Pending
 - Actual unresolved mismatches: see `open-gaps.md`
 
+</evidence_pointers>
+
 ## Objective Safety Proof
+
+<objective_safety_proof>
 
 - Responsive overlap/clipping/horizontal-overflow/control usability findings and evidence: Pending
 - Visible scroll, sidebar, or drawer defects found during broad review and their repairs (or `None`; final measurements belong to Phase 3): Pending
 
+</objective_safety_proof>
+
 ## Scorecard
+
+<scorecard>
 
 | Category | Passed | Total | Evidence |
 | --- | ---: | ---: | --- |
@@ -31,7 +41,11 @@ Use the PNG, capture script, and lifecycle log for capture identity. Keep one co
 
 Required: at least `48/50`. `Unscored` is not a pass.
 
+</scorecard>
+
 ## Non-Compensating Critical Gate
+
+<non_compensating_critical_gate>
 
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
@@ -41,12 +55,18 @@ Required: at least `48/50`. `Unscored` is not a pass.
 | Each compared area's first finding records pass/fail; material broad-layout failures are repaired and rechecked before moving on, while smaller differences are handed to Phase 3 | Pending | Pending |
 | No missing content, unusable layout, material style/placement mismatch, or unresolved Phase 2 broad visual gap remains | Pending | Pending |
 
-## Promotion Lock
+</non_compensating_critical_gate>
 
-- Broad comparison evidence, score arithmetic, every critical item, and Phase 2 open gaps reviewed: Pending
-- After recording `Decision: Pass`, promote the marker and checkpoint to Phase 3; do not require Phase 3's final interaction/sidebar/drawer proof here.
+## Decision And Transition
+
+<decision_and_transition>
+
+Phase 3 owns final interaction/sidebar/drawer proof; do not perform it to unlock this gate.
+
+Evaluate the scorecard and critical requirements once from their cited evidence. Record `Decision: Pass` before updating the marker and compact checkpoint to Phase 3. Updating those pointers is not a second review or separate promotion scorecard.
 
 - Score: Unscored
 - Critical items: Pending
-- Promotion lock: Pending
 - Decision: Pending
+
+</decision_and_transition>

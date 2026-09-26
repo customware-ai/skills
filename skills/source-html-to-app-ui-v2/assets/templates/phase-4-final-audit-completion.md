@@ -4,6 +4,8 @@ Link existing phase artifacts, accepted evidence, code/diff, and check/build out
 
 ## Audit Evidence
 
+<audit_evidence>
+
 - Current marker/checkpoint, design JSON identity, open gaps, prior decisions/scores/critical gates: Pending
 - Accepted/current pair index, identity/framing/dimensions/lifecycle/freshness/opened findings, final desktop/mobile proof: Pending
 - Source-defect-unreachable declaration-to-target proof (or `None`): Pending
@@ -11,7 +13,11 @@ Link existing phase artifacts, accepted evidence, code/diff, and check/build out
 - Complete target diff, UI-only scope, unchanged lifecycle helper, current required checks/build: Pending
 - Exact completion command source and literal command, confirmed unrun: Pending
 
+</audit_evidence>
+
 ## Scorecard
+
+<scorecard>
 
 | Category | Passed | Total | Evidence |
 | --- | ---: | ---: | --- |
@@ -24,11 +30,15 @@ Link existing phase artifacts, accepted evidence, code/diff, and check/build out
 
 Required: exactly `50/50`. `Unscored` is not a pass.
 
+</scorecard>
+
 ## Non-Compensating Critical Gate
+
+<non_compensating_critical_gate>
 
 | Critical item | Pass/Fail | Evidence or repair |
 | --- | --- | --- |
-| Prior phase scores, critical gates, promotion locks, marker, checkpoint, and actual open gaps agree | Pending | Pending |
+| Prior phase scores, critical gates, phase transitions, marker, checkpoint, and actual open gaps agree | Pending | Pending |
 | Every required reachable source-target pair and source-defect exception has complete current opened proof | Pending | Pending |
 | Accepted image identity, viewport/framing, dimensions, lifecycle, freshness, and findings are valid | Pending | Pending |
 | Final desktop/mobile and responsive/sidebar/drawer/theme/interaction proof represents final code | Pending | Pending |
@@ -36,7 +46,11 @@ Required: exactly `50/50`. `Unscored` is not a pass.
 | Complete target diff is source-backed/UI-only, lifecycle helper unchanged, checks/build current | Pending | Pending |
 | Exact supplied completion command is copied, unrun, and all other work is complete | Pending | Pending |
 
+</non_compensating_critical_gate>
+
 ## Completion Lock
+
+<completion_lock>
 
 - Score arithmetic and every critical item independently verified: Pending
 - `Decision: Pass` recorded before the exact command runs: Pending
@@ -46,3 +60,5 @@ Required: exactly `50/50`. `Unscored` is not a pass.
 - Critical items: Pending
 - Completion lock: Pending
 - Decision: Pending
+
+</completion_lock>
