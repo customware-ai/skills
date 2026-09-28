@@ -12,7 +12,7 @@ Read this reference when `CURRENT_PHASE.txt` is `phase-1-ui-implementation`.
 - Start only after Phase 0 is `Pass` at `48/50` or higher, its accepted source evidence is current, and the marker is Phase 1.
 - Inspect the relevant target routes, layout, styles, components, assets, connected tests, and build/check commands before editing.
 - The HTML/design inputs remain authoritative for declared content and behavior; accepted source images show runtime appearance.
-- Do not recreate a source inventory or contract table.
+- Reuse Phase 0's capture plan/shared browser properties and accepted image pointers. They identify the layouts and section framing the implementation must support; do not recreate a source inventory, contract table or reference capture set.
 
 </phase_1_entry>
 
@@ -45,6 +45,7 @@ Use code and focused diffs as implementation proof. Identify target owners/sourc
 - Use the real repository logo when available.
 - Phase 1 is a time-bounded implementation pass: do not preemptively create browser packets or repeatedly check individual controls here.
 - Target browser inspection, including exploratory inspection, runs only through the lifecycle helper; build/check is not browser proof.
+- If a specific implementation question genuinely needs a browser probe, reuse the established capture properties and working steps. Do not introduce content-fitted viewport heights or another framing mode; routine paired capture and visual correction still belong to Phase 2.
 
 </implementation_scope>
 
@@ -58,7 +59,7 @@ Use code and focused diffs as implementation proof. Identify target owners/sourc
 - A mobile drawer, when present, needs full-height geometry, overlay interception, body scroll lock, and restoration.
 - Phase 1 checks code structure; Phases 2–3 measure actual behavior and inspect screenshots.
 
-- Implement the source-represented breakpoints and adapt omitted sizes conservatively.
+- Implement the source-represented breakpoints and materially distinct layouts identified in Phase 0, including intermediate layouts rather than only wide desktop/narrow mobile. Adapt omitted sizes conservatively; do not invent a replacement breakpoint that changes the approved layout.
 - Avoid overlap, clipping, horizontal canvas overflow, inaccessible controls, accidental document scroll, blank lower-sidebar space, or unreadable theme combinations.
 - Do not add a theme switch unless required.
 - Phase 1 completes implementation from source declarations, accepted source images, code review, and checks/build.

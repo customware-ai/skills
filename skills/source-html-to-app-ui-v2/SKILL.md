@@ -29,7 +29,7 @@ This is time-bounded delivery, not an exhaustive research exercise. Spend time i
 
 - **Phases 2–3:** aim for about **15 minutes per phase** as a soft planning guide, never a hard limit or automatic stop. Complete required proof or real repairs that need longer; do not add confidence-only checks or paperwork.
 - **Phase 1:** build the design system first, then reusable UI components, shell, and full pages. Work concurrently within each dependency-ready stage; do not preempt visual-comparison phases with control-by-control checks.
-- **Source capture belongs to Phase 0.** Phases 2–3 reuse its accepted images and capture the target at matching framing. Repair a genuinely missing/invalid source item in its owning phase without resetting the task or recapturing the inventory.
+- **Source capture belongs to Phase 0.** Establish readable reference images and reusable browser/capture properties there, including materially distinct responsive layouts. Phase 1 implements from that plan; Phases 2–3 reuse it for corresponding target views, not a newly invented capture scheme. Repair a genuinely missing/invalid source item in its owning phase without resetting the task or recapturing the inventory.
 - Use judgment to find material differences or missing requirements. Several small deviations caused by one wrong shared rule are material; an isolated harmless pixel/line-wrap variance is not another tuning round.
 - Reuse current instructions, code reviews, builds, screenshots, and findings. Refresh only proof affected by a relevant change or contradicted by actual results.
 
@@ -88,7 +88,7 @@ Preserve the templates' scores, critical requirements, evidence meanings, and de
 
 | Owner | Record once |
 | --- | --- |
-| Source evidence index | Accepted Phase 0 image paths, coverage pointers, and concrete per-image findings |
+| Source evidence index | Accepted Phase 0 image paths, compact capture-plan/shared-packet pointer, coverage pointers, and concrete per-image findings |
 | Comparison index | Area pass/fail, accepted source/target paths, actual mismatch and brief fix/recheck |
 | Phase artifact | Scores, critical outcomes, decision, and pointers to existing proof |
 | Open gaps | Only observed unresolved defects/contradictions; evidence pointer, owner, next repair |

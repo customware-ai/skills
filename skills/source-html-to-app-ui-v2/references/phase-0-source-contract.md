@@ -40,7 +40,7 @@ Create one small task-owned source packet using the lifecycle command contract:
 
 Use targeted HTML/CSS and UI-relevant JavaScript reads/parsing to identify all pages/route-like surfaces, hidden panels, tabs, dialogs, drawers, menus, readable sections, meaningful states, navigation/interaction families, themes, breakpoints, scroll owners and initially hidden content. Do not mechanically read to EOF, repeatedly reread the HTML, audit source execution/handler wiring, or transcribe headings, values and handlers into a table.
 
-Choose the smallest desktop/mobile full-view and focused section/state/theme set covering those declarations and actual differences. Map sections or section groups to covering images; one image can prove several readable sections. A local state change needs only its changed area plus context, not another full page and every unchanged section. Revise the plan only for newly discovered states, unreadable areas or contradictions; no fixed screenshot/packet count applies.
+Choose the smallest readable desktop/mobile overview and focused section/state/theme set covering those declarations and actual differences. Include a representative intermediate viewport when a declared breakpoint materially changes the layout; identify this before completing the source set, not during later target comparison. A different breakpoint number alone does not require another image. Map sections or section groups to covering images; one image can prove several readable sections. A local state change needs only its changed area plus context, not another full page and every unchanged section. Revise the plan only for newly discovered states, unreadable areas or contradictions; no fixed screenshot/packet count applies.
 
 - A declared action reaching an already-evidenced appearance becomes a target behavior requirement, not another source browser test.
 - Source JavaScript errors or unavailable normal-input states: note the error/unavailable state and intended HTML/CSS/design declaration, then move on. No diagnostic packet, exception/handler investigation, repeated failed action, fabricated image or demand for an unreachable source screenshot. Require complete target visual/interaction proof later.
@@ -48,13 +48,28 @@ Choose the smallest desktop/mobile full-view and focused section/state/theme set
 
 </capture_plan>
 
+### Reusable Capture Properties
+
+<reusable_capture_properties>
+
+Phase 0 chooses the reference framing for later comparisons. Keep shared browser viewport width/height, pixel scale/zoom, represented theme, and screenshot framing in executable packet configuration once. Link that configuration from the existing source index with the chosen layout/section groups; do not copy values into another manifest or per-image property table. Target packets reuse/import those definitions, adapting only application-specific navigation, readiness selectors and scroll owners.
+
+- Keep the selected browser viewport stable while capturing each layout. A source document `fullPage` image may be taller than its viewport; PNG height is not the browser viewport height.
+- Use a document overview or viewport/section views as appropriate for readable coverage, not both by default. For long content, preserve the real viewport and use normal scroll input for otherwise hidden sections. Do not resize a viewport until content fits or stitch images into a synthetic page.
+- The target's required internal content scroller may differ from source document scrolling. Plan corresponding content/section framing, not equal PNG heights: later target proof may use real pane scrolling and readable viewport frames against the accepted source overview.
+- Open the first representative image of a capture family as part of its normal review: confirm the intended URL/state, settled visible content/assets, readable section coverage and actual browser properties before extending that method to related views. Reuse those working steps; no separate preflight or readiness ledger. A genuine source asset/overflow/runtime defect is recorded, not repaired through altered geometry or repeated captures.
+
+This plan is sufficient when accepted source images let the target compare every required layout and readable section without inventing a second framing mode. Missing source proof still requires a focused repair; a preference for different image dimensions does not.
+
+</reusable_capture_properties>
+
 ### Complete Reachable Source Proof
 
 <source_capture>
 
 Capture every reachable page-like surface and layout-distinct state through focused lifecycle-owned packets:
 
-- Desktop and mobile full-view/full-page evidence, with readable coverage of every visible section.
+- Desktop/mobile evidence using the chosen capture properties, with readable coverage of every visible section and representative materially distinct intermediate layouts.
 - Focused changed-state/section images when the overview cannot show readable required proof; relevant themes and real-input geometry/pre/post-scroll proof where applicable.
 - One route/state family and coherent viewport/theme set per focused packet, with outputs small enough to review immediately. No monolithic corpus packet or image for the same unchanged content at the same framing.
 
@@ -91,7 +106,7 @@ When present, record the drawer's real-input open/close, overlay/background inte
 After complete source capture/review and its evidence pointers:
 
 1. Read the copied design JSON completely.
-2. Record intended interaction families, source defects/unreachable states, named shell/sidebar/content-scroller roles, responsive/theme adaptations, unsupported destinations, UI-only exclusions and Phase 1 owner-research actions. Link existing declarations/images instead of one row per source item.
+2. Record intended interaction families, source defects/unreachable states, named shell/sidebar/content-scroller roles, responsive/theme adaptations, unsupported destinations, UI-only exclusions and Phase 1 owner-research actions. Link the existing capture plan/shared packet properties and declarations/images instead of one row per source item.
 3. Defer exact target-file mapping and owner/asset research until Phase 1. Use the real repo logo when available; unsupported destinations must be disabled, not invented.
 
 The approved inputs remain authoritative and available for targeted implementation reads. Complete coverage still includes all pages, states, sections, interactions, themes, assets and responsive behavior; a concise handoff does not reduce it.

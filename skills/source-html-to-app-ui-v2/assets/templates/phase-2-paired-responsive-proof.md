@@ -1,6 +1,6 @@
 # Phase 2: Paired Responsive Proof
 
-Reuse accepted Phase 0 source images and their framing; capture only the target in this phase. Use the PNG, capture script, and lifecycle log for capture identity. Keep one concise comparison index with accepted/current pair paths, opened findings, concrete comparisons, and mismatch/pass decisions. Link it here; do not copy every pair into multiple tables or require a separate manifest. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
+Reuse accepted Phase 0 source images and its shared browser/capture properties; capture only the target in this phase. Keep the real responsive viewport and compare corresponding sections using pane scroll where necessary. Different document/pane scroll ownership does not require equal PNG heights, fitted-height captures or both normal/full modes. Use the PNG, capture script, and lifecycle log for capture identity. Keep one concise comparison index with accepted/current pair paths, opened findings, concrete comparisons, and mismatch/pass decisions. Link it here; do not copy every pair into multiple tables or require a separate manifest. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
 
 ## Evidence Pointers
 

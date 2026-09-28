@@ -6,7 +6,7 @@ The HTML/design files, accepted source images, target code, diff, and build/chec
 
 <implementation_evidence>
 
-- Phase 0 decision and accepted source evidence: Pending
+- Phase 0 decision, accepted source evidence and existing capture-plan/shared-packet pointer: Pending
 - Target owner research and relevant code/diff paths: Pending
 - Routes, source-ordered sections, and state/interaction owners: Pending
 - Tokens, typography, themes, primitives, assets, and navigation: Pending
