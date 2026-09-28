@@ -2,9 +2,9 @@
 
 ## Single Artifact Audit
 
-Inspect each owning artifact once: file exists, numeric score/critical requirements pass, required proof is concrete/current and substantively consistent. Cite its results instead of copying full outputs, screenshot lists, pruning/burden ledgers or fixed-wait reviews. Reconcile historical/future-tense wording and missing links in place when valid proof exists; actual missing/failed/invalidated checks require scoped repair in their owning phase.
+Inspect each owning artifact once; use existing current screenshot-existence/logging proof rather than repeating unchanged checks: file exists, numeric score/critical requirements pass, required proof is concrete/current and substantively consistent. Cite its results instead of copying full outputs, screenshot lists, pruning/burden ledgers or fixed-wait reviews. Record real deficiencies in the existing rows and resolve related fixes as one batch. Reconcile wording/links in place when proof exists. Recheck those resolutions and genuinely affected evidence, not another whole-workflow audit. Do not copy phase scores, counts, durations or PIDs here.
 
-| Owning phase/artifact | Score/decision/critical result current? | Required proof checked / pointer / substantive finding |
+| Owning phase/artifact | Authoritative gate pointer / current or actual deficiency | Required proof checked / pointer / substantive finding |
 | --- | --- | --- |
 | 0 - reset/scaffold | Pending | Pending |
 | 1 - research/inputs/plan | Pending | Pending |
@@ -19,7 +19,8 @@ Inspect each owning artifact once: file exists, numeric score/critical requireme
 - Final diff follows task/AGENTS rules and scope; no lasting changed-source `console.*`; relevant proof current after the last change: Pending
 - Gap ledger reconciled with actual proof; no critical/stale open gap or placeholder: Pending
 - Marker/checkpoint identify Phase 7 and completion readiness, with current artifact/reference/input-manifest pointer and no missing local work: Pending
-- Record-only corrections or genuinely invalidated checks and their resolution (or `None`): Pending
+- Resolved deficiency pointers / remaining actual work (or `None`): Pending
+- Pre-completion audit status: Not ready (set `Ready` only after preceding requirements pass; completion result/final gate intentionally remain pending until invocation)
 
 ## Quality Scorecard
 
@@ -34,20 +35,19 @@ Inspect each owning artifact once: file exists, numeric score/critical requireme
 
 ## MITB Completion
 
-Run the exact supplied completion command only after every preceding audit/quality requirement passes. It is the final external task action, not permission for another check/build/test afterward. Keep the command/result here; progress only points here.
+When the pre-completion audit is `Ready`, invoke the exact supplied command. Do not wait for its result or the final Phase 7 gate to be filled before invoking it. Record the returned outcome here, then finalize the gate/checkpoint; these final writes are allowed, but no new check/build/test/browser action or audit follows successful completion. Progress only points here.
 
 - Command source and exact command: Pending
-- Audit passed before invocation: Pending
-- Result / exact useful output: Pending
+- Result / exact useful output: Awaiting invocation (expected; not a missing verification check)
 
 ## Gate
 
-Score against the phase reference once from current evidence. All critical requirements remain mandatory; cite the sections above rather than rewriting their results in a checklist. Conditional evidence uses a reasoned `N/A`, never an unfilled placeholder.
+Finalize the unchanged `20/20` score only after successful completion; before invocation this final gate is intentionally pending and does not block an audit-ready command. All critical requirements remain mandatory; cite the sections above rather than rewriting their results in a checklist. Conditional evidence uses a reasoned `N/A`, never an unfilled placeholder.
 
-| Score / required | Critical requirements | Evidence pointers | Decision |
-| --- | --- | --- | --- |
-| Unscored / 20/20 | Pending | Pending | Pending |
+| Score / required | Critical requirements | Evidence pointers |
+| --- | --- | --- |
+| Unscored / 20/20 | Pending | Pending |
 
-Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
+Keep the single decision below authoritative. Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then finalize the checkpoint and respond; do not start another audit or verification run.
 
 Decision: Pending

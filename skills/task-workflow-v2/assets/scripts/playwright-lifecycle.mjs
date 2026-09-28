@@ -8,11 +8,12 @@ import { setTimeout as delay } from 'node:timers/promises';
 function printUsage() {
 	console.log(`Usage:
   node task-workflow/scripts/playwright-lifecycle.mjs \\
-    --server "PORT=4444 node build/server/start.js" \\
+    --server "<discovered repo-owned verification server command>" \\
     --ready-url "http://127.0.0.1:4444/health" \\
     --run "node task-workflow/playwright/verify-flow.mjs"
 
 Common options:
+  --runtime-dir "location"       Use a phase-owned location; preserve cited logs across runs.
   --setup "command"              Run bounded setup before server startup; repeatable.
   --run "command"                Run bounded verification command after readiness; repeatable.
   --env NAME=value               Add an environment variable; repeatable. Database path variables are rejected.

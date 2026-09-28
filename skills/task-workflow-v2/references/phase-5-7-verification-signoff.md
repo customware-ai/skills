@@ -4,7 +4,7 @@ Use this reference for Phase 5, Phase 6, and Phase 7.
 
 These phases prove the implementation through real browser interaction, the Phase 6 E2E coverage decision, and final artifact audit. They are internal verification gates, not user confirmation points.
 
-This is a looped gate workstream: Phase 5, Phase 6, and Phase 7 are not complete until their artifacts pass their gates. A failing score, missing evidence, browser issue, weak test, stale gap, placeholder row, or incomplete final audit means stay in or return to the failing phase, repair the work, update the artifact, rescore, and repeat. Do not stop or ask the user to continue when a local repair is available.
+This is a looped gate workstream: Phase 5, Phase 6, and Phase 7 are not complete until their artifacts pass their gates. A substantive failing requirement or check needs repair in its owning phase. Documentation-only discrepancies with valid proof are reconciled in place, without rerunning checks. Final audit collects actual deficiencies once, repairs related work as a batch, then reviews those resolutions and affected proof; it does not restart a whole-workflow audit after each record edit. Do not stop or ask the user to continue when a local repair is available.
 
 ## Verification Authority
 
@@ -45,7 +45,7 @@ Interactive scripts and E2E tests must wait on user-visible state or app signals
 ### Do
 
 - Prefer role/text locators, URL assertions, network-visible state, persisted data checks, and `expect` retries.
-- Do not use fixed waits such as `waitForTimeout`, `setTimeout`, or `sleep(...)` in `task-workflow/playwright` or `tests/e2e`.
+- Do not use fixed waits such as `waitForTimeout`, `setTimeout`, or `sleep(...)` in interactive verification scripts or repo-discovered E2E tests.
 - Do not use fixed waits as "stabilization", "mutation timing", "dialog close", "navigation timing", "screenshot timing", "animation timing", or "followed by assertion" helpers. These labels do not make a fixed wait acceptable.
 - Phase 5 and Phase 6 must inspect their interactive scripts and E2E tests before scoring the gate.
 - Record the files inspected and whether they contain any fixed waits.
@@ -72,23 +72,24 @@ Verification phases must not stall on foreground servers or watchers.
 - The first Phase 5 browser command or Phase 6 Playwright/E2E command that needs a running app must establish lifecycle ownership before the browser/test runs. Do not point a script at an assumed existing `127.0.0.1` server first and then treat `fetch failed`, redirects, not-found data, stale DB state, stale build output, or wrong-port behavior as evidence for manual server management.
 - In Phase 6, existing repo E2E tests still run through the helper by default: put `pnpm exec playwright test ...` inside the helper's `--run` while the helper owns setup, server startup, readiness, browser preflight, output capture, and cleanup.
 - Use native Playwright with repo `webServer` ownership only when the helper cannot own the server for that exact command, such as a repo config that cannot target an already-running helper server and cannot have `webServer` bypassed for the selected spec. Record that reason before running the native command. A repo merely having a Playwright config, `webServer`, global setup, or existing E2E file is not enough.
+- Choose a distinct phase-owned runtime location with `--runtime-dir` from the first run. Preserve any successful logs still cited before a repeat run would replace them. Record lifecycle detail in those logs, not separate PID/currentness recaps. Never rerun successful application checks solely to repair a record/link when the underlying proof remains available.
 - The helper runs each `--setup` command before server startup with bounded timeout and `task-workflow/runtime/setup-*.log`, starts the app server in the background, records `task-workflow/runtime/server.pid`, writes `task-workflow/runtime/server.log`, polls the supplied readiness URL, runs each `--run` command with bounded timeout and `task-workflow/runtime/run-*.log`, and stops the server process group after the run unless `--keep-server` is explicitly used and justified.
-- Before choosing Phase 5 or Phase 6 setup/server commands, discover the repo's expected verification lifecycle from `AGENTS.md`, `package.json`, README/docs, Playwright config, and `tests/e2e` helpers. The expected pattern is a repo-owned setup command that prepares isolated E2E/test state and deterministic seed data, plus a repo-owned server command that starts the app against that isolated state. Use those commands when present. In older repos without named scripts, simulate the same pattern with the smallest repo-owned/test-only commands and record the mapping before running them.
+- Before choosing Phase 5 or Phase 6 setup/server commands, discover the repo's expected verification lifecycle from `AGENTS.md`, `package.json`, README/docs, Playwright config, and the repo-owned E2E helpers. The expected pattern is a repo-owned setup command that prepares isolated E2E/test state and deterministic seed data, plus a repo-owned server command that starts the app against that isolated state. Use those commands when present. In older repos without named scripts, simulate the same pattern with the smallest repo-owned/test-only commands and record the mapping before running them.
 
 ### Database And Server Safety
 
-- Database file paths are not a lifecycle-helper option. Do not set `E2E_DATABASE_FILE_PATH`, `DATABASE_PATH`, `DB_PATH`, or any similar database file/path variable with helper `--env`, `--setup`, `--server`, `--run`, native Playwright commands, or custom scripts. Do not change the repo's internal E2E/end-to-end database file path. Use the target repo's checked-in E2E/end-to-end database config or already-materialized environment. `.dbs/database.db` is the live workspace/production database, not a test database; production databases must never be used for testing. Any Playwright/E2E/end-to-end fixture write, reset, migration, seed, direct SQLite access, inspection-with-write-risk, cleanup, debugging, manual query, or data manipulation against `.dbs/database.db` is a critical failure.
+- Database file paths are not a lifecycle-helper option. Do not set `E2E_DATABASE_FILE_PATH`, `DATABASE_PATH`, `DB_PATH`, or any similar database file/path variable with helper `--env`, `--setup`, `--server`, `--run`, native Playwright commands, or custom scripts. Do not change the repo's internal E2E/end-to-end database file path. Use the target repo's checked-in E2E/end-to-end database config or already-materialized environment. The live/default user-data database is the live workspace/production database, not a test database; production databases must never be used for testing. Any Playwright/E2E/end-to-end fixture write, reset, migration, seed, direct SQLite access, inspection-with-write-risk, cleanup, debugging, manual query, or data manipulation against the live/default user-data database is a critical failure.
 - Treat production/live database safety as job-critical. Deleting, resetting, reseeding, truncating, or corrupting the production database can destroy user work and can cause the user to lose his job. This is not an acceptable verification risk, even in a sandbox, because the workflow trains agents to touch live user data.
-- The only allowed production/live database action is the app's required migration command for a real schema change. This does not permit working on `.dbs/database.db` or any production/live DB. If the task creates or changes a migration, that migration must already have been run against the production/live default DB in the owning implementation/static-check phase, recorded as migration evidence, and not mixed with seed/reset/fixture/test cleanup. Verification phases may use only isolated test/E2E database state proved by repo-owned config.
-- Before any Phase 5 or Phase 6 command that mentions `db`, `database`, `sqlite`, `migrate`, `seed`, `fixture`, `reset`, `.dbs`, `rm`, `truncate`, or similar data-state words, record the target database path/source in the phase artifact. If the target is production/live, unknown, or only assumed safe, do not run the command.
+- The only allowed production/live database action is the app's required migration command for a real schema change. This does not permit working on any production/live DB. If the task creates or changes a migration, that migration must already have been run against the production/live default DB in the owning implementation/static-check phase, recorded as migration evidence, and not mixed with seed/reset/fixture/test cleanup. Verification phases may use only isolated test/E2E database state proved by repo-owned config.
+- Before any Phase 5 or Phase 6 command that mentions `db`, `database`, `sqlite`, `migrate`, `seed`, `fixture`, `reset`, `rm`, `truncate`, or similar data-state words, record the target database path/source in the phase artifact. If the target is production/live, unknown, or only assumed safe, do not run the command.
 - Do not assume a backgrounded process started successfully just because the command returned. A server is ready only after the helper records a successful readiness result.
 - Do not compose manual server cleanup, fixed sleep, DB-delete, server-start, and Playwright command chains in Phase 5 or Phase 6. Put pre-server setup such as isolated test DB reset, test migration, test seed, or test fixture preparation into lifecycle `--setup "..."` for helper-owned runs. Treat setup plus server startup as reusable for the current verification batch: prefer one helper-owned run with the needed script/spec commands, or rerun setup only after code, migrations, fixtures, DB state, build inputs, or the prior setup output changed. Do not repeatedly delete/recreate the DB or restart the server before each targeted script/spec just because another E2E command is next. If cleanup is needed, do it as a separate recorded recovery step before the helper run, then run the helper alone. If the helper times out or produces no useful output, treat that as lifecycle/setup evidence, inspect `task-workflow/runtime/server.log`, `task-workflow/runtime/setup-*.log`, readiness output, and `task-workflow/runtime/run-*.log`, then change the setup, server command, ready URL, test command, fixture, or diagnostic before rerunning. If the helper fails once or twice with a diagnosed lifecycle/tooling issue after a corrected invocation, record the helper logs and switch to the smallest fallback that can prove the task: repo Playwright `webServer`, explicit PID/port cleanup, or manual server management with captured PID/log/readiness/cleanup evidence.
-- Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The helper sets `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` when present and fails early when the project Playwright version does not match the sandbox browser cache.
+- Do not run `playwright install`, `playwright install chromium`, or equivalent browser downloads during task verification. The helper uses the preinstalled browser cache when present and fails early when the project Playwright version does not match the sandbox browser cache.
 - Do not leave `pnpm dev`, `npm run dev`, `vite`, `next dev`, test watchers, or similar long-lived commands as the active foreground tool call.
 - If the server or test command hangs, stop it, capture the log/error evidence, update the current phase artifact or `open-gaps.md`, and continue with the smallest local recovery path.
 - If the server appears stale, wrong, or on the wrong port, diagnose through the lifecycle owner: helper runtime logs/readiness first, then repo Playwright `webServer` output/config only for commands where `webServer` owns lifecycle. If a build or DB fixture changed, restart by rerunning the lifecycle owner with the corrected `--setup` or server command. Do not switch to broad process cleanup unless PID/port cleanup is impossible and the artifact records the recovery reason.
 - If manual fallback is genuinely needed, keep ownership explicit: write the PID/log path under `task-workflow/runtime/`, prove readiness with a bounded check, and clean up the captured PID/process group. Do not use `nohup`, `disown`, or a background server without PID/readiness evidence as the normal fallback.
-- Bash readiness polling inside the lifecycle helper is acceptable. The fixed-wait ban applies to Playwright scripts and E2E tests under `task-workflow/playwright` or `tests/e2e`, not the helper's bounded readiness loop.
+- Bash readiness polling inside the lifecycle helper is acceptable. The fixed-wait ban applies to Playwright scripts and E2E tests under interactive verification scripts or repo-discovered E2E tests, not the helper's bounded readiness loop.
 
 </server_command_discipline>
 
@@ -106,8 +107,9 @@ Example helper shape:
 
 ```bash
 node task-workflow/scripts/playwright-lifecycle.mjs \
-  --setup "pnpm run prepare:e2e" \
-  --server "pnpm run start:e2e" \
+	--runtime-dir "<chosen phase-owned runtime location>" \
+  --setup "<discovered isolated setup command>" \
+  --server "<discovered isolated server command>" \
   --ready-url "http://127.0.0.1:4444" \
   --run "node task-workflow/playwright/verify-main-flow.mjs" \
   --command-timeout-ms 20000
@@ -117,14 +119,15 @@ For E2E:
 
 ```bash
 node task-workflow/scripts/playwright-lifecycle.mjs \
-  --setup "pnpm run prepare:e2e" \
-  --server "pnpm run start:e2e" \
+	--runtime-dir "<chosen phase-owned runtime location>" \
+  --setup "<discovered isolated setup command>" \
+  --server "<discovered isolated server command>" \
   --ready-url "http://127.0.0.1:4444" \
-  --run "pnpm exec playwright test tests/e2e/changed-flow.spec.ts --reporter=line" \
+  --run "<discovered targeted E2E command>" \
   --command-timeout-ms 30000
 ```
 
-`prepare:e2e` and `start:e2e` are example names for the expected repo-owned isolated setup/server pattern. Use those exact commands when the repo provides them. In older repos, map the example to equivalent repo-owned commands or task-local setup that preserves the same isolation. Do not copy these examples with a raw production `db:migrate`, `seed`, `rm .dbs/database.db`, or any command that writes the live/default database.
+Substitute commands discovered from the actual repository; these placeholders are not executable commands or template requirements. Preserve its isolated verification configuration and existing source layout. Never replace isolated setup with live-data mutations. Select a distinct phase-owned runtime location with `--runtime-dir` and preserve cited successful logs before a later run can replace them; use the returned log paths as evidence pointers.
 
 ## Phase 5: Interactive Playwright Verification
 
@@ -206,7 +209,7 @@ Critical failures:
 - lifecycle helper not used for Phase 5 app startup and script execution, except after recorded helper failure and a justified fallback
 - first app/browser command ran against an assumed existing server instead of establishing helper/repo lifecycle ownership
 - manual cleanup, fixed `sleep`, DB-delete, or server-start command chain used instead of the lifecycle helper before a diagnosed helper failure
-- any Phase 5 command deletes, resets, reseeds, truncates, migrates, directly opens with write risk, or modifies the production/live workspace database, including `.dbs/database.db` or equivalent default user-data DB
+- any Phase 5 command deletes, resets, reseeds, truncates, migrates, directly opens with write risk, or modifies the production/live workspace database, including equivalent default user-data DB
 - Phase 5 artifact lacks proof that DB/fixture/setup commands targeted only isolated repo-owned test/E2E state
 - production/live DB access is treated as harmless because the run is a sandbox, because the file is local, or because the command appears under `task-workflow/`
 - first-run targeted Phase 5 Playwright script/probe uses a timeout above `20000` ms without a task-specific artifact reason
@@ -223,11 +226,11 @@ Critical failures:
 - screenshot path cited but file does not exist
 - screenshot paths are cited without file-existence proof in the artifact
 - discovered critical UI/runtime issue remains unresolved
-- Phase 5-discovered issue was not routed back to the earliest affected phase, then through Phase 3 check/lint evidence and Phase 4 unit coverage before rechecking
+- Phase 5-discovered application issue was not repaired in its owning phase with every affected static/unit/browser claim refreshed; unchanged claims may reuse current evidence
 - script uses DOM shortcuts as a substitute for normal user interaction
 - script contains any fixed wait in the audited files
 - fixed-wait review not recorded
-- fixed-wait review finds any occurrence in `task-workflow/playwright` or `tests/e2e`
+- fixed-wait review finds any occurrence in interactive verification scripts or repo-discovered E2E tests
 - browser-verification gaps remain stale in `task-workflow/open-gaps.md`
 - `task-workflow/open-gaps.md` still contains template placeholder rows
 
@@ -308,6 +311,8 @@ Before adding any new E2E file or case, record a burden ledger entry in `task-wo
 | Minimal path | The case proves the fewest user steps needed for the durable risk; visual, incidental, copy, class, and existence-only assertions are excluded. |
 | Bulk check | More than one new E2E case or any new E2E file requires per-case proof that cases cannot be merged or moved into an existing spec. |
 
+Test organization and counts describe the actual warranted cases, not a target shape. Correct stale accounting in the authoritative record; do not reorganize useful coverage merely to match prior prose.
+
 If this ledger is missing, generic, or says the test was added because it "locks behavior", "matches the smoke checklist", "adds confidence", or "reviewer may expect it", the E2E is not warranted.
 
 ### Command Scope
@@ -364,7 +369,7 @@ Critical failures:
 - first E2E command depends on an assumed existing server instead of establishing helper/repo lifecycle ownership
 - Playwright/E2E command uses manual cleanup, fixed `sleep`, DB-delete, or server-start command chains instead of lifecycle `--setup` plus managed server/run steps before a diagnosed helper failure
 - any Playwright/E2E/script/helper command sets `E2E_DATABASE_FILE_PATH`, `DATABASE_PATH`, `DB_PATH`, or any similar database file/path override instead of using repo-owned E2E/end-to-end config
-- any Playwright/E2E/end-to-end fixture setup, reset, seed, migration, direct SQLite access, cleanup, inspection-with-write-risk, or custom script points at `.dbs/database.db` or any equivalent production/live default user-data DB
+- any Playwright/E2E/end-to-end fixture setup, reset, seed, migration, direct SQLite access, cleanup, inspection-with-write-risk, or custom script points at any equivalent production/live default user-data DB
 - reviewer or artifact treats a database-path violation as ignorable because it appears in `task-workflow/`, is "only local", or is "only sandbox"; workflow artifacts that mutate sandbox state are runtime-critical and train agents to destroy live data
 - any production/live database write occurs outside the app's required migration command for a real schema change, in the owning phase, with explicit migration evidence
 - first-run targeted Phase 6 E2E uses a timeout above `30000` ms without a task-specific artifact reason
@@ -381,7 +386,7 @@ Critical failures:
 - existing E2E tests deleted without replacement critical-flow coverage or written defense
 - audited Playwright or E2E files contain any fixed wait
 - fixed-wait review not recorded
-- fixed-wait review finds any occurrence in `task-workflow/playwright` or `tests/e2e`
+- fixed-wait review finds any occurrence in interactive verification scripts or repo-discovered E2E tests
 - E2E coverage gaps remain stale in `task-workflow/open-gaps.md`
 - `task-workflow/open-gaps.md` still contains template placeholder rows
 
@@ -408,58 +413,17 @@ If this gate fails, stay in Phase 6.
 
 ## Phase 7: Final Audit And Signoff
 
-1. Set `task-workflow/CURRENT_PHASE.txt` to `phase-7-final-signoff`.
-2. Confirm this reference is loaded as the required current phase reference before Phase 7 work starts.
-3. Inspect each phase artifact once in the final audit; use the same pass for all required evidence categories below.
-4. Confirm every previous gate passed and remains current.
-5. Confirm `task-workflow/open-gaps.md` has no unresolved critical gap.
-6. Confirm no open gap is stale or contradicted by Phase 5, Phase 6, or test evidence.
-7. Confirm `task-workflow/open-gaps.md` has no placeholder `Pending` rows.
-8. Confirm the compact checkpoint/marker identify Phase 7, the current artifact/reference/input-manifest pointer, and next action; reconcile record-only inconsistencies here.
-9. In the same artifact pass, confirm Phase 5/6 fixed-wait reviews remain current. Inspect modified verification files only; do not repeat unchanged reviews.
-10. Confirm Phase 5's cited screenshots still exist using one bounded check; do not rebuild a screenshot inventory or reopen accepted images merely for audit.
-11. In the same artifact pass, confirm Phase 4/6 coverage/actions/pruning, per-new-case burden, exact required output/logs, and removal's useful-coverage rationale/diff evidence. Cite their authoritative entries rather than creating separate recaps.
-12. Inspect changed app/server source for `console.*` again. Temporary `console.*` used to debug Phase 5 browser/runtime behavior must be removed before Phase 7 signs off; lasting logging must use the repo-approved logging or telemetry path.
-13. In the same single artifact-audit pass, check decisions, scores, required evidence/triage and substantive consistency. Record one row per phase with pointers; do not create separate gate, evidence, fixed-wait and screenshot recaps or reopen the same artifact for each category.
-14. Review the final diff.
-15. Treat Phase 7 as evidence validation for missed work, not as a command rerun phase. Re-run only commands whose owning phase missed the required command, whose earlier proof is missing/incomplete/stale, whose earlier proof was invalidated by later edits or changed test/config state, or whose rerun is explicitly required for this exact task by the task or repo instructions. If unit evidence is missing or invalidated, return to Phase 4; if E2E evidence is missing or invalidated, return to Phase 6. Do not rerun checks, builds, tests, Playwright, or E2E when the owning-phase evidence is current, and do not add full unit/Vitest or full Playwright runs only to feel more confident.
-16. Score the final result in all quality categories.
-17. Confirm the final implementation follows the task-relevant development rules extracted from `AGENTS.md`.
-18. Confirm task completion summary is accurate.
-19. Locate the required MITB completed command. Prefer the exact `Completed:` command in `.tasks/task.md`; otherwise use the exact command supplied in the prompt. The expected MITB shape is `node /workspace/mitb/task_complete.mjs --projectId "<projectId>" --taskId "<taskId>" --status completed --summary "<summary>"`.
-20. Do not complete with a failing audit. Correct documentation-only issues in Phase 7 when actual proof exists. For substantive missing/failed/invalidated work, return to its owning phase, repair it, refresh affected evidence, and reuse unaffected gates without sequential marker/readback/score replay.
-21. Run the completed command only after every prior audit check is clean. Record command/result once in Phase 7; checkpoint the completion evidence pointer and final-response next action.
-22. Treat the completed command as the final external task action. Before task completion, verify that required check, lint, build, unit test, E2E test, app server, server probe, browser probe, and verification evidence already exists in the owning phase artifacts, or loop back to the owning phase only for missing, incomplete, stale, or invalidated evidence.
-23. Do not synthesize project/task identifiers when `.tasks/task.md` or the prompt already provides the command.
-24. Checkpoint Phase 7 as the last passed gate, with its completion evidence pointer and final response as the only next action; do not duplicate final-audit evidence.
-25. Sign off only when the artifact proves the whole workflow passed and the completed command has run successfully.
+This phase has two states: **audit ready** before completion, then **final gate passed** after the completion command succeeds. Completion output and the final decision are intentionally pending in the first state; they must not be interpreted as another missing verification gate.
 
-## Final Audit Checklist
+1. Set the Phase 7 marker/checkpoint and use this loaded reference. Inspect each owning artifact once: previous scores/decisions/critical requirements, exact required outputs or defended `N/A`, coverage decisions/pruning/new-case necessity, fixed-wait/lifecycle/DB/timeout proof, current screenshots and gap resolutions. Cite each authoritative result rather than copying counts, durations, outputs, PIDs or inventories. Reuse accepted screenshot-existence and logging reviews when their files/claims are unchanged; check only genuinely changed or uncertain evidence.
+2. Review the final implementation diff against task scope and extracted repository rules. Confirm all connected requirements are implemented, logging is correct after any later edits, no critical or stale gap remains, the checkpoint identifies completion readiness, and every quality category meets `8/10`. Record actual deficiencies together in the Single Artifact Audit; do not add a second audit checklist. Historical notes, corrected links and completion-pending fields are not failed product checks.
+3. Resolve related substantive deficiencies as a cohesive batch in their owning phase, refresh every affected claim using the latest result and actual changes since it passed, and preserve unaffected evidence. Correct documentation-only differences in place. Return to review the recorded resolutions, not a fresh whole-app/whole-artifact audit. Do not reopen accepted implementations or repeat unchanged unit/browser/E2E checks because a record was rewritten.
+4. Once the pre-completion requirements pass, mark the audit **Ready** and invoke the exact completion command from the task or prompt; do not infer its location or identifiers. A pending command result/final gate is expected at this boundary and does not block invocation. Never invoke completion while actual prior requirements fail.
+5. On command success, record its exact useful returned result once, finalize Phase 7's unchanged `20/20` gate and checkpoint, and respond. Only these final bookkeeping writes are permitted after success; no further check/build/test/browser command or another audit follows. If completion fails, retain current prior proof and diagnose that specific failure before retrying. No final completion claim before the required command succeeds.
 
-Confirm:
+## Pre-Completion And Final-Gate Evidence
 
-- every phase artifact exists
-- every previous phase decision is `Pass`
-- every gate score still satisfies its threshold
-- required evidence tables remain intact
-- artifact integrity review passes for every phase artifact
-- no artifact is mostly template placeholders
-- `task-workflow/progress.md` matches Phase 7, has no pending current action, and does not contradict any phase artifact
-- no critical open gap remains
-- no stale open gap remains
-- no `open-gaps.md` placeholder row remains
-- Phase 5 and Phase 6 fixed-wait reviews are present and current
-- every screenshot path cited in Phase 5 exists and has recorded existence proof
-- Phase 4 records exact unit-test command output, defended `N/A`, or removed-test rationale and diff/readback evidence
-- Phase 6 records exact E2E command output, defended `N/A`, or removed-test rationale and diff/readback evidence
-- Phase 4 and Phase 6 record old/excess test pruning audits and new-test burden ledgers when tests were added
-- changed app/server source contains no `console.*` after Phase 5
-- final diff matches the task scope
-- final implementation follows the task-relevant development rules extracted from `AGENTS.md`
-- final quality scorecard is at least `8/10` in every category
-- final verification is current after the last source edit
-- MITB completed command from `.tasks/task.md` or the prompt was run after every Phase 7 audit check passed
-- final response can cite changed files, commands/tests run, and final gate status
+The final rubric below remains mandatory. Evaluate its implementation, evidence, scope, safety and quality requirements in the single pre-completion audit; its successful-command requirement is evaluated only after invocation. This is sequencing, not a lower score threshold or a waived requirement. The final gate cannot pass until all `20/20` requirements, including completion success, are met.
 
 ## Phase 7 Score
 
@@ -477,7 +441,7 @@ Critical failures:
 - critical open gap remains
 - stale open gap remains after the phase that claimed to resolve it
 - `task-workflow/open-gaps.md` still contains template placeholder rows
-- fixed-wait reviews are missing, stale, non-clean, or contradicted by files under `task-workflow/playwright` or `tests/e2e`
+- fixed-wait reviews are missing, stale, non-clean, or contradicted by interactive verification scripts or repo-discovered E2E tests
 - Phase 5 cites screenshot paths that do not exist or lack recorded existence proof
 - Phase 4 lacks unit-test command output evidence, defended `N/A`, or removed-test rationale and diff/readback evidence
 - Phase 6 lacks E2E command output evidence, defended `N/A`, or removed-test rationale and diff/readback evidence
@@ -519,6 +483,6 @@ If this gate fails, reconcile record-only issues in Phase 7 or repair substantiv
 
 The task is complete only when Phase 7 passes.
 
-Use established current gate results at transitions; do not reread all prior artifacts or create a promotion-lock record. At Phase 7, perform one substantive audit of every owning artifact and final diff, including required outputs, images, fixed-wait/lifecycle/DB/timeout evidence and final scores. Only after this audit passes may the completion command run. Actual missing or invalidated proof requires repair; wording/links alone do not restart gates.
+Use established current gate results at transitions; do not reread all prior artifacts or create a promotion-lock record. At Phase 7, perform one substantive audit of every owning artifact and final diff, including required outputs, images, fixed-wait/lifecycle/DB/timeout evidence and final scores. Once its pre-completion audit is Ready, invoke completion; its successful result establishes the final Phase 7 pass. Actual missing or invalidated proof requires repair; wording/links alone do not restart gates.
 
 Do not ask the user whether to continue between Phase 5, Phase 6, and Phase 7. The gates decide whether to continue, rework, or return to an earlier phase.

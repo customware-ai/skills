@@ -27,7 +27,7 @@ Check affected UI/navigation/targets/dialogs/menus, overlap, cramped/clipped/unr
 
 ## Lifecycle And Safety
 
-Record a command/result once; logs carry PID, readiness, preflight, timeout and cleanup detail. Subsequent unchanged runs can cite the setup/config row instead of repeating its safety proof. No assumed server, manual cleanup/start/sleep chain, browser download, or raw DB-path override. The helper is default; record diagnosed fallback/repo-webServer reason before using it. Verification uses only isolated repo-owned test config, never the live DB. Reuse related setup/server state when valid.
+Select a distinct phase-owned runtime location via `--runtime-dir` and preserve cited logs before repeat runs. Record a command/result once; logs carry PID, readiness, preflight, timeout and cleanup detail. Other records cite that entry; do not rerun checks just to recreate paperwork. Subsequent unchanged runs can cite the setup/config row instead of repeating its safety proof. No assumed server, manual cleanup/start/sleep chain, browser download, or raw DB-path override. The helper is default; record diagnosed fallback/repo-webServer reason before using it. Verification uses only isolated repo-owned test config, never the live DB. Reuse related setup/server state when valid.
 
 | Run / helper command and scripts/specs | URL / readiness / preflight / runtime logs / cleanup | Isolated DB config and setup mapping / current build pointer |
 | --- | --- | --- |
@@ -53,10 +53,10 @@ Zero fixed waits in inspected verification scripts/tests. Cite files/diff or aud
 
 Score against the phase reference once from current evidence. All critical requirements remain mandatory; cite the sections above rather than rewriting their results in a checklist. Conditional evidence uses a reasoned `N/A`, never an unfilled placeholder.
 
-| Score / required | Critical requirements | Evidence pointers | Decision |
-| --- | --- | --- | --- |
-| Unscored / >= 44/50 | Pending | Pending | Pending |
+| Score / required | Critical requirements | Evidence pointers |
+| --- | --- | --- |
+| Unscored / >= 44/50 | Pending | Pending |
 
-Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
+Keep the single decision below authoritative. Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
 
 Decision: Pending

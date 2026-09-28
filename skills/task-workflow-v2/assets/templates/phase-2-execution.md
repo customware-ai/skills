@@ -7,7 +7,7 @@
 
 ## Execution Batches
 
-Update once per meaningful cohesive batch, not per file edit. Each entry owns implementation state, changed files, diff/search proof, plan adjustment if any, and remaining work. The checkpoint contains only the next resumable action. Routine check/build/tests/browser work belongs to later phases; a narrow compile/type unblock command needs a concrete blocker/result here.
+Update once per meaningful cohesive batch, not per file edit. Each entry owns implementation state, changed files, diff/search proof, plan adjustment if any, and remaining work. The checkpoint contains only the next resumable action. Routine full check/build/tests/browser work belongs to later phases; a narrow compile/type diagnostic for a changed connected contract or compilation/runtime boundary records its specific reason/result here, not another validation table.
 
 | Plan step/batch | State | Files and diff/inspection evidence | Finding/change reason / next work |
 | --- | --- | --- | --- |
@@ -25,10 +25,10 @@ Update once per meaningful cohesive batch, not per file edit. Each entry owns im
 
 Score against the phase reference once from current evidence. All critical requirements remain mandatory; cite the sections above rather than rewriting their results in a checklist. Conditional evidence uses a reasoned `N/A`, never an unfilled placeholder.
 
-| Score / required | Critical requirements | Evidence pointers | Decision |
-| --- | --- | --- | --- |
-| Unscored / >= 34/40 | Pending | Pending | Pending |
+| Score / required | Critical requirements | Evidence pointers |
+| --- | --- | --- |
+| Unscored / >= 34/40 | Pending | Pending |
 
-Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
+Keep the single decision below authoritative. Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
 
 Decision: Pending

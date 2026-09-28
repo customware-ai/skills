@@ -40,7 +40,7 @@ The Phase 1 inputs are read-only. `AGENTS.md`, `.tasks/task.md`, `.tasks/domain.
 
 ### Source-Edit Boundary
 
-Do not inspect implementation files in app, server, tests, packages, src, or equivalent source directories before Phase 0 artifacts exist.
+Do not inspect implementation files, wherever this repository keeps them, before Phase 0 artifacts exist.
 Do not edit implementation files before Phase 1 passes.
 Do not generate build outputs, route typegen, databases, migrations, or source artifacts before Phase 1 passes.
 Do not edit implementation files after Phase 1 passes until `task-workflow/CURRENT_PHASE.txt` says `phase-2-execution`.
@@ -142,7 +142,7 @@ If this gate fails, stay in Phase 0.
 13. Cite target repo instruction, domain, task file, task files folder, task attachments, and selected local skill files with repo-relative paths only. Do not depend on the task file to list them, and do not record sandbox-specific absolute paths for these files.
 14. Inspect the existing codebase before planning edits.
 15. Identify the affected routes, components, services, schemas, stores, tests, scripts, config, and docs.
-16. Record the exact files and patterns that should be reused.
+16. Record the actual repository patterns and affected files to reuse. For an existing project, preserve current behavior, data and unrelated work; do not impose another template's layout. For new connected code, inspect the existing contracts and compile/runtime configuration before choosing a boundary. Record only non-obvious constraints and decisions, not a directory blueprint.
 17. Record assumptions, constraints, non-goals, and risks.
 18. Write an ordered implementation plan.
 19. Write the verification and test plan.

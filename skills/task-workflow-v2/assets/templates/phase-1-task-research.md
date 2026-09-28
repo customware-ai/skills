@@ -50,10 +50,10 @@ Order by dependencies; independent work within a stage can be concurrent.
 
 Score against the phase reference once from current evidence. All critical requirements remain mandatory; cite the sections above rather than rewriting their results in a checklist. Conditional evidence uses a reasoned `N/A`, never an unfilled placeholder.
 
-| Score / required | Critical requirements | Evidence pointers | Decision |
-| --- | --- | --- | --- |
-| Unscored / >= 28/30 | Pending | Pending | Pending |
+| Score / required | Critical requirements | Evidence pointers |
+| --- | --- | --- |
+| Unscored / >= 28/30 | Pending | Pending |
 
-Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
+Keep the single decision below authoritative. Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
 
 Decision: Pending

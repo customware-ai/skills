@@ -13,7 +13,7 @@ Review the actual implementation against the task and binding instructions, not 
 
 ## Ordered Check And Build Results
 
-Run check, focused lint when useful, then separate build. Group all visible locally-fixable issues before rerunning a failed broad command. Keep exact useful result/log pointers, not pasted long logs; remove temporary full-output triage logs after extracting groups. Each check owns its command/result once; reusable build evidence is this row, not another table. Later edits invalidate only affected claims.
+Run check, focused lint when useful, then separate build. Group all visible locally-fixable issues before rerunning a failed broad command. Keep exact useful result/log pointers, not pasted long logs; remove temporary full-output triage logs after extracting groups. Each check owns its command/scope, current result and verified input state once; reusable build evidence is this row, not another table. Other phases cite it without copying counts/durations/PIDs. A rerun requires a relevant change since this latest pass or actual missing/failed proof; only affected claims are invalidated.
 
 | Command/scope | Current result/output or log | Issue groups / batch fix / rerun reason | Input validity / temporary triage-log cleanup |
 | --- | --- | --- | --- |
@@ -32,10 +32,10 @@ Run check, focused lint when useful, then separate build. Group all visible loca
 
 Score against the phase reference once from current evidence. All critical requirements remain mandatory; cite the sections above rather than rewriting their results in a checklist. Conditional evidence uses a reasoned `N/A`, never an unfilled placeholder.
 
-| Score / required | Critical requirements | Evidence pointers | Decision |
-| --- | --- | --- | --- |
-| Unscored / >= 26/32 | Pending | Pending | Pending |
+| Score / required | Critical requirements | Evidence pointers |
+| --- | --- | --- |
+| Unscored / >= 26/32 | Pending | Pending |
 
-Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
+Keep the single decision below authoritative. Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
 
 Decision: Pending

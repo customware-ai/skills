@@ -17,10 +17,9 @@ After compaction/context loss/new session, read this checkpoint and `CURRENT_PHA
 
 - Current phase: Pending
 - Current artifact/reference: Pending
-- Last passed gate: Pending
+- Last passed gate / authoritative evidence pointer (no copied score/output): Pending
 - Active batch and remaining work: Pending
 - Next local action: Pending
-- Last useful evidence pointer: Pending
 - Blocker / earliest substantive failing phase: None
 
 `CURRENT_PHASE.txt` mirrors only the current phase. `open-gaps.md` owns actual gaps. Phase files are named `phase-0-artifact-reset.md`, `phase-1-task-research.md`, `phase-2-execution.md`, `phase-3-second-execution.md`, `phase-4-unit-coverage.md`, `phase-5-playwright-verification.md`, `phase-6-e2e-verification.md`, and `phase-7-final-signoff.md`; their reference mapping is in the main skill. Do not maintain another dynamic phase index, file inventory, score recap, or artifact-pointer table here.

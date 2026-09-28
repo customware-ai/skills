@@ -12,7 +12,7 @@ For each changed behavior/workflow, decide warranted coverage, inspect connected
 
 ## New E2E Burden Ledger
 
-Before adding any new file/case, prove necessity here. If none, one defended `N/A` suffices. Do not duplicate the full existing-test inventory; point to its Coverage Decisions entry.
+Before adding any new file/case, prove necessity here. Describe the actual distinct warranted cases; never restructure tests merely to fit a stale recorded count. If none, one defended `N/A` suffices. Do not duplicate the full existing-test inventory; point to its Coverage Decisions entry.
 
 | New file/case / durable risk | Existing-first rejection / why smaller proof insufficient | Minimal distinct assertions/path | Bulk reduction/merge decision and evidence |
 | --- | --- | --- | --- |
@@ -20,7 +20,7 @@ Before adding any new file/case, prove necessity here. If none, one defended `N/
 
 ## Command Results
 
-Use the smallest warranted targeted/connected commands; broad scope needs the reference’s explicit justification. No rerun merely for confidence. For each necessary rerun cite a material change, stale/incomplete prior output, or a new narrow diagnostic. Preserve exact required output or a local log with exact final lines; a prose pass claim is insufficient. If no command is warranted, record defended `N/A`.
+Use the smallest warranted targeted/connected commands; broad scope needs the reference’s explicit justification. No rerun merely for confidence. For each necessary rerun cite the relevant change since the latest successful result, actual missing/failed proof, or a new narrow diagnostic. Already post-fix passes are current; record-only corrections and unrelated edits do not require reruns. Preserve exact required output or a local log with exact final lines; a prose pass claim is insufficient. If no command is warranted, record defended `N/A`.
 
 | Command / bounded timeout / scope reason | Current result / exact output or log and final lines | Failure type / fix or new diagnostic / rerun reason |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ Use the smallest warranted targeted/connected commands; broad scope needs the re
 
 ## Lifecycle And Safety
 
-Record a command/result once; logs carry PID, readiness, preflight, timeout and cleanup detail. Subsequent unchanged runs can cite the setup/config row instead of repeating its safety proof. No assumed server, manual cleanup/start/sleep chain, browser download, or raw DB-path override. The helper is default; record diagnosed fallback/repo-webServer reason before using it. Verification uses only isolated repo-owned test config, never the live DB. Reuse related setup/server state when valid.
+Select a distinct phase-owned runtime location via `--runtime-dir` and preserve cited logs before repeat runs. Record a command/result once; logs carry PID, readiness, preflight, timeout and cleanup detail. Other records cite that entry; do not rerun checks just to recreate paperwork. Subsequent unchanged runs can cite the setup/config row instead of repeating its safety proof. No assumed server, manual cleanup/start/sleep chain, browser download, or raw DB-path override. The helper is default; record diagnosed fallback/repo-webServer reason before using it. Verification uses only isolated repo-owned test config, never the live DB. Reuse related setup/server state when valid.
 
 | Run / helper command and scripts/specs | URL / readiness / preflight / runtime logs / cleanup | Isolated DB config and setup mapping / current build pointer |
 | --- | --- | --- |
@@ -58,10 +58,10 @@ See `open-gaps.md` for actual unresolved/resolved gaps; do not repeat them in an
 
 Score against the phase reference once from current evidence. All critical requirements remain mandatory; cite the sections above rather than rewriting their results in a checklist. Conditional evidence uses a reasoned `N/A`, never an unfilled placeholder.
 
-| Score / required | Critical requirements | Evidence pointers | Decision |
-| --- | --- | --- | --- |
-| Unscored / >= 24/30 | Pending | Pending | Pending |
+| Score / required | Critical requirements | Evidence pointers |
+| --- | --- | --- |
+| Unscored / >= 24/30 | Pending | Pending |
 
-Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
+Keep the single decision below authoritative. Record `Decision: Pass` only after the numeric threshold and all critical requirements pass. Then update marker/checkpoint together; no separate promotion-lock record or readback is needed.
 
 Decision: Pending

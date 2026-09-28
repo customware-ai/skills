@@ -4,7 +4,7 @@ Use this reference for Phase 2, Phase 3, and Phase 4.
 
 These phases turn the accepted research plan into working code, then force a second implementation/integrity pass, check/lint validation, and a dedicated unit-test coverage decision before browser verification begins. They are internal gates, not user confirmation points. When a gate passes, continue automatically. When a gate fails, fix the work and rerun the gate automatically. Do not end an OpenCode turn while Phase 2, Phase 3, or Phase 4 is unblocked and the current phase artifact still says `Decision: Fail`.
 
-This is a looped gate workstream: Phase 2, Phase 3, and Phase 4 are not complete until their artifacts pass their gates. A failing score, missing evidence, broken check/lint evidence, stale gap, placeholder row, weak implementation, or weak unit-test decision means stay in the same phase, repair the work, update the artifact, rescore, and repeat. Do not stop or ask the user to continue when a local repair is available.
+This is a looped gate workstream: Phase 2, Phase 3, and Phase 4 are not complete until their artifacts pass their gates. A substantive failing requirement or check needs repair in its owning phase. A stale record with existing valid proof needs only an in-place correction; it does not reopen successful checks or require another implementation review. Apply the main Evidence And Resume Contract to reuse accepted results, repair only actual deficiencies and rescore only an affected gate. Do not stop or ask the user to continue when a local repair is available.
 
 ## Implementation Authority
 
@@ -64,16 +64,16 @@ These phases must not stall on unbounded tools.
 - Inspect cohesive implementation/test diffs once for gate reliance. Trust successful routine artifact patches; inspect failed/uncertain writes as specified by the main Evidence And Resume Contract.
 - If a write, patch, generated file, or command result is invalid, partial, missing, or uncertain, repair that exact issue before starting the next packet.
 - Use bounded commands for checks and tests. If a command appears hung or idle, stop it, record the evidence, and continue with the next local recovery path.
-- Protect production/live workspace databases as job-critical user data. `.dbs/database.db`, repo default user-data DB paths, and any equivalent live app database are not fixtures or scratch files. Deleting, resetting, reseeding, truncating, manipulating, or corrupting them can destroy user work and can cause the user to lose his job.
-- The only allowed production/live database action is the app's required migration command for a real schema change. Record the migration reason, command, target DB/source, and result as phase evidence. This does not permit working on `.dbs/database.db` or any production/live DB. Do not run manual queries, seed, reset, fixture setup, test setup, Playwright, E2E, direct SQLite, data repair, delete, truncate, cleanup, or any data manipulation against production/live DB.
+- Protect production/live workspace databases as job-critical user data. Repo-declared live/default databases and any equivalent live app database are not fixtures or scratch files. Deleting, resetting, reseeding, truncating, manipulating, or corrupting them can destroy user work and can cause the user to lose his job.
+- The only allowed production/live database action is the app's required migration command for a real schema change. Record the migration reason, command, target DB/source, and result as phase evidence. This does not permit working on any production/live DB. Do not run manual queries, seed, reset, fixture setup, test setup, Playwright, E2E, direct SQLite, data repair, delete, truncate, cleanup, or any data manipulation against production/live DB.
 - If Phase 2 or Phase 3 creates or changes a migration, apply it to the production/live default DB with the repo's app migration command once after the migration exists and before Phase 3 passes. This is mandatory because the user uses the completed app immediately; an unapplied migration means the implementation is not actually delivered. Rerun only if the migration changed after the prior run or the prior migration run failed/incomplete.
-- If a command mentions `db`, `database`, `sqlite`, `migrate`, `seed`, `fixture`, `reset`, `.dbs`, `rm`, `truncate`, or similar data-state words, prove the target is either the legitimate migration target or an isolated repo-owned test DB before running it. If the target is unknown, assumed safe, or production/live for non-migration work, do not run it.
+- If a command mentions `db`, `database`, `sqlite`, `migrate`, `seed`, `fixture`, `reset`, `rm`, `truncate`, or similar data-state words, prove the target is either the legitimate migration target or an isolated repo-owned test DB before running it. If the target is unknown, assumed safe, or production/live for non-migration work, do not run it.
 - Do not run long-lived dev servers, watchers, or interactive CLIs in the foreground as the active command. If a server is needed before Phase 5 for an API/runtime probe, use `task-workflow/scripts/server-probe.mjs`. Server readiness is usually 5-10 seconds; use 15-20 seconds as the normal budget and 30 seconds as the maximum startup-readiness limit. Do not use a 120 second readiness budget for server startup.
 - Use this helper shape for manual API/runtime probes. Pass a foreground server command; do not add `&`, `nohup`, `disown`, process-name cleanup, or fixed sleeps around it.
 
 ```bash
 node task-workflow/scripts/server-probe.mjs \
-	--server "PORT=8080 node build/server/start.js" \
+	--server "<discovered repo-owned server command>" \
 	--ready-url "http://127.0.0.1:8080/health" \
 	--ready-timeout-ms 20000 \
 	--run "curl -fsS http://127.0.0.1:8080/health"
@@ -84,7 +84,7 @@ node task-workflow/scripts/server-probe.mjs \
 
 ### Phase-Owned Commands
 
-- Phase 2 may run narrow non-test checks only when needed to unblock implementation or prove a specific batch. Defer routine check, lint, build, unit/Vitest, E2E, Playwright, and repo combined check commands such as `pnpm run check` to owning later phases. If a compile/type issue blocks the batch, a combined static command is allowed with blocker/result evidence. Use cohesive batch diffs/targeted inspection as proof, not per-edit record/readback cycles.
+- Phase 2 may run the smallest relevant non-test compile/type diagnostic to establish a changed connected contract or compilation/runtime boundary before building more callers on it. Reuse the repo's actual configuration and commands; record the specific integration reason/result once in the batch. This does not impose a layout or authorize per-edit/full validation loops. Routine check/build, unit, E2E and browser work remains in the owning later phase. Use cohesive batch diffs/targeted inspection as proof.
 - Phase 3 owns the normal ordered check/build checkpoint after the implementation, connected-place sweep, and integrity review: run the repo's full check command first, use lint only as a focused static/backend diagnostic when useful or when the repo defines it as the static command, then run build if build is separate from check. Each command must run only after the prior command is passing unless the target repo combines them in one documented command.
 - Phase 4 owns unit-test commands. Phase 5 owns interactive browser verification. Phase 6 owns E2E coverage decisions. If Phase 2 or Phase 3 discovers unit/E2E/browser work may be needed, record it for the owning phase and continue the ordered gates.
 
@@ -123,6 +123,8 @@ Before adding any new unit test file or case, record a burden ledger entry in `t
 | Minimal assertion set | Each new assertion protects a distinct required behavior; incidental rendering, text existence, styling, and one-off branches are excluded. |
 | Bulk check | If more than one new unit file, more than three new cases, or any helper/fixture/test-file split is introduced, the artifact itemizes why each remains necessary after reduction. |
 
+The ledger explains distinct necessary coverage, not a target number of cases. Describe the actual tests and use the command result as the authority for its counts. Do not merge or rewrite warranted cases merely because an earlier record used a different count.
+
 If the ledger is missing or generic, do not add the test. If added tests cause max-lines, fixture churn, helper churn, slow broad commands, or repeated reruns, return to the ledger and reduce or remove tests before continuing.
 
 ### Minimal Command Rules
@@ -152,12 +154,12 @@ Phase 3 is the default checkpoint for the repo's check command, focused lint whe
 - Run the repo's full check command first, usually `pnpm run check`. Use `pnpm run lint` only as a focused static/backend diagnostic or when the repo documents lint as the static command. Run build only when the repo has a separate build requirement not already covered by check. Record the repo command mapping instead of inventing duplicate commands.
 - When a command fails, inspect enough output to identify every visible issue group by file, contract, or root cause. Do not rely on truncated `tail`/`head` output as the only evidence if it can hide issue groups. If output is too large, use focused searches, reporter options, or a temporary full-output log; delete any temporary full-output log after extracting issue groups. Record issue groups, fixes, and rerun reason in the artifact, not large pasted logs.
 - Use targeted diagnostics or narrow fix checks only to prove a specific issue group. Before rerunning the same broad check, lint, or build command, fix every locally-fixable issue group visible from the prior broad output. Do not fix one line or one file and rerun the broad command while other visible related groups remain unhandled.
-- After check passes, move to any focused lint/build command that is still required. After build passes, record the reusable build evidence: command, output/log path, and the source/config/package/build inputs it depends on.
+- After check passes, move to any focused lint/build command still required. Record the successful scope, exact useful output/log pointer and relevant inputs once in the owning result row. Retain the actual repository's connected compile/runtime contract; do not redesign a working boundary after a pass without a demonstrated defect. Externally supplied instruction/examples are not application source: identify their provenance when a check scans them. Use the repo-supported source diagnostic for isolation without weakening rules or silently claiming a failing required full check passed.
 
 ### Reuse And Invalidation
 
 - Later phases reuse the Phase 3 build result unless code, config, package/dependency files, migrations/build inputs, or generated assets changed after that build, or unless the previous output is missing, partial, stale, or incompatible with the verification command. Do not run a later build as phase preparation, final confirmation, or because E2E is starting; use the recorded Phase 3 build output.
-- If a later phase changes code, return to the earliest affected phase, update artifacts, and rerun the relevant ordered command from the first invalidated point. Do not rerun build only for confidence when the Phase 3 build evidence is still current.
+- Before a later rerun, compare the relevant change with the latest successful result, not an older failure or phase summary. Use the main scoped-invalidation contract: refresh only affected claims and preserve unrelated proof. A missing record, unit-case reorganization or test cleanup does not by itself require rebuilding the app or repeating interactive/responsive/E2E verification. Never repeat an already post-fix pass just because its artifact pointer was corrected.
 
 </ordered_static_build_checkpoint>
 
@@ -174,7 +176,9 @@ If the task touches multiple layers, prefer this order unless the repo architect
 5. route/page/component implementation
 6. docs required by changed behavior
 
-Record deviations in the phase artifact. Do not backfill the checklist after coding without evidence.
+This is a dependency guide, not a direction for storing code. Discover how the existing repository connects these responsibilities and preserve its conventions. Resolve all affected producers/consumers of a changed contract as one cohesive batch. If a proposed boundary fails, retain the reason with the decision and do not restore it without new evidence.
+
+Record material deviations once in the phase artifact. Do not backfill the checklist after coding without evidence.
 
 During Phase 2, artifact updates are incremental, not end-of-phase cleanup. Do not batch the whole implementation and then fill `phase-2-execution.md` later.
 
@@ -226,7 +230,7 @@ Critical failures:
 - meaningful batches are completed without incremental implementation evidence or a usable resume checkpoint
 - failed or uncertain write/edit result is ignored instead of repaired and read back
 - long-lived command, watcher, or dev server is left running in the foreground until the session stalls
-- Phase 2 runs `pnpm run check` or an equivalent combined check/build command without a concrete compile/type blocker recorded before the command
+- Phase 2 runs routine full validation without a specific connected-integration reason for a narrow diagnostic
 - required planned step missing without an open-gap entry
 - implementation bypasses existing repo contracts or boundaries without evidence
 - visible task behavior left fake or placeholder
