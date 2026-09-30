@@ -27,12 +27,18 @@ Build/check, code review, interactions, measurements and opened screenshots prov
 
 1. Compare the area's relevant content/order, geometry/spacing, typography/colors, borders/radii/shadows/backgrounds, controls/assets, clipping/overlap, state/scroll/theme and responsive behavior.
 2. Immediately write one concise area **pass/fail** in the existing comparison index, with accepted paths and what matched or materially differed. Several images may support the same entry. Do not move to an unrelated batch with the current finding unwritten, or reopen images later to reconstruct notes.
-3. For a material failure, note the owning gap and fix its cause—prefer shared tokens/components. Batch shared-cause or independent repairs where dependencies permit, but do not collect unrelated comparisons while a known material mismatch remains.
+3. For a material failure, note the owning gap and fix its cause—prefer shared tokens/components. Collect independent findings before batching related repairs; a mismatch blocks only dependent proof, not unrelated comparisons. Complete broad repairs before the Phase 2 gate; fine-detail findings remain Phase 3 work, not a reason to prolong Phase 2.
 4. Review only affected replacement proof and append a short **fail → fix → recheck → pass** correction. Retain accepted unchanged images and findings; a later packet failure does not erase them.
 
 Use the entrypoint's evidence homes: findings in the index, unresolved pointers in gaps, gate decisions in phase artifacts, phase/next action in the checkpoint. No repeated findings, CSS transcription, command table or detail ledger.
 
 Reuse working navigation/readiness/capture steps; narrow repairs and batching follow the lifecycle reference. Browser replacement proof must include any relevant target repair in the served build.
+
+### Group Proof By Page Or Flow
+
+Plan the remaining coverage from the existing indexes, not a new inventory. Group related views, states and interaction families into a page/flow packet, with both applicable layouts handled in that packet where practical. Pass ready independent same-build packets as multiple `--run` commands in one managed lifecycle. Keep assertions and useful failure output per area; do not restart the server or create a near-duplicate script for each small state, control, dismissal path or screenshot. Safety, command bounds, real-input proof, and required desktop/mobile coverage are unchanged.
+
+After a comparison batch, group related code repairs, review the changed diff, and run required checks/build for that repair batch before replacement captures. A known failure must be resolved before its owning gate passes, but need not interrupt unrelated discovery. Reuse unchanged successful proof; no full workflow rerun after a script-only repair.
 
 </comparison_loop>
 
@@ -49,7 +55,7 @@ Aim for **about 15 minutes**, as a soft guide—not a hard limit. Spend effort o
 - Compare page shells, section hierarchy, card/grid placement, content, shared design-system styling and overall layout across routes, represented themes, desktop and mobile.
 - Choose readable views covering multiple sections where possible; add a focused view only for obscured coverage. Include representative major dialogs/structural states when their layout is part of the design. No default top/middle/bottom or interaction-state matrix.
 - Inspect responsive transformation, visible scroll regions, overlap/clipping/cutoff and horizontal overflow using Phase 0's chosen layout views, including its materially distinct intermediate layout when applicable. Add another tablet/short-height view only for a newly identified material difference or suspected defect; do not repeat desktop/mobile proof or reopen source coverage to create a generic viewport matrix.
-- Fix material broad layout/style/content failures and obvious broken controls encountered while reaching views. Once broad layout passes, hand off small differences; isolated disabled-button opacity belongs to Phase 3 unless it causes a material layout/usability failure.
+- Fix material broad layout/style/content failures and obvious broken controls encountered while reaching views. Broad means an incorrect shell, section hierarchy, card/grid placement, missing content, clipping/overflow, unusable controls, or a visibly wrong shared design-system rule. Isolated heading line-fit, footer/button spacing, opacity, border/radius or dialog-control alignment belongs to Phase 3 unless it causes one of those broad failures. Record it once as deferred fine work; do not tune it or run its fix/check/build/capture cycle in Phase 2.
 - Revalidate only claims invalidated by repairs. Keep visual corrections here, not a marker rollback to Phase 1. Final interaction-family/distinct-state/fine-detail/sidebar/drawer proof belongs to Phase 3, not this gate; do not defer a visible broad failure.
 
 Use the shared compare/note/fix/recheck loop. Test intended behavior rather than every input combination.
@@ -73,7 +79,7 @@ Required: **at least `48/50`**, with every critical requirement independently pa
 
 - [ ] Current required checks/build, UI-only code and managed lifecycle.
 - [ ] Opened current broad comparisons for every page's overall layout/readable section hierarchy at desktop/mobile sizes and represented themes; needed representative structural states included, source-unavailable states declaration-backed.
-- [ ] Immediate area pass/fail notes; material broad failures repaired and affected proof rechecked before unrelated comparisons.
+- [ ] Immediate area pass/fail notes; material broad failures repaired in batches and affected proof rechecked before this gate; independent comparisons are not serially blocked.
 - [ ] No missing content, unusable layout, material style/placement mismatch or unresolved Phase 2 broad gap.
 
 Score once from existing proof. Final distinct-state/section, interaction, small-detail and sidebar/drawer checks are Phase 3 requirements, not per-capture promotion paperwork. Record the score, critical results, pointers and `Decision: Pass`, then promote to Phase 3 and update the checkpoint. The threshold suffices; do not chase `50/50`. A failure stays here for repair and refresh of only affected claims, including earlier code/check proof.
@@ -91,8 +97,8 @@ Enter with passing Phases 0–2 and current broad comparisons/checks. Start from
 Aim for **about 15 minutes**, as a soft guide—not a hard limit. Complete required proof/repairs even when longer. Once an area's current proof passes, it is done; expanding review without a new defect or missing requirement means finish the gate, not start another round.
 
 1. Prioritize missing content/states, wrong shared rules, visibly incorrect styling and broken behavior. Review smaller typography/spacing/color/border/radius/asset/control/state differences against accepted images.
-2. Complete only missing/affected interaction-family, distinct-state, tablet/short-height, shell, drawer and theme proof. Use meaningful inputs and applicable failure behavior—not every field-value permutation or repeated transition. Every required interaction family still needs real-input proof.
-3. Use focused captures/measurements to answer actual unresolved questions. Reuse Phase 0 source images and unchanged Phase 2 findings; no new source run, redundant route × state × viewport matrix or screenshot of an already-evidenced appearance.
+2. Complete only missing/affected interaction-family, distinct-state, tablet/short-height, shell, drawer and theme proof. Group related checks into page/flow packets using the shared batching rules, rather than a separate browser run for each family or state. Use meaningful inputs and applicable failure behavior—not every field-value permutation or repeated transition. Every required interaction family still needs real-input proof. An already-proven outcome needs no replay merely to attach it to this phase.
+3. Use focused captures/measurements to answer actual unresolved questions. Focused means capturing the relevant area within grouped proof, not creating a standalone script/lifecycle for every small check. Reuse Phase 0 source images and unchanged Phase 2 findings; no new source run, redundant route × state × viewport matrix or screenshot of an already-evidenced appearance.
 4. For genuine mismatches, use the shared finding/fix/recheck loop. A larger escaped defect needs its owning repair and affected evidence, not a replay of Phase 2. Aim for the closest practical match, not literal pixel identity.
 5. Keep an honest minor deduction for harmless isolated pixel/line-wrap variance. Repeated deviations from an incorrect shared token/component rule are material and must be repaired. Never skip a required check or accept a real failure for speed.
 

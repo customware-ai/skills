@@ -2,6 +2,8 @@
 
 Reuse accepted Phase 0 source images and its shared browser/capture properties; capture only the target in this phase. Keep the real responsive viewport and compare corresponding sections using pane scroll where necessary. Different document/pane scroll ownership does not require equal PNG heights, fitted-height captures or both normal/full modes. Use the PNG, capture script, and lifecycle log for capture identity. Keep one concise comparison index with accepted/current pair paths, opened findings, concrete comparisons, and mismatch/pass decisions. Link it here; do not copy every pair into multiple tables or require a separate manifest. Failed revisions stay in runtime evidence with reasons and are excluded from the passing count.
 
+Review broad shells, section hierarchy, card/grid placement, content and shared styling in grouped page/layout batches. Record independent findings, batch broad repairs, then check/build and recapture affected areas. A mismatch blocks only dependent proof. Defer isolated fine-detail findings to Phase 3; they do not block this phase unless they cause a material broad layout/usability failure. The shared Phases 2–3 reference owns the scope and browser-grouping rules.
+
 ## Evidence Pointers
 
 <evidence_pointers>
@@ -52,7 +54,7 @@ Required: at least `48/50`. `Unscored` is not a pass.
 | Current required checks/build and UI-only code pass | Pending | Pending |
 | Source and target broad comparisons use managed lifecycles, real input where needed, and opened current images | Pending | Pending |
 | Every page's broad layout and readable section hierarchy at desktop/mobile sizes and represented themes has an opened source-target comparison; needed representative structural states are included, and source-unavailable states use declarations rather than fabricated images | Pending | Pending |
-| Each compared area's first finding records pass/fail; material broad-layout failures are repaired and rechecked before moving on, while smaller differences are handed to Phase 3 | Pending | Pending |
+| Each compared area's first finding records pass/fail; material broad-layout failures are repaired in batches and rechecked before this gate, while independent comparisons continue and smaller differences are handed to Phase 3 | Pending | Pending |
 | No missing content, unusable layout, material style/placement mismatch, or unresolved Phase 2 broad visual gap remains | Pending | Pending |
 
 </non_compensating_critical_gate>

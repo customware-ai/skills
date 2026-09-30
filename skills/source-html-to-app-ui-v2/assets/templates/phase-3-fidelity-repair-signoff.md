@@ -2,7 +2,7 @@
 
 Reuse accepted Phase 0 source images/framing, the Phase 2 comparison index, and already-opened findings. Do not capture the HTML again here. Add only changed/replacement pair findings and actual mismatch resolutions there; do not reopen unchanged pairs or rebuild a second full-view/section/final matrix. Runtime history retains invalidated revisions. The HTML/design, code/diff, and accepted images remain the authorities for their respective facts.
 
-Use judgment to find actual omissions/material differences and complete missing checks. At each first comparison, record its concise pass/fail in the existing comparison index before reviewing unrelated images. For a failure, append one short finding → fix → affected recheck, not a new detail ledger. Reuse an accepted area's proof and move on when it passes; harmless isolated pixel/line-wrap differences do not need another tuning/capture round. All required checks and score thresholds below still apply.
+Use judgment to find actual omissions/material differences and complete missing checks. At each first comparison, record its concise pass/fail in the existing comparison index. Collect independent findings and batch related repairs; append one short finding → fix → affected recheck, not a new detail ledger. Follow the shared Phases 2–3 reference to group remaining interaction/state/detail proof by page or flow, including applicable desktop/mobile layouts; do not create a separate script/lifecycle for each small check. Reuse an accepted area's proof and move on when it passes; harmless isolated pixel/line-wrap differences do not need another tuning/capture round. All required coverage, checks and score thresholds below still apply.
 
 ## Fidelity Evidence
 

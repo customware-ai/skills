@@ -126,7 +126,7 @@ The artifact filename without `.md` is the marker value. Scores below are passin
 
 1. Set the marker at a real transition; use the instructions already loaded or load the newly relevant reference.
 2. Work in cohesive implementation/evidence groups, batching independent dependency-ready work. No fixed sequence of individual tool calls is required.
-3. Review changed code/focused diffs and newly accepted browser images at readable scale. Record source findings per image in Phase 0, and an immediate area pass/fail at first paired comparison. Fix a material failure and recheck its affected area before gathering unrelated comparisons; reuse passing areas.
+3. Review changed code/focused diffs and newly accepted browser images at readable scale. Record source findings per image in Phase 0, and an immediate area pass/fail at first paired comparison. Collect independent findings, batch related repairs, then recheck affected areas; a mismatch blocks only proof that depends on it, not unrelated comparisons. Phase 2 owns broad failures; record fine-detail findings for Phase 3 without repairing them to unlock Phase 2. Reuse passing areas and group browser work as described in the shared reference.
 4. At the gate, score each weighted row and evaluate every critical requirement from current evidence once. Record a passing decision before advancing; on failure, repair its owning work and refresh only affected proof.
 5. Continue automatically through Phase 4 while locally unblocked. A phase pass is not task completion. Stop only at the user's request or a proven external blocker with no local recovery; record that blocker and next action.
 
