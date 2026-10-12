@@ -1,6 +1,6 @@
 # Request errors and batched operations
 
-Read when a changed journey needs faults or explicit wire/operation proof. Use native Playwright and the actual client/server contract. The shared browser observes unexpected errors; its existing `hold`, `expectIssue` and `exchange` are optional conveniences, not app adapters. Inspect their source for advanced use.
+Read when a changed journey needs faults or explicit wire/operation proof. Use native Playwright and the actual client/server contract. The shared browser observes unexpected errors; its existing `hold`, `expectIssue` and `exchange` are optional conveniences, not app adapters. Use the documented example below; inspect only the relevant implementation when an interface is undocumented or helper behavior is suspect.
 
 ## Bind the real action
 

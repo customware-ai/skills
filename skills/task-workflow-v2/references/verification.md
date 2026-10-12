@@ -2,7 +2,7 @@
 
 ## Environment, not application logic
 
-Run from the target repository root. Use the installed `scripts/verify.mjs` to own setup/server readiness, commands, logs and cleanup; use `scripts/browser.mjs` for an observed browser and error reporting. Inspect `--help` once when the invocation is unknown. Use existing dependencies/browser cache; do not silently install prerequisites.
+Run from the target repository root. Use the installed `scripts/verify.mjs` to own setup/server readiness, commands, logs and cleanup; use `scripts/browser.mjs` for an observed browser and error reporting. Inspect `--help` once when the invocation is unknown. Read a relevant helper implementation section only for an undocumented interface or evidence of a helper defect, not before every ordinary check. Use existing dependencies/browser cache; do not silently install prerequisites.
 
 ```sh
 node .agents/skills/task-workflow/scripts/verify.mjs --run 'node task-workflow/verify-change.mjs'

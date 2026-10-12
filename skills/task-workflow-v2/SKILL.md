@@ -9,9 +9,11 @@ Discover connected owners, implement, verify the real journey, repair causes, fi
 
 ## Trace and change
 
-Read the task, binding `AGENTS.md`, required docs and relevant skills. Use actual repository contracts/architecture. MITB inputs are `.tasks/task.md`, `.tasks/domain.md` and `.tasks/files/`. Preserve canonical inputs, installed skills, unrelated edits and data unless their exact change is authorized.
+Read the task, binding `AGENTS.md`, required docs and relevant skills. MITB inputs are `.tasks/task.md`, `.tasks/domain.md` and `.tasks/files/`. Preserve canonical inputs, installed skills, unrelated edits and data unless their exact change is authorized.
 
-Trace shared/separate owners, routes, producers/consumers, persistence/recovery and affected tests. Styling includes component families/tokens, not just imports. Change shared owners once and separate affected uses consistently; preserve intentional differences. Fix structural causes and remove superseded code, not retained data. Reopen decisions only for new evidence/conflict.
+Find relevant files through actual listings/search results, confirmed imports or known paths; do not guess filenames. Read the needed sections, then follow connected callers, contracts and data flow until the requested behavior's owners are clear. Include shared/separate uses, persistence/recovery and affected tests; styling includes component families/tokens, not just imports. This is targeted discovery, not an audit of the whole app. Reuse intact context; reread only for changed files, new evidence or genuine context loss.
+
+Reuse working repository contracts and architecture. Change shared owners once and separate affected uses consistently; preserve intentional differences. For a bug, fix the structural cause across the connected uses that share it and remove superseded code, not retained data. Refactor when required for the task's correct behavior, not merely because code is duplicated or another design is possible. Record unrelated findings in the existing handoff rather than turning them into cleanup work. Reopen decisions only for new evidence/conflict.
 
 Implement the smallest complete affected user journey in the first connected batch: the persistence/contract and actual UI needed to prove one outcome, not the whole backend followed by the whole UI. Run the repository’s fast lint/type checks and prove that outcome through the real UI before implementing the next independent outcome. If the journey is not usable yet, finish only its missing connected owners; do not broaden into unrelated stages while deferring its first proof. Repeat these checks after connected implementation batches and shared-owner refactors, not every edit; resolve failures before broadening. When persistence changes, prove save → authoritative commit → reload; appearance changes need their actual rendered result and interactions.
 
@@ -19,17 +21,19 @@ Implement the smallest complete affected user journey in the first connected bat
 
 **Bad:** change one rounded button in a page while its shared component and separately implemented siblings stay square. **Good:** trace the component/token and independent siblings, update their owners consistently, then exercise the affected rendered controls.
 
+**Bad:** replace a working sync engine or audit every route while adding Daily Focus. **Good:** fix its shared date qualification, sidebar counts and mutation rollback where required; reuse the existing sync path and prove the connected outcomes.
+
 ## One recovery snapshot
 
 Keep the single recovery snapshot at `<repository-root>/task-workflow/checkpoint.md`; put temporary verification scripts, fixtures, diagnostics and evidence in that same task-workflow folder, never the installed skill folder. For a genuinely new task, empty the task-workflow folder only after confirming it holds finished work and preserving its required evidence. Never clear it when resuming or discard unrelated work. No separate progress files, TODO tools, test ledgers or per-command paperwork.
 
 Create once scope and the first journey are understood. Keep task/goal, consequential owners/decisions, implemented versus verified journeys with proof paths or missing checks, and now/next. Name the first journey, not an entire backend/UI phase.
 
-Refresh from intact context only when a completed/resumable journey milestone materially changes verified work or the next batch, a consequential decision/blocker changes continuation, interruption/handoff is imminent, or final proof is ready. Combine related updates into one write; skip unchanged state. Not per file, command, assertion, failed attempt, repair or timer. Do not reread the snapshot while context is intact or after a successful write; inspect an uncertain write once. User-facing progress updates do not trigger snapshot writes.
+Refresh from intact context only when a completed/resumable journey milestone materially changes verified work or the next batch, a consequential decision/blocker changes continuation, interruption/handoff is imminent, or final proof is ready. Replace this small snapshot in one whole-file write; combine related updates and skip unchanged state. Not per file, command, assertion, failed attempt, repair or timer. Do not reread the snapshot while context is intact or after a successful write; inspect an uncertain write once. User-facing progress updates do not trigger snapshot writes.
 
-After genuine context loss/replacement, read snapshot/binding inputs once; reconcile Git status/diff including untracked files, named owners and proof, then resume unfinished work. Intact reconnects need no recovery ritual. Session/tool logs are diagnostic history, not another ledger.
+After compaction or genuine context loss/replacement, read required instructions, task/domain inputs and the snapshot once. Reconcile Git status/diff including untracked files, then load the named owners and proof needed for the unfinished outcome. Do not rebuild a whole-app mental model or retrace completed unchanged journeys. Intact reconnects need no recovery ritual. Session/tool logs are diagnostic history, not another ledger.
 
-**Bad:** reread/write the checkpoint after each file edit or failed assertion. **Good:** keep working from intact context; write once when save → reload is implemented and verified, with proof paths and the next unfinished outcome. On a real resume, read once and reconcile the diff.
+**Bad:** patch stale checkpoint text after each failed assertion, or reread every route after compaction. **Good:** keep working from intact context; replace the snapshot once at a meaningful milestone. On a real resume, reconcile its proof with the diff and read only the unfinished journey's missing context.
 
 ## Verify through the application
 
