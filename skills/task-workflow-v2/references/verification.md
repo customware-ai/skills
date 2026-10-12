@@ -12,7 +12,7 @@ For a temporary server add the actual isolated `--setup`, `--server`, `--ready-u
 
 `withBrowser(check, { url })` enters once before the callback. Use `{ url: null }` when routes must be installed before entering, then navigate once yourself. Do not repeat initial navigation or manually close the browser inside the callback. `TW_BROWSER_KIT`, `TW_RUN_DIR` and server-mode `TARGET_URL` are supplied by the runner.
 
-Await `kit.navigate(() => page.reload(...))` or `kit.navigate(() => page.goto(observedUrl, ...))` for document replacement. It settles finite requests and owns cancellation of the old document’s acknowledged realtime streams. `kit.settle()` also settles finite work without requiring a healthy stream to end. Assert streamed business results through the UI; response headers alone do not prove them. Normal helper teardown owns its stream cancellations. Do not close the browser yourself, globally excuse aborted requests, or change application code to satisfy checker cleanup.
+Await `kit.navigate(() => page.reload(...))` or `kit.navigate(() => page.goto(observedUrl, ...))` for document replacement. It settles finite requests and owns cancellation of the old document’s acknowledged realtime streams only after Chromium confirms a different main-frame document. Hash changes and same-document history navigation do not grant cancellation ownership. `kit.settle()` also settles finite work without requiring a healthy stream to end. Assert streamed business results through the UI; response headers alone do not prove them. Normal helper teardown owns its stream cancellations. Do not close the browser yourself, globally excuse aborted requests, or change application code to satisfy checker cleanup.
 
 ## Worked journey: observe → act → prove → extend
 

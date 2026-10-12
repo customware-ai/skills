@@ -164,7 +164,7 @@ async function openBrowser({
 			},
 			/**
 			 * Await a native document-replacing navigation after settling finite work.
-			 * Old live streams belong to this cutover only if the main frame actually navigates.
+			 * Old live streams belong to this cutover only after a different main-frame document commits.
 			 * @template T
 			 * @param {()=>Promise<T>} action
 			 * @param {{page?:import('playwright-core').Page,timeoutMs?:number}} [options]
@@ -176,20 +176,24 @@ async function openBrowser({
 				for (const stream of streams.values()) {
 					if (stream.page === target) stream.closeOwner = owner;
 				}
-				/** @param {import('playwright-core').Frame} frame */
-				function navigated(frame) {
-					if (frame === target.mainFrame()) owner.committed = true;
-				}
-				target.on('framenavigated', navigated);
+				const session = await context.newCDPSession(target);
 				try {
+					await session.send('Page.enable');
+					const { frameTree } = await session.send('Page.getFrameTree');
+					/** @param {{frame: typeof frameTree.frame}} event */
+					function navigated({ frame }) {
+						if (frame.id === frameTree.frame.id && frame.loaderId !== frameTree.frame.loaderId)
+							owner.committed = true;
+					}
+					session.on('Page.frameNavigated', navigated);
 					const result = await action();
 					await kit.settle({ timeoutMs });
 					return result;
 				} finally {
-					target.off('framenavigated', navigated);
 					for (const stream of streams.values()) {
 						if (stream.closeOwner === owner) stream.closeOwner = null;
 					}
+					await session.detach();
 				}
 			},
 			/** @param {string} name @param {{page?:import('playwright-core').Page}} [options] */
