@@ -24,7 +24,8 @@ function loadPlaywright(cwd) {
 	throw new Error(`Playwright is not installed in the target project: ${cwd}. Use its existing dependencies/cache.`);
 }
 
-/** @typedef {{type:string,url:string,pageId?:string,method?:string,message?:string,status?:number,browserResource?:boolean,request?:import('playwright-core').Request,phase?:'verification'|'teardown'}} Issue */
+/** @typedef {{committed:boolean,start:number}} StreamCloseOwner */
+/** @typedef {{type:string,url:string,pageId?:string,method?:string,message?:string,status?:number,browserResource?:boolean,request?:import('playwright-core').Request,closeOwner?:StreamCloseOwner,phase?:'verification'|'teardown'}} Issue */
 /** @typedef {{label:string,request?:import('playwright-core').Request,match?:((issue:Issue)=>boolean),count:number,start:number,seen:number,twin:boolean}} Expectation */
 /** @typedef {'release'|'fail'|'cancel'} Action */
 /** @typedef {{cwd?:string,url?:string|null,outputDir?:string,viewport?:import('playwright-core').ViewportSize}} BrowserOptions */
@@ -64,9 +65,13 @@ async function openBrowser({
 		const exchanges = [];
 		/** @type {Set<import('playwright-core').Request>} */
 		const inFlight = new Set();
-		/** @type {(()=>void)|undefined} */
-		let notifyIdle;
+		/** @type {Map<import('playwright-core').Request,{page:import('playwright-core').Page,closeOwner:StreamCloseOwner|null}>} */
+		const streams = new Map();
+		/** @type {PromiseWithResolvers<void>} */
+		let idle = Promise.withResolvers();
 		let closing = false;
+		/** @type {StreamCloseOwner|null} */
+		let teardownOwner = null;
 		let pageCount = 0;
 		/** @param {Issue} issue */
 		function recordIssue(issue) {
@@ -75,21 +80,29 @@ async function openBrowser({
 		}
 		/** @param {Issue} issue @param {import('playwright-core').Request} request */
 		function recordNetworkIssue(issue, request) {
+			const stream = streams.get(request);
+			Object.defineProperty(issue, 'closeOwner', { value: stream && (closing ? teardownOwner : stream.closeOwner) });
 			Object.defineProperty(issue, 'request', { value: request });
 			recordIssue(issue);
 		}
 		/** @param {import('playwright-core').Request} request */
 		function requestSettled(request) {
 			inFlight.delete(request);
-			if (!inFlight.size) notifyIdle?.();
+			if (!inFlight.size) idle.resolve();
 		}
 		/** @param {import('playwright-core').Page} target */
 		function observePage(target) {
 			if (observedPages.has(target)) return target;
 			const pageId = `page-${++pageCount}`;
 			observedPages.set(target, pageId);
-			target.on('request', request => inFlight.add(request));
-			target.on('requestfinished', requestSettled);
+			target.on('request', request => {
+				if (!inFlight.size) idle = Promise.withResolvers();
+				inFlight.add(request);
+			});
+			target.on('requestfinished', request => {
+				streams.delete(request);
+				requestSettled(request);
+			});
 			target.on('pageerror', error => recordIssue({ type: 'pageerror', pageId, url: target.url(), message: error.message }));
 			target.on('console', message => {
 				if (message.type() === 'error')
@@ -97,9 +110,15 @@ async function openBrowser({
 			});
 			target.on('requestfailed', request => {
 				recordNetworkIssue({ type: 'requestfailed', pageId, url: request.url(), method: request.method(), message: request.failure()?.errorText }, request);
+				streams.delete(request);
 				requestSettled(request);
 			});
 			target.on('response', response => {
+				if (response.status() >= 200 && response.status() < 300 &&
+					/^text\/event-stream(?:\s*;|\s*$)/i.test(response.headers()['content-type'] ?? '')) {
+					streams.set(response.request(), { page: target, closeOwner: null });
+					requestSettled(response.request());
+				}
 				if (response.status() >= 400)
 					recordNetworkIssue({ type: 'http', pageId, url: response.url(), method: response.request().method(), status: response.status() }, response.request());
 			});
@@ -108,12 +127,71 @@ async function openBrowser({
 		observePage(page);
 		context.on('page', observePage);
 
+		/** @param {Promise<never>} deadline */
+		async function waitForRequests(deadline) {
+			do {
+				while (inFlight.size) {
+					await Promise.race([idle.promise, deadline]);
+				}
+				for (const target of observedPages.keys()) {
+					if (!target.isClosed()) await Promise.race([target.evaluate(() => undefined), deadline]);
+				}
+			} while (inFlight.size);
+		}
+		/** @param {(deadline:Promise<never>)=>Promise<void>} work @param {number} timeoutMs */
+		async function withRequestDeadline(work, timeoutMs) {
+			let timer;
+			const deadline = new Promise((_, reject) => {
+				timer = setTimeout(() => {
+					const pending = [];
+					for (const request of inFlight) pending.push(`${request.method()} ${request.url()}`);
+					reject(new Error(`Browser verification did not settle within ${timeoutMs}ms. In-flight requests: ${pending.join(', ')}`));
+				}, timeoutMs);
+			});
+			try { await work(deadline); }
+			finally { clearTimeout(timer); }
+		}
+
 		const kit = {
 			browser,
 			context,
 			page,
 			issues,
 			observePage,
+			/** Settle finite work without waiting for an acknowledged realtime stream to end. */
+			async settle({ timeoutMs = 10000 } = {}) {
+				await withRequestDeadline(waitForRequests, timeoutMs);
+			},
+			/**
+			 * Await a native document-replacing navigation after settling finite work.
+			 * Old live streams belong to this cutover only if the main frame actually navigates.
+			 * @template T
+			 * @param {()=>Promise<T>} action
+			 * @param {{page?:import('playwright-core').Page,timeoutMs?:number}} [options]
+			 */
+			async navigate(action, { page: target = page, timeoutMs = 10000 } = {}) {
+				observePage(target);
+				await kit.settle({ timeoutMs });
+				const owner = { committed: false, start: issues.length };
+				for (const stream of streams.values()) {
+					if (stream.page === target) stream.closeOwner = owner;
+				}
+				/** @param {import('playwright-core').Frame} frame */
+				function navigated(frame) {
+					if (frame === target.mainFrame()) owner.committed = true;
+				}
+				target.on('framenavigated', navigated);
+				try {
+					const result = await action();
+					await kit.settle({ timeoutMs });
+					return result;
+				} finally {
+					target.off('framenavigated', navigated);
+					for (const stream of streams.values()) {
+						if (stream.closeOwner === owner) stream.closeOwner = null;
+					}
+				}
+			},
 			/** @param {string} name @param {{page?:import('playwright-core').Page}} [options] */
 			async screenshot(name, { page: target = page } = {}) {
 				observePage(target);
@@ -310,35 +388,34 @@ async function openBrowser({
 			async finish({ timeoutMs = 10000 } = {}) {
 				/** @type {unknown[]} */
 				const errors = [];
-				let timer;
-				const deadline = new Promise((_, reject) => {
-					timer = setTimeout(() => {
-						const pending = [];
-						for (const request of inFlight) pending.push(`${request.method()} ${request.url()}`);
-						reject(new Error(`Browser verification did not settle within ${timeoutMs}ms. In-flight requests: ${pending.join(', ')}`));
-					}, timeoutMs);
-				});
 				const canceled = Promise.allSettled(gates.map(cancel => cancel()));
 				try {
-					await Promise.race([canceled, deadline]);
-					await Promise.race([Promise.allSettled(exchanges.map(exchange => exchange.operation)), deadline]);
-					do {
-						while (inFlight.size) {
-							const idle = new Promise(resolve => { notifyIdle = () => resolve(undefined); });
-							await Promise.race([idle, deadline]);
-						}
-						// Drain already-generated page events before judging, not shutdown side effects.
-						for (const target of observedPages.keys()) {
-							if (!target.isClosed()) await Promise.race([target.evaluate(() => undefined), deadline]);
-						}
-					} while (inFlight.size);
+					await withRequestDeadline(async deadline => {
+						await Promise.race([canceled, deadline]);
+						await Promise.race([Promise.allSettled(exchanges.map(exchange => exchange.operation)), deadline]);
+						await waitForRequests(deadline);
+					}, timeoutMs);
 				} catch (error) {
 					errors.push(error);
 					for (const exchange of exchanges) exchange.cancel(error);
 					await Promise.allSettled(exchanges.map(exchange => exchange.operation));
-				} finally {
-					clearTimeout(timer);
-					notifyIdle = undefined;
+				}
+				closing = true;
+				teardownOwner = { committed: true, start: issues.length };
+				try { await context.close(); }
+				catch (error) { errors.push(error); }
+				try { await browser.close(); }
+				catch (error) { errors.push(error); }
+				for (const result of await canceled) {
+					if (result.status === 'rejected') errors.push(result.reason);
+				}
+				for (const error of routingErrors) errors.push(error);
+				for (let index = 0; index < issues.length; index += 1) {
+					const issue = issues[index];
+					if (issue.type === 'requestfailed' && issue.message === 'net::ERR_ABORTED' &&
+						issue.closeOwner?.committed && !expectations.some(item => item.request === issue.request)) {
+						expectations.push({ label: 'owned realtime cancellation', request: issue.request, count: 1, start: issue.closeOwner.start, seen: 0, twin: false });
+					}
 				}
 				try {
 					for (let index = 0; index < issues.length; index += 1) {
@@ -355,7 +432,7 @@ async function openBrowser({
 								: issue.message === `Failed to load resource: ${network.message}`;
 						});
 						if (twin) twin.twin = true;
-						else errors.push(new Error(`Unexpected browser issue: ${JSON.stringify(issue)}`));
+						else errors.push(new Error(`${issue.phase === 'teardown' ? 'Unattributed browser issue during teardown' : 'Unexpected browser issue'}: ${JSON.stringify(issue)}`));
 					}
 					for (const expected of expectations) {
 						if (expected.seen !== expected.count)
@@ -365,19 +442,6 @@ async function openBrowser({
 					}
 				} catch (error) {
 					errors.push(error);
-				}
-				const judgedIssues = issues.length;
-				closing = true;
-				try { await context.close(); }
-				catch (error) { errors.push(error); }
-				try { await browser.close(); }
-				catch (error) { errors.push(error); }
-				for (const result of await canceled) {
-					if (result.status === 'rejected') errors.push(result.reason);
-				}
-				for (const error of routingErrors) errors.push(error);
-				for (let index = judgedIssues; index < issues.length; index += 1) {
-					errors.push(new Error(`Unattributed browser issue during teardown: ${JSON.stringify(issues[index])}`));
 				}
 				if (errors.length)
 					throw new AggregateError(errors, 'Browser verification failed.', { cause: errors[0] });

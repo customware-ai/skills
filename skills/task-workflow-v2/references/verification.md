@@ -12,6 +12,8 @@ For a temporary server add the actual isolated `--setup`, `--server`, `--ready-u
 
 `withBrowser(check, { url })` enters once before the callback. Use `{ url: null }` when routes must be installed before entering, then navigate once yourself. Do not repeat initial navigation or manually close the browser inside the callback. `TW_BROWSER_KIT`, `TW_RUN_DIR` and server-mode `TARGET_URL` are supplied by the runner.
 
+Await `kit.navigate(() => page.reload(...))` or `kit.navigate(() => page.goto(observedUrl, ...))` for document replacement. It settles finite requests and owns cancellation of the old document’s acknowledged realtime streams. `kit.settle()` also settles finite work without requiring a healthy stream to end. Assert streamed business results through the UI; response headers alone do not prove them. Normal helper teardown owns its stream cancellations. Do not close the browser yourself, globally excuse aborted requests, or change application code to satisfy checker cleanup.
+
 ## Worked journey: observe → act → prove → extend
 
 You write the check with native Playwright. First inspect the owning requirements/source and the relevant actual screen. For example:
@@ -29,7 +31,8 @@ import assert from 'node:assert/strict';
 import { expect } from '@playwright/test';
 const { withBrowser } = await import(process.env.TW_BROWSER_KIT);
 
-await withBrowser(async ({ page }) => {
+await withBrowser(async (kit) => {
+  const { page } = kit;
   // From the real screen; requirements determine values, not this observation.
   const freight = page.getByRole('spinbutton', { name: 'Freight', exact: true });
   await expect(freight).toHaveCount(1);
@@ -54,7 +57,7 @@ await withBrowser(async ({ page }) => {
     page.waitForResponse(response =>
       response.request().method() === 'GET' &&
       new URL(response.url()).pathname === '/api/quotes/' + committed.id),
-    page.reload({ waitUntil: 'load' })
+    kit.navigate(() => page.reload({ waitUntil: 'load' }))
   ]);
   assert.equal(reloadedResponse.status(), 200);
   const stored = await reloadedResponse.json();
