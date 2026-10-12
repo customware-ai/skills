@@ -1,0 +1,11 @@
+# Connected verification boundaries
+
+Apply these to the changed journey and its consequential consumers, not every unrelated screen. Expected behavior comes from the task/contract, and UI actions provide the proof.
+
+- **Values and persistence:** prove accepted values survive authoritative save, reload and relevant list/re-edit/output consumers. Preserve precision; do not match a broken formatter. **Bad:** accept `$1,235` after entering `$1,234.56`. **Good:** compare exact committed cents and the corresponding displayed values through the changed flow.
+- **Identity and navigation:** use the actual created identity and explicit stage. When multiple records matter, reopen older A after newer B through affected routes/Back and reload; assert A's fields/identity. **Bad:** a heading means the right record opened. **Good:** A's identity and distinct entered values remain correct.
+- **Live state and recovery:** prove statuses/counts/notifications reflect actual data, then exercise connected loading/error/retry and recovery where relevant. **Bad:** an empty Notifications modal proves wiring. **Good:** create pending data through the UI and verify its real entry; test its owning failure/retry after the positive behavior works.
+- **Consequential state:** pending/failed mutations must not claim committed success or permit release. Prove real success and durable state/output; check actual actor authority where the task promises it, not just a selected role label. **Bad:** a toast proves approval. **Good:** hold/fail the actual mutation, prove no approval/output, then successfully retry and reload committed state. Reference-data changes need durable meaning proof when affected.
+- **Interaction and appearance:** exercise changed controls, keyboard close/focus, scroll and affected desktop/mobile layouts. Actually view screenshots and every page of affected output for clipping, background, spacing, legibility and final content. **Bad:** screenshot path/PDF text means it looks correct. **Good:** inspect page pixels and describe a concrete defect or the checked result; separately state native printing or extreme content not exercised.
+
+Reuse these assertions in the agent's journey checks; no per-screen checklist files or additional progress ledger.
