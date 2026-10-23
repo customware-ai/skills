@@ -12,7 +12,24 @@ For a temporary server add the actual isolated `--setup`, `--server`, `--ready-u
 
 `withBrowser(check, { url })` enters once before the callback. Use `{ url: null }` when routes must be installed before entering, then navigate once yourself. Do not repeat initial navigation or manually close the browser inside the callback. `TW_BROWSER_KIT`, `TW_RUN_DIR` and server-mode `TARGET_URL` are supplied by the runner.
 
-Await `kit.navigate(() => page.reload(...))` or `kit.navigate(() => page.goto(observedUrl, ...))` for document replacement. It settles finite requests and owns cancellation of the old document’s acknowledged realtime streams only after Chromium confirms a different main-frame document. Hash changes and same-document history navigation do not grant cancellation ownership. `kit.settle()` also settles finite work without requiring a healthy stream to end. Assert streamed business results through the UI; response headers alone do not prove them. Normal helper teardown owns its stream cancellations. Do not close the browser yourself, globally excuse aborted requests, or change application code to satisfy checker cleanup.
+Await `kit.navigate(() => page.reload(...))` or `kit.navigate(() => page.goto(observedUrl, ...))` for document replacement. It settles finite requests and owns the old document's acknowledged realtime streams and native beacons/pings only after Chromium confirms a different main-frame document. Streams opened during the action are included. Hash changes, iframe-only navigation and same-document history changes do not grant ownership; requests from the new document remain independent. Normal helper teardown owns its remaining lifecycle cancellations. Other request failures, observed HTTP errors and application errors still fail.
+
+Wrap native link clicks, form submissions and buttons that replace the document in `kit.navigate` too; ownership is not limited to `goto` and `reload` calls.
+
+Leave application logging and `navigator.sendBeacon` unchanged. Chromium can report an old document's beacon as `ERR_ABORTED` even after its server received it. That lifecycle outcome is not proof of server delivery; assert delivery separately when it is part of the changed contract. Do not force a fetch fallback, intercept every logging request or wait for a periodic logging timer to make navigation pass.
+
+Playwright exposes native beacons as `ping` but does not expose fetch's `keepalive` flag. For an application that actually uses `fetch(..., { keepalive: true })`, declare only its known requests at the document-replacement boundary:
+
+```js
+await kit.navigate(() => page.reload({ waitUntil: 'load' }), {
+	keepalive: request => request.method() === 'POST' &&
+		request.url() === new URL('/telemetry', page.url()).href
+});
+```
+
+Match the owning method, URL and inputs as needed; do not declare ordinary saves or every fetch as keepalive. This owns only exact old-document `ERR_ABORTED` outcomes during a committed replacement, not HTTP errors, other network failures or cancellations in the new document. Explicit `expectIssue` checks retain their exact counts.
+
+`kit.settle()` settles finite work without requiring healthy streams to end. Assert streamed business results through the UI; response headers alone do not prove them. Await each navigation on a page; overlapping navigation owners are rejected. Navigation failures retain their original cause even if cleanup also fails. Do not close the browser yourself, globally excuse aborted requests, or change application code to satisfy checker cleanup.
 
 ## Worked journey: observe → act → prove → extend
 

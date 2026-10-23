@@ -24,8 +24,8 @@ function loadPlaywright(cwd) {
 	throw new Error(`Playwright is not installed in the target project: ${cwd}. Use its existing dependencies/cache.`);
 }
 
-/** @typedef {{committed:boolean,start:number}} StreamCloseOwner */
-/** @typedef {{type:string,url:string,pageId?:string,method?:string,message?:string,status?:number,browserResource?:boolean,request?:import('playwright-core').Request,closeOwner?:StreamCloseOwner,phase?:'verification'|'teardown'}} Issue */
+/** @typedef {{committed:boolean,active:boolean,start:number,keepalive?:((request:import('playwright-core').Request)=>boolean)}} DocumentCloseOwner */
+/** @typedef {{type:string,url:string,pageId?:string,method?:string,message?:string,status?:number,browserResource?:boolean,request?:import('playwright-core').Request,closeOwner?:DocumentCloseOwner,phase?:'verification'|'teardown'}} Issue */
 /** @typedef {{label:string,request?:import('playwright-core').Request,match?:((issue:Issue)=>boolean),count:number,start:number,seen:number,twin:boolean}} Expectation */
 /** @typedef {'release'|'fail'|'cancel'} Action */
 /** @typedef {{cwd?:string,url?:string|null,outputDir?:string,viewport?:import('playwright-core').ViewportSize}} BrowserOptions */
@@ -65,12 +65,14 @@ async function openBrowser({
 		const exchanges = [];
 		/** @type {Set<import('playwright-core').Request>} */
 		const inFlight = new Set();
-		/** @type {Map<import('playwright-core').Request,{page:import('playwright-core').Page,closeOwner:StreamCloseOwner|null}>} */
-		const streams = new Map();
+		/** @type {Map<import('playwright-core').Request,{page:import('playwright-core').Page,closeOwner:DocumentCloseOwner|null}>} */
+		const lifecycleRequests = new Map();
+		/** @type {Map<import('playwright-core').Page,DocumentCloseOwner>} */
+		const navigations = new Map();
 		/** @type {PromiseWithResolvers<void>} */
 		let idle = Promise.withResolvers();
 		let closing = false;
-		/** @type {StreamCloseOwner|null} */
+		/** @type {DocumentCloseOwner|null} */
 		let teardownOwner = null;
 		let pageCount = 0;
 		/** @param {Issue} issue */
@@ -80,8 +82,8 @@ async function openBrowser({
 		}
 		/** @param {Issue} issue @param {import('playwright-core').Request} request */
 		function recordNetworkIssue(issue, request) {
-			const stream = streams.get(request);
-			Object.defineProperty(issue, 'closeOwner', { value: stream && (closing ? teardownOwner : stream.closeOwner) });
+			const lifecycle = lifecycleRequests.get(request);
+			Object.defineProperty(issue, 'closeOwner', { value: lifecycle && (closing ? teardownOwner : lifecycle.closeOwner) });
 			Object.defineProperty(issue, 'request', { value: request });
 			recordIssue(issue);
 		}
@@ -98,9 +100,15 @@ async function openBrowser({
 			target.on('request', request => {
 				if (!inFlight.size) idle = Promise.withResolvers();
 				inFlight.add(request);
+				const navigation = navigations.get(target);
+				const owner = navigation?.active && !navigation.committed ? navigation : null;
+				try {
+					if (request.resourceType() === 'ping' || owner?.keepalive?.(request))
+						lifecycleRequests.set(request, { page: target, closeOwner: owner });
+				} catch (error) { routingErrors.push(error); }
 			});
 			target.on('requestfinished', request => {
-				streams.delete(request);
+				lifecycleRequests.delete(request);
 				requestSettled(request);
 			});
 			target.on('pageerror', error => recordIssue({ type: 'pageerror', pageId, url: target.url(), message: error.message }));
@@ -110,13 +118,14 @@ async function openBrowser({
 			});
 			target.on('requestfailed', request => {
 				recordNetworkIssue({ type: 'requestfailed', pageId, url: request.url(), method: request.method(), message: request.failure()?.errorText }, request);
-				streams.delete(request);
+				lifecycleRequests.delete(request);
 				requestSettled(request);
 			});
 			target.on('response', response => {
 				if (response.status() >= 200 && response.status() < 300 &&
 					/^text\/event-stream(?:\s*;|\s*$)/i.test(response.headers()['content-type'] ?? '')) {
-					streams.set(response.request(), { page: target, closeOwner: null });
+					const navigation = navigations.get(target);
+					lifecycleRequests.set(response.request(), { page: target, closeOwner: navigation?.active && !navigation.committed ? navigation : null });
 					requestSettled(response.request());
 				}
 				if (response.status() >= 400)
@@ -164,20 +173,24 @@ async function openBrowser({
 			},
 			/**
 			 * Await a native document-replacing navigation after settling finite work.
-			 * Old live streams belong to this cutover only after a different main-frame document commits.
+			 * Streams and unload beacons belong to a committed document cutover, never hash/history changes.
+			 * Declare fetch keepalive requests explicitly: Playwright does not expose their keepalive flag.
 			 * @template T
 			 * @param {()=>Promise<T>} action
-			 * @param {{page?:import('playwright-core').Page,timeoutMs?:number}} [options]
+			 * @param {{page?:import('playwright-core').Page,timeoutMs?:number,keepalive?:(request:import('playwright-core').Request)=>boolean}} [options]
 			 */
-			async navigate(action, { page: target = page, timeoutMs = 10000 } = {}) {
+			async navigate(action, { page: target = page, timeoutMs = 10000, keepalive } = {}) {
 				observePage(target);
-				await kit.settle({ timeoutMs });
-				const owner = { committed: false, start: issues.length };
-				for (const stream of streams.values()) {
-					if (stream.page === target) stream.closeOwner = owner;
-				}
-				const session = await context.newCDPSession(target);
+				if (navigations.has(target)) throw new Error('A navigation already owns this page. Await it before starting another.');
+				const owner = { committed: false, active: false, start: issues.length, keepalive };
+				navigations.set(target, owner);
+				/** @type {unknown[]} */
+				const errors = [];
+				/** @type {import('playwright-core').CDPSession|undefined} */
+				let session;
 				try {
+					await kit.settle({ timeoutMs });
+					session = await context.newCDPSession(target);
 					await session.send('Page.enable');
 					const { frameTree } = await session.send('Page.getFrameTree');
 					/** @param {{frame: typeof frameTree.frame}} event */
@@ -186,14 +199,27 @@ async function openBrowser({
 							owner.committed = true;
 					}
 					session.on('Page.frameNavigated', navigated);
+					owner.active = true;
+					for (const lifecycle of lifecycleRequests.values()) {
+						if (lifecycle.page === target) lifecycle.closeOwner = owner;
+					}
 					const result = await action();
 					await kit.settle({ timeoutMs });
 					return result;
+				} catch (error) {
+					errors.push(error);
+					throw error;
 				} finally {
-					for (const stream of streams.values()) {
-						if (stream.closeOwner === owner) stream.closeOwner = null;
+					navigations.delete(target);
+					for (const lifecycle of lifecycleRequests.values()) {
+						if (lifecycle.closeOwner === owner) lifecycle.closeOwner = null;
 					}
-					await session.detach();
+					try { await session?.detach(); }
+					catch (error) {
+						errors.push(error);
+						if (errors.length === 1) throw error;
+						throw new AggregateError(errors, 'Navigation and cleanup failed.', { cause: errors[0] });
+					}
 				}
 			},
 			/** @param {string} name @param {{page?:import('playwright-core').Page}} [options] */
@@ -405,7 +431,7 @@ async function openBrowser({
 					await Promise.allSettled(exchanges.map(exchange => exchange.operation));
 				}
 				closing = true;
-				teardownOwner = { committed: true, start: issues.length };
+				teardownOwner = { committed: true, active: true, start: issues.length };
 				try { await context.close(); }
 				catch (error) { errors.push(error); }
 				try { await browser.close(); }
@@ -418,7 +444,7 @@ async function openBrowser({
 					const issue = issues[index];
 					if (issue.type === 'requestfailed' && issue.message === 'net::ERR_ABORTED' &&
 						issue.closeOwner?.committed && !expectations.some(item => item.request === issue.request)) {
-						expectations.push({ label: 'owned realtime cancellation', request: issue.request, count: 1, start: issue.closeOwner.start, seen: 0, twin: false });
+						expectations.push({ label: 'owned document cancellation', request: issue.request, count: 1, start: issue.closeOwner.start, seen: 0, twin: false });
 					}
 				}
 				try {
