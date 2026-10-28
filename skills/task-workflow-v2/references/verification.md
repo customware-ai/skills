@@ -85,7 +85,7 @@ await withBrowser(async (kit) => {
 });
 ```
 
-Retain the committed identity for reopen/Back/list checks when those consumers are affected. Observe the next screen, add its next meaningful action/assertion, run, and continue. If source/build changes, refresh the connected earlier segments. API calls or seeded fixtures cannot substitute for performing a claimed UI action.
+During final verification, retain the committed identity for reopen/Back/list checks when those consumers are affected. Observe the next screen and add its next meaningful action/assertion. If a later source/build fix invalidates connected proof, refresh only the affected segments. API calls or seeded fixtures cannot substitute for performing a claimed UI action.
 
 **Bad:** a guessed label fails; add a heading wait and replay every journey. **Good:** print the failed region's `ariaSnapshot`, inspect both matching nodes/current stage, fix its selector/precondition once and rerun the owning scenario. Expected business values still come from requirements; an observed disagreement is a finding, not a new expected value.
 
