@@ -1,4 +1,0 @@
-interface:
-  display_name: "Task Workflow Skill"
-  short_description: "Connected changes, real UI proof, minimal recovery bookkeeping"
-  default_prompt: "Use $task-workflow to implement the complete connected change, keep a small recovery checkpoint, verify the real user experience, and finish with current evidence."
