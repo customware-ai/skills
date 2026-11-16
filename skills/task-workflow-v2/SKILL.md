@@ -13,7 +13,7 @@ Main reads and follows `AGENTS.md` at session start and after compaction and del
 
 ## Checkpoint
 
-Keep only these in `task-workflow/checkpoint.md`:
+Keep only these in `task-workflow/checkpoint.md` at the repository root, never under `.agents/` or `.tasks/`:
 
 - each required outcome, implementation state and required direct check or browser proof: **unverified, passed, failed or blocked**, concise evidence, relevant build and blocker when applicable. If both proofs are needed, both must pass; unrequired proofs are not outstanding;
 - task identity, settled contracts and live path of each changed journey;
