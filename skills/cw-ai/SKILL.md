@@ -22,6 +22,8 @@ Use these defaults unless the user asks for another OpenRouter model ID (other I
 | Image generation (`modalities: ["image", "text"]`) | `google/gemini-nano-banana-2.1` |
 | Classification and decisions | Decisions API below (the gateway picks the model) |
 
+`meta/muse-ember` always reasons, and reasoning tokens count against `max_tokens`: at its default effort a 500-word reply spends 2,000–5,500 reasoning tokens first, so a small cap ends with `finish_reason: "length"` and no text. For chat, send `reasoning: { effort: "minimal" }` (about 90 reasoning tokens, fastest first word); raise the effort only when the task needs more thinking, and leave `max_tokens` unset or at least 16000.
+
 The free tier replaces the model with `openrouter/free`, supports text output only, and has no decisions. Don't reject a successful response because its `model` differs from the request.
 
 ## Chat Completions
