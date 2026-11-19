@@ -494,7 +494,7 @@ export default function ChatPage(): ReactElement {
             <Suggestion
               key={starter}
               suggestion={starter}
-              onClick={() => setDraft(starter)}
+              onClick={send}
               className="min-h-11"
             />
           ))}
