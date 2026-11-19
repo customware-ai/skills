@@ -254,6 +254,8 @@ pnpm dlx ai-elements@1.9.1 add conversation message prompt-input shimmer suggest
 - They land in `apps/app/app/components/ai-elements/`. Edit them there like any template component.
 - If check or build fails on a generated file, fix that file. Don't replace the component with hand-built markup.
 - Pin every package the installer adds to an exact version in `apps/app/package.json`.
+- Install and add packages only with pnpm (`pnpm dlx`, `pnpm add`), never npm, npx or yarn.
+- Remove Streamdown's add-ons unless the task description asks for them: delete the `@streamdown/code`, `@streamdown/math`, `@streamdown/mermaid` and `@streamdown/cjk` imports and the `plugins` prop from `MessageResponse` in `message.tsx`, then `pnpm remove` those packages. They add code highlighting, maths, diagrams and CJK text support, which most apps never show, and they make the chat page much heavier.
 
 Use these elements:
 
