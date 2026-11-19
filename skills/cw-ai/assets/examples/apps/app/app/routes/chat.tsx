@@ -33,7 +33,6 @@ import {
 } from "~/components/ai-elements/prompt-input";
 import { Shimmer } from "~/components/ai-elements/shimmer";
 import { Suggestion, Suggestions } from "~/components/ai-elements/suggestion";
-import { Tool, ToolContent, ToolHeader } from "~/components/ai-elements/tool";
 import { AiResponse } from "~/components/ai-response";
 
 type ChatMessage = UIMessage<unknown, UIDataTypes, InferUITools<ChatTools>>;
@@ -130,17 +129,13 @@ export default function ChatPage(): ReactElement {
   }
 
   return (
-    <section className="mx-auto flex h-[calc(100dvh-5rem)] min-h-80 max-w-3xl flex-col gap-3 lg:h-[calc(100dvh-6rem)]">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Chat</h1>
-        <p className="text-sm text-muted-foreground">This conversation isn’t saved.</p>
-      </header>
-      <Conversation className="min-h-0 flex-1 rounded-xl border bg-card">
+    <section className="mx-auto flex h-[calc(100dvh-5rem)] min-h-80 w-full max-w-3xl flex-col divide-y overflow-hidden lg:h-[calc(100dvh-6rem)]">
+      <Conversation className="min-h-0 flex-1">
         <ConversationContent>
           {messages.length === 0 ? (
             <ConversationEmptyState
               title="Ask a question"
-              description="Answers come from your todos."
+              description="Answers come from your todos. This conversation isn’t saved."
             />
           ) : (
             messages.map((message) => {
@@ -162,19 +157,17 @@ export default function ChatPage(): ReactElement {
               const isLatest = message.id === lastAssistant?.id;
               const streaming = status === "streaming" && isLatest;
               return (
-                <Message
-                  key={message.id}
-                  from={message.role}
-                  className={message.role === "assistant" ? "max-w-[min(70ch,100%)]" : undefined}
-                >
-                  <MessageContent className="w-full [overflow-wrap:anywhere] group-[.is-user]:w-fit">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      {message.role === "user" ? "You" : "Assistant"}
-                    </span>
-                    {message.role === "user" ? (
-                      <p className="whitespace-pre-wrap">{text}</p>
-                    ) : (
-                      text && (
+                <Message key={message.id} from={message.role}>
+                  {lookups.map(({ id, ok }) => (
+                    <p key={id} className="text-xs text-muted-foreground">
+                      {ok ? "Looked up todos" : "Couldn’t look up todos"}
+                    </p>
+                  ))}
+                  {text && (
+                    <MessageContent>
+                      {message.role === "user" ? (
+                        <p className="whitespace-pre-wrap">{text}</p>
+                      ) : (
                         <AiResponse
                           text={text}
                           partial={
@@ -182,27 +175,10 @@ export default function ChatPage(): ReactElement {
                           }
                           isAnimating={streaming}
                         />
-                      )
-                    )}
-                    {lookups.map(({ id, ok }) => (
-                      <Tool key={id}>
-                        <ToolHeader
-                          type="tool-listTodos"
-                          title={ok ? "Looked up todos" : "Couldn’t look up todos"}
-                          state={ok ? "output-available" : "output-error"}
-                          className="min-h-11 focus-visible:ring-2 focus-visible:ring-ring"
-                        />
-                        <ToolContent>
-                          <p>
-                            {ok
-                              ? "Used the app’s read-only todo lookup."
-                              : "The todo lookup did not finish successfully."}
-                          </p>
-                        </ToolContent>
-                      </Tool>
-                    ))}
-                    {wasStopped && <p className="text-xs text-muted-foreground">Stopped</p>}
-                  </MessageContent>
+                      )}
+                    </MessageContent>
+                  )}
+                  {wasStopped && <p className="text-xs text-muted-foreground">Stopped</p>}
                 </Message>
               );
             })
@@ -211,62 +187,64 @@ export default function ChatPage(): ReactElement {
         </ConversationContent>
         <ConversationScrollButton aria-label="Scroll to latest reply" className="size-11" />
       </Conversation>
-      <div className="sr-only" aria-live="polite">
-        {pending
-          ? "Generating reply…"
-          : lastAssistant && unfinished.get(lastAssistant.id) === "stopped"
-            ? "Reply stopped"
-            : ""}
-      </div>
-      {(error || notice) && !pending && (
-        <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-1">
-          <p role="alert" className="text-sm text-destructive">
-            {error?.message === AI_NOT_AVAILABLE
-              ? AI_NOT_AVAILABLE
-              : notice === "length"
-                ? "The reply ran out of room before it could finish. Try asking for a shorter answer."
-                : notice === "interrupted"
-                  ? "The reply was interrupted."
-                  : "Could not get a reply. Please try again."}
-          </p>
-          <MessageActions>
-            <MessageAction size="default" variant="outline" className="min-h-11" onClick={retry}>
-              Retry
-            </MessageAction>
-          </MessageActions>
+      <div className="grid shrink-0 gap-4 p-4">
+        <div className="sr-only" aria-live="polite">
+          {pending
+            ? "Generating reply…"
+            : lastAssistant && unfinished.get(lastAssistant.id) === "stopped"
+              ? "Reply stopped"
+              : ""}
         </div>
-      )}
-      {messages.length === 0 && !pending && (
-        <Suggestions>
-          {STARTERS.map((starter) => (
-            <Suggestion
-              key={starter}
-              suggestion={starter}
-              onClick={send}
-              className="min-h-11"
-            />
-          ))}
-        </Suggestions>
-      )}
-      <PromptInput onSubmit={({ text }) => send(text)}>
-        <PromptInputTextarea
-          aria-label="Message"
-          placeholder="Write a message…"
-          maxLength={CHAT_TEXT_LIMIT}
-          value={draft}
-          onChange={(event) => setDraft(event.currentTarget.value)}
-        />
-        <PromptInputFooter className="justify-end">
-          <PromptInputSubmit
-            status={status}
-            disabled={!pending && !draft.trim()}
-            onStop={() => {
-              stopRequested.current = true;
-              void runChatAction(stop);
-            }}
+        {(error || notice) && !pending && (
+          <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-1">
+            <p role="alert" className="text-sm text-destructive">
+              {error?.message === AI_NOT_AVAILABLE
+                ? AI_NOT_AVAILABLE
+                : notice === "length"
+                  ? "The reply ran out of room before it could finish. Try asking for a shorter answer."
+                  : notice === "interrupted"
+                    ? "The reply was interrupted."
+                    : "Could not get a reply. Please try again."}
+            </p>
+            <MessageActions>
+              <MessageAction size="default" variant="outline" className="min-h-11" onClick={retry}>
+                Retry
+              </MessageAction>
+            </MessageActions>
+          </div>
+        )}
+        {messages.length === 0 && !pending && (
+          <Suggestions>
+            {STARTERS.map((starter) => (
+              <Suggestion
+                key={starter}
+                suggestion={starter}
+                onClick={send}
+                className="min-h-11"
+              />
+            ))}
+          </Suggestions>
+        )}
+        <PromptInput onSubmit={({ text }) => send(text)}>
+          <PromptInputTextarea
+            aria-label="Message"
+            placeholder="Write a message…"
+            maxLength={CHAT_TEXT_LIMIT}
+            value={draft}
+            onChange={(event) => setDraft(event.currentTarget.value)}
           />
-        </PromptInputFooter>
-      </PromptInput>
+          <PromptInputFooter className="justify-end">
+            <PromptInputSubmit
+              status={status}
+              disabled={!pending && !draft.trim()}
+              onStop={() => {
+                stopRequested.current = true;
+                void runChatAction(stop);
+              }}
+            />
+          </PromptInputFooter>
+        </PromptInput>
+      </div>
     </section>
   );
 }

@@ -18,10 +18,17 @@ Keep AI pages as lazy routes; `AiResponse` also defers Streamdown until there is
 | Input box whose send button becomes Stop while a reply streams | `PromptInput`, `PromptInputTextarea`, `PromptInputSubmit` with `status` and `onStop` |
 | Waiting for the first words | `Shimmer` |
 | Starter questions | `Suggestions`, `Suggestion` |
-| A tool the assistant used | `Tool` with a plain label only, never its raw input or output |
 | Generated image | `Image` |
 
 Streamdown repairs half-written Markdown while a reply streams and redraws only the block still being written, so long replies stay fast.
+
+## Look
+
+Mirror the [AI Elements chatbot example](https://elements.ai-sdk.dev/examples/chatbot). Its defaults already look right:
+
+- Keep `Message` and `MessageContent` styling as generated: the user's message is a bubble on the right, the reply is plain text on the left. No role labels ("You", "Assistant"), no extra borders or cards around the conversation.
+- Each reply ends with the answer. Anything about how the answer was found, such as a lookup, goes above the text as one muted line ("Looked up todos"). Don't use `Tool`: its status badge and expand arrow read as an error card.
+- A chat inside an existing app, such as a help chat, opens as a docked panel on the right, at least 420px wide on desktop and full screen on phones. The page beside it stays sharp and usable, because people read their data while they ask about it. Build it as a plain fixed `aside` toggled by a button, not `Sheet` or `Dialog`: those are modal, so they blur the page and block clicks on it. On desktop the page makes room while the panel is open (the layout's main area gets the panel's width as right padding), so nothing hides under it.
 
 ## Install and adapt
 
@@ -44,7 +51,6 @@ yes n | pnpm exec shadcn add -y \
   https://elements.ai-sdk.dev/api/registry/prompt-input.json \
   https://elements.ai-sdk.dev/api/registry/shimmer.json \
   https://elements.ai-sdk.dev/api/registry/suggestion.json \
-  https://elements.ai-sdk.dev/api/registry/tool.json \
   https://elements.ai-sdk.dev/api/registry/image.json
 mv components/ai-elements app/components/
 rmdir components
@@ -61,7 +67,7 @@ pnpm install --frozen-lockfile
 
 The generated files fail `pnpm run check` with about 140 errors. Fix them in place; don't replace them with hand-written stand-ins, because the generated markup carries the template's theme and the behaviour below. When done, the components must:
 
-- keep only the parts these screens use: drop attachments, sources, model select, screenshot, microphone, export, branching, toolbar, raw tool input and output, and `code-block.tsx`;
+- keep only the parts these screens use: drop attachments, sources, model select, screenshot, microphone, export, branching, toolbar, and `code-block.tsx`;
 - use the template's Base UI components and the `render` prop instead of Radix `asChild`, with explicit return types;
 - send on Enter (Shift+Enter adds a line), keep the draft until a send is accepted, and make Stop a plain button, not a submit;
 - split `message-layout.tsx` (`Message`, `MessageContent`, `MessageActions`, `MessageAction`) from `message.tsx` (`MessageResponse` only), so Streamdown loads only with the first reply;

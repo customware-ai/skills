@@ -54,7 +54,8 @@ export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 
 - The tool calls the app's existing service and query: allowlisted inputs, parameterized, with a row limit.
 - It returns only fields the user may see, because tool results stream to the browser.
-- The typed outcome lets the UI tell success from failure.
+- The typed outcome lets the UI tell success from failure. Nothing found, such as an unknown name or an empty list, is a successful lookup, not a failure.
+- The system prompt makes replies read like a person answering: no "Let me check…" lines, no internal names (organization, project ID, tool names), only the answer and what it rests on.
 - `stopWhen` bounds the steps, and `timeout` bounds the whole reply.
 
 Example: [`apps/api/src/services/chat.ts`](../assets/examples/apps/api/src/services/chat.ts). Read it before writing this file, then adapt it to the app.
