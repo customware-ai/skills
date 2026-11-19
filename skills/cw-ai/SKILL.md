@@ -110,8 +110,8 @@ These are the defaults. Use another OpenRouter model ID only when the user names
 
 **Free tier:**
 
-- The gateway swaps in a free model and allows text output only.
-- Decisions and image output return 403 `tier_excluded`.
+- Chat: the gateway swaps in a free model and allows text output only. Image output returns 403 `tier_excluded`.
+- Decisions work on every tier and use the organization's credits.
 - Don't reject a reply because its `model` differs from the request.
 
 ## Gateway contract
@@ -137,7 +137,7 @@ Log the body on the server (the reference `ai-gateway.ts` does), so a failed cal
 | --- | --- | --- |
 | `unauthorized` | 401 | Missing or wrong `CUSTOMWARE_AI_GATEWAY_KEY`. |
 | `feature_off` | 403 | AI as a Service is off for the organization. |
-| `tier_excluded` | 403 | The tier doesn't include this, such as decisions or images on Free. |
+| `tier_excluded` | 403 | The tier doesn't include this, such as image output on Free. |
 | `project_not_found`, `project_busy`, `project_unavailable` | 404, 409, 403 | Wrong project ID in the URL constant, or the project is being changed or deleted. |
 | `invalid_json`, `invalid_request` | 400 | The body isn't JSON or breaks the contract. The message names the bad field. |
 | `model_not_allowed` | 400 | Not a plain `vendor/model` ID. |
