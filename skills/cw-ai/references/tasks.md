@@ -219,7 +219,7 @@ ai: t.router({
 
 ## Client
 
-Use the shared response and AI Elements setup in [chat.md](chat.md#client). Use real textareas for prompts, Shimmer on pending actions and Image for the server's raster payload. Keep structured fields and decisions in semantic HTML. Mount this page as a lazy route in `apps/app/app/routes.ts`.
+First complete [ui.md](ui.md): AI Elements installed and `AiResponse` in place. Use real textareas for prompts, Shimmer on pending actions and Image for the server's raster payload. Keep structured fields and decisions in semantic HTML. Mount this page as a lazy route in `apps/app/app/routes.ts`.
 
 ```tsx
 import { AI_NOT_AVAILABLE } from "@cw/shared/ai-errors";
