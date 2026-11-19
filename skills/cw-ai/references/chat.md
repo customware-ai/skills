@@ -10,7 +10,7 @@
 Copy the structure below; rename the tool, prompts and copy for the app.
 
 **Packages** (pin exactly; these versions were verified together):
-- API workspace: `ai@7.0.177`, `@openrouter/ai-sdk-provider@3.1.0`.
+- Root runtime: `ai@7.0.177` (shared catalog) and `@openrouter/ai-sdk-provider@3.1.0`.
 - App workspace: `@ai-sdk/react@4.0.181`, plus the packages the AI Elements installer adds (see Client).
 
 ## Server
@@ -245,47 +245,66 @@ chat.post("/", bodyLimit({ maxSize: 1024 * 1024 }), async (c): Promise<Response>
 
 ## Client
 
-Build every AI screen from [AI Elements](https://ai-sdk.dev/elements): shadcn-style chat components copied into the app, so they follow the template's theme. Install the ones the page uses from `apps/app`:
+Use AI Elements for chat, prompt controls, loading, safe tool status and generated images. Render AI-written text through the shared `AiResponse` below. The chat route is lazy, and `AiResponse` defers Streamdown until there is model output.
 
-```sh
-pnpm dlx ai-elements@1.9.1 add conversation message prompt-input shimmer suggestion
-```
-
-- They land in `apps/app/app/components/ai-elements/`. Edit them there like any template component.
-- If check or build fails on a generated file, fix that file. Don't replace the component with hand-built markup.
-- Pin every package the installer adds to an exact version in `apps/app/package.json`.
-- Install and add packages only with pnpm (`pnpm dlx`, `pnpm add`), never npm, npx or yarn.
-- Remove Streamdown's add-ons unless the task description asks for them: delete the `@streamdown/code`, `@streamdown/math`, `@streamdown/mermaid` and `@streamdown/cjk` imports and the `plugins` prop from `MessageResponse` in `message.tsx`, then `pnpm remove` those packages. They add code highlighting, maths, diagrams and CJK text support, which most apps never show, and they make the chat page much heavier.
-
-Use these elements:
 
 | Need | Element |
 | --- | --- |
 | Message list that sticks to the newest reply, with a jump-to-bottom button and an empty state | `Conversation`, `ConversationContent`, `ConversationScrollButton`, `ConversationEmptyState` |
-| One message | `Message` with `from={message.role}`, `MessageContent` |
-| Any AI-written text, in chat or anywhere else | `MessageResponse` (Streamdown) |
+| One message, with Retry or Copy | `Message`, `MessageContent`, `MessageActions`, `MessageAction` |
+| Any AI-written text, in chat or anywhere else | `AiResponse` (below), which wraps `MessageResponse` (Streamdown) |
 | Input box whose send button becomes Stop while a reply streams | `PromptInput`, `PromptInputTextarea`, `PromptInputSubmit` with `status` and `onStop` |
 | Waiting for the first words | `Shimmer` |
 | Starter questions | `Suggestions`, `Suggestion` |
-| Copy or retry on a reply | `MessageActions`, `MessageAction` |
+| A tool the assistant used | `Tool` with a plain label only, never its raw input or output |
 | Generated image | `Image` |
 
-`MessageResponse` renders Markdown with Streamdown. While a reply streams, Streamdown repairs half-written Markdown, so no raw `**` or broken tables show. It also redraws only the block still being written, so long replies stay fast. Always pass the same safety props:
+Streamdown repairs half-written Markdown while a reply streams and redraws only the block still being written, so long replies stay fast.
 
-- `skipHtml` and `disallowedElements={["img"]}`: model output can't inject HTML or load images.
-- `remend={{ linkMode: "text-only" }}`: a half-written link shows as text, so clicking it can't reload the page and wipe the chat.
-- `isAnimating` only on the reply that is still streaming.
+### Install and adapt the registry files
 
-`Tool` shows a tool's raw input and output. Use it only on admin or debugging screens. Users get one plain line instead, like "Looked up todos" below.
+Use pnpm only. The template already pins shadcn at 4.23.0; the installer writes under `apps/app/components` before moving the files under `app/components`.
 
-`apps/app/app/routes/chat.tsx`:
+```sh
+# From the template root
+pnpm install --frozen-lockfile
+pnpm add -w -E @openrouter/ai-sdk-provider@3.1.0
+pnpm add -w -E ai@7.0.177 --save-catalog-name default
+pnpm --filter @cw/app add -E ai@7.0.177 --save-catalog-name default
+pnpm --filter @cw/app add -E @ai-sdk/react@4.0.181
 
-- Send turns into Stop while a reply streams.
-- **Stopped** marks a reply the user cut off.
-- **The reply was interrupted** with Retry covers a stream that ended without finishing: a timeout or a dropped connection. The SDK reports that as a normal finish, so check `finishReason`.
-- A length notice covers a reply that ran out of output tokens.
-- A polite live region announces progress to screen readers.
-- The page is a lazy route, so Streamdown and the streaming client stay out of the initial bundle.
+# Use the template's already-pinned shadcn 4.23.0 via pnpm.
+cd apps/app
+pnpm exec shadcn add -y \
+  https://elements.ai-sdk.dev/api/registry/conversation.json \
+  https://elements.ai-sdk.dev/api/registry/message.json \
+  https://elements.ai-sdk.dev/api/registry/prompt-input.json \
+  https://elements.ai-sdk.dev/api/registry/shimmer.json \
+  https://elements.ai-sdk.dev/api/registry/suggestion.json \
+  https://elements.ai-sdk.dev/api/registry/tool.json \
+  https://elements.ai-sdk.dev/api/registry/image.json
+# Answer No to every overwrite prompt to keep the template's Base Nova primitives.
+mv components/ai-elements app/components/
+rmdir components
+cd ../..
+
+# Remove unused registry extras; apply the generated-component edits before building.
+pnpm --filter @cw/app remove @streamdown/code @streamdown/math @streamdown/mermaid @streamdown/cjk nanoid shiki
+pnpm --filter @cw/app add -E streamdown@2.8.0 motion@14.14.0 use-stick-to-bottom@1.1.6
+# Upgrading the old reference? Also remove direct react-markdown, remark-gfm, and remend.
+pnpm install --frozen-lockfile
+```
+
+- Fix the generated files until `pnpm run check` passes; expect about 140 errors on a fresh install. Delete exported parts the app doesn't use (attachments, sources, model select, screenshot, microphone, export, branching, toolbar, raw `ToolInput`/`ToolOutput` and `code-block.tsx`), add explicit return types, replace Radix-only props (`asChild`, Radix event and hover-card props) with Base UI's `render` and props, and fix ref errors. Keep the generated markup and variants of the parts you use, so they stay on the template's theme.
+- Move `Message`, `MessageContent`, `MessageActions` and `MessageAction` from `message.tsx` into `message-layout.tsx`, leaving only `MessageResponse` in `message.tsx`. `message.tsx` imports Streamdown, so this keeps it out of the chat page until the first reply.
+- Retain the template's Base Nova primitives. AI Elements' Radix trigger composition uses Base UI's `render` prop after installation.
+- Keep the text-only composer: its Enter handler requires an enabled submit button, Stop is not a submit action, and only an accepted send clears the controlled draft.
+- Leave out Streamdown's four optional add-ons and the generated `plugins` prop unless a task explicitly needs them.
+- Keep the AI Elements Tool disclosure, but show a safe label only; do not render provider tool inputs, raw output or tool error text.
+- In `apps/app/app/app.css`, import `"streamdown/styles.css"` and register `@source "../node_modules/streamdown/dist";` for Tailwind utilities.
+- When using registry Image with the task response, narrow its props to `Pick<Experimental_GeneratedImage, "base64" | "mediaType">` rather than decoding duplicate bytes.
+
+### Chat page
 
 ```tsx
 import { useChat } from "@ai-sdk/react";
@@ -300,6 +319,7 @@ import {
   type UIDataTypes,
   type UIMessage,
 } from "ai";
+import { Result } from "better-result";
 import { useRef, useState, type ReactElement } from "react";
 
 import {
@@ -308,23 +328,26 @@ import {
   ConversationEmptyState,
   ConversationScrollButton,
 } from "~/components/ai-elements/conversation";
-import { Message, MessageContent, MessageResponse } from "~/components/ai-elements/message";
+import {
+  Message,
+  MessageAction,
+  MessageActions,
+  MessageContent,
+} from "~/components/ai-elements/message-layout";
 import {
   PromptInput,
-  PromptInputBody,
   PromptInputFooter,
   PromptInputSubmit,
   PromptInputTextarea,
 } from "~/components/ai-elements/prompt-input";
 import { Shimmer } from "~/components/ai-elements/shimmer";
 import { Suggestion, Suggestions } from "~/components/ai-elements/suggestion";
-import { Button } from "~/components/ui/button";
+import { Tool, ToolContent, ToolHeader } from "~/components/ai-elements/tool";
+import { AiResponse } from "~/components/ai-response";
 
 type ChatMessage = UIMessage<unknown, UIDataTypes, InferUITools<ChatTools>>;
 
 const STARTERS = ["Which todos are still open?", "What should I do first today?"];
-const BLOCKED_ELEMENTS = ["img"];
-const PARTIAL_LINKS = { linkMode: "text-only" } as const;
 
 /** The gateway only needs text, not SDK metadata or reasoning parts. */
 function messageText(message: ChatMessage): string {
@@ -350,34 +373,61 @@ const transport = new DefaultChatTransport<ChatMessage>({
 
 /** A temporary conversation with streaming replies and no saved history. */
 export default function ChatPage(): ReactElement {
-  const [stopped, setStopped] = useState<string[]>([]);
+  const [draft, setDraft] = useState("");
+  const [unfinished, setUnfinished] = useState<ReadonlyMap<string, "stopped" | "partial">>(
+    () => new Map(),
+  );
   const [notice, setNotice] = useState<"length" | "interrupted">();
   const stopRequested = useRef(false);
   const { messages, setMessages, sendMessage, regenerate, stop, status, error } =
     useChat<ChatMessage>({
       transport,
       throttle: 40,
-      onFinish: ({ message, isAbort, finishReason }): void => {
+      onFinish: ({ message, messages: current, isAbort, isError, finishReason }): void => {
         const stoppedByUser = stopRequested.current && isAbort;
         stopRequested.current = false;
-        if (stoppedByUser) {
-          setStopped((ids) => [...ids.slice(-(CHAT_HISTORY_LIMIT - 1)), message.id]);
-        } else if (finishReason !== "stop" && finishReason !== "tool-calls") {
+        const interrupted = finishReason !== "stop" && finishReason !== "tool-calls";
+        if (stoppedByUser || isError || interrupted) {
+          setUnfinished(
+            (previous) =>
+              new Map([
+                ...Array.from(previous).slice(-(CHAT_HISTORY_LIMIT - 1)),
+                [message.id, stoppedByUser ? "stopped" : "partial"],
+              ]),
+          );
+        }
+        if (stoppedByUser && current.at(-1)?.id !== message.id) {
+          setMessages([...current, message]);
+        } else if (!stoppedByUser && !isError && interrupted) {
           setNotice(finishReason === "length" ? "length" : "interrupted");
         }
       },
     });
   const pending = status === "submitted" || status === "streaming";
-  const lastAssistant = messages.filter((message) => message.role === "assistant").at(-1);
+  const lastMessage = messages.at(-1);
+  const lastAssistant = lastMessage?.role === "assistant" ? lastMessage : undefined;
+  const waiting = pending && (!lastAssistant || !messageText(lastAssistant));
+
+  /** Maps a rejected SDK action to the same safe recovery notice as an interrupted reply. */
+  function runChatAction(action: () => Promise<void>): Promise<Result<void, "interrupted">> {
+    return Result.tryPromise({
+      try: action,
+      catch: () => {
+        setNotice("interrupted");
+        return "interrupted" as const;
+      },
+    });
+  }
 
   /** Show the user's message immediately and keep the transcript bounded. */
   function send(text: string): void {
     const content = text.trim();
     if (!content || pending) return;
+    setDraft("");
     setNotice(undefined);
     stopRequested.current = false;
     setMessages((current) => current.slice(-(CHAT_HISTORY_LIMIT - 2)));
-    void sendMessage({ text: content });
+    void runChatAction(() => sendMessage({ text: content }));
   }
 
   /** Retry only when a turn exists; regenerate rejects for missing turns. */
@@ -385,7 +435,7 @@ export default function ChatPage(): ReactElement {
     if (!messages.length || pending) return;
     setNotice(undefined);
     stopRequested.current = false;
-    void regenerate();
+    void runChatAction(() => regenerate());
   }
 
   return (
@@ -405,50 +455,75 @@ export default function ChatPage(): ReactElement {
             messages.map((message) => {
               const text = messageText(message);
               const lookups = message.parts.flatMap((part) =>
-                part.type === "tool-listTodos" && part.state === "output-available"
-                  ? [part.output.ok]
-                  : [],
+                part.type !== "tool-listTodos" ||
+                (part.state !== "output-available" && part.state !== "output-error")
+                  ? []
+                  : [
+                      {
+                        id: part.toolCallId,
+                        ok: part.state === "output-available" && part.output.ok,
+                      },
+                    ],
               );
-              const wasStopped = stopped.includes(message.id);
+              const outcome = unfinished.get(message.id);
+              const wasStopped = outcome === "stopped";
               if (!text && !lookups.length && !wasStopped) return null;
-              const streaming = pending && message.id === messages.at(-1)?.id;
+              const isLatest = message.id === lastAssistant?.id;
+              const streaming = status === "streaming" && isLatest;
               return (
-                <Message key={message.id} from={message.role}>
-                  <MessageContent>
+                <Message
+                  key={message.id}
+                  from={message.role}
+                  className={message.role === "assistant" ? "max-w-[min(70ch,100%)]" : undefined}
+                >
+                  <MessageContent className="w-full [overflow-wrap:anywhere] group-[.is-user]:w-fit">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {message.role === "user" ? "You" : "Assistant"}
+                    </span>
                     {message.role === "user" ? (
                       <p className="whitespace-pre-wrap">{text}</p>
                     ) : (
                       text && (
-                        <MessageResponse
+                        <AiResponse
+                          text={text}
+                          partial={
+                            wasStopped || streaming || (isLatest && Boolean(notice || error))
+                          }
                           isAnimating={streaming}
-                          skipHtml
-                          disallowedElements={BLOCKED_ELEMENTS}
-                          remend={PARTIAL_LINKS}
-                        >
-                          {text}
-                        </MessageResponse>
+                        />
                       )
                     )}
-                    {lookups.includes(true) && (
-                      <p className="text-xs text-muted-foreground">Looked up todos</p>
-                    )}
-                    {lookups.includes(false) && (
-                      <p className="text-xs text-muted-foreground">Couldn’t look up todos</p>
-                    )}
+                    {lookups.map(({ id, ok }) => (
+                      <Tool key={id}>
+                        <ToolHeader
+                          type="tool-listTodos"
+                          title={ok ? "Looked up todos" : "Couldn’t look up todos"}
+                          state={ok ? "output-available" : "output-error"}
+                          className="min-h-11 focus-visible:ring-2 focus-visible:ring-ring"
+                        />
+                        <ToolContent>
+                          <p>
+                            {ok
+                              ? "Used the app’s read-only todo lookup."
+                              : "The todo lookup did not finish successfully."}
+                          </p>
+                        </ToolContent>
+                      </Tool>
+                    ))}
                     {wasStopped && <p className="text-xs text-muted-foreground">Stopped</p>}
                   </MessageContent>
                 </Message>
               );
             })
           )}
-          {status === "submitted" && <Shimmer>Thinking…</Shimmer>}
+          {waiting && <Shimmer>Thinking…</Shimmer>}
         </ConversationContent>
-        <ConversationScrollButton />
+        <ConversationScrollButton aria-label="Scroll to latest reply" className="size-11" />
       </Conversation>
       <div className="sr-only" aria-live="polite">
         {pending
           ? "Generating reply…"
-          : lastAssistant && stopped.includes(lastAssistant.id)
+          : lastAssistant && unfinished.get(lastAssistant.id) === "stopped"
             ? "Reply stopped"
             : ""}
       </div>
@@ -463,37 +538,122 @@ export default function ChatPage(): ReactElement {
                   ? "The reply was interrupted."
                   : "Could not get a reply. Please try again."}
           </p>
-          <Button variant="outline" className="min-h-11" onClick={retry}>
-            Retry
-          </Button>
+          <MessageActions>
+            <MessageAction size="default" variant="outline" className="min-h-11" onClick={retry}>
+              Retry
+            </MessageAction>
+          </MessageActions>
         </div>
       )}
-      {messages.length === 0 && (
+      {messages.length === 0 && !pending && (
         <Suggestions>
           {STARTERS.map((starter) => (
-            <Suggestion key={starter} suggestion={starter} onClick={send} />
+            <Suggestion
+              key={starter}
+              suggestion={starter}
+              onClick={() => setDraft(starter)}
+              className="min-h-11"
+            />
           ))}
         </Suggestions>
       )}
       <PromptInput onSubmit={({ text }) => send(text)}>
-        <PromptInputBody>
-          <PromptInputTextarea
-            aria-label="Message"
-            placeholder="Write a message…"
-            maxLength={CHAT_TEXT_LIMIT}
-          />
-        </PromptInputBody>
+        <PromptInputTextarea
+          aria-label="Message"
+          placeholder="Write a message…"
+          maxLength={CHAT_TEXT_LIMIT}
+          value={draft}
+          onChange={(event) => setDraft(event.currentTarget.value)}
+        />
         <PromptInputFooter className="justify-end">
           <PromptInputSubmit
             status={status}
+            disabled={!pending && !draft.trim()}
             onStop={() => {
               stopRequested.current = true;
-              void stop();
+              void runChatAction(stop);
             }}
           />
         </PromptInputFooter>
       </PromptInput>
     </section>
+  );
+}
+```
+
+### Shared AI response
+
+### `apps/app/app/components/ai-response.tsx`
+
+```tsx
+import { lazy, Suspense, type ReactElement } from "react";
+
+import { Shimmer } from "~/components/ai-elements/shimmer";
+
+// Keep Streamdown out of the initial app and chat route until there is an AI response.
+const SafeMessageResponse = lazy(() => import("~/components/ai-response-markdown"));
+
+type AiResponseProps = {
+  text: string;
+  partial?: boolean;
+  isAnimating?: boolean;
+};
+
+/** Renders an AI response without loading its Markdown renderer before it is needed. */
+export function AiResponse(props: AiResponseProps): ReactElement {
+  return (
+    <Suspense
+      fallback={
+        <output>
+          <Shimmer>Formatting reply…</Shimmer>
+        </output>
+      }
+    >
+      <SafeMessageResponse {...props} />
+    </Suspense>
+  );
+}
+```
+
+### `apps/app/app/components/ai-response-markdown.tsx`
+
+```tsx
+import type { ReactElement } from "react";
+import { defaultRehypePlugins } from "streamdown";
+
+import { MessageResponse } from "~/components/ai-elements/message";
+
+const BLOCKED_ELEMENTS = ["img"];
+const PARTIAL_BLOCKED_ELEMENTS = ["img", "a"];
+const PARTIAL_LINKS = { linkMode: "text-only" } as const;
+// skipHtml only sees raw nodes. Keep sanitization and URL hardening without first parsing HTML.
+const REHYPE_PLUGINS = Object.entries(defaultRehypePlugins)
+  .filter(([name]) => name !== "raw")
+  .map(([, plugin]) => plugin);
+
+/** Applies the same HTML, image and link policy to all model-written text. */
+export default function SafeMessageResponse({
+  text,
+  partial = false,
+  isAnimating = false,
+}: {
+  text: string;
+  partial?: boolean;
+  isAnimating?: boolean;
+}): ReactElement {
+  return (
+    <MessageResponse
+      className="min-w-0 max-w-full [overflow-wrap:anywhere]"
+      mode={partial ? "streaming" : "static"}
+      isAnimating={isAnimating}
+      skipHtml
+      disallowedElements={partial ? PARTIAL_BLOCKED_ELEMENTS : BLOCKED_ELEMENTS}
+      unwrapDisallowed
+      remend={PARTIAL_LINKS}
+      rehypePlugins={REHYPE_PLUGINS}
+    >
+      {text}
+    </MessageResponse>
   );
 }
 ```
