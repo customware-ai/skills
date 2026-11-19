@@ -275,7 +275,8 @@ pnpm --filter @cw/app add -E @ai-sdk/react@4.0.181
 
 # Use the template's already-pinned shadcn 4.23.0 via pnpm.
 cd apps/app
-pnpm exec shadcn add -y \
+# `yes n` answers No to every overwrite prompt, so the template's Base Nova components stay and the command never waits for input.
+yes n | pnpm exec shadcn add -y \
   https://elements.ai-sdk.dev/api/registry/conversation.json \
   https://elements.ai-sdk.dev/api/registry/message.json \
   https://elements.ai-sdk.dev/api/registry/prompt-input.json \
@@ -283,7 +284,6 @@ pnpm exec shadcn add -y \
   https://elements.ai-sdk.dev/api/registry/suggestion.json \
   https://elements.ai-sdk.dev/api/registry/tool.json \
   https://elements.ai-sdk.dev/api/registry/image.json
-# Answer No to every overwrite prompt to keep the template's Base Nova primitives.
 mv components/ai-elements app/components/
 rmdir components
 cd ../..
