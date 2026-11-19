@@ -57,91 +57,24 @@ pnpm --filter @cw/app add -E streamdown@2.8.0 motion@14.14.0 use-stick-to-bottom
 pnpm install --frozen-lockfile
 ```
 
-- Fix the generated files until `pnpm run check` passes; expect about 140 errors on a fresh install. Delete exported parts the app doesn't use (attachments, sources, model select, screenshot, microphone, export, branching, toolbar, raw `ToolInput`/`ToolOutput` and `code-block.tsx`), add explicit return types, replace Radix-only props (`asChild`, Radix event and hover-card props) with Base UI's `render` and props, and fix ref errors. Keep the generated markup and variants of the parts you use, so they stay on the template's theme.
-- Move `Message`, `MessageContent`, `MessageActions` and `MessageAction` from `message.tsx` into `message-layout.tsx`, leaving only `MessageResponse` in `message.tsx`. `message.tsx` imports Streamdown, so this keeps it out of the chat page until the first reply.
-- Retain the template's Base Nova primitives. AI Elements' Radix trigger composition uses Base UI's `render` prop after installation.
-- Keep the text-only composer: its Enter handler requires an enabled submit button, Stop is not a submit action, and only an accepted send clears the controlled draft.
-- Leave out Streamdown's four optional add-ons and the generated `plugins` prop unless a task explicitly needs them.
-- Keep the AI Elements Tool disclosure, but show a safe label only; do not render provider tool inputs, raw output or tool error text.
-- In `apps/app/app/app.css`, import `"streamdown/styles.css"` and register `@source "../node_modules/streamdown/dist";` for Tailwind utilities.
-- When using registry Image with the task response, narrow its props to `Pick<Experimental_GeneratedImage, "base64" | "mediaType">` rather than decoding duplicate bytes.
+Then make each generated file match its example in [`assets/ai-elements/`](../assets/ai-elements/): same exports, props and behaviour. The examples pass the template's checks and build; copying an example over its generated file is fine. The generated files fail `pnpm run check` with about 140 errors, so don't keep them as generated.
+
+The examples already:
+
+- keep only the parts these screens use and drop raw tool input and output (and `code-block.tsx`);
+- use the template's Base UI components and `render` prop instead of Radix `asChild`;
+- send on Enter (Shift+Enter adds a line), keep the draft until a send is accepted, and make Stop a plain button;
+- split `message-layout.tsx` (Message, MessageContent, actions) from `message.tsx` (`MessageResponse`), so Streamdown loads only with the first reply;
+- run Streamdown without its add-ons; add them only when the task description asks for code highlighting, maths, diagrams or CJK text;
+- label icon buttons and respect reduced motion in `Shimmer`;
+- take the server's `{ base64, mediaType }` in `Image`.
+
+In `apps/app/app/app.css`, import `"streamdown/styles.css"` and add `@source "../node_modules/streamdown/dist";` so Tailwind sees Streamdown's classes.
 
 ## Safe response: `AiResponse`
 
-Copy both files as they are.
+Copy [`assets/ai-response.tsx`](../assets/ai-response.tsx) and [`assets/ai-response-markdown.tsx`](../assets/ai-response-markdown.tsx) into `apps/app/app/components/` unchanged. All AI-written text renders through `<AiResponse text={…} partial={…} isAnimating={…} />`:
 
-### `apps/app/app/components/ai-response.tsx`
-
-```tsx
-import { lazy, Suspense, type ReactElement } from "react";
-
-import { Shimmer } from "~/components/ai-elements/shimmer";
-
-// Keep Streamdown out of the initial app and chat route until there is an AI response.
-const SafeMessageResponse = lazy(() => import("~/components/ai-response-markdown"));
-
-type AiResponseProps = {
-  text: string;
-  partial?: boolean;
-  isAnimating?: boolean;
-};
-
-/** Renders an AI response without loading its Markdown renderer before it is needed. */
-export function AiResponse(props: AiResponseProps): ReactElement {
-  return (
-    <Suspense
-      fallback={
-        <output>
-          <Shimmer>Formatting reply…</Shimmer>
-        </output>
-      }
-    >
-      <SafeMessageResponse {...props} />
-    </Suspense>
-  );
-}
-```
-
-### `apps/app/app/components/ai-response-markdown.tsx`
-
-```tsx
-import type { ReactElement } from "react";
-import { defaultRehypePlugins } from "streamdown";
-
-import { MessageResponse } from "~/components/ai-elements/message";
-
-const BLOCKED_ELEMENTS = ["img"];
-const PARTIAL_BLOCKED_ELEMENTS = ["img", "a"];
-const PARTIAL_LINKS = { linkMode: "text-only" } as const;
-// skipHtml only sees raw nodes. Keep sanitization and URL hardening without first parsing HTML.
-const REHYPE_PLUGINS = Object.entries(defaultRehypePlugins)
-  .filter(([name]) => name !== "raw")
-  .map(([, plugin]) => plugin);
-
-/** Applies the same HTML, image and link policy to all model-written text. */
-export default function SafeMessageResponse({
-  text,
-  partial = false,
-  isAnimating = false,
-}: {
-  text: string;
-  partial?: boolean;
-  isAnimating?: boolean;
-}): ReactElement {
-  return (
-    <MessageResponse
-      className="min-w-0 max-w-full [overflow-wrap:anywhere]"
-      mode={partial ? "streaming" : "static"}
-      isAnimating={isAnimating}
-      skipHtml
-      disallowedElements={partial ? PARTIAL_BLOCKED_ELEMENTS : BLOCKED_ELEMENTS}
-      unwrapDisallowed
-      remend={PARTIAL_LINKS}
-      rehypePlugins={REHYPE_PLUGINS}
-    >
-      {text}
-    </MessageResponse>
-  );
-}
-```
-
+- `partial` while a reply is streaming, stopped or cut off: half-written Markdown is repaired and links show as text.
+- `isAnimating` only on the reply that is still streaming.
+- Raw HTML is dropped before it's parsed, images are blocked, and Streamdown loads only when the first reply arrives.
