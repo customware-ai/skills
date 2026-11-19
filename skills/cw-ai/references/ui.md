@@ -50,8 +50,10 @@ mv components/ai-elements app/components/
 rmdir components
 cd ../..
 
-# Remove unused registry extras; apply the generated-component edits before building.
-pnpm --filter @cw/app remove @streamdown/code @streamdown/math @streamdown/mermaid @streamdown/cjk nanoid shiki
+# Remove only the add-ons the installer added; pnpm refuses names that aren't direct dependencies.
+for p in @streamdown/code @streamdown/math @streamdown/mermaid @streamdown/cjk nanoid shiki; do
+  if grep -q "\"$p\"" apps/app/package.json; then pnpm --filter @cw/app remove "$p"; fi
+done
 pnpm --filter @cw/app add -E streamdown@2.8.0 motion@14.14.0 use-stick-to-bottom@1.1.6
 # Upgrading the old reference? Also remove direct react-markdown, remark-gfm, and remend.
 pnpm install --frozen-lockfile
