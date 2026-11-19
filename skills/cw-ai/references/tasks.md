@@ -187,17 +187,20 @@ ai: t.router({
 
 ## Client
 
-The client uses typed mutations and the template's `Button` + `Spinner` pending pattern. Each mutation shows one safe error line, and results render as readable text, never as raw JSON. Mount these sections in a page registered in `apps/app/app/routes.ts`.
+The client uses typed mutations and the template's `Button` + `Spinner` pending pattern. Each mutation shows one safe error line, and results render as readable text, never as raw JSON. AI-written text (summaries, drafts) renders with AI Elements' `MessageResponse` and the same safety props as the chat ([chat.md](chat.md#client)); install it with `pnpm dlx ai-elements@1.9.1 add message`. Mount these sections in a page registered in `apps/app/app/routes.ts`.
 
 ```tsx
 import { AI_NOT_AVAILABLE } from "@cw/shared/ai-errors";
 import { AI_EMAIL_LIMIT, AI_PROMPT_LIMIT } from "@cw/shared/ai-limits";
 import { useState, type ReactElement, type ReactNode } from "react";
 
+import { MessageResponse } from "~/components/ai-elements/message";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
 import { Textarea } from "~/components/ui/textarea";
 import { trpc } from "~/lib/trpc";
+
+const BLOCKED_ELEMENTS = ["img"];
 
 const SAMPLE_EMAIL =
   "Hi, I’m Alex Example (alex@example.com). I was charged twice for test order TEST-0001. Could you correct the invoice today?";
@@ -306,7 +309,11 @@ function EmailTools(): ReactElement {
           </div>
           <div>
             <dt className="font-medium">Summary</dt>
-            <dd>{extract.data.summary}</dd>
+            <dd>
+              <MessageResponse skipHtml disallowedElements={BLOCKED_ELEMENTS}>
+                {extract.data.summary}
+              </MessageResponse>
+            </dd>
           </div>
         </dl>
       )}

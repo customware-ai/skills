@@ -1,17 +1,17 @@
 # Streaming chat
 
-**What:** a chat page whose replies stream in, with Stop, safe Markdown, and an optional read-only tool over the app's data.
+**What:** a chat page whose replies stream in, built from AI Elements, with Stop, safe Markdown, and an optional read-only tool over the app's data.
 
 **Why this shape:**
 
 - The reply streams over one dedicated Hono route (`streamText(...).toUIMessageStreamResponse()`), read by `useChat` from `@ai-sdk/react`. tRPC doesn't carry the AI SDK stream format; the rest of the app stays on tRPC.
 - The browser sends plain text turns, never system prompts or tool output, so a user can't rewrite the instructions or fake a tool result.
 
-The example below was built and verified in the current template. Copy its structure; rename the tool, prompts and copy for the app.
+Copy the structure below; rename the tool, prompts and copy for the app.
 
 **Packages** (pin exactly; these versions were verified together):
 - API workspace: `ai@7.0.177`, `@openrouter/ai-sdk-provider@3.1.0`.
-- App workspace: `@ai-sdk/react@4.0.181`, `react-markdown@10.1.0`, `remark-gfm@4.0.1`, `remend@1.5.0`.
+- App workspace: `@ai-sdk/react@4.0.181`, plus the packages the AI Elements installer adds (see Client).
 
 ## Server
 
@@ -245,67 +245,45 @@ chat.post("/", bodyLimit({ maxSize: 1024 * 1024 }), async (c): Promise<Response>
 
 ## Client
 
-`apps/app/app/routes/chat-markdown.tsx` is lazy-loaded:
+Build every AI screen from [AI Elements](https://ai-sdk.dev/elements): shadcn-style chat components copied into the app, so they follow the template's theme. Install the ones the page uses from `apps/app`:
 
-- `remend` repairs half-streamed Markdown, so no raw `**` or unclosed fences show.
-- Incomplete links render as text, so clicking one can't reload the page and wipe the chat.
-- Raw HTML and images are blocked.
-- Tables scroll inside their own box on phones.
-
-```tsx
-import type { ReactElement } from "react";
-import Markdown, { type Components } from "react-markdown";
-import remarkGfm from "remark-gfm";
-import remend from "remend";
-
-const remarkPlugins = [remarkGfm];
-const components = {
-  a: ({ node: _node, href, children, ...props }): ReactElement =>
-    href ? (
-      <a {...props} href={href}>
-        {children}
-      </a>
-    ) : (
-      <>{children}</>
-    ),
-  table: ({ node: _node, ...props }): ReactElement => (
-    <div className="max-w-full overflow-x-auto rounded-lg border">
-      <table {...props} />
-    </div>
-  ),
-} satisfies Components;
-
-/** Repairs partial replies and styles Markdown without weakening URL sanitization. */
-export default function ChatMarkdown({
-  text,
-  partial,
-}: {
-  text: string;
-  partial: boolean;
-}): ReactElement {
-  return (
-    <div className="min-w-0 max-w-full space-y-3 [overflow-wrap:anywhere] [&_a]:underline [&_li]:ms-5 [&_ol]:list-decimal [&_ul]:list-disc [&_blockquote]:border-s-2 [&_blockquote]:border-border [&_blockquote]:ps-3 [&_blockquote]:text-muted-foreground [&_table]:w-full [&_table]:border-collapse [&_table]:text-sm [&_th,&_td]:px-3 [&_th,&_td]:py-2 [&_th,&_td]:text-start [&_th,&_td]:[overflow-wrap:normal] [&_th]:bg-muted [&_th]:font-medium [&_tr]:border-b [&_tbody_tr:last-child]:border-0 [&_pre]:overflow-x-auto [&_pre]:rounded-md [&_pre]:bg-muted [&_pre]:p-3 [&_code]:rounded [&_code]:bg-muted [&_code]:font-mono [&_:not(pre)>code]:px-1 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:font-semibold [&_h3]:font-semibold">
-      <Markdown
-        components={components}
-        remarkPlugins={remarkPlugins}
-        skipHtml
-        disallowedElements={["img"]}
-      >
-        {partial ? remend(text, { linkMode: "text-only" }) : text}
-      </Markdown>
-    </div>
-  );
-}
+```sh
+pnpm dlx ai-elements@1.9.1 add conversation message prompt-input shimmer suggestion
 ```
 
-`apps/app/app/routes/chat.tsx` uses the template's `message`, `bubble`, `message-scroller` and `input-group` primitives:
+- They land in `apps/app/app/components/ai-elements/`. Edit them there like any template component.
+- If check or build fails on a generated file, fix that file. Don't replace the component with hand-built markup.
+- Pin every package the installer adds to an exact version in `apps/app/package.json`.
+
+Use these elements:
+
+| Need | Element |
+| --- | --- |
+| Message list that sticks to the newest reply, with a jump-to-bottom button and an empty state | `Conversation`, `ConversationContent`, `ConversationScrollButton`, `ConversationEmptyState` |
+| One message | `Message` with `from={message.role}`, `MessageContent` |
+| Any AI-written text, in chat or anywhere else | `MessageResponse` (Streamdown) |
+| Input box whose send button becomes Stop while a reply streams | `PromptInput`, `PromptInputTextarea`, `PromptInputSubmit` with `status` and `onStop` |
+| Waiting for the first words | `Shimmer` |
+| Starter questions | `Suggestions`, `Suggestion` |
+| Copy or retry on a reply | `MessageActions`, `MessageAction` |
+| Generated image | `Image` |
+
+`MessageResponse` renders Markdown with Streamdown. While a reply streams, Streamdown repairs half-written Markdown, so no raw `**` or broken tables show. It also redraws only the block still being written, so long replies stay fast. Always pass the same safety props:
+
+- `skipHtml` and `disallowedElements={["img"]}`: model output can't inject HTML or load images.
+- `remend={{ linkMode: "text-only" }}`: a half-written link shows as text, so clicking it can't reload the page and wipe the chat.
+- `isAnimating` only on the reply that is still streaming.
+
+`Tool` shows a tool's raw input and output. Use it only on admin or debugging screens. Users get one plain line instead, like "Looked up todos" below.
+
+`apps/app/app/routes/chat.tsx`:
 
 - Send turns into Stop while a reply streams.
 - **Stopped** marks a reply the user cut off.
 - **The reply was interrupted** with Retry covers a stream that ended without finishing: a timeout or a dropped connection. The SDK reports that as a normal finish, so check `finishReason`.
 - A length notice covers a reply that ran out of output tokens.
 - A polite live region announces progress to screen readers.
-- Replies are capped at about 70 characters per line.
+- The page is a lazy route, so Streamdown and the streaming client stay out of the initial bundle.
 
 ```tsx
 import { useChat } from "@ai-sdk/react";
@@ -320,31 +298,31 @@ import {
   type UIDataTypes,
   type UIMessage,
 } from "ai";
-import { ArrowUp, Square } from "lucide-react";
-import { lazy, Suspense, useRef, useState, type FormEvent, type ReactElement } from "react";
+import { useRef, useState, type ReactElement } from "react";
 
-import { Bubble, BubbleContent } from "~/components/ui/bubble";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationEmptyState,
+  ConversationScrollButton,
+} from "~/components/ai-elements/conversation";
+import { Message, MessageContent, MessageResponse } from "~/components/ai-elements/message";
+import {
+  PromptInput,
+  PromptInputBody,
+  PromptInputFooter,
+  PromptInputSubmit,
+  PromptInputTextarea,
+} from "~/components/ai-elements/prompt-input";
+import { Shimmer } from "~/components/ai-elements/shimmer";
+import { Suggestion, Suggestions } from "~/components/ai-elements/suggestion";
 import { Button } from "~/components/ui/button";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupTextarea,
-} from "~/components/ui/input-group";
-import { Message } from "~/components/ui/message";
-import {
-  MessageScroller,
-  MessageScrollerButton,
-  MessageScrollerContent,
-  MessageScrollerItem,
-  MessageScrollerProvider,
-  MessageScrollerViewport,
-} from "~/components/ui/message-scroller";
-
-// Defer the Markdown parser until a reply needs it.
-const ChatMarkdown = lazy(() => import("./chat-markdown"));
 
 type ChatMessage = UIMessage<unknown, UIDataTypes, InferUITools<ChatTools>>;
+
+const STARTERS = ["Which todos are still open?", "What should I do first today?"];
+const BLOCKED_ELEMENTS = ["img"];
+const PARTIAL_LINKS = { linkMode: "text-only" } as const;
 
 /** The gateway only needs text, not SDK metadata or reasoning parts. */
 function messageText(message: ChatMessage): string {
@@ -371,7 +349,6 @@ const transport = new DefaultChatTransport<ChatMessage>({
 /** A temporary conversation with streaming replies and no saved history. */
 export default function ChatPage(): ReactElement {
   const [stopped, setStopped] = useState<string[]>([]);
-  const [draft, setDraft] = useState("");
   const [notice, setNotice] = useState<"length" | "interrupted">();
   const stopRequested = useRef(false);
   const { messages, setMessages, sendMessage, regenerate, stop, status, error } =
@@ -391,6 +368,16 @@ export default function ChatPage(): ReactElement {
   const pending = status === "submitted" || status === "streaming";
   const lastAssistant = messages.filter((message) => message.role === "assistant").at(-1);
 
+  /** Show the user's message immediately and keep the transcript bounded. */
+  function send(text: string): void {
+    const content = text.trim();
+    if (!content || pending) return;
+    setNotice(undefined);
+    stopRequested.current = false;
+    setMessages((current) => current.slice(-(CHAT_HISTORY_LIMIT - 2)));
+    void sendMessage({ text: content });
+  }
+
   /** Retry only when a turn exists; regenerate rejects for missing turns. */
   function retry(): void {
     if (!messages.length || pending) return;
@@ -399,92 +386,63 @@ export default function ChatPage(): ReactElement {
     void regenerate();
   }
 
-  /** Show the user's message immediately and keep the transcript bounded. */
-  function submit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
-    const content = draft.trim();
-    if (!content || pending) return;
-    setDraft("");
-    setNotice(undefined);
-    stopRequested.current = false;
-    setMessages((current) => current.slice(-(CHAT_HISTORY_LIMIT - 2)));
-    void sendMessage({ role: "user", parts: [{ type: "text", text: content }] });
-  }
-
   return (
     <section className="mx-auto flex h-[calc(100dvh-5rem)] min-h-80 max-w-3xl flex-col gap-3 lg:h-[calc(100dvh-6rem)]">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Chat</h1>
         <p className="text-sm text-muted-foreground">This conversation isn’t saved.</p>
       </header>
-      <MessageScrollerProvider autoScroll>
-        <MessageScroller className="flex-1 rounded-xl border bg-card">
-          <MessageScrollerViewport>
-            <MessageScrollerContent className="p-4 sm:p-6">
-              {messages.length === 0 && (
-                <p className="m-auto text-center text-sm text-muted-foreground">
-                  Ask a question to start the conversation.
-                </p>
-              )}
-              {messages.map((message) => {
-                const text = messageText(message);
-                const lookups = message.parts.flatMap((part) =>
-                  part.type === "tool-listTodos" && part.state === "output-available"
-                    ? [part.output.ok]
-                    : [],
-                );
-                const wasStopped = stopped.includes(message.id);
-                if (!text && !lookups.length && !wasStopped) return null;
-                const fromUser = message.role === "user";
-                return (
-                  <MessageScrollerItem key={message.id} messageId={message.id}>
-                    <Message align={fromUser ? "end" : "start"}>
-                      <Bubble
-                        variant={fromUser ? "tinted" : "ghost"}
-                        className={fromUser ? undefined : "max-w-[min(70ch,100%)]!"}
-                      >
-                        <span className="px-1 text-xs font-medium text-muted-foreground">
-                          {fromUser ? "You" : "Assistant"}
-                        </span>
-                        {text && (
-                          <BubbleContent className={fromUser ? "whitespace-pre-wrap" : undefined}>
-                            {fromUser ? (
-                              text
-                            ) : (
-                              <Suspense
-                                fallback={
-                                  <output className="text-muted-foreground">
-                                    Formatting reply…
-                                  </output>
-                                }
-                              >
-                                <ChatMarkdown
-                                  text={text}
-                                  partial={
-                                    wasStopped || (pending && message.id === messages.at(-1)?.id)
-                                  }
-                                />
-                              </Suspense>
-                            )}
-                          </BubbleContent>
-                        )}
-                        {lookups.includes(true) && (
-                          <p className="text-xs text-muted-foreground">Looked up todos</p>
-                        )}
-                        {lookups.includes(false) && (
-                          <p className="text-xs text-muted-foreground">Couldn’t look up todos</p>
-                        )}
-                        {wasStopped && <p className="text-xs text-muted-foreground">Stopped</p>}
-                      </Bubble>
-                    </Message>
-                  </MessageScrollerItem>
-                );
-              })}
-            </MessageScrollerContent>
-          </MessageScrollerViewport>
-          <MessageScrollerButton className="size-11" behavior="auto" />
-        </MessageScroller>
-      </MessageScrollerProvider>
+      <Conversation className="min-h-0 flex-1 rounded-xl border bg-card">
+        <ConversationContent>
+          {messages.length === 0 ? (
+            <ConversationEmptyState
+              title="Ask a question"
+              description="Answers come from your todos."
+            />
+          ) : (
+            messages.map((message) => {
+              const text = messageText(message);
+              const lookups = message.parts.flatMap((part) =>
+                part.type === "tool-listTodos" && part.state === "output-available"
+                  ? [part.output.ok]
+                  : [],
+              );
+              const wasStopped = stopped.includes(message.id);
+              if (!text && !lookups.length && !wasStopped) return null;
+              const streaming = pending && message.id === messages.at(-1)?.id;
+              return (
+                <Message key={message.id} from={message.role}>
+                  <MessageContent>
+                    {message.role === "user" ? (
+                      <p className="whitespace-pre-wrap">{text}</p>
+                    ) : (
+                      text && (
+                        <MessageResponse
+                          isAnimating={streaming}
+                          skipHtml
+                          disallowedElements={BLOCKED_ELEMENTS}
+                          remend={PARTIAL_LINKS}
+                        >
+                          {text}
+                        </MessageResponse>
+                      )
+                    )}
+                    {lookups.includes(true) && (
+                      <p className="text-xs text-muted-foreground">Looked up todos</p>
+                    )}
+                    {lookups.includes(false) && (
+                      <p className="text-xs text-muted-foreground">Couldn’t look up todos</p>
+                    )}
+                    {wasStopped && <p className="text-xs text-muted-foreground">Stopped</p>}
+                  </MessageContent>
+                </Message>
+              );
+            })
+          )}
+          {status === "submitted" && <Shimmer>Thinking…</Shimmer>}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
       <div className="sr-only" aria-live="polite">
         {pending
           ? "Generating reply…"
@@ -508,51 +466,31 @@ export default function ChatPage(): ReactElement {
           </Button>
         </div>
       )}
-      <form onSubmit={submit} className="flex items-end gap-2">
-        <InputGroup className="min-w-0 flex-1 items-end rounded-2xl">
-          <InputGroupTextarea
+      {messages.length === 0 && (
+        <Suggestions>
+          {STARTERS.map((starter) => (
+            <Suggestion key={starter} suggestion={starter} onClick={send} />
+          ))}
+        </Suggestions>
+      )}
+      <PromptInput onSubmit={({ text }) => send(text)}>
+        <PromptInputBody>
+          <PromptInputTextarea
             aria-label="Message"
-            className="max-h-32 min-h-11"
-            rows={1}
             placeholder="Write a message…"
-            value={draft}
             maxLength={CHAT_TEXT_LIMIT}
-            onChange={(event) => setDraft(event.currentTarget.value)}
-            onKeyDown={(event) => {
-              if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
-              event.preventDefault();
-              event.currentTarget.form?.requestSubmit();
+          />
+        </PromptInputBody>
+        <PromptInputFooter className="justify-end">
+          <PromptInputSubmit
+            status={status}
+            onStop={() => {
+              stopRequested.current = true;
+              void stop();
             }}
           />
-          <InputGroupAddon align="inline-end" className="self-end">
-            {pending ? (
-              <InputGroupButton
-                key="stop"
-                aria-label="Stop reply"
-                variant="secondary"
-                className="size-11 rounded-xl"
-                onClick={() => {
-                  stopRequested.current = true;
-                  void stop();
-                }}
-              >
-                <Square className="fill-current" />
-              </InputGroupButton>
-            ) : (
-              <InputGroupButton
-                key="send"
-                type="submit"
-                aria-label="Send message"
-                variant="default"
-                className="size-11 rounded-xl"
-                disabled={!draft.trim()}
-              >
-                <ArrowUp />
-              </InputGroupButton>
-            )}
-          </InputGroupAddon>
-        </InputGroup>
-      </form>
+        </PromptInputFooter>
+      </PromptInput>
     </section>
   );
 }
@@ -572,7 +510,7 @@ The template doesn't ship these; add each one:
 const chatRoute = createRoute({
   getParentRoute: () => layoutRoute,
   path: "/chat",
-  // Keep the streaming client and Markdown parser out of the initial bundle.
+  // Keep the streaming client and Streamdown out of the initial bundle.
   component: lazyRouteComponent(() => import("./routes/chat")),
 });
 // routeTree: rootRoute.addChildren([layoutRoute.addChildren([indexRoute, chatRoute])])

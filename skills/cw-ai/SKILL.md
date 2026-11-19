@@ -32,7 +32,7 @@ Apps get AI through the CW Agents AI gateway: one endpoint per project, OpenAI-c
 **How:**
 
 - A Hono route returns `streamText(...).toUIMessageStreamResponse()`, and the page uses `useChat`. This is the one place the app leaves tRPC, because tRPC doesn't carry this stream format.
-- Messages render with the template's chat primitives and lazy-loaded Markdown.
+- Build every AI screen from AI Elements components, and render all AI-written text with its `MessageResponse` (Streamdown). They follow the template's theme and handle streaming, scrolling and half-written Markdown.
 
 ### Classify, group, score and flag: the Decisions API, [tasks.md](references/tasks.md)
 
@@ -163,7 +163,7 @@ If a stream fails after it starts, it ends with one `data: {"error": {...}}` eve
 
   Tool results are streamed to the browser even when the UI hides them, so return only fields the user may see. The model never writes SQL. Writes go through a separate action the user confirms and the server authorizes.
 - **Prompts:** treat user content and tool results as data, not instructions. Text in an email can say "ignore your rules".
-- **Markdown:** render model output with raw HTML and images disabled.
+- **Markdown:** render model output with `MessageResponse`, raw HTML skipped and images disallowed ([chat.md](references/chat.md#client)).
 
 ## Adapt to the app
 
