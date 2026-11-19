@@ -57,23 +57,21 @@ pnpm --filter @cw/app add -E streamdown@2.8.0 motion@14.14.0 use-stick-to-bottom
 pnpm install --frozen-lockfile
 ```
 
-Then make each generated file match its example in [`assets/ai-elements/`](../assets/ai-elements/): same exports, props and behaviour. The examples pass the template's checks and build; copying an example over its generated file is fine. The generated files fail `pnpm run check` with about 140 errors, so don't keep them as generated.
+The generated files fail `pnpm run check` with about 140 errors. Fix them in place; don't replace them with hand-written stand-ins, because the generated markup carries the template's theme and the behaviour below. When done, the components must:
 
-The examples already:
-
-- keep only the parts these screens use and drop raw tool input and output (and `code-block.tsx`);
-- use the template's Base UI components and `render` prop instead of Radix `asChild`;
-- send on Enter (Shift+Enter adds a line), keep the draft until a send is accepted, and make Stop a plain button;
-- split `message-layout.tsx` (Message, MessageContent, actions) from `message.tsx` (`MessageResponse`), so Streamdown loads only with the first reply;
-- run Streamdown without its add-ons; add them only when the task description asks for code highlighting, maths, diagrams or CJK text;
-- label icon buttons and respect reduced motion in `Shimmer`;
+- keep only the parts these screens use: drop attachments, sources, model select, screenshot, microphone, export, branching, toolbar, raw tool input and output, and `code-block.tsx`;
+- use the template's Base UI components and the `render` prop instead of Radix `asChild`, with explicit return types;
+- send on Enter (Shift+Enter adds a line), keep the draft until a send is accepted, and make Stop a plain button, not a submit;
+- split `message-layout.tsx` (`Message`, `MessageContent`, `MessageActions`, `MessageAction`) from `message.tsx` (`MessageResponse` only), so Streamdown loads only with the first reply;
+- run Streamdown without its add-ons and the generated `plugins` prop; add them only when the task description asks for code highlighting, maths, diagrams or CJK text;
+- keep the real shimmer animation, respecting reduced motion, and label every icon button;
 - take the server's `{ base64, mediaType }` in `Image`.
 
 In `apps/app/app/app.css`, import `"streamdown/styles.css"` and add `@source "../node_modules/streamdown/dist";` so Tailwind sees Streamdown's classes.
 
 ## Safe response: `AiResponse`
 
-Copy [`assets/ai-response.tsx`](../assets/ai-response.tsx) and [`assets/ai-response-markdown.tsx`](../assets/ai-response-markdown.tsx) into `apps/app/app/components/` unchanged. All AI-written text renders through `<AiResponse text={…} partial={…} isAnimating={…} />`:
+Copy [`ai-response.tsx`](../assets/examples/apps/app/app/components/ai-response.tsx) and [`ai-response-markdown.tsx`](../assets/examples/apps/app/app/components/ai-response-markdown.tsx) into `apps/app/app/components/` unchanged. All AI-written text renders through `<AiResponse text={…} partial={…} isAnimating={…} />`:
 
 - `partial` while a reply is streaming, stopped or cut off: half-written Markdown is repaired and links show as text.
 - `isAnimating` only on the reply that is still streaming.
