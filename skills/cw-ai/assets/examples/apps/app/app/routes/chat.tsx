@@ -39,7 +39,10 @@ type ChatMessage = UIMessage<unknown, UIDataTypes, InferUITools<ChatTools>>;
 
 const STARTERS = ["Which todos are still open?", "What should I do first today?"];
 
-/** The answer is the text after the last lookup; text before it is "checking…" filler. */
+/**
+ * The gateway only needs text, not SDK metadata or reasoning parts.
+ * The answer is the text after the last lookup; text before it is "checking…" filler.
+ */
 function messageText(message: ChatMessage): string {
   const answerStart = message.parts.reduce(
     (start, part, index) => (part.type.startsWith("tool-") ? index + 1 : start),
