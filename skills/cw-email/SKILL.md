@@ -19,19 +19,23 @@ Send transactional email through the CW Agents outbound email feature. The brows
 `apps/api/src/services/email.ts`:
 
 ```ts
+import { z } from "zod";
+
 const PROJECT_ID = "<projectId>"; // Replace with the real ID from .tasks/task.json.
 const SEND_URL = `https://agents.customware.ai/api/features/out-email/v1/${PROJECT_ID}/send`;
 
 type Email = { to: string; subject: string; html: string; text: string };
 type SendResult = { ok: true } | { ok: false; message: string };
 const unavailable = "Outbound email isn't available for this org.";
+const tooLarge = "Email exceeds 1 MiB.";
+const GatewayError = z.object({ error: z.object({ request_id: z.string() }) });
 
 const errors: Partial<Record<number, string>> = {
   400: "Invalid email request.",       // invalid_json / invalid_request
   401: "Email authorization failed.",  // unauthorized
   403: unavailable,                    // feature_off
   404: "Email project not found.",     // project_not_found
-  413: "Email exceeds 1 MiB.",         // body_too_large
+  413: tooLarge,                       // body_too_large
   429: "Daily email limit reached.",   // daily_limit_reached
   502: "Email could not be sent.",     // send_failed
   500: "Email service failed.",        // internal
@@ -43,7 +47,7 @@ export async function sendEmail({ to, subject, html, text }: Email): Promise<Sen
 
   const body = JSON.stringify({ to, subject, html, text });
   if (new TextEncoder().encode(body).length > 1024 * 1024) {
-    return { ok: false, message: errors[413]! };
+    return { ok: false, message: tooLarge };
   }
 
   const response = await fetch(SEND_URL, {
@@ -58,11 +62,10 @@ export async function sendEmail({ to, subject, html, text }: Email): Promise<Sen
   }
   if (response.status === 200) return { ok: true };
 
-  const payload = await response.json().catch(() => null) as
-    { error?: { code: string; message: string; status: number; request_id: string } } | null;
+  const payload = GatewayError.safeParse(await response.json().catch(() => null));
   console.error("Outbound email failed.", {
     status: response.status,
-    request_id: payload?.error?.request_id,
+    request_id: payload.success ? payload.data.error.request_id : undefined,
   });
   return { ok: false, message: errors[response.status] ?? "Email request failed." };
 }
@@ -84,7 +87,7 @@ requestPasswordReset: publicProcedure
   }),
 
 // In the server-side reset job:
-async function sendPasswordReset(email: string) {
+async function sendPasswordReset(email: string): Promise<void> {
   const account = await findAccountByEmail(email);
   if (!account) return;
 
