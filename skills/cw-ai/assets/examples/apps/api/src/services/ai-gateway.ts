@@ -11,7 +11,12 @@ const AI_GATEWAY_URL = "https://agents.customware.ai/api/features/ai/v1/<project
 export const TEXT_MODEL = "meta/muse-ember";
 export const TEXT_PROVIDER_OPTIONS = { openrouter: { reasoning: { effort: "minimal" } } };
 
-export type AiError = "NOT_CONFIGURED" | "NOT_AVAILABLE" | "NOT_FOUND" | "GATEWAY_FAILED";
+export type AiError =
+  | "NOT_CONFIGURED"
+  | "NOT_AVAILABLE"
+  | "NOT_FOUND"
+  | "TOO_LONG"
+  | "GATEWAY_FAILED";
 
 const apiKey = Result.try({
   try: () => z.string().min(1).parse(process.env.CUSTOMWARE_AI_GATEWAY_KEY),
@@ -32,6 +37,7 @@ function failure(status: number | undefined, body: string | undefined): AiError 
   );
   if (status === 403) return "NOT_AVAILABLE";
   if (status === 404) return "NOT_FOUND";
+  if (status === 400 && body?.includes("maximum context length")) return "TOO_LONG";
   return "GATEWAY_FAILED";
 }
 

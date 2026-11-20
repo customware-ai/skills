@@ -1,6 +1,6 @@
 import { useChat } from "@ai-sdk/react";
 import type { ChatMessage } from "@cw/api/trpc";
-import { AI_NOT_AVAILABLE } from "@cw/shared/ai-errors";
+import { AI_NOT_AVAILABLE, AI_TOO_LONG } from "@cw/shared/ai-errors";
 import { isTextUIPart, isToolUIPart } from "ai";
 import { Result } from "better-result";
 import { useRef, useState, type ReactElement } from "react";
@@ -50,7 +50,7 @@ export default function ChatPage(): ReactElement {
   );
   const [notice, setNotice] = useState<"length" | "interrupted">();
   const stopRequested = useRef(false);
-  const { messages, setMessages, sendMessage, regenerate, stop, status, error } =
+  const { messages, setMessages, sendMessage, regenerate, stop, status, error, clearError } =
     useChat<ChatMessage>({
       throttle: 40,
       onFinish: ({ message, messages: current, isAbort, isError, finishReason }): void => {
@@ -72,6 +72,7 @@ export default function ChatPage(): ReactElement {
   const pending = status === "submitted" || status === "streaming";
   const lastMessage = messages.at(-1);
   const lastAssistant = lastMessage?.role === "assistant" ? lastMessage : undefined;
+  const tooLong = error?.message === AI_TOO_LONG;
   const waiting = pending && (!lastAssistant || !answerText(lastAssistant));
 
   /** Maps a rejected SDK action to the same safe recovery notice as an interrupted reply. */
@@ -93,6 +94,14 @@ export default function ChatPage(): ReactElement {
     setNotice(undefined);
     stopRequested.current = false;
     void runChatAction(() => sendMessage({ text: content }));
+  }
+
+  /** Starts over when the history no longer fits the model. */
+  function newChat(): void {
+    clearError();
+    setNotice(undefined);
+    setUnfinished(new Map());
+    setMessages([]);
   }
 
   /** Retry only when a turn exists; regenerate rejects for missing turns. */
@@ -173,8 +182,8 @@ export default function ChatPage(): ReactElement {
         {(error || notice) && !pending && (
           <div className="flex items-center justify-between gap-3 rounded-lg border px-3 py-1">
             <p role="alert" className="text-sm text-destructive">
-              {error?.message === AI_NOT_AVAILABLE
-                ? AI_NOT_AVAILABLE
+              {tooLong || error?.message === AI_NOT_AVAILABLE
+                ? error.message
                 : notice === "length"
                   ? "The reply ran out of room before it could finish. Try asking for a shorter answer."
                   : notice === "interrupted"
@@ -182,8 +191,13 @@ export default function ChatPage(): ReactElement {
                     : "Could not get a reply. Please try again."}
             </p>
             <MessageActions>
-              <MessageAction size="default" variant="outline" className="min-h-11" onClick={retry}>
-                Retry
+              <MessageAction
+                size="default"
+                variant="outline"
+                className="min-h-11"
+                onClick={tooLong ? newChat : retry}
+              >
+                {tooLong ? "New chat" : "Retry"}
               </MessageAction>
             </MessageActions>
           </div>

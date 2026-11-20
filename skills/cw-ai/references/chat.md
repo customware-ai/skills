@@ -24,6 +24,8 @@ Example: [`apps/api/src/services/ai-gateway.ts`](../assets/examples/apps/api/src
 
 ```ts
 export const AI_NOT_AVAILABLE = "This AI feature isn't available for your organization.";
+export const AI_TOO_LONG = "This conversation is too long for the AI. Start a new chat.";
+export const AI_TEXT_TOO_LONG = "This text is too long for the AI. Shorten it and try again.";
 ```
 
 `apps/api/src/services/chat.ts`:
@@ -39,9 +41,10 @@ export const AI_NOT_AVAILABLE = "This AI feature isn't available for your organi
 
 Example: [`apps/api/src/services/chat.ts`](../assets/examples/apps/api/src/services/chat.ts). Read it before writing this file, then adapt it to the app.
 
-`apps/api/src/routes/chat.ts`: put the app's auth check here when it has users.
+`apps/api/src/routes/chat.ts`: put the app's auth check here when it has users. The 10 MiB body limit protects the app's memory and stays under the gateway's 20 MiB. A history over the model's context window is trimmed in the middle by OpenRouter's context compression, which the gateway turns on. When even that can't fit, or the body passes 10 MiB, the page shows `AI_TOO_LONG` with New chat.
 
 ```ts
+import { AI_TOO_LONG } from "@cw/shared/ai-errors";
 import { Result } from "better-result";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
@@ -51,22 +54,28 @@ import { logServerEvent } from "../services/logging.js";
 
 export const chat: Hono = new Hono();
 
-chat.post("/", bodyLimit({ maxSize: 1024 * 1024 }), async (c): Promise<Response> => {
-  if (c.req.header("Content-Type")?.split(";", 1)[0]?.trim().toLowerCase() !== "application/json") {
-    return c.text("Send a JSON chat request.", 415);
-  }
-  const body = await Result.tryPromise({
-    try: () => c.req.json<{ messages?: unknown }>(),
-    catch: () => "INVALID_CHAT" as const,
-  });
-  if (body.isErr()) return c.text("Invalid chat request.", 400);
+chat.post(
+  "/",
+  bodyLimit({ maxSize: 10 * 1024 * 1024, onError: (c) => c.text(AI_TOO_LONG, 413) }),
+  async (c): Promise<Response> => {
+    if (
+      c.req.header("Content-Type")?.split(";", 1)[0]?.trim().toLowerCase() !== "application/json"
+    ) {
+      return c.text("Send a JSON chat request.", 415);
+    }
+    const body = await Result.tryPromise({
+      try: () => c.req.json<{ messages?: unknown }>(),
+      catch: () => "INVALID_CHAT" as const,
+    });
+    if (body.isErr()) return c.text("Invalid chat request.", 400);
 
-  const reply = await streamChat(body.value?.messages, c.req.raw.signal);
-  if (reply.isOk()) return reply.value;
-  if (reply.error === "INVALID_CHAT") return c.text("Invalid chat request.", 400);
-  logServerEvent("error", "Chat could not start.", { code: reply.error }).unwrapOr(undefined);
-  return c.text("Chat is unavailable. Please try again.", 503);
-});
+    const reply = await streamChat(body.value?.messages, c.req.raw.signal);
+    if (reply.isOk()) return reply.value;
+    if (reply.error === "INVALID_CHAT") return c.text("Invalid chat request.", 400);
+    logServerEvent("error", "Chat could not start.", { code: reply.error }).unwrapOr(undefined);
+    return c.text("Chat is unavailable. Please try again.", 503);
+  },
+);
 ```
 
 ## Client
@@ -87,7 +96,7 @@ The page must keep these behaviours:
 
 ### Long or saved histories
 
-The example doesn't save conversations; the browser holds the history and the body limit bounds it. When the app saves conversations, follow the AI SDK's message persistence pattern: the browser sends only the new message, and the server loads the history and passes the loaded history as `originalMessages` to `toUIMessageStreamResponse` and saves `messages` from its `onEnd`, and Retry must replace the last reply on the server. When a transcript can grow past about 50 messages, render only the messages on screen with `@tanstack/react-virtual@3.14.26` inside `ConversationContent`, and keep auto-scroll to the newest reply. Streamdown keeps each reply cheap to draw, but a long list still slows the page.
+The example doesn't save conversations; the browser holds the whole history, and the gateway compresses it when it outgrows the model's context window. When the app saves conversations, follow the AI SDK's message persistence pattern: the browser sends only the new message, and the server loads the history and passes the loaded history as `originalMessages` to `toUIMessageStreamResponse` and saves `messages` from its `onEnd`, and Retry must replace the last reply on the server. When a transcript can grow past about 50 messages, render only the messages on screen with `@tanstack/react-virtual@3.14.26` inside `ConversationContent`, and keep auto-scroll to the newest reply. Streamdown keeps each reply cheap to draw, but a long list still slows the page.
 
 ## Wiring checklist
 

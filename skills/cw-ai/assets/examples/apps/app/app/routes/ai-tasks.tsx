@@ -1,4 +1,4 @@
-import { AI_NOT_AVAILABLE } from "@cw/shared/ai-errors";
+import { AI_NOT_AVAILABLE, AI_TEXT_TOO_LONG } from "@cw/shared/ai-errors";
 import { AI_EMAIL_LIMIT, AI_PROMPT_LIMIT } from "@cw/shared/ai-limits";
 import { useState, type ReactElement, type ReactNode } from "react";
 
@@ -47,14 +47,16 @@ function Submit({
 function Failure({
   error,
 }: {
-  error: { data?: { code?: string } | null } | null;
+  error: { message: string; data?: { code?: string } | null } | null;
 }): ReactElement | null {
   if (!error) return null;
   return (
     <p role="alert" className="text-sm text-destructive">
       {error.data?.code === "FORBIDDEN"
         ? AI_NOT_AVAILABLE
-        : "Something went wrong. Please try again."}
+        : error.message === AI_TEXT_TOO_LONG
+          ? AI_TEXT_TOO_LONG
+          : "Something went wrong. Please try again."}
     </p>
   );
 }

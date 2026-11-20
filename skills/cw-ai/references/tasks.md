@@ -55,7 +55,7 @@ export type EmailWritingTask = z.infer<typeof EmailWritingInput>["task"];
 
 Example: [`apps/api/src/services/ai-tools.ts`](../assets/examples/apps/api/src/services/ai-tools.ts). Read it before writing this file, then adapt it to the app.
 
-`apps/api/src/trpc/router.ts` maps typed failures to safe tRPC errors once. Add one procedure per task, with imports for `Result`, `AiError`, the input schemas and the services:
+`apps/api/src/trpc/router.ts` maps typed failures to safe tRPC errors once. Add one procedure per task, with imports for `Result`, `AiError`, `AI_NOT_AVAILABLE`, `AI_TEXT_TOO_LONG`, the input schemas and the services:
 
 ```ts
 /** Converts typed gateway failures to safe tRPC responses. */
@@ -66,6 +66,8 @@ function aiResult<T>(result: Result<T, AiError>): T {
       throw new TRPCError({ code: "FORBIDDEN", message: AI_NOT_AVAILABLE });
     case "NOT_FOUND":
       throw new TRPCError({ code: "NOT_FOUND", message: "The AI resource was not found." });
+    case "TOO_LONG":
+      throw new TRPCError({ code: "BAD_REQUEST", message: AI_TEXT_TOO_LONG });
     case "NOT_CONFIGURED":
     case "GATEWAY_FAILED":
       logServerEvent("error", "AI tool request failed.", { code: result.error }).unwrapOr(

@@ -1,4 +1,4 @@
-import { AI_NOT_AVAILABLE } from "@cw/shared/ai-errors";
+import { AI_NOT_AVAILABLE, AI_TOO_LONG } from "@cw/shared/ai-errors";
 import {
   convertToModelMessages,
   isStepCount,
@@ -92,10 +92,12 @@ export async function streamChat(
           }).unwrapOr(undefined);
         },
       }).toUIMessageStreamResponse({
-        onError: (error) =>
-          sdkError(error) === "NOT_AVAILABLE"
-            ? AI_NOT_AVAILABLE
-            : "Could not get a reply. Please try again.",
+        onError: (error) => {
+          const code = sdkError(error);
+          if (code === "NOT_AVAILABLE") return AI_NOT_AVAILABLE;
+          if (code === "TOO_LONG") return AI_TOO_LONG;
+          return "Could not get a reply. Please try again.";
+        },
       }),
     catch: () => "GATEWAY_FAILED" as const,
   });
