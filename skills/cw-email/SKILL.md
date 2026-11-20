@@ -11,7 +11,7 @@ Send transactional email through the CW Agents outbound email feature. The brows
 - CW Agents injects `CUSTOMWARE_EMAIL_KEY` into the dev sandbox and live app when the org's Outbound email feature is on. If the key is missing, report that outbound email isn't available for this org; never invent credentials or silently switch providers.
 - Send exactly `{ to, subject, html, text }`: one recipient address, a subject and both body versions. The endpoint accepts no attachments, cc/bcc, reply-to, from or templates. Max request: 1 MiB.
 - Name the app in the body: the sender is always “Customware AI” <support@customware.ai> and can't be changed.
-- Send only transactional messages: 15 emails per project per UTC day, and admitted sends count even if delivery fails. Never send bulk mail, marketing or digests to all users, or retry in a loop.
+- Send only transactional messages. Never send bulk mail, marketing or digests to all users, or retry in a loop.
 - Log the gateway's `request_id` on failure to trace the send. Never log the email body or raw gateway error; content can contain reset links.
 
 ## Send from the server
