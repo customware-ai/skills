@@ -12,15 +12,13 @@ Send transactional email through the CW Agents outbound email feature. The brows
 - Send exactly `{ to, subject, html, text }`: one recipient address, a subject and both body versions. The endpoint accepts no attachments, cc/bcc, reply-to, from or templates. Max request: 1 MiB.
 - Name the app in the body: the sender is always “Customware AI” <support@customware.ai> and can't be changed.
 - Send only transactional messages. Never send bulk mail, marketing or digests to all users, or retry in a loop.
-- Log the gateway's `request_id` on failure to trace the send. Never log the email body or raw gateway error; content can contain reset links.
+- On failure, log the status and the `x-request-id` response header to trace the send. Never log the email body or the gateway's response body; content can contain reset links.
 
 ## Send from the server
 
 `apps/api/src/services/email.ts`:
 
 ```ts
-import { z } from "zod";
-
 const PROJECT_ID = "<projectId>"; // Replace with the real ID from .tasks/task.json.
 const SEND_URL = `https://agents.customware.ai/api/features/out-email/v1/${PROJECT_ID}/send`;
 
@@ -28,7 +26,6 @@ type Email = { to: string; subject: string; html: string; text: string };
 type SendResult = { ok: true } | { ok: false; message: string };
 const unavailable = "Outbound email isn't available for this org.";
 const tooLarge = "Email exceeds 1 MiB.";
-const GatewayError = z.object({ error: z.object({ request_id: z.string() }) });
 
 const errors: Partial<Record<number, string>> = {
   400: "Invalid email request.",       // invalid_json / invalid_request
@@ -62,16 +59,15 @@ export async function sendEmail({ to, subject, html, text }: Email): Promise<Sen
   }
   if (response.status === 200) return { ok: true };
 
-  const payload = GatewayError.safeParse(await response.json().catch(() => null));
   console.error("Outbound email failed.", {
     status: response.status,
-    request_id: payload.success ? payload.data.error.request_id : undefined,
+    request_id: response.headers.get("x-request-id"),
   });
   return { ok: false, message: errors[response.status] ?? "Email request failed." };
 }
 ```
 
-A 429 returns a message the caller can show where safe; don't retry it. Don't retry an unconfirmed send automatically either: the gateway may already have admitted it.
+Branch on the HTTP status, not the error body. Each comment names the gateway's error code for that status. `429 daily_limit_reached` means the project used up today's email quota: show the message where safe and don't retry; sends work again once the quota resets. Don't retry an unconfirmed send automatically either: the gateway may already have admitted it.
 
 ## Send a password reset
 
