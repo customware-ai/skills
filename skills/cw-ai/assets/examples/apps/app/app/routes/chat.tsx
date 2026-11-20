@@ -1,15 +1,7 @@
 import { useChat } from "@ai-sdk/react";
-import type { ChatTools } from "@cw/api/trpc";
+import type { ChatMessage } from "@cw/api/trpc";
 import { AI_NOT_AVAILABLE } from "@cw/shared/ai-errors";
-import { CHAT_HISTORY_LIMIT, CHAT_TEXT_LIMIT } from "@cw/shared/chat-limits";
-import {
-  DefaultChatTransport,
-  isTextUIPart,
-  type InferUITools,
-  type PrepareSendMessagesRequest,
-  type UIDataTypes,
-  type UIMessage,
-} from "ai";
+import { isTextUIPart, isToolUIPart } from "ai";
 import { Result } from "better-result";
 import { useRef, useState, type ReactElement } from "react";
 
@@ -35,17 +27,12 @@ import { Shimmer } from "~/components/ai-elements/shimmer";
 import { Suggestion, Suggestions } from "~/components/ai-elements/suggestion";
 import { AiResponse } from "~/components/ai-response";
 
-type ChatMessage = UIMessage<unknown, UIDataTypes, InferUITools<ChatTools>>;
-
 const STARTERS = ["Which todos are still open?", "What should I do first today?"];
 
-/**
- * The gateway only needs text, not SDK metadata or reasoning parts.
- * The answer is the text after the last lookup; text before it is "checking…" filler.
- */
-function messageText(message: ChatMessage): string {
+/** Shows the text after the last lookup; text before it is "checking…" filler. */
+function answerText(message: ChatMessage): string {
   const answerStart = message.parts.reduce(
-    (start, part, index) => (part.type.startsWith("tool-") ? index + 1 : start),
+    (start, part, index) => (isToolUIPart(part) ? index + 1 : start),
     0,
   );
   return message.parts
@@ -54,20 +41,6 @@ function messageText(message: ChatMessage): string {
     .map((part) => part.text)
     .join("\n\n");
 }
-
-const transport = new DefaultChatTransport<ChatMessage>({
-  api: "/api/chat",
-  prepareSendMessagesRequest: ({
-    messages,
-  }): ReturnType<PrepareSendMessagesRequest<ChatMessage>> => ({
-    body: {
-      messages: messages.slice(-CHAT_HISTORY_LIMIT).flatMap((message) => {
-        const content = messageText(message).trim().slice(0, CHAT_TEXT_LIMIT);
-        return message.role !== "system" && content ? [{ role: message.role, content }] : [];
-      }),
-    },
-  }),
-});
 
 /** A temporary conversation with streaming replies and no saved history. */
 export default function ChatPage(): ReactElement {
@@ -79,19 +52,14 @@ export default function ChatPage(): ReactElement {
   const stopRequested = useRef(false);
   const { messages, setMessages, sendMessage, regenerate, stop, status, error } =
     useChat<ChatMessage>({
-      transport,
       throttle: 40,
       onFinish: ({ message, messages: current, isAbort, isError, finishReason }): void => {
         const stoppedByUser = stopRequested.current && isAbort;
         stopRequested.current = false;
         const interrupted = finishReason !== "stop" && finishReason !== "tool-calls";
         if (stoppedByUser || isError || interrupted) {
-          setUnfinished(
-            (previous) =>
-              new Map([
-                ...Array.from(previous).slice(-(CHAT_HISTORY_LIMIT - 1)),
-                [message.id, stoppedByUser ? "stopped" : "partial"],
-              ]),
+          setUnfinished((previous) =>
+            new Map(previous).set(message.id, stoppedByUser ? "stopped" : "partial"),
           );
         }
         if (stoppedByUser && current.at(-1)?.id !== message.id) {
@@ -104,7 +72,7 @@ export default function ChatPage(): ReactElement {
   const pending = status === "submitted" || status === "streaming";
   const lastMessage = messages.at(-1);
   const lastAssistant = lastMessage?.role === "assistant" ? lastMessage : undefined;
-  const waiting = pending && (!lastAssistant || !messageText(lastAssistant));
+  const waiting = pending && (!lastAssistant || !answerText(lastAssistant));
 
   /** Maps a rejected SDK action to the same safe recovery notice as an interrupted reply. */
   function runChatAction(action: () => Promise<void>): Promise<Result<void, "interrupted">> {
@@ -117,14 +85,13 @@ export default function ChatPage(): ReactElement {
     });
   }
 
-  /** Show the user's message immediately and keep the transcript bounded. */
+  /** Show the user's message immediately. */
   function send(text: string): void {
     const content = text.trim();
     if (!content || pending) return;
     setDraft("");
     setNotice(undefined);
     stopRequested.current = false;
-    setMessages((current) => current.slice(-(CHAT_HISTORY_LIMIT - 2)));
     void runChatAction(() => sendMessage({ text: content }));
   }
 
@@ -147,7 +114,7 @@ export default function ChatPage(): ReactElement {
             />
           ) : (
             messages.map((message) => {
-              const text = messageText(message);
+              const text = answerText(message);
               const lookups = message.parts.flatMap((part) =>
                 part.type !== "tool-listTodos" ||
                 (part.state !== "output-available" && part.state !== "output-error")
@@ -224,12 +191,7 @@ export default function ChatPage(): ReactElement {
         {messages.length === 0 && !pending && (
           <Suggestions>
             {STARTERS.map((starter) => (
-              <Suggestion
-                key={starter}
-                suggestion={starter}
-                onClick={send}
-                className="min-h-11"
-              />
+              <Suggestion key={starter} suggestion={starter} onClick={send} className="min-h-11" />
             ))}
           </Suggestions>
         )}
@@ -237,7 +199,6 @@ export default function ChatPage(): ReactElement {
           <PromptInputTextarea
             aria-label="Message"
             placeholder="Write a message…"
-            maxLength={CHAT_TEXT_LIMIT}
             value={draft}
             onChange={(event) => setDraft(event.currentTarget.value)}
           />

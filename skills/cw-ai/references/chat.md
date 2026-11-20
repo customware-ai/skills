@@ -5,7 +5,8 @@
 **Why this shape:**
 
 - The reply streams over one dedicated Hono route (`streamText(...).toUIMessageStreamResponse()`), read by `useChat` from `@ai-sdk/react`. tRPC doesn't carry the AI SDK stream format; the rest of the app stays on tRPC.
-- The browser sends plain text turns, never system prompts or tool output, so a user can't rewrite the instructions or fake a tool result.
+- The AI SDK carries the conversation end to end: `useChat` sends its UI messages intact, and the server only validates and converts them for the model. Lookups, their results and reasoning stay in the history, so follow-up questions work and each turn resends the same prefix for the provider's prompt cache. Don't rebuild, trim or re-shape messages in between; hide the text written before a lookup only when drawing the reply.
+- The gateway is only a proxy for the key and usage. The OpenRouter provider talks to it as it would to OpenRouter.
 
 The example files in [`assets/examples/`](../assets/examples/) mirror the app's paths. Copy their structure; rename the tool, prompts and copy for the app.
 
@@ -19,35 +20,10 @@ The example files in [`assets/examples/`](../assets/examples/) mirror the app's 
 
 Example: [`apps/api/src/services/ai-gateway.ts`](../assets/examples/apps/api/src/services/ai-gateway.ts). Read it before writing this file, then adapt it to the app.
 
-`packages/shared/src/chat-limits.ts` and `packages/shared/src/ai-errors.ts` (shared with the UI):
+`packages/shared/src/ai-errors.ts` (shared with the UI):
 
 ```ts
-export const CHAT_HISTORY_LIMIT = 20;
-export const CHAT_TEXT_LIMIT = 8_000;
-
 export const AI_NOT_AVAILABLE = "This AI feature isn't available for your organization.";
-```
-
-`apps/api/src/contracts/chat.ts`:
-
-```ts
-import { CHAT_HISTORY_LIMIT, CHAT_TEXT_LIMIT } from "@cw/shared/chat-limits";
-import { z } from "zod";
-
-export const ChatRequestSchema = z.strictObject({
-  messages: z
-    .array(
-      z.strictObject({
-        role: z.enum(["user", "assistant"]),
-        content: z.string().trim().min(1).max(CHAT_TEXT_LIMIT),
-      }),
-    )
-    .min(1)
-    .max(CHAT_HISTORY_LIMIT)
-    .refine((messages) => messages.at(-1)?.role === "user"),
-});
-
-export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 ```
 
 `apps/api/src/services/chat.ts`:
@@ -57,6 +33,9 @@ export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 - The typed outcome lets the UI tell success from failure. Nothing found, such as an unknown name or an empty list, is a successful lookup, not a failure.
 - The system prompt makes replies read like a person answering: no "Let me check…" lines, no internal names (organization, project ID, tool names), only the answer and what it rests on.
 - `stopWhen` bounds the steps, and `timeout` bounds the whole reply.
+- `experimental_download` returns `null` for every file, so the server never fetches a URL the browser put in the history.
+- The browser can edit the history it sends, but that only changes its own conversation. `safeValidateUIMessages` checks each registered tool's parts against its `inputSchema` and `outputSchema`, so give every tool both. It can't prove a result is real, so each tool checks the caller's access itself when the app has users.
+- Reasoning streams to the browser with the reply so it can come back in the history. The page doesn't show it, but anyone can read it in the network tab: keep secrets out of the system prompt.
 
 Example: [`apps/api/src/services/chat.ts`](../assets/examples/apps/api/src/services/chat.ts). Read it before writing this file, then adapt it to the app.
 
@@ -67,7 +46,6 @@ import { Result } from "better-result";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 
-import { ChatRequestSchema } from "../contracts/chat.js";
 import { streamChat } from "../services/chat.js";
 import { logServerEvent } from "../services/logging.js";
 
@@ -77,17 +55,15 @@ chat.post("/", bodyLimit({ maxSize: 1024 * 1024 }), async (c): Promise<Response>
   if (c.req.header("Content-Type")?.split(";", 1)[0]?.trim().toLowerCase() !== "application/json") {
     return c.text("Send a JSON chat request.", 415);
   }
-  const input = await Result.tryPromise({
-    try: async () => {
-      const body: unknown = await c.req.json();
-      return ChatRequestSchema.parse(body);
-    },
+  const body = await Result.tryPromise({
+    try: () => c.req.json<{ messages?: unknown }>(),
     catch: () => "INVALID_CHAT" as const,
   });
-  if (input.isErr()) return c.text("Invalid chat request.", 400);
+  if (body.isErr()) return c.text("Invalid chat request.", 400);
 
-  const reply = streamChat(input.value, c.req.raw.signal);
+  const reply = await streamChat(body.value?.messages, c.req.raw.signal);
   if (reply.isOk()) return reply.value;
+  if (reply.error === "INVALID_CHAT") return c.text("Invalid chat request.", 400);
   logServerEvent("error", "Chat could not start.", { code: reply.error }).unwrapOr(undefined);
   return c.text("Chat is unavailable. Please try again.", 503);
 });
@@ -111,14 +87,14 @@ The page must keep these behaviours:
 
 ### Long or saved histories
 
-The example keeps the last `CHAT_HISTORY_LIMIT` messages and doesn't save them, so every message renders. When the app saves conversations or a transcript can grow past about 50 messages, render only the messages on screen with `@tanstack/react-virtual@3.14.26` inside `ConversationContent`, and keep auto-scroll to the newest reply. Streamdown keeps each reply cheap to draw, but a long list still slows the page.
+The example doesn't save conversations; the browser holds the history and the body limit bounds it. When the app saves conversations, follow the AI SDK's message persistence pattern: the browser sends only the new message, and the server loads the history and passes the loaded history as `originalMessages` to `toUIMessageStreamResponse` and saves `messages` from its `onEnd`, and Retry must replace the last reply on the server. When a transcript can grow past about 50 messages, render only the messages on screen with `@tanstack/react-virtual@3.14.26` inside `ConversationContent`, and keep auto-scroll to the newest reply. Streamdown keeps each reply cheap to draw, but a long list still slows the page.
 
 ## Wiring checklist
 
 The template doesn't ship these; add each one:
 
-1. `packages/shared/package.json` `exports`: `"./chat-limits": "./src/chat-limits.ts"` and `"./ai-errors": "./src/ai-errors.ts"`.
-2. `apps/api/src/trpc/router.ts`: `import type { tools } from "../services/chat.js";` and `export type ChatTools = typeof tools;`, so the page gets typed tool parts.
+1. `packages/shared/package.json` `exports`: `"./ai-errors": "./src/ai-errors.ts"`.
+2. `apps/api/src/trpc/router.ts`: `export type { ChatMessage } from "../services/chat.js";`, so the page gets typed tool parts.
 3. `apps/api/src/index.ts`: `app.route("/api/chat", chat);` before static serving and the SPA fallback.
 4. `apps/app/vite.config.ts` dev proxy: `"/api/chat": "http://localhost:8080"` next to `/trpc`.
 5. `apps/app/app/routes.ts`: register the page lazily under the main layout, and add a nav link:
