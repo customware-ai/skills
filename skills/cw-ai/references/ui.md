@@ -29,7 +29,8 @@ Mirror the [AI Elements chatbot example](https://elements.ai-sdk.dev/examples/ch
 - Keep `Message` and `MessageContent` styling as generated: the user's message is a bubble on the right, the reply is plain text on the left. No role labels ("You", "Assistant"), no extra borders or cards around the conversation.
 - Each reply ends with the answer. Anything about how the answer was found, such as a lookup, goes above the text as one muted line ("Looked up todos"). Don't use `Tool`: its status badge and expand arrow read as an error card.
 - Show only the text written after a reply's last lookup. Models often write a "checking…" line before calling a tool, and the prompt can't reliably stop it.
-- A chat inside an existing app, such as a help chat, opens as a docked panel on the right, at least 420px wide on desktop and full screen on phones. The page beside it stays sharp and usable, because people read their data while they ask about it. Build it as a plain fixed `aside` toggled by a button, not `Sheet` or `Dialog`: those are modal, so they blur the page and block clicks on it. On desktop the page makes room while the panel is open (the layout's main area gets the panel's width as right padding), so nothing hides under it.
+- A chat inside an existing app, such as a help chat, opens as a docked panel on the right, at least 420px wide on desktop and full screen on phones. The page beside it stays sharp and usable, because people read their data while they ask about it. Build it as a plain fixed `aside`, not `Sheet` or `Dialog`: those are modal, so they blur the page and block clicks on it. On desktop the page makes room while the panel is open (the layout's main area gets the panel's width as right padding), so nothing hides under it.
+- The button that opens the panel hides while it's open, and the panel's header has the close button. A floating button left on screen covers the chat's Send and Stop.
 
 ## Install and adapt
 

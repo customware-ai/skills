@@ -1,6 +1,6 @@
 # Streaming chat
 
-**What:** a chat page whose replies stream in, built from AI Elements, with Stop, safe Markdown, and an optional read-only tool over the app's data.
+**What:** a chat whose replies stream in, shown as a page or a docked panel, built from AI Elements, with Stop, safe Markdown, and an optional read-only tool over the app's data.
 
 **Why this shape:**
 
@@ -82,17 +82,24 @@ chat.post(
 
 First complete [ui.md](ui.md): AI Elements installed and `AiResponse` in place.
 
-### Chat page: `apps/app/app/routes/chat.tsx`
+### The chat: `apps/app/app/components/chat.tsx`
 
-Example: [`apps/app/app/routes/chat.tsx`](../assets/examples/apps/app/app/routes/chat.tsx). Read it before writing this file, then adapt it to the app.
+Example: [`apps/app/app/components/chat.tsx`](../assets/examples/apps/app/app/components/chat.tsx). Every chat surface renders this one component: change only the tool, its lookup line, the starters and the copy, and keep the behaviours below. A hand-written chat loses them. It fills a height-bounded flex column.
 
-The page must keep these behaviours:
+It must keep these behaviours:
 
 - Send turns into Stop while a reply streams; **Stopped** marks a reply the user cut off.
 - **The reply was interrupted**, with Retry, covers a stream that ended without finishing (a timeout or dropped connection). The SDK reports that as a normal finish, so check `finishReason`.
 - A length notice covers a reply that ran out of output tokens.
 - Starter questions send on tap.
 - A polite live region announces progress to screen readers.
+- A lookup shows as one muted line above the answer, and text written before the lookup is hidden.
+- **New chat** replaces Retry when the conversation no longer fits the model.
+
+### Where it shows
+
+- **Its own page:** [`apps/app/app/routes/chat.tsx`](../assets/examples/apps/app/app/routes/chat.tsx), a lazy route (see the wiring checklist).
+- **A panel inside the app**, such as a help chat: [`apps/app/app/components/chat-panel.tsx`](../assets/examples/apps/app/app/components/chat-panel.tsx), rendered once in the main layout. The layout keeps `open` in state and, while it's open, sets its main area's right padding to the panel's width plus the usual gutter (`lg:pr-[calc(420px+1.5rem)]`), so the page makes room. See [ui.md](ui.md#look) for why it's docked.
 
 ### Long or saved histories
 
@@ -106,7 +113,7 @@ The template doesn't ship these; add each one:
 2. `apps/api/src/trpc/router.ts`: `export type { ChatMessage } from "../services/chat.js";`, so the page gets typed tool parts.
 3. `apps/api/src/index.ts`: `app.route("/api/chat", chat);` before static serving and the SPA fallback.
 4. `apps/app/vite.config.ts` dev proxy: `"/api/chat": "http://localhost:8080"` next to `/trpc`.
-5. `apps/app/app/routes.ts`: register the page lazily under the main layout, and add a nav link:
+5. For a chat page, `apps/app/app/routes.ts`: register it lazily under the main layout, and add a nav link. A panel needs no route; it lazy-loads the chat itself.
 
 ```ts
 const chatRoute = createRoute({
