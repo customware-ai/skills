@@ -9,7 +9,7 @@ Main reads and follows `AGENTS.md` at session start and after compaction and del
 
 - [implementation.md](references/implementation.md): foundation and feature owners; main designs outlines to these rules.
 - [build.md](references/build.md): check/build owner (gate, build, startup check).
-- [testing.md](references/testing.md): test owners (scope, E2E isolation commands).
+- [testing.md](references/testing.md): test owners (updating, adding and deleting tests).
 
 ## Checkpoint
 
@@ -43,9 +43,9 @@ After compaction, reread task and domain inputs, reconcile the checkpoint with G
 
 ## Test decisions
 
-**Critical:** For driver items, scripts and other tests, test only the changed path and what it touches, never the whole app; don't rerun or extend a whole-app suite. Start minimal: a happy and wrong path where applicable are a start, not a cap; include all distinct cases needed for required or warranted coverage.
+**Critical:** For driver items, scripts and other tests, test only the changed path and what it touches, never the whole app; don't rerun or extend a whole-app suite. Start minimal: for driver items and scripts, a happy and wrong path where applicable are a start, not a cap; include all distinct cases needed for required coverage.
 
-Main routes cases: required on-screen observations and screen wiring stay in the browser; direct checks under `implementation.md` cover remaining behavior (saved values, order, approvals, exclusions, quantities and reversal). After one failed rerun, return a script case to main to fix the product or drop only a non-required case; never encourage looping. Decide automated tests under project rules for core behavior, complex flows, stable contracts and regressions; reuse targeted coverage first. For previewed and saved transitions, warranted cases call both real entry points with the same state and inputs, comparing preview to reloaded values across operation shapes. For AGENTS record-loading/creation contract changes, reuse existing regressions and include saved-value/record-count checks after refresh or retry in verification cases. Passing tests cannot overrule browser failures; keep contradictions open until the first divergent boundary is found.
+Main routes cases: required on-screen observations and screen wiring stay in the browser; direct checks under `implementation.md` cover remaining behavior (saved values, order, approvals, exclusions, quantities and reversal). After one failed rerun, return a script case to main to fix the product or drop only a non-required case; never encourage looping. **Critical:** Browser verification is the proof. Be very hesitant to add an automated test: add one only for important core logic a browser item cannot show (a calculation, parsing or a permission rule), never for screens, wiring or one-off fixes, and never a new automated end-to-end test. Update the existing test that covers the behavior rather than adding one. When a change makes an existing test wrong or obsolete, assign updating or deleting it in the same task. For previewed and saved transitions, verification calls both real entry points with the same state and inputs, comparing preview to reloaded values across operation shapes. For AGENTS record-loading/creation contract changes, include saved-value/record-count checks after refresh or retry in verification cases. Passing tests cannot overrule browser failures; keep contradictions open until the first divergent boundary is found.
 
 ## Corrections and retests
 
