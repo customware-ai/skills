@@ -7,7 +7,8 @@ description: Use when adding, moving, or sizing the embedded CW Agents support c
 
 1. Read `orgId` and `projectId` from the Builder's raw task record at `.tasks/task.json`. The Markdown brief (`.tasks/task.md`) lists `projectId` in its frontmatter. If the raw record is unavailable, get both IDs from the CW Agents project URL `/<orgId>/projects/<projectId>`. Don't render placeholders. If an ID still can't be determined, report what's missing in the task outcome.
 2. Load the script once in the client app shell (for example, `apps/app/index.html` in the current template). Place one `<customware-chat>` in the shared layout. If IDs arrive at runtime, render it only when both are present.
-3. Verify on the project's dev sandbox URL. The org's Support widget feature must be on. The widget works on the project's own app hosts (live or dev sandbox) and on localhost in development. Open the app directly, not inside an iframe.
+3. Verify in the task's running app, opened directly rather than inside an iframe: the launcher appears on every page that has the shared layout and its panel opens without console errors.
+4. Do not send messages or requests from the task's app. The support service does not accept it as a sender and answers `Support chat is not available for this app.` This is expected, is not a defect and does not block the task: don't retry it, call support endpoints directly or change the embed to get around it. Sending is checked after the task, so report it as not checked by the task.
 
 ```html
 <script src="https://agents.customware.ai/support-widget/customware-chat.js" defer></script>
@@ -30,4 +31,4 @@ description: Use when adding, moving, or sizing the embedded CW Agents support c
 
 Position and size the host element or its wrapper with CSS and the options above. Don't restyle the widget internals, reach into its Shadow DOM, or call support endpoints directly from the app.
 
-The widget answers from the project's Customer Help document. Filed requests become draft Support tasks for the team. In the dev sandbox, check that the widget opens and answers a question covered by the document. Verify draft creation only with an approved test request.
+The widget answers from the project's Customer Help document. Filed requests become draft Support tasks for the team.
