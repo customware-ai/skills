@@ -7,7 +7,7 @@ description: Use when adding, moving, or sizing the embedded CW Agents support c
 
 1. Read `orgId` and `projectId` from the Builder's raw task record at `.tasks/task.json`. The Markdown brief (`.tasks/task.md`) lists `projectId` in its frontmatter. If the raw record is unavailable, get both IDs from the CW Agents project URL `/<orgId>/projects/<projectId>`. Don't render placeholders. If an ID still can't be determined, report what's missing in the task outcome.
 2. Load the script once in the client app shell (for example, `apps/app/index.html` in the current template). Place one `<customware-chat>` in the shared layout. If IDs arrive at runtime, render it only when both are present.
-3. Verify in the task's running app, opened directly rather than inside an iframe: the launcher appears on every page that has the shared layout and its panel opens without console errors.
+3. Verify in the task's running app, opened directly rather than inside an iframe: the launcher appears on every page that has the shared layout and its panel opens without console errors. This browser check is the only test the embed needs: don't add or update unit tests for it.
 4. Do not send messages or requests from the task's app. The support service does not accept it as a sender and answers `Support chat is not available for this app.` This is expected, is not a defect and does not block the task: don't retry it, call support endpoints directly or change the embed to get around it. Sending is checked after the task, so report it as not checked by the task.
 
 ```html
